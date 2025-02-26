@@ -13,8 +13,17 @@ import { passInviteCode } from "./common";
 // ***********************************************
 
 
+export enum SkipOnboardingSlides {
+  No = 0,
+  Yes = 1
+};
 
-Cypress.Commands.add('onboardAsNewUser', (profileName: string, profileBio: string = '', skipOnboardingSlides: boolean = true, pubkyAlias?: string) => {
+Cypress.Commands.add('onboardAsNewUser',
+  ( profileName: string,
+    profileBio: string = '',
+    skipOnboardingSlides: SkipOnboardingSlides = SkipOnboardingSlides.Yes,
+    pubkyAlias?: string
+  ) => {
   cy.visit('/');
 
   cy.location('pathname').should('eq', '/onboarding');
@@ -22,7 +31,7 @@ Cypress.Commands.add('onboardAsNewUser', (profileName: string, profileBio: strin
   cy.get('#onboarding-create-account-btn').click();
   cy.location('pathname').should('eq', '/onboarding/intro');
 
-  if (skipOnboardingSlides) {
+  if (skipOnboardingSlides === SkipOnboardingSlides.Yes) {
     // click 'Skip Intro' button
     cy.get('#onboarding-skip-intro-btn').click();
   } else {
@@ -61,7 +70,12 @@ Cypress.Commands.add('onboardAsNewUser', (profileName: string, profileBio: strin
   cy.location('pathname').should('eq', '/home');
 });
 
-Cypress.Commands.add('signOut', (hasBackedUp: boolean) => {
+export enum HasBackedUp {
+  No = 0,
+  Yes = 1
+};
+
+Cypress.Commands.add('signOut', (hasBackedUp: HasBackedUp) => {
   cy.location('pathname').then((currentPath) => {
     if (currentPath !== '/profile') {
       cy.get('#header-profile-pic').click();
@@ -73,7 +87,7 @@ Cypress.Commands.add('signOut', (hasBackedUp: boolean) => {
   cy.get('#profile-sign-out-btn').click();
 
   // sign out model only shows if user has not backed up recovery file
-  if (!hasBackedUp) cy.get('#logout-modal-sign-out-btn').click();
+  if (hasBackedUp === HasBackedUp.No) cy.get('#logout-modal-sign-out-btn').click();
 
   cy.location('pathname').should('eq', '/logout');
 
@@ -263,7 +277,13 @@ Cypress.Commands.add('findPostInBookmarks', (postIdx : number) => {
   return cy.get('#bookmarked-posts').find('[id="post-container"]').eq(postIdx);
 });
 
-const findPostInFeed = (postIdx = 0, filterText?, checkIndexed = true) => {
+// used to check if the newly created post is indexed
+export enum CheckIndexed {
+  No = 0,
+  Yes = 1
+};
+
+const findPostInFeed = (postIdx = 0, filterText?, checkIndexed = CheckIndexed.Yes) => {
   // A function to check if timeline contains 'No post yet'.
   // If it does then wait 1 second and check again.
   // This is a wait for the timeline to load after the page loads.
@@ -306,7 +326,7 @@ const findPostInFeed = (postIdx = 0, filterText?, checkIndexed = true) => {
   // if 'checkIndexed' then wait for the post to have two green ticks, indicating it is indexed
   // this is needed because the container element is rerendered when the post is indexed
   cy.wrap(checkIndexed).then(($checkIndexed) => {
-    if ($checkIndexed) checkPostIsIndexed();
+    if ($checkIndexed === CheckIndexed.Yes) checkPostIsIndexed();
   });
 
   // find the post in the timeline
@@ -320,17 +340,17 @@ const findPostInFeed = (postIdx = 0, filterText?, checkIndexed = true) => {
 };
 
 // useful to find your latest new post
-Cypress.Commands.add('findFirstPostInFeed', (checkIndexed = true) => {
+Cypress.Commands.add('findFirstPostInFeed', (checkIndexed = CheckIndexed.Yes) => {
   findPostInFeed(0, "", checkIndexed);
 });
 
 // useful for finding a specific post by text
-Cypress.Commands.add('findFirstPostInFeedFiltered', (filterText, checkIndexed = true) => {
+Cypress.Commands.add('findFirstPostInFeedFiltered', (filterText, checkIndexed = CheckIndexed.Yes) => {
   findPostInFeed(0, filterText, checkIndexed);
 });
 
 // useful for finding a specific post by index with optional filter text
-Cypress.Commands.add('findPostInFeed', (postIdx = 0, filterText?, checkIndexed = true) => {
+Cypress.Commands.add('findPostInFeed', (postIdx = 0, filterText?, checkIndexed = CheckIndexed.Yes) => {
   findPostInFeed(postIdx, filterText, checkIndexed);
 });
 

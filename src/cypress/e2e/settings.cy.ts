@@ -5,6 +5,7 @@ import {
 } from '../support/posts';
 import { slowCypressDown } from 'cypress-slow-down';
 import 'cypress-slow-down/commands';
+import { HasBackedUp } from '../support/commands';
 
 describe('settings', () => {
   before(() => {
@@ -130,7 +131,7 @@ describe('settings', () => {
     });
 
     // sign out
-    cy.signOut(false);
+    cy.signOut(HasBackedUp.No);
 
     // create user 2
     cy.onboardAsNewUser('Mr Mute', 'I like to mute people');

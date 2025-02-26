@@ -1,6 +1,7 @@
 import * as path from 'path';
 import { defaultBackupFilename } from '../support/auth';
 import { slowCypressDown } from 'cypress-slow-down';
+import { HasBackedUp, SkipOnboardingSlides } from '../support/commands';
 
 describe('onboarding', () => {
   before(() => {
@@ -14,8 +15,8 @@ describe('onboarding', () => {
 
   it('can onboard as a new user, viewing onboarding slides, go to home and logout', () => {
     // onboard as new user without skipping onboarding slides
-    cy.onboardAsNewUser('Satoshi Nakamoto', 'I am cypherpunk', false);
-    cy.signOut(false);
+    cy.onboardAsNewUser('Satoshi Nakamoto', 'I am cypherpunk', SkipOnboardingSlides.No);
+    cy.signOut(HasBackedUp.No);
   });
 
   it('should login, skipping onboarding slides, save recovery file and use it to log back in', () => {
@@ -28,7 +29,7 @@ describe('onboarding', () => {
     const expectedFilePath = path.join(downloadsFolder, defaultBackupFilename());
     cy.readFile(expectedFilePath).should('exist');
 
-    cy.signOut(true);
+    cy.signOut(HasBackedUp.Yes);
     cy.signIn(expectedFilePath, '666942');
 
     cy.get('#header-profile-pic').click();

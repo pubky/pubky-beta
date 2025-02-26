@@ -21,7 +21,7 @@ describe('multi-sign-in-out', () => {
   it('sign up then sign out then in then out then in then..', () => {
     const t = 10_000;
     for (let i = 0; i < t; i++) {
-      cy.signOut(true);
+      cy.signOut(HasBackedUp.Yes);
       cy.signIn(backupDownloadFilePath(username));
     };
   });

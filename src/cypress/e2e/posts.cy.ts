@@ -16,6 +16,7 @@ import { latestPostInFeedContentEq,
         addImage,
         waitForBookmarksToLoad} from '../support/posts';
 import { defaultMs, fastMs } from '../support/slow-down';
+import { CheckIndexed, HasBackedUp, SkipOnboardingSlides } from '../support/commands';
 
 const username = 'Poster';
 
@@ -157,15 +158,13 @@ describe('posts', () => {
     });
 
     // wait for post to be indexed then verify the post has expected content and 1 image
-    cy.findFirstPostInFeed(true).within(() => {
+    cy.findFirstPostInFeed(CheckIndexed.Yes).within(() => {
       cy.get('#post-content-text').innerTextShouldEq(postContent);
       cy.get('#post-content-text').find('img').should('have.length', 1);
     });
   });
 
-  // TODO: run with false once posts don't rerender once indexed, see: https://github.com/pubky/pubky-app/issues/992
-  //[true, false].forEach((waitForIndexed) => {
-  [true].forEach((waitForIndexed) => {
+  [CheckIndexed.Yes, CheckIndexed.No].forEach((waitForIndexed) => {
     it(`can post with embedded link (waitForIndexed: ${waitForIndexed})`, () => {
       const link = 'https://www.youtube.com/watch?v=989-7xsRLR4';
       const embedLink = 'https://www.youtube.com/embed/989-7xsRLR4';
@@ -192,7 +191,7 @@ describe('posts', () => {
 
   it('can post with profile reference', () => {
     // create profile to refer to in a post
-    cy.signOut(true);
+    cy.signOut(HasBackedUp.Yes);
     const uniquePrefix = Cypress._.uniqueId(Date.now().toString().slice(-3));
     const otherUsername = 'Jeremy The Poser';
     const fullUsername = uniquePrefix + '_' + otherUsername;
@@ -200,10 +199,10 @@ describe('posts', () => {
     cy.onboardAsNewUser(
       fullUsername,
       'My account will be referenced in a post.',
-      true,
+      SkipOnboardingSlides.Yes,
       pubkyAlias,
     );
-    cy.signOut(false);
+    cy.signOut(HasBackedUp.No);
     // sign back in as poster
     cy.signIn(backupDownloadFilePath(username));
 
@@ -254,16 +253,16 @@ describe('posts', () => {
   // todo: consider combining with 'can delete a post' test
   it("cannot delete other profile's post", () => {
     // create profile to create a post to try and delete
-    cy.signOut(true);
+    cy.signOut(HasBackedUp.Yes);
     cy.onboardAsNewUser('Del Boy', 'Try delete my post.');
     const postContent = `Noone else can delete this post! ${Date.now()}`;
     createQuickPost(postContent);
-    cy.signOut(false);
+    cy.signOut(HasBackedUp.No);
     // sign back in as poster
     cy.signIn(backupDownloadFilePath(username));
 
     // try to delete the post made by the other account
-    cy.findFirstPostInFeed(false).within(() => {
+    cy.findFirstPostInFeed(CheckIndexed.No).within(() => {
       // open post menu and check delete is not available
       cy.get('#menu-btn').should('be.visible').click();
       cy.get('#post-tooltip-menu')
@@ -274,7 +273,7 @@ describe('posts', () => {
     });
   });
 
-  [true, false].forEach((waitForIndexed) => {
+  [CheckIndexed.Yes, CheckIndexed.No].forEach((waitForIndexed) => {
     it(`can tag whilst creating post (waitForIndexed: ${waitForIndexed})`, () => {
       const postContent = `I can post with tags! ${Date.now()}`;
       const tag1 = 'alpacas';
@@ -319,7 +318,7 @@ describe('posts', () => {
     ReverseAlphanumeric,
   }
 
-  [true, false].forEach((waitForIndexed) => {
+  [CheckIndexed.Yes, CheckIndexed.No].forEach((waitForIndexed) => {
     it(`can tag and remove tags from existing post on feed page (waitForIndexed: ${waitForIndexed})`, () => {
       const postContent = `I can add and remove tags from my existing post! ${Date.now()}`;
       const tag1 = 'bananas';
@@ -641,7 +640,7 @@ describe('posts', () => {
     cy.get('#bookmarked-posts').should('contain.text', 'Save posts for later')
   });
 
-  [true, false].forEach((waitForIndexed) => {
+  [CheckIndexed.Yes, CheckIndexed.No].forEach((waitForIndexed) => {
     it(`can repost with content then delete the repost (waitForIndexed: ${waitForIndexed})`, () => {
       // create a post to repost
       const postContent = `This post will be reposted with content! ${Date.now()}`;
@@ -735,7 +734,7 @@ describe('posts', () => {
     });
   });
 
-  [true, false].forEach((waitForIndexed) => {
+  [CheckIndexed.Yes, CheckIndexed.No].forEach((waitForIndexed) => {
     it(`cannot see reply of a deleted post in feed (waitForIndexed: ${waitForIndexed})`, () => {
       // create a post to reply to
       const postContent = `This post will be replied to! ${Date.now()}`;

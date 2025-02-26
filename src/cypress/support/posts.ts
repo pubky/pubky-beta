@@ -1,3 +1,5 @@
+import { CheckIndexed } from "./commands";
+
 // select an emoji using the emoji picker by its data-full-name attribute
 export const selectEmojis = (emojiName: string[]) => {
   // open emoji picker
@@ -116,13 +118,13 @@ export const replyToPost = ({
   postContent,
   filterText = '',
   postIdx = 0,
-  waitForIndexed = true,
+  waitForIndexed = CheckIndexed.Yes,
 }: {
   replyContent: string;
   postContent?: string;
   filterText?: string;
   postIdx?: number;
-  waitForIndexed?: boolean;
+  waitForIndexed?: CheckIndexed;
 }) => {
   cy.findPostInFeed(postIdx, filterText, waitForIndexed).within(() => {
     cy.get('#reply-btn').click();
@@ -150,7 +152,7 @@ export const repostPost = ({
   postIdx,
 }: {
   repostContent?: string;
-  waitForIndexed?: boolean;
+  waitForIndexed?: CheckIndexed;
   postContent?: string;
   filterText?: string;
   postIdx?: number;

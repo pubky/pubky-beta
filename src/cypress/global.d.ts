@@ -1,8 +1,8 @@
 declare namespace Cypress {
   interface Chainable<Subject> {
-    signOut(hasBackup: boolean): Chainable<void>;
+    signOut(hasBackedUp: HasBackedUp): Chainable<void>;
     signIn(backupFilepath: string, passcode?: string): Chainable<void>;
-    onboardAsNewUser(profileName: string, profileBio?: string, skipOnboardingSlides?: boolean, pubkyAlias?: string): Chainable<void>;
+    onboardAsNewUser(profileName: string, profileBio?: string, skipOnboardingSlides?: SkipOnboardingSlides, pubkyAlias?: string): Chainable<void>;
     backupRecoveryFile(passcode?: string): Chainable<void>;
     deleteDownloadsFolder(): Chainable<void>;
     waitForFileExistsWithSuffix(folder: string, suffix: string): Chainable<void>;
@@ -19,9 +19,9 @@ declare namespace Cypress {
     waitReloadWhileElementDoesNotExist(selector: string, attempts?: number): Chainable<void>;
     findPostInBookmarks(postIdx: number, expectedCount?: number): Chainable<JQuery<HTMLElement>>;
     countPostsInBookmarks(expectedCount: number): Chainable<void>;
-    findFirstPostInFeed(checkIndexed?: boolean): Chainable<JQuery<HTMLElement>>;
-    findFirstPostInFeedFiltered(filterText: string, checkIndexed?: boolean): Chainable<JQuery<HTMLElement>>;
-    findPostInFeed(postIdx?: number, filterText?: string, checkIndexed?: boolean): Chainable<JQuery<HTMLElement>>;
+    findFirstPostInFeed(checkIndexed?: CheckIndexed): Chainable<JQuery<HTMLElement>>;
+    findFirstPostInFeedFiltered(filterText: string, checkIndexed?: CheckIndexed): Chainable<JQuery<HTMLElement>>;
+    findPostInFeed(postIdx?: number, filterText?: string, checkIndexed?: CheckIndexed): Chainable<JQuery<HTMLElement>>;
     mockInviteCodeApi(): Chainable<void>;
   }
 }

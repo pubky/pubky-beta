@@ -4,6 +4,7 @@ import { slowCypressDown } from 'cypress-slow-down'
 import 'cypress-slow-down/commands'
 import { cannotFindPostInFeed, checkPostIsAtIndexInFeed, countPostsInFeed, createQuickPost, fastTagPostInFeed, repostPost, waitForFeedToLoad } from '../support/posts';
 import { searchAndFollowProfile } from '../support/contacts';
+import { HasBackedUp, SkipOnboardingSlides } from '../support/commands';
 
 // Profile 1 follows Profile 2 and is friends with Profile 2. Profile 1 also follows Profile 3 and Profile 4.
 const profile1 = {username: "Profile #1", bio: "Follows Profile #2", pubkyAlias: "pubky_1", postText1: `Profile 1's post ${Date.now()}`, postText2: `Profile 1's post to be reposted ${Date.now()}`};
@@ -21,15 +22,15 @@ describe('feed and filters', () => {
     cy.deleteDownloadsFolder();
 
     // * create profile 1 of 4 and post
-    cy.onboardAsNewUser(profile1.username, profile1.bio, true, profile1.pubkyAlias);
+    cy.onboardAsNewUser(profile1.username, profile1.bio, SkipOnboardingSlides.Yes, profile1.pubkyAlias);
     cy.backupRecoveryFile();
     cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(profile1.username));
     createQuickPost(profile1.postText1);
     createQuickPost(profile1.postText2);
-    cy.signOut(true);
+    cy.signOut(HasBackedUp.Yes);
 
     // * create profile 2 of 4, post and repost profile 1's post
-    cy.onboardAsNewUser(profile2.username, profile2.bio, true, profile2.pubkyAlias);
+    cy.onboardAsNewUser(profile2.username, profile2.bio, SkipOnboardingSlides.Yes, profile2.pubkyAlias);
     cy.backupRecoveryFile();
     cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(profile2.username));
     createQuickPost(profile2.postText);
@@ -39,10 +40,10 @@ describe('feed and filters', () => {
     cy.get(`@${profile1.pubkyAlias}`).then((pubky) => {
       searchAndFollowProfile(`${pubky}`, profile1.username);
     });
-    cy.signOut(true);
+    cy.signOut(HasBackedUp.Yes);
 
     // * create profile 3 of 4, post and repost profile 2's post
-    cy.onboardAsNewUser(profile3.username, profile3.bio, true, profile3.pubkyAlias);
+    cy.onboardAsNewUser(profile3.username, profile3.bio, SkipOnboardingSlides.Yes, profile3.pubkyAlias);
     cy.backupRecoveryFile();
     cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(profile3.username));
     createQuickPost(profile3.postText);
@@ -50,10 +51,10 @@ describe('feed and filters', () => {
     cy.get(`@${profile2.pubkyAlias}`).then((pubky) => {
       searchAndFollowProfile(`${pubky}`, profile2.username);
     });
-    cy.signOut(true);
+    cy.signOut(HasBackedUp.Yes);
 
     // * create profile 4 of 4 and post
-    cy.onboardAsNewUser(profile4.username, profile4.bio, true, profile4.pubkyAlias);
+    cy.onboardAsNewUser(profile4.username, profile4.bio, SkipOnboardingSlides.Yes, profile4.pubkyAlias);
     cy.backupRecoveryFile();
     cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(profile4.username));
     createQuickPost(profile4.postText);
@@ -61,7 +62,7 @@ describe('feed and filters', () => {
     fastTagPostInFeed(['p3tag1', 'p3tag2', 'p3tag3', 'p3tag4', 'p3tag5'], profile3.postText);
     // tag profile 2's post 4 times to make it the second most popular
     fastTagPostInFeed(['p2tag1', 'p2tag2', 'p2tag3', 'p2tag4'], profile2.postText);
-    cy.signOut(true);
+    cy.signOut(HasBackedUp.Yes);
 
     // * sign back in as profile 1 and follow profile 2, 3 and 4.
     cy.signIn(backupDownloadFilePath(profile1.username));
@@ -70,7 +71,7 @@ describe('feed and filters', () => {
         searchAndFollowProfile(`${pubky}`, profile.username);
       });
     });
-    cy.signOut(true);
+    cy.signOut(HasBackedUp.Yes);
   });
 
   beforeEach(() => {
@@ -79,7 +80,7 @@ describe('feed and filters', () => {
 
   it('can filter to view all posts in the recent sorting order (default view)', () => {
     // * sign in as profile 2 and view Reach All posts, all can be seen
-    cy.signIn(backupDownloadFilePath(`${profile2.username}.pkarr`));
+    cy.signIn(backupDownloadFilePath(profile2.username));
     // Reach All is the default view so no need to click
     // Recent is the default sort so no need to click
 
@@ -99,10 +100,10 @@ describe('feed and filters', () => {
     checkPostIsAtIndexInFeed(profile1.postText2, 4);
     checkPostIsAtIndexInFeed(profile1.postText1, 5);
 
-    cy.signOut(true);
+    cy.signOut(HasBackedUp.Yes);
 
     // * sign in as profile 4 and view Reach All posts, all can be seen
-    cy.signIn(backupDownloadFilePath(`${profile4.username}.pkarr`));
+    cy.signIn(backupDownloadFilePath(profile4.username));
     // Reach All is the default view so no need to click
 
     // TODO: remove refresh hen bug is fixed, see https://github.com/pubky/pubky-app/issues/924
@@ -129,7 +130,7 @@ describe('feed and filters', () => {
 
   it('can filter to view only posts and reposts of following', () => {
     // * sign in as profile 2 and view Reach Following, only profile 1's posts can be seen
-    cy.signIn(backupDownloadFilePath(`${profile2.username}.pkarr`));
+    cy.signIn(backupDownloadFilePath(profile2.username));
     // click the following button in the leftmost (first) sidebar item
     cy.get('#left-sidebar').find('#reach-following-btn').click();
     waitForFeedToLoad();
@@ -141,10 +142,10 @@ describe('feed and filters', () => {
     cannotFindPostInFeed(profile3.postText);
     cannotFindPostInFeed(profile4.postText);
 
-    cy.signOut(true);
+    cy.signOut(HasBackedUp.Yes);
 
     // * sign in as profile 3 and view Reach Following, only profile 2's post can be seen
-    cy.signIn(backupDownloadFilePath(`${profile3.username}.pkarr`));
+    cy.signIn(backupDownloadFilePath(profile3.username));
     cy.get('#left-sidebar').find('#reach-following-btn').click();
     waitForFeedToLoad();
 
@@ -155,10 +156,10 @@ describe('feed and filters', () => {
     cannotFindPostInFeed(profile3.postText);
     cannotFindPostInFeed(profile4.postText);
 
-    cy.signOut(true);
+    cy.signOut(HasBackedUp.Yes);
 
     // * sign in as profile 4 and view Reach Following, no posts can be seen
-    cy.signIn(backupDownloadFilePath(`${profile4.username}.pkarr`));
+    cy.signIn(backupDownloadFilePath(profile4.username));
     cy.get('#left-sidebar').find('#reach-following-btn').click();
 
     cannotFindPostInFeed(profile1.postText1);
@@ -172,7 +173,7 @@ describe('feed and filters', () => {
 
   it('can filter view only posts and reposts of friends', () => {
     // * sign in as profile 1 and view Reach Friends, only profile 2's post can be seen
-    cy.signIn(backupDownloadFilePath(`${profile1.username}.pkarr`));
+    cy.signIn(backupDownloadFilePath(profile1.username));
     cy.get('#left-sidebar').find('#reach-friends-btn').click();
     waitForFeedToLoad();
 
@@ -183,10 +184,10 @@ describe('feed and filters', () => {
     cannotFindPostInFeed(profile3.postText);
     cannotFindPostInFeed(profile4.postText);
 
-    cy.signOut(true);
+    cy.signOut(HasBackedUp.Yes);
 
     // * sign in as profile 2 and view Reach Friends, only profile 1's posts can be seen
-    cy.signIn(backupDownloadFilePath(`${profile2.username}.pkarr`));
+    cy.signIn(backupDownloadFilePath(profile2.username));
     cy.get('#left-sidebar').find('#reach-friends-btn').click();
     waitForFeedToLoad();
     cy.findFirstPostInFeedFiltered(profile1.postText1).should('be.visible');
@@ -196,10 +197,10 @@ describe('feed and filters', () => {
     cannotFindPostInFeed(profile3.postText);
     cannotFindPostInFeed(profile4.postText);
 
-    cy.signOut(true);
+    cy.signOut(HasBackedUp.Yes);
 
     // * sign in as profile 3 and view Reach Friends, no posts can be seen
-    cy.signIn(backupDownloadFilePath(`${profile3.username}.pkarr`));
+    cy.signIn(backupDownloadFilePath(profile3.username));
     cy.get('#left-sidebar').find('#reach-friends-btn').click();
 
     cannotFindPostInFeed(profile1.postText1);
@@ -212,7 +213,7 @@ describe('feed and filters', () => {
 
   it('can sort by popularity', () => {
     // * sign in as profile 1 and sort by Popularity with Reach Following posts
-    cy.signIn(backupDownloadFilePath(`${profile1.username}.pkarr`));
+    cy.signIn(backupDownloadFilePath(profile1.username));
     cy.get('#left-sidebar').find('#reach-following-btn').click();
     cy.get('#left-sidebar').find('#sort-popularity-btn').click();
     waitForFeedToLoad();
@@ -229,5 +230,15 @@ describe('feed and filters', () => {
     checkPostIsAtIndexInFeed(profile2.repostText, 3);
   });
 
-  it('can create a custom feed', () => {});
+  it('can create and delete a custom feed', () => {
+    // * sign up as a new user
+    //cy.onboardAsNewUser('Custom Feed User', 'Custom Feed User', true);
+    // * confirm only 'All' feed is available
+    // * create a new custom feed with tag 'p3tag1'
+    // * confirm only posts with p3tag1 are visible
+    // * select 'All' feed
+    // * confirm all posts are visible
+    // * delete the custom feed
+    // * confirm only 'All' feed is available
+  });
 });
