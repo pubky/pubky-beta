@@ -144,17 +144,6 @@ export default function FooterArea({
     });
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleAddTag();
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const valueWithoutSpaces = e.target.value.toLowerCase().replace(/\s/g, '').replace(/!/g, '');
-    setTagInput(valueWithoutSpaces);
-  };
-
   return (
     <>
       {(visibleTextArea || textArea || content || (arrayTags && arrayTags.length > 0)) && (

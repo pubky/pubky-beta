@@ -10,8 +10,7 @@ interface InputTagProps {
 }
 
 export default function InputTag({ post, tagsError }: InputTagProps) {
-  const { tag, setTag, handleChange, addTag, showEmojis, setShowEmojis, wrapperRefEmojis, loading, inputRef } =
-    useUtilsTag(post);
+  const { tag, setTag, addTag, showEmojis, setShowEmojis, wrapperRefEmojis, loading } = useUtilsTag(post);
 
   return (
     <div>

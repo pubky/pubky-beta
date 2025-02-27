@@ -23,11 +23,6 @@ export default function ContentTagCreatePost({ arrayTags, setArrayTags }: TagPro
     setLocalTags(arrayTags);
   }, [arrayTags]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const valueWithoutSpaces = e.target.value.toLowerCase().replace(/\s/g, '').replace(/!/g, '');
-    setTag(valueWithoutSpaces);
-  };
-
   const handleAddTag = () => {
     const trimmedTag = tag.trim();
     if (!trimmedTag || localTags.includes(trimmedTag)) return;
@@ -48,12 +43,6 @@ export default function ContentTagCreatePost({ arrayTags, setArrayTags }: TagPro
     setLocalTags(updatedTags);
     setArrayTags(updatedTags);
     if (updatedTags.length <= 4) setTagsError(false);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleAddTag();
-    }
   };
 
   return (

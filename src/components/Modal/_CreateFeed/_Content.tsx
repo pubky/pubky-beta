@@ -78,17 +78,6 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleAddTag();
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const valueWithoutSpaces = e.target.value.toLowerCase().replace(/\s/g, '').replace(/!/g, '');
-    setTag(valueWithoutSpaces);
-  };
-
   return (
     <>
       <div className="my-4 flex flex-col sm:flex-row gap-8">
