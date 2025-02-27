@@ -1,7 +1,7 @@
 import EmojiPicker from '@/components/EmojiPicker';
 import Post from '@/components/Post';
 import { PostView } from '@/types/Post';
-import { Button, Icon, Input, Typography } from '@social/ui-shared';
+import { Input, Typography } from '@social/ui-shared';
 import { useUtilsTag } from './_Utils';
 
 interface InputTagProps {
@@ -10,8 +10,7 @@ interface InputTagProps {
 }
 
 export default function InputTag({ post, tagsError }: InputTagProps) {
-  const { tag, setTag, handleChange, addTag, showEmojis, setShowEmojis, wrapperRefEmojis, loading, inputRef } =
-    useUtilsTag(post);
+  const { tag, setTag, addTag, showEmojis, setShowEmojis, wrapperRefEmojis, loading } = useUtilsTag(post);
 
   return (
     <div>
@@ -35,47 +34,19 @@ export default function InputTag({ post, tagsError }: InputTagProps) {
         </>
       )}
       <Input.Label value="New tag" />
-      <Input.Text
-        ref={inputRef}
-        placeholder="tag"
-        value={tag}
-        className="w-full md:w-[500px] mt-2 flex items-center"
-        maxLength={20}
-        autoFocus
-        disabled={loading}
-        onChange={handleChange}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            addTag(tag);
-          }
-        }}
-        action={
-          <div className="flex">
-            <Button.Action
-              id="add-btn"
-              icon={loading ? <Icon.LoadingSpin size="18" /> : <Icon.Plus size="18" />}
-              className={tag ? 'flex' : 'hidden'}
-              variant="custom"
-              size="medium"
-              disabled={loading}
-              onClick={() => {
-                addTag(tag);
-              }}
-            />
-            <Button.Action
-              variant="custom"
-              icon={<Icon.Smiley size="32" />}
-              size="medium"
-              className="hidden ml-2 lg:flex"
-              disabled={loading}
-              onClick={(event) => {
-                event.stopPropagation();
-                setShowEmojis(true);
-              }}
-            />
-          </div>
-        }
-      />
+      <div className="w-full md:w-[500px] mt-2">
+        <Input.Tag
+          value={tag}
+          onChange={setTag}
+          onAddTag={addTag}
+          onEmojiPickerClick={() => setShowEmojis(true)}
+          loading={loading}
+          autoFocus
+          variant="default"
+          className="w-full"
+          inputClassName="flex-1 max-w-[calc(100%-100px)]"
+        />
+      </div>
       <div className="mt-4 w-full md:w-[500px] hidden md:flex">
         <Post post={post} repostView />
       </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Icon, Button, PostUtil, Input, Typography } from '@social/ui-shared';
+import { Icon, PostUtil, Input, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import EmojiPicker from '@/components/EmojiPicker';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
@@ -23,11 +23,6 @@ export default function ContentTagCreatePost({ arrayTags, setArrayTags }: TagPro
     setLocalTags(arrayTags);
   }, [arrayTags]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const valueWithoutSpaces = e.target.value.toLowerCase().replace(/\s/g, '').replace(/!/g, '');
-    setTag(valueWithoutSpaces);
-  };
-
   const handleAddTag = () => {
     const trimmedTag = tag.trim();
     if (!trimmedTag || localTags.includes(trimmedTag)) return;
@@ -48,12 +43,6 @@ export default function ContentTagCreatePost({ arrayTags, setArrayTags }: TagPro
     setLocalTags(updatedTags);
     setArrayTags(updatedTags);
     if (updatedTags.length <= 4) setTagsError(false);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleAddTag();
-    }
   };
 
   return (
@@ -105,36 +94,15 @@ export default function ContentTagCreatePost({ arrayTags, setArrayTags }: TagPro
             </div>
           </>
         )}
-        <Input.Text
-          placeholder="tag"
+        <Input.Tag
           value={tag}
-          maxLength={20}
-          onChange={handleChange}
+          onChange={(value) => setTag(value)}
+          onAddTag={handleAddTag}
+          onEmojiPickerClick={() => setShowEmojis(true)}
+          variant="default"
+          className="w-full"
           autoFocus
-          onKeyDown={handleKeyDown}
-          action={
-            <div className="flex">
-              <Button.Action
-                id="add-btn"
-                icon={<Icon.Plus size="18" />}
-                variant="custom"
-                size="medium"
-                className={tag ? 'flex' : 'hidden'}
-                onClick={handleAddTag}
-              />
-              <Button.Action
-                id="emoji-btn"
-                variant="custom"
-                icon={<Icon.Smiley size="32" />}
-                className="hidden ml-2 lg:flex"
-                size="medium"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  setShowEmojis(true);
-                }}
-              />
-            </div>
-          }
+          inputClassName="flex-1 max-w-[calc(100%-100px)]"
         />
       </div>
       {tagsError && (

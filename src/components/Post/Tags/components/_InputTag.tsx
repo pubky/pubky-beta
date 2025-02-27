@@ -16,8 +16,6 @@ export default function InputTag({ post }: InputTagProps) {
     setShowEmojis,
     loadingTags,
     handleAddTag,
-    handleInputChange,
-    handleKeyDown,
     wrapperRefEmojis,
     openModal,
     addTagInput,
@@ -41,44 +39,18 @@ export default function InputTag({ post }: InputTagProps) {
               />
             </div>
           )}
-          <div className="w-fit">
-            <Input.Text
-              placeholder="tag"
-              className="h-[32px] p-3 text-[14px] rounded-lg"
-              value={tagInput}
-              maxLength={20}
-              onChange={handleInputChange}
-              onKeyDown={handleKeyDown}
-              autoFocus
-              disabled={loadingTags !== ''}
-              action={
-                <div className="flex gap-1 -mr-2">
-                  <div
-                    id="add-tag-btn"
-                    onClick={!loadingTags ? () => handleAddTag(tagInput) : undefined}
-                    className={`${tagInput ? 'flex' : 'hidden'} cursor-pointer p-1 rounded-full bg-white bg-opacity-10 ${loadingTags ? 'opacity-50' : 'opacity-80 hover:opacity-100'}`}
-                  >
-                    {loadingTags ? <Icon.LoadingSpin size="12" /> : <Icon.Plus size="12" />}
-                  </div>
-                  <div className="flex">
-                    <div
-                      onClick={() => setShowEmojis(true)}
-                      className="hidden mr-1 lg:flex cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100"
-                    >
-                      <Icon.Smiley size="12" />
-                    </div>
-                    <div
-                      id="close-add-tag-input-btn"
-                      onClick={() => setAddTagInput(false)}
-                      className="cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100"
-                    >
-                      <Icon.X size="12" />
-                    </div>
-                  </div>
-                </div>
-              }
-            />
-          </div>
+          <Input.Tag
+            value={tagInput}
+            onChange={setTagInput}
+            onAddTag={handleAddTag}
+            onEmojiPickerClick={() => setShowEmojis(true)}
+            showCloseButton={true}
+            onClose={() => setAddTagInput(false)}
+            loading={loadingTags !== ''}
+            variant="small"
+            autoFocus
+            className="w-full"
+          />
         </>
       ) : (
         <div

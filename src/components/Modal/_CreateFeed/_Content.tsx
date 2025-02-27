@@ -78,17 +78,6 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleAddTag();
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const valueWithoutSpaces = e.target.value.toLowerCase().replace(/\s/g, '').replace(/!/g, '');
-    setTag(valueWithoutSpaces);
-  };
-
   return (
     <>
       <div className="my-4 flex flex-col sm:flex-row gap-8">
@@ -123,35 +112,15 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
               </>
             )}
             {/* <Input.Label value="Add tag" /> */}
-            <Input.Text
-              placeholder="tag"
+            <Input.Tag
               value={tag}
-              maxLength={20}
-              onChange={handleChange}
-              onKeyDown={handleKeyDown}
-              action={
-                <div className="flex">
-                  <Button.Action
-                    id="add-btn"
-                    icon={<Icon.Plus size="18" />}
-                    variant="custom"
-                    size="medium"
-                    className={tag ? 'flex' : 'hidden'}
-                    onClick={handleAddTag}
-                  />
-                  <Button.Action
-                    id="emoji-btn"
-                    variant="custom"
-                    className="hidden ml-2 lg:flex"
-                    icon={<Icon.Smiley size="32" />}
-                    size="medium"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      setShowEmojis(true);
-                    }}
-                  />
-                </div>
-              }
+              onChange={(value) => setTag(value)}
+              onAddTag={handleAddTag}
+              onEmojiPickerClick={() => setShowEmojis(true)}
+              variant="default"
+              className="w-full"
+              autoFocus
+              inputClassName="flex-1 max-w-[calc(100%-100px)]"
             />
           </div>
           <div className="mt-2 justify-start items-start">

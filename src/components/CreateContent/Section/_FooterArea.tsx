@@ -67,7 +67,7 @@ export default function FooterArea({
   const [errorTag, setErrorTag] = useState(false);
   const [showEmojisFastTag, setShowEmojisFastTag] = useState(false);
   const wrapperRefEmojisFastTag = useRef<HTMLDivElement>(null);
-  useDrawerClickOutside(wrapperRefEmojisFastTag, () => setShowEmojis(false));
+  useDrawerClickOutside(wrapperRefEmojisFastTag, () => setShowEmojisFastTag(false));
 
   const handleEmojiClick = (emoji: any) => {
     const textBeforeCursor = content.slice(0, cursorPosition);
@@ -144,17 +144,6 @@ export default function FooterArea({
     });
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleAddTag();
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const valueWithoutSpaces = e.target.value.toLowerCase().replace(/\s/g, '').replace(/!/g, '');
-    setTagInput(valueWithoutSpaces);
-  };
-
   return (
     <>
       {(visibleTextArea || textArea || content || (arrayTags && arrayTags.length > 0)) && (
@@ -214,41 +203,20 @@ export default function FooterArea({
                     </div>
                   )}
 
-                  <Input.Text
-                    placeholder="tag"
-                    className="w-max h-[32px] p-3 pr-8 text-[14px] rounded-lg"
+                  <Input.Tag
                     value={tagInput}
-                    maxLength={20}
-                    onChange={handleChange}
-                    onKeyDown={handleKeyDown}
+                    onChange={setTagInput}
+                    onAddTag={handleAddTag}
+                    onEmojiPickerClick={() => setShowEmojisFastTag(true)}
+                    variant="small"
                     autoFocus
-                    action={
-                      <div className="flex gap-1 -mr-2">
-                        <div
-                          id="add-tag-btn"
-                          onClick={tagInput ? handleAddTag : undefined}
-                          className={`${tagInput ? 'flex' : 'hidden'} cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100`}
-                        >
-                          <Icon.Plus size="12" />
-                        </div>
-                        <div className="flex">
-                          <div
-                            onClick={() => setShowEmojisFastTag(true)}
-                            className="hidden mr-1 lg:flex cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100"
-                          >
-                            <Icon.Smiley size="12" />
-                          </div>
-                          <div
-                            id="close-add-tag-input-btn"
-                            onClick={() => setAddTagInput(false)}
-                            className="cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100"
-                          >
-                            <Icon.X size="12" />
-                          </div>
-                        </div>
-                      </div>
-                    }
                   />
+
+                  {errorTag && addTagInput && (
+                    <Typography.Body className="whitespace-nowrap text-[#e95164]" variant="small">
+                      Max 4 tags
+                    </Typography.Body>
+                  )}
                 </>
               ) : (
                 <div
@@ -260,11 +228,6 @@ export default function FooterArea({
                     <Icon.Plus size="16" />
                   </div>
                 </div>
-              )}
-              {errorTag && addTagInput && (
-                <Typography.Body className="whitespace-nowrap text-[#e95164]" variant="small">
-                  Max 4 tags
-                </Typography.Body>
               )}
             </div>
             <div className="grow" />
