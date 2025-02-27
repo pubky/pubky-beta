@@ -53,6 +53,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
   const { reach, layout, sort, content, tagsFeed } = useTimelineFilters(selectedFeed);
   const [skip, setSkip] = useState<number>(0);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [isSwitchingFilters, setIsSwitchingFilters] = useState(false);
 
   const { data, isLoading } = useStreamPost(
     pubky ?? '',
@@ -77,14 +78,14 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
   }, [setNewPosts]);
 
   const fetchPosts = async () => {
-    if (fetching || !data) return;
+    if (fetching || !data) return [];
     setFetching(true);
 
     try {
       if (!Array.isArray(data) || data.length === 0) {
         setTimeline([]);
         setFetching(false);
-        return;
+        return [];
       }
 
       if (sort === 'recent') {
@@ -114,7 +115,10 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
       // Set timeline without conditional logic
       if (isInitialLoad) {
         setTimeline(filteredPosts);
-        setIsInitialLoad(false);
+        // Only set isInitialLoad to false if we have posts to display
+        if (filteredPosts.length > 0) {
+          setIsInitialLoad(false);
+        }
       } else {
         setTimeline((prev) => {
           const posts = data.filter(
@@ -127,8 +131,11 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
           return [...prev, ...posts];
         });
       }
+
+      return filteredPosts;
     } catch (error) {
       console.log('Error fetching posts:', error);
+      return [];
     } finally {
       setFetching(false);
     }
@@ -138,9 +145,20 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
 
   useEffect(() => {
     const initializeTimeline = async () => {
+      setIsSwitchingFilters(true);
       clearTimeline();
-      await new Promise((resolve) => setTimeout(resolve, 100)); // Increased delay
-      fetchPosts();
+      await new Promise((resolve) => setTimeout(resolve, 300)); // Increased delay for better UX when switching filters
+      const posts = await fetchPosts();
+
+      // Set a timeout to ensure we don't show the placeholder too early
+      setTimeout(() => {
+        setIsSwitchingFilters(false);
+        // If there are no posts after switching filters and fetching,
+        // we should set isInitialLoad to false to allow the placeholder to show
+        if (!posts || posts.length === 0) {
+          setIsInitialLoad(false);
+        }
+      }, 500);
     };
 
     initializeTimeline();
@@ -206,7 +224,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
         </div>
       )}
       <div ref={loader} />
-      {!isLoading && !fetching && timeline.length === 0 && (
+      {!isLoading && !fetching && !isSwitchingFilters && timeline.length === 0 && !isInitialLoad && (
         <ContentNotFound
           icon={<Icon.Smiley size="48" color="#C8FF00" />}
           title="Welcome to your feed!"
