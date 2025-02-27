@@ -12,8 +12,12 @@ interface InputTagProps {
 }
 
 export default function InputTag({ profileTags, setProfileTags, pubkyUser, user }: InputTagProps) {
-  const { showEmojis, setShowEmojis, wrapperRefEmojis, setTag, tag, inputRef, loading, handleChange, addProfileTag } =
-    useUtilsTag({ profileTags, setProfileTags, pubkyUser, user });
+  const { showEmojis, setShowEmojis, wrapperRefEmojis, setTag, tag, loading, addProfileTag } = useUtilsTag({
+    profileTags,
+    setProfileTags,
+    pubkyUser,
+    user
+  });
 
   return (
     <div>

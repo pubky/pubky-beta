@@ -16,8 +16,6 @@ export default function InputTag({ post }: InputTagProps) {
     setShowEmojis,
     loadingTags,
     handleAddTag,
-    handleInputChange,
-    handleKeyDown,
     wrapperRefEmojis,
     openModal,
     addTagInput,
