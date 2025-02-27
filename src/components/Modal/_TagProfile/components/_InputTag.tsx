@@ -1,5 +1,5 @@
 import EmojiPicker from '@/components/EmojiPicker';
-import { Button, Icon, Input, SideCard } from '@social/ui-shared';
+import { Input, SideCard } from '@social/ui-shared';
 import { useUtilsTag } from './_Utils';
 import { UserTags, UserView } from '@/types/User';
 import { Utils } from '@social/utils-shared';
@@ -38,48 +38,17 @@ export default function InputTag({ profileTags, setProfileTags, pubkyUser, user 
       )}
       <Input.Label value="New tag" />
       <div className="w-full lg:w-96 mt-2">
-        <div className="flex items-center h-[70px] rounded-2xl border border-white border-opacity-30 border-dashed bg-transparent">
-          <input
-            ref={inputRef}
-            type="text"
-            placeholder="tag"
-            className="h-full flex-1 max-w-[calc(100%-100px)] bg-transparent outline-none text-white text-opacity-80 text-[17px] pl-6 pr-1 font-normal font-InterTight leading-snug tracking-wide"
-            value={tag}
-            maxLength={20}
-            autoFocus
-            disabled={loading}
-            onChange={handleChange}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                addProfileTag(tag);
-              }
-            }}
-          />
-          <div className="flex items-center pr-4">
-            <Button.Action
-              id="add-btn"
-              icon={loading ? <Icon.LoadingSpin size="18" /> : <Icon.Plus size="18" />}
-              variant="custom"
-              size="medium"
-              disabled={loading}
-              className={tag ? 'flex' : 'hidden'}
-              onClick={() => {
-                addProfileTag(tag);
-              }}
-            />
-            <Button.Action
-              variant="custom"
-              icon={<Icon.Smiley size="32" />}
-              className="hidden ml-2 lg:flex"
-              disabled={loading}
-              size="medium"
-              onClick={(event) => {
-                event.stopPropagation();
-                setShowEmojis(true);
-              }}
-            />
-          </div>
-        </div>
+        <Input.Tag
+          value={tag}
+          onChange={setTag}
+          onAddTag={addProfileTag}
+          onEmojiPickerClick={() => setShowEmojis(true)}
+          loading={loading}
+          autoFocus
+          variant="default"
+          className="w-full"
+          inputClassName="flex-1 max-w-[calc(100%-100px)]"
+        />
       </div>
       {user && pubkyUser && (
         <SideCard.User

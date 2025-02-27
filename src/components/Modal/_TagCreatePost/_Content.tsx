@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Icon, Button, PostUtil, Input, Typography } from '@social/ui-shared';
+import { Icon, PostUtil, Input, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import EmojiPicker from '@/components/EmojiPicker';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
@@ -105,37 +105,16 @@ export default function ContentTagCreatePost({ arrayTags, setArrayTags }: TagPro
             </div>
           </>
         )}
-        <div className="flex items-center h-[70px] rounded-2xl border border-white border-opacity-30 border-dashed bg-transparent">
-          <input
-            type="text"
-            placeholder="tag"
-            className="h-full flex-1 max-w-[calc(100%-100px)] bg-transparent outline-none text-white text-opacity-80 text-[17px] pl-6 pr-1 font-normal font-InterTight leading-snug tracking-wide"
-            value={tag}
-            maxLength={20}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-            autoFocus
-          />
-          <div className="flex items-center pr-4">
-            <Button.Action
-              icon={<Icon.Plus size="18" />}
-              className={tag ? 'flex' : 'hidden'}
-              variant="custom"
-              size="medium"
-              onClick={() => handleAddTag()}
-            />
-            <Button.Action
-              variant="custom"
-              icon={<Icon.Smiley size="32" />}
-              size="medium"
-              className="hidden ml-2 lg:flex"
-              onClick={(event) => {
-                event.stopPropagation();
-                setShowEmojis(true);
-              }}
-            />
-          </div>
-        </div>
+        <Input.Tag
+          value={tag}
+          onChange={(value) => setTag(value)}
+          onAddTag={handleAddTag}
+          onEmojiPickerClick={() => setShowEmojis(true)}
+          variant="default"
+          className="w-full"
+          autoFocus
+          inputClassName="flex-1 max-w-[calc(100%-100px)]"
+        />
       </div>
       {tagsError && (
         <Typography.Body variant="small" className="text-[#e95164]">

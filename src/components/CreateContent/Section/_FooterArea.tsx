@@ -67,7 +67,7 @@ export default function FooterArea({
   const [errorTag, setErrorTag] = useState(false);
   const [showEmojisFastTag, setShowEmojisFastTag] = useState(false);
   const wrapperRefEmojisFastTag = useRef<HTMLDivElement>(null);
-  useDrawerClickOutside(wrapperRefEmojisFastTag, () => setShowEmojis(false));
+  useDrawerClickOutside(wrapperRefEmojisFastTag, () => setShowEmojisFastTag(false));
 
   const handleEmojiClick = (emoji: any) => {
     const textBeforeCursor = content.slice(0, cursorPosition);
@@ -214,32 +214,14 @@ export default function FooterArea({
                     </div>
                   )}
 
-                  <div className="flex items-center h-[32px] rounded-lg border border-white border-opacity-30 border-dashed bg-transparent">
-                    <input
-                      type="text"
-                      placeholder="tag"
-                      className="h-full w-[120px] bg-transparent outline-none text-white text-opacity-80 text-[14px] pl-3 pr-1 font-normal font-InterTight"
-                      value={tagInput}
-                      maxLength={20}
-                      onChange={handleChange}
-                      onKeyDown={handleKeyDown}
-                      autoFocus
-                    />
-                    <div className="flex gap-1 px-2 h-full items-center">
-                      <div
-                        onClick={() => handleAddTag()}
-                        className={`${tagInput ? 'flex' : 'hidden'} cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100`}
-                      >
-                        <Icon.Plus size="12" />
-                      </div>
-                      <div
-                        onClick={() => setShowEmojis(true)}
-                        className="hidden lg:flex cursor-pointer p-1 rounded-full bg-white bg-opacity-10 opacity-80 hover:opacity-100"
-                      >
-                        <Icon.Smiley size="12" />
-                      </div>
-                    </div>
-                  </div>
+                  <Input.Tag
+                    value={tagInput}
+                    onChange={setTagInput}
+                    onAddTag={handleAddTag}
+                    onEmojiPickerClick={() => setShowEmojisFastTag(true)}
+                    variant="small"
+                    autoFocus
+                  />
 
                   {errorTag && addTagInput && (
                     <Typography.Body className="whitespace-nowrap text-[#e95164]" variant="small">
