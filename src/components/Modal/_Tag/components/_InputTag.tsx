@@ -10,7 +10,7 @@ interface InputTagProps {
 }
 
 export default function InputTag({ post, tagsError }: InputTagProps) {
-  const { tag, setTag, addTag, showEmojis, setShowEmojis, wrapperRefEmojis, loading } = useUtilsTag(post);
+  const { tag, setTag, addTag, showEmojis, setShowEmojis, wrapperRefEmojis, loading, inputRef } = useUtilsTag(post);
 
   return (
     <div>
@@ -36,6 +36,7 @@ export default function InputTag({ post, tagsError }: InputTagProps) {
       <Input.Label value="New tag" />
       <div className="w-full md:w-[500px] mt-2">
         <Input.Tag
+          ref={inputRef}
           value={tag}
           onChange={setTag}
           onAddTag={addTag}
@@ -44,7 +45,6 @@ export default function InputTag({ post, tagsError }: InputTagProps) {
           autoFocus
           variant="default"
           className="w-full"
-          inputClassName="flex-1 max-w-[calc(100%-100px)]"
         />
       </div>
       <div className="mt-4 w-full md:w-[500px] hidden md:flex">

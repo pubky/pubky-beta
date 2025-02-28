@@ -111,7 +111,6 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
                 </div>
               </>
             )}
-            {/* <Input.Label value="Add tag" /> */}
             <Input.Tag
               value={tag}
               onChange={(value) => setTag(value)}
@@ -120,7 +119,6 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
               variant="default"
               className="w-full"
               autoFocus
-              inputClassName="flex-1 max-w-[calc(100%-100px)]"
             />
           </div>
           <div className="mt-2 justify-start items-start">

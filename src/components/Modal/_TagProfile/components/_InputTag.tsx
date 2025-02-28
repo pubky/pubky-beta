@@ -51,7 +51,6 @@ export default function InputTag({ profileTags, setProfileTags, pubkyUser, user 
           autoFocus
           variant="default"
           className="w-full"
-          inputClassName="flex-1 max-w-[calc(100%-100px)]"
         />
       </div>
       {user && pubkyUser && (
