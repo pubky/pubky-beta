@@ -1,6 +1,3 @@
-'use client';
-
-import React, { useRef } from 'react';
 import { Icon } from '../../index';
 
 export interface InputTagProps {
@@ -72,6 +69,10 @@ export interface InputTagProps {
    * @default false
    */
   autoFocus?: boolean;
+  /**
+   * ref of the input
+   */
+  ref?: any;
 }
 
 export const Tag = ({
@@ -89,19 +90,18 @@ export const Tag = ({
   loading = false,
   className = '',
   inputClassName = '',
-  autoFocus = false
+  autoFocus = false,
+  ref
 }: InputTagProps) => {
-  const inputRef = useRef<HTMLInputElement>(null);
-
   // Container size classes
   const containerSizeClasses = variant === 'small' ? 'h-[32px] rounded-lg' : 'h-[70px] rounded-2xl';
 
   // Input size classes
-  const inputSizeClasses =
-    variant === 'small' ? 'w-[120px] text-[14px] pl-3 pr-1' : 'flex-1 max-w-[calc(100%-100px)] text-[17px] pl-6 pr-1';
+  const inputSizeClasses = variant === 'small' ? 'w-[140px] text-[14px] pl-3 pr-1' : 'w-full text-[17px] pl-6 pr-1';
 
   // Button styles
-  const buttonClasses = variant === 'small' ? 'p-1 rounded-full bg-white bg-opacity-10' : '';
+  const buttonClasses =
+    variant === 'small' ? 'p-1 rounded-full bg-white bg-opacity-10' : 'p-3 rounded-full bg-white bg-opacity-10';
 
   // Handle key press (Enter to add tag)
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -110,34 +110,41 @@ export const Tag = ({
     }
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const valueWithoutSpaces = e.target.value.toLowerCase().replace(/\s/g, '').replace(/!/g, '');
+    onChange(valueWithoutSpaces);
+  };
+
   return (
     <div
       className={`flex items-center ${containerSizeClasses} border border-white border-opacity-30 border-dashed bg-transparent ${className}`}
     >
       <input
-        ref={inputRef}
+        ref={ref}
         type="text"
         placeholder="tag"
-        className={`h-full bg-transparent outline-none text-white text-opacity-80 font-normal font-InterTight ${inputSizeClasses} ${inputClassName}`}
+        className={`h-full bg-transparent outline-none text-white text-opacity-80 font-normal font-InterTight placeholder:text-white placeholder:text-opacity-50 ${inputSizeClasses} ${inputClassName}`}
         value={value}
         maxLength={maxLength}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={handleChange}
         onKeyDown={handleKeyDown}
         disabled={disabled || loading}
         autoFocus={autoFocus}
       />
       <div className={`flex ${variant === 'small' ? 'gap-1 px-2' : 'pr-4'} h-full items-center`}>
         {showAddButton && value && (
-          <div
-            onClick={!disabled && !loading ? () => onAddTag(value) : undefined}
-            className={`cursor-pointer ${buttonClasses} ${
-              loading ? 'opacity-50' : 'opacity-80 hover:opacity-100'
-            } ${variant === 'small' ? '' : ''}`}
-          >
+          <div>
             {loading ? (
-              <Icon.LoadingSpin size={variant === 'small' ? '12' : '18'} />
+              <div className={`cursor-pointer ${buttonClasses}`}>
+                <Icon.LoadingSpin size={variant === 'small' ? '12' : '24'} />
+              </div>
             ) : (
-              <Icon.Plus size={variant === 'small' ? '12' : '18'} />
+              <div
+                onClick={!disabled && !loading ? () => onAddTag(value) : undefined}
+                className={`cursor-pointer ${buttonClasses} ${loading ? 'opacity-50' : 'opacity-80 hover:opacity-100'}`}
+              >
+                <Icon.Plus size={variant === 'small' ? '12' : '24'} />
+              </div>
             )}
           </div>
         )}
@@ -147,13 +154,13 @@ export const Tag = ({
             onClick={!disabled && !loading ? onEmojiPickerClick : undefined}
             className={`${variant === 'small' ? 'hidden mr-1 lg:flex' : 'hidden ml-2 lg:flex'} cursor-pointer ${buttonClasses} opacity-80 hover:opacity-100`}
           >
-            <Icon.Smiley size={variant === 'small' ? '12' : '32'} />
+            <Icon.Smiley size={variant === 'small' ? '12' : '24'} />
           </div>
         )}
 
         {showCloseButton && onClose && (
           <div onClick={onClose} className={`cursor-pointer ${buttonClasses} opacity-80 hover:opacity-100`}>
-            <Icon.X size={variant === 'small' ? '12' : '18'} />
+            <Icon.X size={variant === 'small' ? '12' : '24'} />
           </div>
         )}
       </div>

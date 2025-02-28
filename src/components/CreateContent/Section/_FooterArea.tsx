@@ -208,6 +208,8 @@ export default function FooterArea({
                     onChange={setTagInput}
                     onAddTag={handleAddTag}
                     onEmojiPickerClick={() => setShowEmojisFastTag(true)}
+                    showCloseButton
+                    onClose={() => setAddTagInput(false)}
                     variant="small"
                     autoFocus
                   />

@@ -15,7 +15,7 @@ export default function ContentTagCreatePost({ arrayTags, setArrayTags }: TagPro
   const [tag, setTag] = useState('');
   const [tagsError, setTagsError] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
-  const [localTags, setLocalTags] = useState<string[]>(arrayTags); // Stato locale dei tag
+  const [localTags, setLocalTags] = useState<string[]>(arrayTags);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
 
@@ -102,7 +102,6 @@ export default function ContentTagCreatePost({ arrayTags, setArrayTags }: TagPro
           variant="default"
           className="w-full"
           autoFocus
-          inputClassName="flex-1 max-w-[calc(100%-100px)]"
         />
       </div>
       {tagsError && (

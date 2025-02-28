@@ -49,7 +49,7 @@ export default function InputTag({ post }: InputTagProps) {
             loading={loadingTags !== ''}
             variant="small"
             autoFocus
-            className="w-full"
+            className="w-max"
           />
         </>
       ) : (
