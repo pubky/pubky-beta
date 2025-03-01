@@ -311,7 +311,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
       console.warn('Sign in failed:', error);
       try {
         // 1.1) Try republishHomeserver with the Keypair
-        await client.republishHomeserver(keypair, String(NEXT_PUBLIC_HOMESERVER));
+        await client.republishHomeserver(keypair, NEXT_PUBLIC_HOMESERVER);
       } catch (error) {
         console.error(error);
         throw new Error('Authentication failed: unable to sign in');
