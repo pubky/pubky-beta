@@ -23,7 +23,7 @@ export default function Index() {
     data: influencers,
     isLoading: isLoadingInfluencers,
     isError: isErrorInfluencers
-  } = useStreamUsers(pubky ?? '', pubky ?? '', 'pioneers', undefined, 5);
+  } = useStreamUsers(pubky ?? '', pubky ?? '', 'influencers', undefined, 5);
   const hotTags = data || [];
   if (isError || isErrorInfluencers) console.error(isError && isErrorInfluencers);
   const [activeTab, setActiveTab] = useState(0);

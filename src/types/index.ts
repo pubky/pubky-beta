@@ -25,7 +25,7 @@ export type TSourceUser =
   | 'followers'
   | 'recommended'
   | 'muted'
-  | 'pioneers'
+  | 'influencers'
   | 'most_followed'
   | 'all';
 export type TLanguage = 'english' | 'spanish' | 'german' | 'french' | 'italian';
@@ -46,9 +46,7 @@ export interface IFileContent {
   size: number;
   src: string;
   uri: string;
-  urls: {
-    main: string;
-  };
+  urls: { main: string };
 }
 
 export interface NotificationsResponse {
@@ -166,16 +164,11 @@ export interface BookmarkPost {
 export interface ITag {
   tag: string;
   count: number;
-  from: {
-    image: string;
-  }[];
+  from: { image: string }[];
 }
 
 export interface IFollowed {
-  profile: {
-    image: string;
-    name: string;
-  };
+  profile: { image: string; name: string };
   id: string;
 }
 
