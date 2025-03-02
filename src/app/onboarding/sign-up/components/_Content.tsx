@@ -39,11 +39,7 @@ export default function Index() {
     { url: '', title: 'x (twitter)', placeHolder: '@user' }
   ]);
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState({
-    name: '',
-    token: '',
-    bio: ''
-  });
+  const [errors, setErrors] = useState({ name: '', token: '', bio: '' });
 
   useEffect(() => {
     const generateAndSetImage = async () => {
@@ -64,17 +60,9 @@ export default function Index() {
     }
     try {
       setLoading(true);
-      setErrors({
-        name: '',
-        token: '',
-        bio: ''
-      });
+      setErrors({ name: '', token: '', bio: '' });
 
-      const result = profileSchema.safeParse({
-        name: name,
-        token: token,
-        bio: bio ? bio : undefined
-      });
+      const result = profileSchema.safeParse({ name: name, token: token, bio: bio ? bio : undefined });
 
       if (!result.success) {
         const newErrors: FormErrors = result.error.flatten().fieldErrors;
@@ -102,7 +90,8 @@ export default function Index() {
           return;
         }
 
-        const signUpResponse = await signUp(name, token, bio, linksObject, image);
+        const tokenUppercase = token.toUpperCase();
+        const signUpResponse = await signUp(name, tokenUppercase, bio, linksObject, image);
 
         if ('state' in signUpResponse && !signUpResponse.state) {
           const errorMessage = signUpResponse.error.split('Error message: ')[1] || signUpResponse.error;
@@ -142,7 +131,7 @@ export default function Index() {
         autoCorrect="off"
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setToken(e.target.value)}
         error={errors.token}
-        className="h-12 placeholder:text-opacity-20 text-[24px]"
+        className="h-12 uppercase placeholder:normal-case placeholder:text-opacity-20 text-[24px]"
         placeholder="Add invite code"
       />
       <Typography.Body variant="large" className="text-[22px] sm:text-2xl leading-tight text-opacity-50">
