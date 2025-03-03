@@ -1,11 +1,7 @@
 //@ts-check
-
-// Removed NX integration since it's no longer needed
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path');
 require('dotenv').config({
-  path: path.resolve(process.cwd(), '../.env')
+  path: path.resolve(process.cwd(), '.env')
 });
 
 const nextConfig = {
@@ -34,7 +30,6 @@ const nextConfig = {
       }
     ]
   },
-  cleanDistDir: false,
   env: {
     NEXT_PUBLIC_HOMESERVER: process.env.NEXT_PUBLIC_HOMESERVER || '11111111111111111111111111111111'
   },
@@ -49,17 +44,11 @@ const nextConfig = {
       asyncWebAssembly: true
     };
 
-    config.module.rules.push({
-      test: /\.wasm$/,
-      type: 'webassembly/async',
-      include: [path.resolve(__dirname, 'pubky-app-specs')]
-    });
-
-    config.resolve = config.resolve || {};
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      '@nx/react/tailwind': path.resolve(__dirname, 'stubs/nx-react-tailwind.js')
-    };
+    // config.module.rules.push({
+    //   test: /\.wasm$/,
+    //   type: 'webassembly/async',
+    //   include: [path.resolve(__dirname, 'pubky-app-specs')]
+    // });
 
     return config;
   },

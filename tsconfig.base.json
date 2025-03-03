@@ -25,6 +25,6 @@
     },
     "noImplicitAny": false
   },
-  "include": ["src/components/utils-shared/types"],
-  "exclude": ["node_modules", "tmp"]
+  "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
+  "exclude": ["node_modules", "tmp", "./.next"]
 }

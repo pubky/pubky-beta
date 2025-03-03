@@ -24,7 +24,6 @@ export default defineConfig({
 
     // Plugins
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setupNodeEvents(on, _config) {
       on('before:browser:launch', (browser, launchOptions) => {
         if (browser.family === 'firefox') {
@@ -49,7 +48,6 @@ export default defineConfig({
         deleteFolder(folderName) {
           console.log('deleting folder %s', folderName);
 
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           return new Promise((resolve, _reject) => {
             rmdir(folderName, { maxRetries: 10, recursive: true }, (err) => {
               if (err) {

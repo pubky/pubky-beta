@@ -1,5 +1,19 @@
 {
   "extends": "./tsconfig.base.json",
-  "include": ["src"],
-  "exclude": ["node_modules"]
+  "include": ["next.config.js", "src", ".next/types/**/*.ts", "index.d.ts"],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "strict": false,
+    "noEmit": true,
+    "incremental": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  }
 }
