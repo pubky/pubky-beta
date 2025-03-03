@@ -90,6 +90,21 @@ export default function Account() {
       <div className="w-full h-px bg-white bg-opacity-10 my-12" />
       <div className="flex-col justify-start items-start gap-6 flex">
         <div className="justify-start items-center gap-2 inline-flex">
+          <Icon.Pencil size="24" />
+          <Typography.H2>Edit your profile</Typography.H2>
+        </div>
+        <Typography.Body variant="medium" className="text-opacity-80">
+          Update your bio or user picture, so friends can find you easier.
+        </Typography.Body>
+        <Link href="/settings/edit">
+          <Button.Large id="edit-profile-btn" icon={<Icon.Pencil size="16" />} variant="secondary" className="w-auto">
+            Edit profile
+          </Button.Large>
+        </Link>
+      </div>
+      <div className="w-full h-px bg-white bg-opacity-10 my-12" />
+      <div className="flex-col justify-start items-start gap-6 flex">
+        <div className="justify-start items-center gap-2 inline-flex">
           <Icon.Lock size="24" />
           <Typography.H2>Back up your account</Typography.H2>
         </div>
@@ -119,21 +134,6 @@ export default function Account() {
             </Tooltip.Small>
           )}
         </Tooltip.RootSmall>
-      </div>
-      <div className="w-full h-px bg-white bg-opacity-10 my-12" />
-      <div className="flex-col justify-start items-start gap-6 flex">
-        <div className="justify-start items-center gap-2 inline-flex">
-          <Icon.Pencil size="24" />
-          <Typography.H2>Edit your profile</Typography.H2>
-        </div>
-        <Typography.Body variant="medium" className="text-opacity-80">
-          Update your bio or user picture, so friends can find you easier.
-        </Typography.Body>
-        <Link href="/settings/edit">
-          <Button.Large id="edit-profile-btn" icon={<Icon.Pencil size="16" />} variant="secondary" className="w-auto">
-            Edit profile
-          </Button.Large>
-        </Link>
       </div>
       <div className="w-full h-px bg-white bg-opacity-10 my-12" />
       <div className="flex-col justify-start items-start gap-6 flex">
@@ -178,8 +178,8 @@ export default function Account() {
       <div className="w-full h-px bg-white bg-opacity-10 my-12" />
       <div className="flex-col justify-start items-start gap-6 flex">
         <div className="justify-start items-center gap-2 inline-flex">
-          <Icon.Trash size="24" />
-          <Typography.H2>Delete your account</Typography.H2>
+          <Icon.Trash size="24" color="#E95164" />
+          <Typography.H2 className="text-[#E95164]">Delete your account</Typography.H2>
         </div>
         <Typography.Body variant="medium" className="text-opacity-80">
           Deleting your account will remove all of your posts, tags, profile information, contacts, custom streams, and
@@ -187,10 +187,9 @@ export default function Account() {
         </Typography.Body>
         <Button.Large
           id="delete-account-btn"
-          icon={<Icon.Trash size="16" color="#dc2626" />}
+          icon={<Icon.Trash size="16" />}
           variant="secondary"
-          className="w-auto bg-[#dc2626] border border-[#dc2626]"
-          colorText="text-[#dc2626]"
+          className="w-auto"
           onClick={() => openModal('deleteAccount')}
         >
           Delete Account
