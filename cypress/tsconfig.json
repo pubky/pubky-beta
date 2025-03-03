@@ -12,6 +12,6 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src/**/*.ts", "src/**/*.js", "cypress.config.ts"],
-  "files": ["global.d.ts"]
+  "include": ["./**/*.ts", "./**/*.js"],
+  "files": ["./global.d.ts"]
 }
