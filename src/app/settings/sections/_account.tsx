@@ -123,26 +123,6 @@ export default function Account() {
       <div className="w-full h-px bg-white bg-opacity-10 my-12" />
       <div className="flex-col justify-start items-start gap-6 flex">
         <div className="justify-start items-center gap-2 inline-flex">
-          <Icon.Trash size="24" />
-          <Typography.H2>Delete your account</Typography.H2>
-        </div>
-        <Typography.Body variant="medium" className="text-opacity-80">
-          Deleting your account will remove all of your posts, tags, profile information, contacts, custom streams, and
-          settings or preferences.
-        </Typography.Body>
-        <Button.Large
-          id="delete-account-btn"
-          icon={<Icon.Trash size="16" />}
-          variant="secondary"
-          className="w-auto"
-          onClick={() => openModal('deleteAccount')}
-        >
-          Delete Account
-        </Button.Large>
-      </div>
-      <div className="w-full h-px bg-white bg-opacity-10 my-12" />
-      <div className="flex-col justify-start items-start gap-6 flex">
-        <div className="justify-start items-center gap-2 inline-flex">
           <Icon.Pencil size="24" />
           <Typography.H2>Edit your profile</Typography.H2>
         </div>
@@ -194,6 +174,27 @@ export default function Account() {
           onChange={handleImportData}
           disabled={importingData}
         />
+      </div>
+      <div className="w-full h-px bg-white bg-opacity-10 my-12" />
+      <div className="flex-col justify-start items-start gap-6 flex">
+        <div className="justify-start items-center gap-2 inline-flex">
+          <Icon.Trash size="24" />
+          <Typography.H2>Delete your account</Typography.H2>
+        </div>
+        <Typography.Body variant="medium" className="text-opacity-80">
+          Deleting your account will remove all of your posts, tags, profile information, contacts, custom streams, and
+          settings or preferences.
+        </Typography.Body>
+        <Button.Large
+          id="delete-account-btn"
+          icon={<Icon.Trash size="16" color="#dc2626" />}
+          variant="secondary"
+          className="w-auto bg-[#dc2626] border border-[#dc2626]"
+          colorText="text-[#dc2626]"
+          onClick={() => openModal('deleteAccount')}
+        >
+          Delete Account
+        </Button.Large>
       </div>
     </div>
   );
