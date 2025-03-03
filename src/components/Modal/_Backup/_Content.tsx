@@ -115,6 +115,7 @@ export default function ContentBackup({
       ) : file ? (
         <File
           loading={loading}
+          password={password}
           setPassword={setPassword}
           handleSubmit={handleSubmit}
           errors={errors}
