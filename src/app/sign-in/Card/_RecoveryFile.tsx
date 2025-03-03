@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import { Button, Card, Icon, Input, Typography } from '@social/ui-shared';
 
 interface Errors {
@@ -11,7 +14,6 @@ interface RecoveryFileProps {
   setFileName: React.Dispatch<React.SetStateAction<string>>;
   setPassword: React.Dispatch<React.SetStateAction<string>>;
   loginError: string;
-  // userNotFound: boolean;
   loading: boolean;
   handleSubmit: () => void;
   setRecoveryFile: React.Dispatch<React.SetStateAction<Buffer | null>>;
@@ -23,11 +25,16 @@ export default function RecoveryFile({
   setFileName,
   setPassword,
   loginError,
-  // userNotFound,
   loading,
   handleSubmit,
   setRecoveryFile
 }: RecoveryFileProps) {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
+
   const UploadRecoveryFile = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       setFileName(event.target.files[0].name);
@@ -73,13 +80,18 @@ export default function RecoveryFile({
           <Input.Label value="Password" />
           <Input.Text
             className="h-[70px] mt-1"
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             error={errors.password}
             disabled={loading}
             placeholder="••••••••••••"
             id="sign-in-password-input"
             onKeyDown={handleKeyDown}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+            action={
+              <div className="mt-2 cursor-pointer" onClick={togglePasswordVisibility}>
+                {showPassword ? <Icon.EyeSlash size="20" /> : <Icon.Eye size="20" />}
+              </div>
+            }
           />
         </div>
       </div>
@@ -95,20 +107,6 @@ export default function RecoveryFile({
           </div>
         </div>
       )}
-      {/**userNotFound && (
-        <div className="flex justify-center items-center px-4 py-2 mt-6 mb-4 rounded-lg border-2 border-white bg-white bg-opacity-10">
-          <Typography.Body className="text-white" variant="small-bold">
-            Your profile was not found, please{' '}
-            <span
-              onClick={() => router.push('/onboarding/sign-in')}
-              className="text-white text-opacity-90 hover:text-opacity-100 cursor-pointer"
-            >
-              create a new one
-            </span>
-          </Typography.Body>
-          <Icon.Warning color="white" />
-        </div>
-      )*/}
       <Button.Large
         onClick={!loading ? () => handleSubmit() : undefined}
         icon={<Icon.Key size="16" />}
