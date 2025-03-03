@@ -9,7 +9,7 @@
     "test:e2e": "cypress run -P src/cypress",
     "build": "npm --prefix src run build",
     "serve:prod": "npm --prefix src run start",
-    "clean": "rm -rf ./node_modules/ ./dist/",
+    "clean": "rm -rf ./node_modules/ ./src/.next/",
     "format:check": "prettier --check .",
     "format:fix": "prettier --write ."
   },
