@@ -6,7 +6,6 @@ import NextTopLoader from 'nextjs-toploader';
 import React, { useEffect, useState } from 'react';
 import { getUserMuted, getUserProfile } from '@/services/userService';
 import { defaultPreferences } from '@/contexts/_filters';
-import { Utils } from '@social/utils-shared';
 import { PubkyAppUser } from 'pubky-app-specs';
 
 export default function ProtectedRoutes({ children }: { children: React.ReactNode }) {
@@ -35,8 +34,7 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
     '/onboarding/sign-in',
     '/onboarding/sign-up',
     '/logout',
-    '/sign-in',
-    '/invite-code'
+    '/sign-in'
   ];
 
   const isDynamicPublicRoute = (path: string) => {
@@ -159,39 +157,6 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
         closeModal('sessionExpired');
       }, 2000);
       return;
-    }
-
-    // Check invite code
-    const inviteCode = Utils.storage.get('inviteCode');
-
-    if (['/sign-in', '/onboarding/sign-in', '/onboarding/sign-up'].includes(pathname) && !inviteCode) {
-      router.push('/invite-code');
-      return;
-    }
-
-    if (inviteCode) {
-      try {
-        const response = await fetch('/api/invite-code', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ inviteCode })
-        });
-        const data = await response.json();
-
-        if (!data.valid) {
-          router.push('/invite-code');
-          return;
-        }
-
-        if (pathname === '/invite-code') {
-          router.push('/onboarding/sign-in');
-          return;
-        }
-      } catch (error) {
-        console.error('Error verifying invitation code:', error);
-        router.push('/invite-code');
-        return;
-      }
     }
 
     setLoading(false);

@@ -21,6 +21,7 @@ const profileSchema = z.object({
     .string()
     .min(3, { message: 'Minimum length 3 character.' })
     .max(24, { message: 'Maximum length 24 characters' }),
+  token: z.string().length(14, { message: 'Invite code must be 14 characters.' }),
   bio: z.string().max(160, { message: 'Maximum length 160 characters' }).optional()
 });
 
@@ -29,6 +30,7 @@ export default function Index() {
   const router = useRouter();
 
   const [name, setName] = useState(profile?.name || '');
+  const [token, setToken] = useState('');
   const [bio, setBio] = useState(profile?.bio || '');
   const [image, setImage] = useState<File | string | undefined>();
   const [generatedImage, setGeneratedImage] = useState<File>();
@@ -37,10 +39,7 @@ export default function Index() {
     { url: '', title: 'x (twitter)', placeHolder: '@user' }
   ]);
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState({
-    name: '',
-    bio: ''
-  });
+  const [errors, setErrors] = useState({ name: '', token: '', bio: '' });
 
   useEffect(() => {
     const generateAndSetImage = async () => {
@@ -61,15 +60,9 @@ export default function Index() {
     }
     try {
       setLoading(true);
-      setErrors({
-        name: '',
-        bio: ''
-      });
+      setErrors({ name: '', token: '', bio: '' });
 
-      const result = profileSchema.safeParse({
-        name: name,
-        bio: bio ? bio : undefined
-      });
+      const result = profileSchema.safeParse({ name: name, token: token, bio: bio ? bio : undefined });
 
       if (!result.success) {
         const newErrors: FormErrors = result.error.flatten().fieldErrors;
@@ -97,9 +90,12 @@ export default function Index() {
           return;
         }
 
-        const signUpResponse = await signUp(name, bio, linksObject, image);
+        const tokenUppercase = token.toUpperCase();
+        const signUpResponse = await signUp(name, tokenUppercase, bio, linksObject, image);
 
-        if (!signUpResponse) {
+        if ('state' in signUpResponse && !signUpResponse.state) {
+          const errorMessage = signUpResponse.error.split('Error message: ')[1] || signUpResponse.error;
+          setErrors((prev) => ({ ...prev, token: errorMessage }));
           throw new Error('Something went wrong');
         }
         router.push('/onboarding/pubky');
@@ -118,15 +114,27 @@ export default function Index() {
       <Input.Cursor
         placeholder="Your Name"
         className="h-14 text-[40px] font-bold sm:h-[106px] sm:text-[64px] placeholder:text-opacity-20"
-        defaultValue={name ? name : ''}
+        defaultValue={name}
         disabled={loading}
+        maxLength={30}
         autoFocus
         id="onboarding-name-input"
         autoCorrect="off"
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
         error={errors.name}
       />
-      <Typography.Body variant="large" className="text-[22px] sm:text-2xl leading-tight text-opacity-50 mt-2 sm:mt-0">
+      <Input.Cursor
+        defaultValue={token}
+        disabled={loading}
+        maxLength={14}
+        id="onboarding-token-input"
+        autoCorrect="off"
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setToken(e.target.value)}
+        error={errors.token}
+        className="h-12 uppercase placeholder:normal-case placeholder:text-opacity-20 text-[24px]"
+        placeholder="Add invite code"
+      />
+      <Typography.Body variant="large" className="text-[22px] sm:text-2xl leading-tight text-opacity-50">
         Enter your bio, add some links, and upload a user picture.
       </Typography.Body>
       <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-8 gap-6 mt-6">

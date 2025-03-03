@@ -3,25 +3,15 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Header, Content, Typography, Button, Icon } from '@social/ui-shared';
-//import * as jdenticon from 'jdenticon';
 import { usePubkyClientContext } from '@/contexts';
-//import { Links } from '@/types/Post';
-//import { Utils } from '@social/utils-shared';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { Utils } from '@social/utils-shared';
 import { SocialLinks } from '@/components';
-//import { useRouter } from 'next/navigation';
 
 export default function Index() {
   const { pubky, isLoggedIn } = usePubkyClientContext();
   const isMobile = useIsMobile();
-  //const router = useRouter();
   const currentYear = new Date().getFullYear();
-  const inviteCode = Utils.storage.get('inviteCode');
   const [logoLink, setLogoLink] = useState('/onboarding');
-  //const [progress, setProgress] = useState(0);
-  //const [loading, setLoading] = useState(false);
-  //const links: Links[] = [];
 
   useEffect(() => {
     async function fetchData() {
@@ -41,11 +31,7 @@ export default function Index() {
         <Header.Logo link={logoLink} />
         <div className="flex gap-6 items-center">
           <SocialLinks className="hidden sm:inline-flex" />
-          <Header.Action
-            icon={<Icon.SignIn size="16" />}
-            link={inviteCode ? '/sign-in' : '/invite-code'}
-            id="onboarding-sign-in-btn"
-          >
+          <Header.Action icon={<Icon.SignIn size="16" />} link="/sign-in" id="onboarding-sign-in-btn">
             Sign in
           </Header.Action>
         </div>

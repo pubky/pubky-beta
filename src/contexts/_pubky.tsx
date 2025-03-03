@@ -46,10 +46,11 @@ type PubkyClientContextType = {
   logout: () => boolean;
   signUp: (
     name: string,
+    token: string,
     bio?: string,
     links?: PubkyAppUserLink[],
     image?: File | string
-  ) => Promise<PubkyAppUser | false>;
+  ) => Promise<PubkyAppUser | { state: false; error: any }>;
   saveProfile: (
     name: string,
     bio?: string,
@@ -309,11 +310,11 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
     } catch (error) {
       console.warn('Sign in failed:', error);
       try {
-        // 1.1) Sign up with the Keypair
-        await client.signup(keypair, NEXT_PUBLIC_HOMESERVER);
+        // 1.1) Try republishHomeserver with the Keypair
+        await client.republishHomeserver(keypair, NEXT_PUBLIC_HOMESERVER);
       } catch (error) {
         console.error(error);
-        throw new Error('Authentication failed: unable to sign in or sign up.');
+        throw new Error('Authentication failed: unable to sign in');
       }
     }
 
@@ -395,10 +396,11 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
 
   const signUp = async (
     name: string,
+    token: string,
     bio?: string,
     links?: PubkyAppUserLink[],
     image?: File | string
-  ): Promise<PubkyAppUser | false> => {
+  ): Promise<PubkyAppUser | { state: false; error: any }> => {
     try {
       const mnemonic = bip39.generateMnemonic(128);
       const seedMnemonic = bip39.mnemonicToSeedSync(mnemonic);
@@ -407,7 +409,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
       const seed = Utils.uint8ArrayToBase64(newKeypair.secretKey());
 
       // Sign up
-      await client.signup(newKeypair, NEXT_PUBLIC_HOMESERVER);
+      await client.signup(newKeypair, NEXT_PUBLIC_HOMESERVER, token);
 
       // Get session
       const session = await client.session(newKeypair.publicKey());
@@ -459,7 +461,10 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
       return user;
     } catch (error) {
       console.log(error);
-      return false;
+      return {
+        state: false,
+        error
+      };
     }
   };
 
