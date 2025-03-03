@@ -13,6 +13,7 @@ interface RecoveryFileProps {
   fileName: string;
   setFileName: React.Dispatch<React.SetStateAction<string>>;
   setPassword: React.Dispatch<React.SetStateAction<string>>;
+  password: string;
   loginError: string;
   loading: boolean;
   handleSubmit: () => void;
@@ -24,6 +25,7 @@ export default function RecoveryFile({
   fileName,
   setFileName,
   setPassword,
+  password,
   loginError,
   loading,
   handleSubmit,
@@ -88,9 +90,14 @@ export default function RecoveryFile({
             onKeyDown={handleKeyDown}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
             action={
-              <div className="mt-1.5 mr-3 flex cursor-pointer p-1 hover:bg-white/10 rounded-full" onClick={togglePasswordVisibility}>
-                {showPassword ? <Icon.Eye size="20" /> : <Icon.EyeSlash size="20" />}
-              </div>
+              password && (
+                <div
+                  className="mt-1.5 mr-2 flex cursor-pointer p-2 hover:bg-white/10 rounded-full"
+                  onClick={togglePasswordVisibility}
+                >
+                  {showPassword ? <Icon.Eye size="20" /> : <Icon.EyeSlash size="20" />}
+                </div>
+              )
             }
           />
         </div>
