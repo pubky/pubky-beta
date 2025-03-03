@@ -1,14 +1,24 @@
+'use client';
+
 import { Button, Icon, Input, Typography } from '@social/ui-shared';
+import { useState } from 'react';
 
 interface FileProps {
   loading: boolean;
+  password: string;
   setPassword: React.Dispatch<React.SetStateAction<string>>;
   handleSubmit: () => Promise<void>;
   errors: string;
   setFile: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function File({ loading, setPassword, handleSubmit, errors, setFile }: FileProps) {
+export default function File({ loading, password, setPassword, handleSubmit, errors, setFile }: FileProps) {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
+
   return (
     <>
       <Typography.Body className="text-opacity-80 mt-4" variant="medium-light">
@@ -21,10 +31,20 @@ export default function File({ loading, setPassword, handleSubmit, errors, setFi
         <Input.Text
           id="backup-recovery-file-password-input"
           className="h-[70px] mt-1"
-          type="password"
+          type={showPassword ? 'text' : 'password'}
           error={errors}
           placeholder="••••••••••••"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+          action={
+            password && (
+              <div
+                className="mt-1.5 mr-2 flex cursor-pointer p-2 hover:bg-white/10 rounded-full"
+                onClick={togglePasswordVisibility}
+              >
+                {showPassword ? <Icon.Eye size="20" /> : <Icon.EyeSlash size="20" />}
+              </div>
+            )
+          }
         />
       </div>
       <div className="flex w-full gap-2 items-center px-4 py-3 mb-4 rounded-2xl border-2 border-[#ffd200] bg-yellow-600 bg-opacity-10">

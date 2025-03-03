@@ -22,6 +22,7 @@ import {
   SquareHalf,
   ThreeColumns,
   Eye,
+  EyeSlash,
   LineHorizontal
 } from './_Design';
 import { Plus, Minus, X, PlusCircle } from './_Math';
@@ -152,6 +153,7 @@ export const Icon = {
   DotsThreeOutline,
   Envelope,
   Eye,
+  EyeSlash,
   Ellipse,
   File,
   FileText,

@@ -112,6 +112,7 @@ export default function Index() {
             errors={errors}
             fileName={fileName}
             setFileName={setFileName}
+            password={password}
             setPassword={setPassword}
             loginError={loginError}
             loading={loading}
