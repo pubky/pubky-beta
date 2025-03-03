@@ -88,8 +88,8 @@ export default function RecoveryFile({
             onKeyDown={handleKeyDown}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
             action={
-              <div className="mt-2 cursor-pointer" onClick={togglePasswordVisibility}>
-                {showPassword ? <Icon.EyeSlash size="20" /> : <Icon.Eye size="20" />}
+              <div className="mt-1.5 mr-3 flex cursor-pointer p-1 hover:bg-white/10 rounded-full" onClick={togglePasswordVisibility}>
+                {showPassword ? <Icon.Eye size="20" /> : <Icon.EyeSlash size="20" />}
               </div>
             }
           />
