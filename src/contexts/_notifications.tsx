@@ -4,20 +4,37 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { BodyNotification, NotificationView } from '@/types/User';
 import { useUserNotifications } from '@/hooks/useUser';
+import { FilterNotificationPreferences } from '@/types';
 
 type NotificationsContextType = {
   notifications: NotificationView[];
   loading: boolean;
   fetchNotifications: () => Promise<void>;
   loadMoreNotifications: () => Promise<void>;
+  selectedFilter: FilterNotificationPreferences;
+  setSelectedFilter: any;
 };
 
 const NotificationsContext = createContext<NotificationsContextType>({
   notifications: [],
   loading: true,
   fetchNotifications: async () => {},
-  loadMoreNotifications: async () => {}
+  loadMoreNotifications: async () => {},
+  selectedFilter: 'all',
+  setSelectedFilter: () => {}
 });
+
+export const filterMap: Record<FilterNotificationPreferences, string[]> = {
+  all: [],
+  follow: ['follow'],
+  new_friend: ['new_friend'],
+  tagged: ['tag_profile', 'tag_post'],
+  mention: ['mention'],
+  reply: ['reply'],
+  repost: ['repost'],
+  post_deleted: ['post_deleted'],
+  post_edited: ['post_edited']
+};
 
 export function NotificationsWrapper({ children }: { children: ReactNode }) {
   const { pubky, timestamp, notificationPreferences, mutedUsers } = usePubkyClientContext();
@@ -26,6 +43,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
   const limit = 30;
   const [skip, setSkip] = useState(0);
   const [notifications, setNotifications] = useState<NotificationView[]>([]);
+  const [selectedFilter, setSelectedFilter] = useState<FilterNotificationPreferences>('all');
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [prevPubky, setPrevPubky] = useState<string | null>(null);
@@ -80,28 +98,24 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
       return (
         senderPubky &&
         !mutedUsers?.includes(senderPubky) &&
-        notificationPreferences[notification.body.type as keyof typeof notificationPreferences]
+        notificationPreferences[notification.body.type as keyof typeof notificationPreferences] &&
+        (selectedFilter === 'all' || filterMap[selectedFilter]?.includes(notification.body.type))
       );
     });
 
   const fetchNotifications = async () => {
-    if (!pubky || !notificationPreferences || !hasMore) return;
+    if (!pubky || !notificationPreferences) return;
 
+    setLoading(true);
     try {
       if (initNotifications) {
         const filteredNotifications = filterNotifications(initNotifications);
-
-        updateNotifications(filteredNotifications);
-
-        const unreadCount = filteredNotifications.reduce(
-          (count, notification) => (timestamp && notification.timestamp > timestamp ? count + 1 : count),
-          0
-        );
-
-        setUnReadNotification(unreadCount);
+        setNotifications(filteredNotifications);
       }
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -109,6 +123,8 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     if (!pubky || !notificationPreferences || !hasMore || loading) return;
 
     try {
+      setSkip((prev) => prev + limit);
+
       if (initNotifications) {
         const filteredNotifications = filterNotifications(initNotifications);
         if (filteredNotifications.length === 0) {
@@ -116,8 +132,6 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
           return;
         }
         updateNotifications(filteredNotifications);
-
-        setSkip((prev) => prev + limit);
       }
     } catch (err) {
       console.error(err);
@@ -138,13 +152,28 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     }
   }, [pubky, notificationPreferences, timestamp]);
 
+  useEffect(() => {
+    setSkip(0);
+    setNotifications([]);
+    setHasMore(true);
+
+    if (selectedFilter === 'all') {
+      fetchNotifications();
+    } else {
+      const filtered = filterNotifications(initNotifications);
+      setNotifications(filtered);
+    }
+  }, [selectedFilter]);
+
   return (
     <NotificationsContext.Provider
       value={{
         notifications,
         loading,
         fetchNotifications,
-        loadMoreNotifications
+        loadMoreNotifications,
+        selectedFilter,
+        setSelectedFilter
       }}
     >
       {children}
