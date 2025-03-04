@@ -156,7 +156,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     setSkip(0);
     setNotifications([]);
     setHasMore(true);
-    
+
     if (selectedFilter === 'all') {
       fetchNotifications();
     } else {
