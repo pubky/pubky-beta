@@ -7,13 +7,7 @@ import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { useEffect, useState } from 'react';
 import { LoadingContacts } from '@/types';
 
-export default function Contact({
-  contacts,
-  isLoading
-}: {
-  contacts: UserView[] | [] | undefined;
-  isLoading: boolean;
-}) {
+export default function Contact({ contacts, isLoading }: { contacts: UserView[] | undefined; isLoading: boolean }) {
   const { pubky, createTagProfile, deleteTagProfile, follow, unfollow } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [loadingContacts, setLoadingContacts] = useState<LoadingContacts>({});
@@ -25,22 +19,22 @@ export default function Contact({
 
   useEffect(() => {
     if (contacts) {
-      // const initialFollowedState = contacts.reduce(
-      //   (acc, profile) => {
-      //     acc[profile.details.id] = profile.relationship?.following || false;
-      //     return acc;
-      //   },
-      //   {} as { [pubky: string]: boolean }
-      // );
-      // setFollowed(initialFollowedState);
-      // const initialTagsState = contacts.reduce(
-      //   (acc, profile) => {
-      //     acc[profile.details.id] = profile.tags || [];
-      //     return acc;
-      //   },
-      //   {} as { [pubky: string]: UserView['tags'] }
-      // );
-      // setProfileTags(initialTagsState);
+      const initialFollowedState = contacts.reduce(
+        (acc, profile) => {
+          acc[profile.details.id] = profile.relationship?.following || false;
+          return acc;
+        },
+        {} as { [pubky: string]: boolean }
+      );
+      setFollowed(initialFollowedState);
+      const initialTagsState = contacts.reduce(
+        (acc, profile) => {
+          acc[profile.details.id] = profile.tags || [];
+          return acc;
+        },
+        {} as { [pubky: string]: UserView['tags'] }
+      );
+      setProfileTags(initialTagsState);
     }
   }, [contacts]);
 
