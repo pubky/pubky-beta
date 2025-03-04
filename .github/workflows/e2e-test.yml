@@ -136,22 +136,19 @@ jobs:
           SUPPORT_ACCOUNT_ID=1" > .env
           npm ci
 
-      - name: Run pubky-app frontend
-        working-directory: pubky-app
-        run: npm run start:prod &
-
       - name: Run e2e tests (${{ matrix.browser }})
         uses: cypress-io/github-action@v6
         env:
           DEBUG: '@cypress/github-action'
         with:
-          working-directory: pubky-app/src/cypress
+          working-directory: pubky-app/cypress
           config-file: cypress.config.ts
           spec: e2e/**/*.cy.ts
           browser: ${{ matrix.browser }}
           headed: false
           summary-title: ${{ matrix.browser }}
           install: false
+          start: npm run start:prod
           wait-on: 'http://localhost:4200'
           wait-on-timeout: 180
 
@@ -160,14 +157,14 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: screenshots-${{ matrix.browser }}
-          path: pubky-app/src/cypress/screenshots
+          path: pubky-app/cypress/screenshots
 
       - name: Upload ${{ matrix.browser }} videos
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
           name: videos-${{ matrix.browser }}
-          path: pubky-app/src/cypress/videos
+          path: pubky-app/cypress/videos
 
       - name: Dump docker logs on failure
         if: failure()
