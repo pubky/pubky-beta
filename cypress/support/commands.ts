@@ -1,5 +1,6 @@
 // <reference types="cypress" />
 
+import { CheckIndexed, HasBackedUp, SkipOnboardingSlides } from './types/enums';
 import { passInviteCode } from './common';
 
 // ***********************************************
@@ -11,11 +12,6 @@ import { passInviteCode } from './common';
 // commands please read more here:
 // https://on.cypress.io/custom-commands
 // ***********************************************
-
-export enum SkipOnboardingSlides {
-  No = 0,
-  Yes = 1
-}
 
 Cypress.Commands.add(
   'onboardAsNewUser',
@@ -71,11 +67,6 @@ Cypress.Commands.add(
     cy.location('pathname').should('eq', '/home');
   }
 );
-
-export enum HasBackedUp {
-  No = 0,
-  Yes = 1
-}
 
 Cypress.Commands.add('signOut', (hasBackedUp: HasBackedUp) => {
   cy.location('pathname').then((currentPath) => {
@@ -283,13 +274,7 @@ Cypress.Commands.add('findPostInBookmarks', (postIdx: number) => {
   return cy.get('#bookmarked-posts').find('[id="post-container"]').eq(postIdx);
 });
 
-// used to check if the newly created post is indexed
-export enum CheckIndexed {
-  No = 0,
-  Yes = 1
-}
-
-const findPostInFeed = (postIdx = 0, filterText?, checkIndexed = CheckIndexed.Yes) => {
+const findPostInFeed = (postIdx = 0, filterText?: string, checkIndexed = CheckIndexed.Yes) => {
   // A function to check if timeline contains 'No post yet'.
   // If it does then wait 1 second and check again.
   // This is a wait for the timeline to load after the page loads.

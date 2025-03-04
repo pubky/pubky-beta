@@ -1,5 +1,4 @@
 {
-  "extends": "../tsconfig.json",
   "compilerOptions": {
     "sourceMap": false,
     "outDir": "../dist/out-tsc",
@@ -12,6 +11,5 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["./**/*.ts", "./**/*.js"],
-  "files": ["./global.d.ts"]
+  "include": ["./**/*.ts", "./**/*.d.ts"]
 }

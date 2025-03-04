@@ -18,7 +18,7 @@ import {
   waitForBookmarksToLoad
 } from '../support/posts';
 import { defaultMs, fastMs } from '../support/slow-down';
-import { CheckIndexed, HasBackedUp, SkipOnboardingSlides } from '../support/commands';
+import { CheckIndexed, HasBackedUp, SkipOnboardingSlides } from '../support/types/enums';
 
 const username = 'Poster';
 

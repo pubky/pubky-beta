@@ -1,4 +1,4 @@
-import { CheckIndexed } from './commands';
+import { CheckIndexed } from '../support/types/enums';
 
 // select an emoji using the emoji picker by its data-full-name attribute
 export const selectEmojis = (emojiName: string[]) => {

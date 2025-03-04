@@ -1,7 +1,7 @@
 import { latestPostInFeedContentEq, createQuickPost, checkPostIsNotAtTopOfFeed } from '../support/posts';
 import { slowCypressDown } from 'cypress-slow-down';
 import 'cypress-slow-down/commands';
-import { HasBackedUp } from '../support/commands';
+import { HasBackedUp } from '../support/types/enums';
 
 describe('settings', () => {
   before(() => {
