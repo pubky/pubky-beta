@@ -180,7 +180,7 @@ export default function Notification({ notification, unread }: { notification: N
 
   return (
     <div className="py-2 justify-between items-start flex flex-row border-b md:border-0 border-white border-opacity-10">
-      <div className="flex gap-3 flex-col sm:flex-row">
+      <div className="flex sm:gap-1 md:gap-3 flex-col sm:flex-row">
         <div className="flex gap-2">
           {user && (
             <ImageByUri
@@ -212,7 +212,7 @@ export default function Notification({ notification, unread }: { notification: N
             </Link>
           )}
         </div>
-        <div className="flex gap-2 items-center flex-wrap">
+        <div className="flex gap-1 md:gap-2 items-center flex-wrap">
           <Typography.Body variant="medium-bold" className="text-opacity-50">
             {currentNotificationType.text}
             {notification.body.type === notificationType?.post_deleted?.type &&
