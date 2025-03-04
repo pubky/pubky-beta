@@ -5,7 +5,7 @@ import { usePubkyClientContext } from '@/contexts';
 import { PostView } from '@/types/Post';
 import { Button, Icon, Post as PostUI, PostUtil, Tooltip as TooltipUI, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useTagsLogic } from './TagsUtils';
 import { PubkyAppPostKind } from 'pubky-app-specs';
 import Link from 'next/link';
@@ -17,9 +17,12 @@ interface TagsProps {
 
 export default function TagsLargeView({ post }: TagsProps) {
   const [showTooltipPostChecked, setShowTooltipPostChecked] = useState('');
+  const [showTooltipProfile, setShowTooltipProfile] = useState<{ tagIndex: number; imageIndex: number } | null>(null);
   const isArticle = String(post?.details?.kind) === PubkyAppPostKind[1].toLocaleLowerCase();
   const { tags, profileImages, loadingTags, handleAddTag, handleDeleteTag, openModal, isMobile } = useTagsLogic(post);
   const { pubky } = usePubkyClientContext();
+  const tooltipRef = useRef(null);
+  const [tooltipPosition, setTooltipPosition] = useState<{ top: number; left: number } | null>(null);
 
   return (
     <>
@@ -67,6 +70,7 @@ export default function TagsLargeView({ post }: TagsProps) {
             .filter(Boolean);
 
           const extraImagesCount = tagObj?.taggers_count - displayedImages.length;
+          const taggers = tagObj.taggers;
 
           return (
             <React.Fragment key={`${index}-${tagObj?.label}`}>
@@ -106,16 +110,47 @@ export default function TagsLargeView({ post }: TagsProps) {
                 </div>
                 <div className="flex">
                   {displayedImages.map((image, imageIndex) => (
-                    <ImageByUri
-                      width={32}
-                      height={32}
-                      key={imageIndex}
-                      className={`min-w-[32px] max-w-[32px] min-h-[32px] max-h-[32px] rounded-full shadow justify-center items-center flex ${
-                        imageIndex > 0 && '-ml-2'
-                      }`}
-                      alt={`tag-${imageIndex + 1}`}
-                      uri={image}
-                    />
+                    <div key={imageIndex}>
+                      <TooltipUI.Root
+                        className="static"
+                        delay={0}
+                        setShowTooltip={() => setShowTooltipProfile(null)}
+                        tagId={image}
+                      >
+                        <ImageByUri
+                          width={32}
+                          height={32}
+                          onClick={(e) => {
+                            const rect = e.currentTarget.getBoundingClientRect();
+                            setShowTooltipProfile({ tagIndex: index, imageIndex });
+                            setTooltipPosition({
+                              top: rect.top - 10,
+                              left: rect.left + rect.width / 2
+                            });
+                          }}
+                          className={`cursor-pointer min-w-[32px] max-w-[32px] min-h-[32px] max-h-[32px] rounded-full shadow justify-center items-center flex ${
+                            imageIndex > 0 && '-ml-2'
+                          }`}
+                          alt={`tag-${imageIndex + 1}`}
+                          uri={image}
+                        />
+                        {showTooltipProfile?.tagIndex === index &&
+                          showTooltipProfile?.imageIndex === imageIndex &&
+                          tooltipPosition && (
+                            <TooltipUI.Main
+                              ref={tooltipRef}
+                              className="z-50 w-auto shadow-none px-0 pb-5 bg-transparent border-0 cursor-default fixed"
+                              style={{
+                                top: `${tooltipPosition.top}px`,
+                                left: `${tooltipPosition.left}px`,
+                                transform: 'translateX(-50%)' // Per centrare esattamente sopra l'immagine
+                              }}
+                            >
+                              <Tooltip.Profile profileId={taggers[imageIndex]} />
+                            </TooltipUI.Main>
+                          )}
+                      </TooltipUI.Root>
+                    </div>
                   ))}
                   {extraImagesCount > 0 && <PostUtil.Counter className="-ml-2">+{extraImagesCount}</PostUtil.Counter>}
                 </div>
