@@ -5,9 +5,10 @@ import { twMerge } from 'tailwind-merge';
 
 interface MainProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
+  ref?: any;
 }
 
-export const Main = ({ children, ...rest }: MainProps) => {
+export const Main = ({ children, ref, ...rest }: MainProps) => {
   const tooltipRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState<'top' | 'bottom'>('top');
 
@@ -31,7 +32,7 @@ export const Main = ({ children, ...rest }: MainProps) => {
 
   return (
     <div
-      ref={tooltipRef}
+      ref={ref || tooltipRef}
       {...rest}
       className={twMerge(baseCSS, position === 'top' ? topPositionCSS : bottomPositionCSS, rest.className)}
     >

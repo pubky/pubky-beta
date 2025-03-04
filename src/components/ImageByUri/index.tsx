@@ -13,7 +13,7 @@ interface ImageByUriProps {
   height: number;
   className?: string;
   style?: React.CSSProperties;
-  onClick?: () => void;
+  onClick?: any;
   loading?: boolean;
 }
 
