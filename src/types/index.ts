@@ -94,6 +94,17 @@ export interface INotification {
   type: string;
 }
 
+export type FilterNotificationPreferences =
+  | 'all'
+  | 'follow'
+  | 'new_friend'
+  | 'tagged'
+  | 'mention'
+  | 'reply'
+  | 'repost'
+  | 'post_deleted'
+  | 'post_edited';
+
 export interface ILink {
   url: string;
   title: string;
