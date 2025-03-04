@@ -46,6 +46,6 @@ Thumbs.db
 .env
 
 # Cypress files
-src/cypress/download
-src/cypress/screenshots
-src/cypress/videos
+cypress/download
+cypress/screenshots
+cypress/videos

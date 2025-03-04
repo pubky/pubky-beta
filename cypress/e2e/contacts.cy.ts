@@ -1,7 +1,7 @@
 import { backupDownloadFilePath } from '../support/auth';
 import { slowCypressDown } from 'cypress-slow-down';
 import { searchAndFollowProfile } from '../support/contacts';
-import { HasBackedUp } from '../support/commands';
+import { HasBackedUp } from '../support/types/enums';
 
 describe('contacts', () => {
   before(() => {

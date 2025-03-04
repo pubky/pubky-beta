@@ -1,8 +1,7 @@
 {
-  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "sourceMap": false,
-    "outDir": "../../dist/out-tsc",
+    "outDir": "../dist/out-tsc",
     "allowJs": true,
     "types": ["cypress", "node"],
     "forceConsistentCasingInFileNames": true,
@@ -12,6 +11,5 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src/**/*.ts", "src/**/*.js", "cypress.config.ts"],
-  "files": ["global.d.ts"]
+  "include": ["./**/*.ts", "./**/*.d.ts"]
 }

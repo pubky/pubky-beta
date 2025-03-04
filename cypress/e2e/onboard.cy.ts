@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { defaultBackupFilename } from '../support/auth';
 import { slowCypressDown } from 'cypress-slow-down';
-import { HasBackedUp, SkipOnboardingSlides } from '../support/commands';
+import { HasBackedUp, SkipOnboardingSlides } from '../support/types/enums';
 
 describe('onboarding', () => {
   before(() => {

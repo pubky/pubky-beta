@@ -6,7 +6,7 @@ import { searchAndFollowProfile, searchForProfile } from '../support/contacts';
 import { clickFollowButton } from '../support/profile';
 import { addTagsWithModal } from '../support/common';
 import { checkLatestNotification } from '../support/profile';
-import { HasBackedUp, SkipOnboardingSlides } from '../support/commands';
+import { HasBackedUp, SkipOnboardingSlides } from '../support/types/enums';
 
 const profile1 = { username: 'Notif #1', pubkyAlias: 'pubky_1' };
 const profile2 = { username: 'Notif #2', pubkyAlias: 'pubky_2' };

@@ -12,7 +12,7 @@ import {
   waitForFeedToLoad
 } from '../support/posts';
 import { searchAndFollowProfile } from '../support/contacts';
-import { HasBackedUp, SkipOnboardingSlides } from '../support/commands';
+import { HasBackedUp, SkipOnboardingSlides } from '../support/types/enums';
 
 // Profile 1 follows Profile 2 and is friends with Profile 2. Profile 1 also follows Profile 3 and Profile 4.
 const profile1 = {
