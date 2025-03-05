@@ -33,8 +33,6 @@ type FilterContextType = {
   setContent: (content: TContent) => void;
   timeframe: TTimeframe;
   setTimeframe: (timeframe: TTimeframe) => void;
-  unReadNotification: number;
-  setUnReadNotification: React.Dispatch<React.SetStateAction<number>>;
   resetDefault: () => void;
   selectedFeed: ICustomFeed | undefined;
   setSelectedFeed: React.Dispatch<React.SetStateAction<ICustomFeed | undefined>>;
@@ -70,8 +68,6 @@ const FilterContext = createContext<FilterContextType>({
   setContent: () => {},
   timeframe: 'all_time',
   setTimeframe: () => {},
-  unReadNotification: 0,
-  setUnReadNotification: () => {},
   resetDefault: () => {},
   selectedFeed: undefined,
   setSelectedFeed: () => {}
@@ -91,7 +87,6 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
   );
   const [content, setContent] = useState<TContent>((Utils.storage.get('content') as TContent) || 'all');
   const [timeframe, setTimeframe] = useState<TTimeframe>((Utils.storage.get('timeframe') as TTimeframe) || 'all_time');
-  const [unReadNotification, setUnReadNotification] = useState<number>((Utils.storage.get('unread') as number) || 0);
   const [selectedFeed, setSelectedFeed] = useState<ICustomFeed>();
 
   const resetDefault = () => {
@@ -104,7 +99,6 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
       setContactsLayout('list');
       setContent('all');
       setTimeframe('all_time');
-      setUnReadNotification(0);
     });
   };
 
@@ -118,7 +112,6 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
     Utils.storage.set('contactsLayout', contactsLayout);
     Utils.storage.set('content', content);
     Utils.storage.set('timeframe', timeframe);
-    Utils.storage.set('unread', unReadNotification);
     setIsInitialized(true);
   }, [layout, sort, reach, hotTagsReach, contacts, contactsLayout, content, timeframe]);
 
@@ -143,8 +136,6 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
         setContent,
         timeframe,
         setTimeframe,
-        unReadNotification,
-        setUnReadNotification,
         resetDefault,
         selectedFeed,
         setSelectedFeed

@@ -2,7 +2,7 @@
 
 import { Notifications } from '@/app/profile/components/notifications/components';
 import { ContentNotFound, Skeleton } from '@/components';
-import { useFilterContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
 import { Icon } from '@social/ui-shared';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useEffect, useState, useCallback, useRef } from 'react';
@@ -11,11 +11,13 @@ import {
   selectNotifications,
   selectNotificationsLoading,
   selectSelectedFilter,
+  selectUnreadCount,
   setSelectedFilter as setReduxSelectedFilter,
   fetchNotifications,
   loadMoreNotifications,
   filterMap,
-  setTimestamp
+  setTimestamp,
+  setUnreadCount
 } from '@/store/slices/notifications';
 
 export default function NotificationsProfile() {
@@ -23,8 +25,8 @@ export default function NotificationsProfile() {
   const notifications = useAppSelector(selectNotifications);
   const loadingNotifications = useAppSelector(selectNotificationsLoading);
   const selectedFilter = useAppSelector(selectSelectedFilter);
-  const { unReadNotification, setUnReadNotification } = useFilterContext();
-  const [tempUnReadNotication, setTempUnReadNotification] = useState(0);
+  const unreadCount = useAppSelector(selectUnreadCount);
+  const [tempUnReadNotification, setTempUnReadNotification] = useState(0);
   const { putTimestampNotification, pubky, mutedUsers, notificationPreferences, timestamp } = usePubkyClientContext();
   const hasInitialized = useRef(false);
   const hasFetchedInitial = useRef(false);
@@ -60,7 +62,7 @@ export default function NotificationsProfile() {
     (notification) => selectedFilter === 'all' || filterMap[selectedFilter]?.includes(notification.body.type)
   );
 
-  const displayedNotifications = filteredNotifications.slice(tempUnReadNotication);
+  const displayedNotifications = filteredNotifications.slice(tempUnReadNotification);
 
   // Efeito único para controlar todo o fluxo de inicialização e fetch
   useEffect(() => {
@@ -98,12 +100,12 @@ export default function NotificationsProfile() {
 
   // Efeito para lidar com notificações não lidas
   useEffect(() => {
-    if (unReadNotification) {
-      setTempUnReadNotification(unReadNotification);
+    if (unreadCount) {
+      setTempUnReadNotification(unreadCount);
       setTimeout(() => setTempUnReadNotification(0), 3000);
-      setUnReadNotification(0);
+      dispatch(setUnreadCount(0));
     }
-  }, [unReadNotification, setUnReadNotification]);
+  }, [unreadCount, dispatch]);
 
   const handleFilterChange = (newFilter: typeof selectedFilter) => {
     dispatch(setReduxSelectedFilter(newFilter));
@@ -117,9 +119,9 @@ export default function NotificationsProfile() {
         <div className="flex flex-col gap-1">
           <Notifications.FilterTabs selectedFilter={selectedFilter} setSelectedFilter={handleFilterChange} />
           <div className="px-6 py-[18px] bg-white/10 rounded-b-lg">
-            {tempUnReadNotication > 0 && (
+            {tempUnReadNotification > 0 && (
               <div>
-                {notifications.slice(0, tempUnReadNotication).map((notification, index) => (
+                {notifications.slice(0, tempUnReadNotification).map((notification, index) => (
                   <Notifications.Notification key={index} notification={notification} unread />
                 ))}
               </div>

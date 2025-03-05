@@ -3,8 +3,10 @@
 import { useRouter } from 'next/navigation';
 import { Icon, Typography } from '@social/ui-shared';
 import { Skeleton } from '@/components';
-import { useFilterContext, useModal, usePubkyClientContext } from '@/contexts';
+import { useModal, usePubkyClientContext } from '@/contexts';
 import { UserCounts } from '@/types/User';
+import { useAppSelector } from '@/store';
+import { selectUnreadCount } from '@/store/slices/notifications';
 
 const tabs = [
   {
@@ -13,12 +15,6 @@ const tabs = [
     icon: <Icon.BellSimple size="24" color="white" />,
     label: 'Notifications'
   },
-  //{
-  //  id: 1,
-  //  key: 'bookmarks',
-  //  icon: <Icon.BookmarkSimple size="24" color="white" />,
-  //  label: 'Bookmarks',
-  //},
   {
     id: 1,
     key: 'posts',
@@ -84,7 +80,7 @@ export default function FilterTabs({
 }) {
   const { pubky } = usePubkyClientContext();
   const { openModal } = useModal();
-  const { unReadNotification } = useFilterContext();
+  const unreadCount = useAppSelector(selectUnreadCount);
   const router = useRouter();
 
   const handleTabClick = (id: number, key: string) => {
@@ -99,7 +95,7 @@ export default function FilterTabs({
   const getTabNumber = (key: string) => {
     switch (key) {
       case 'notifications':
-        return unReadNotification || null;
+        return unreadCount || null;
       case 'bookmarks':
         return userCounts?.bookmarks || 0;
       case 'posts':

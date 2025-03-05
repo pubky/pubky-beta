@@ -1,10 +1,12 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { useFilterContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
 import { BodyNotification, NotificationView } from '@/types/User';
 import { useUserNotifications } from '@/hooks/useUser';
 import { FilterNotificationPreferences } from '@/types';
+import { useAppDispatch } from '@/store';
+import { setUnreadCount } from '@/store/slices/notifications';
 
 type NotificationsContextType = {
   notifications: NotificationView[];
@@ -38,7 +40,7 @@ export const filterMap: Record<FilterNotificationPreferences, string[]> = {
 
 export function NotificationsWrapper({ children }: { children: ReactNode }) {
   const { pubky, timestamp, notificationPreferences, mutedUsers } = usePubkyClientContext();
-  const { setUnReadNotification } = useFilterContext();
+  const dispatch = useAppDispatch();
 
   const limit = 30;
   const [skip, setSkip] = useState(0);
@@ -67,8 +69,8 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
       (count, notification) => (timestamp && notification.timestamp > timestamp ? count + 1 : count),
       0
     );
-    setUnReadNotification(unreadCount);
-  }, [initNotifications, timestamp]);
+    dispatch(setUnreadCount(unreadCount));
+  }, [initNotifications, timestamp, dispatch]);
 
   const updateNotifications = (newNotifications: NotificationView[]) => {
     setNotifications((prev) => {
@@ -142,7 +144,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     if (pubky !== prevPubky) {
       setPrevPubky(pubky ?? '');
       setNotifications([]);
-      setUnReadNotification(0);
+      dispatch(setUnreadCount(0));
       setSkip(0);
       setHasMore(true);
     }

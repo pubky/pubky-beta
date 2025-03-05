@@ -136,6 +136,9 @@ const notificationsSlice = createSlice({
     setTimestamp: (state, action: PayloadAction<number>) => {
       state.timestamp = action.payload;
     },
+    setUnreadCount: (state, action: PayloadAction<number>) => {
+      state.unreadCount = action.payload;
+    },
     resetNotifications: (state) => {
       state.notifications = [];
       state.skip = 0;
@@ -151,7 +154,16 @@ const notificationsSlice = createSlice({
       .addCase(fetchNotifications.fulfilled, (state, action) => {
         state.loading = false;
         state.notifications = action.payload.notifications;
-        state.unreadCount = action.payload.unreadCount;
+        state.hasMore = action.payload.notifications.length > 0;
+
+        // Calculate unread count when we get new notifications
+        if (state.timestamp) {
+          const unreadCount = action.payload.notifications.reduce(
+            (count, notification) => (notification.timestamp > state.timestamp ? count + 1 : count),
+            0
+          );
+          state.unreadCount = unreadCount;
+        }
       })
       .addCase(fetchNotifications.rejected, (state) => {
         state.loading = false;
@@ -161,15 +173,8 @@ const notificationsSlice = createSlice({
       })
       .addCase(loadMoreNotifications.fulfilled, (state, action) => {
         state.loading = false;
-        if (action.payload.length === 0) {
-          state.hasMore = false;
-        } else {
-          const merged = [...state.notifications, ...action.payload].filter(
-            (notification, index, self) => index === self.findIndex((n) => n.timestamp === notification.timestamp)
-          );
-          state.notifications = merged.sort((a, b) => b.timestamp - a.timestamp);
-          state.skip += state.limit;
-        }
+        state.notifications = [...state.notifications, ...action.payload.notifications];
+        state.hasMore = action.payload.notifications.length > 0;
       })
       .addCase(loadMoreNotifications.rejected, (state) => {
         state.loading = false;
@@ -177,7 +182,7 @@ const notificationsSlice = createSlice({
   }
 });
 
-export const { setSelectedFilter, setTimestamp, resetNotifications } = notificationsSlice.actions;
+export const { setSelectedFilter, setTimestamp, setUnreadCount, resetNotifications } = notificationsSlice.actions;
 
 // Selectors
 export const selectNotifications = (state: RootState) => state.notifications.notifications;
