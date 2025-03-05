@@ -2,26 +2,43 @@
 
 import { Notifications } from '@/app/profile/components/notifications/components';
 import { ContentNotFound, Skeleton } from '@/components';
-import { useFilterContext, useNotificationsContext, usePubkyClientContext } from '@/contexts';
+import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { Icon } from '@social/ui-shared';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useEffect, useState } from 'react';
-import { filterMap } from '@/contexts/_notifications';
+import { useAppDispatch, useAppSelector } from '@/store';
+import {
+  selectNotifications,
+  selectNotificationsLoading,
+  selectSelectedFilter,
+  setSelectedFilter as setReduxSelectedFilter,
+  fetchNotifications,
+  loadMoreNotifications,
+  filterMap
+} from '@/store/slices/notifications';
 
 export default function NotificationsProfile() {
-  const {
-    notifications,
-    loading: loadingNotifications,
-    loadMoreNotifications,
-    fetchNotifications,
-    selectedFilter,
-    setSelectedFilter
-  } = useNotificationsContext();
+  const dispatch = useAppDispatch();
+  const notifications = useAppSelector(selectNotifications);
+  const loadingNotifications = useAppSelector(selectNotificationsLoading);
+  const selectedFilter = useAppSelector(selectSelectedFilter);
   const { unReadNotification, setUnReadNotification } = useFilterContext();
   const [tempUnReadNotication, setTempUnReadNotification] = useState(0);
-  const { putTimestampNotification } = usePubkyClientContext();
+  const { putTimestampNotification, pubky, mutedUsers, notificationPreferences, timestamp } = usePubkyClientContext();
 
-  const loader = useInfiniteScroll(loadMoreNotifications, loadingNotifications);
+  const handleLoadMore = async () => {
+    if (pubky && notificationPreferences) {
+      dispatch(
+        loadMoreNotifications({
+          pubky,
+          mutedUsers,
+          notificationPreferences
+        })
+      );
+    }
+  };
+
+  const loader = useInfiniteScroll(handleLoadMore, loadingNotifications);
 
   const filteredNotifications = notifications.filter(
     (notification) => selectedFilter === 'all' || filterMap[selectedFilter]?.includes(notification.body.type)
@@ -42,8 +59,21 @@ export default function NotificationsProfile() {
   }, []);
 
   useEffect(() => {
-    fetchNotifications();
-  }, [selectedFilter]);
+    if (pubky && notificationPreferences) {
+      dispatch(
+        fetchNotifications({
+          pubky,
+          mutedUsers,
+          notificationPreferences,
+          timestamp
+        })
+      );
+    }
+  }, [selectedFilter, pubky, notificationPreferences, mutedUsers, timestamp, dispatch]);
+
+  const handleFilterChange = (newFilter: typeof selectedFilter) => {
+    dispatch(setReduxSelectedFilter(newFilter));
+  };
 
   return (
     <>
@@ -51,7 +81,7 @@ export default function NotificationsProfile() {
         <Skeleton.Simple />
       ) : (
         <div className="flex flex-col gap-1">
-          <Notifications.FilterTabs selectedFilter={selectedFilter} setSelectedFilter={setSelectedFilter} />
+          <Notifications.FilterTabs selectedFilter={selectedFilter} setSelectedFilter={handleFilterChange} />
           <div className="px-6 py-[18px] bg-white/10 rounded-b-lg">
             {tempUnReadNotication > 0 && (
               <div>
