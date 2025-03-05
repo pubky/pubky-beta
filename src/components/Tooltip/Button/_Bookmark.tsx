@@ -59,7 +59,13 @@ export default function Bookmark({ post, repost, setShowMenu }: BookmarkProps) {
     }
 
     if (!isBookmarked) {
-      addToast(`This post by ${author?.details?.name} was saved to your bookmarks.`, 'bookmark');
+      addToast(
+        <>
+          This post by <span className="text-opacity-100 font-bold">{author?.details?.name}</span> was saved to your
+          bookmarks
+        </>,
+        'bookmark'
+      );
     }
   };
 
