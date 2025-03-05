@@ -223,7 +223,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
           <Skeleton.Simple />
         </div>
       )}
-      <div ref={loader} />
+      <div ref={loader} className="fixed bottom-4 left-1/2 -translate-x-1/2" />
       {!isLoading && !fetching && !isSwitchingFilters && timeline.length === 0 && !isInitialLoad && (
         <ContentNotFound
           icon={<Icon.Smiley size="48" color="#C8FF00" />}

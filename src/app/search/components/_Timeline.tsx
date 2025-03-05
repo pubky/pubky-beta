@@ -92,7 +92,7 @@ export const Timeline = () => {
           <Skeleton.Simple />
         </div>
       )}
-      <div ref={loader} />
+      <div ref={loader} className="fixed bottom-4 left-1/2 -translate-x-1/2" />
       {!isLoading && !fetching && timeline.length === 0 && (
         <ContentNotFound
           icon={<Icon.Tag size="48" color="#C8FF00" />}
