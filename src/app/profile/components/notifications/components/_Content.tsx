@@ -1,52 +1,18 @@
 'use client';
 
 import { Content, Typography } from '@social/ui-shared';
-import { usePubkyClientContext } from '@/contexts';
 import { CreatePost, Header, HotTags, Sidebar, Skeleton, WhoFollow } from '@/components';
 import Notifications from './_Notification';
 import Root from './_Root';
 import { useState, useEffect } from 'react';
 import { NotificationView } from '@/types/User';
-import { useAppDispatch, useAppSelector } from '@/store';
-import {
-  selectNotifications,
-  selectNotificationsLoading,
-  fetchNotifications,
-  setTimestamp
-} from '@/store/slices/notifications';
+import { useAppSelector } from '@/store';
+import { selectNotifications, selectNotificationsLoading } from '@/store/slices/notifications';
 
 export default function Index() {
-  const dispatch = useAppDispatch();
-  const { putTimestampNotification, pubky, mutedUsers, notificationPreferences, timestamp } = usePubkyClientContext();
   const notifications = useAppSelector(selectNotifications);
   const loading = useAppSelector(selectNotificationsLoading);
   const [loadingNotifications, setLoadingNotifications] = useState(true);
-
-  useEffect(() => {
-    const updateTimestamp = async () => {
-      await putTimestampNotification();
-    };
-    updateTimestamp();
-  }, []);
-
-  useEffect(() => {
-    if (timestamp) {
-      dispatch(setTimestamp(timestamp));
-    }
-  }, [timestamp, dispatch]);
-
-  useEffect(() => {
-    if (pubky && notificationPreferences) {
-      dispatch(
-        fetchNotifications({
-          pubky,
-          mutedUsers,
-          notificationPreferences,
-          timestamp
-        })
-      );
-    }
-  }, [pubky, notificationPreferences, mutedUsers, timestamp, dispatch]);
 
   useEffect(() => {
     if (!loading) {

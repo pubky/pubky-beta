@@ -5,7 +5,7 @@ import { ContentNotFound, Skeleton } from '@/components';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { Icon } from '@social/ui-shared';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store';
 import {
   selectNotifications,
@@ -14,7 +14,8 @@ import {
   setSelectedFilter as setReduxSelectedFilter,
   fetchNotifications,
   loadMoreNotifications,
-  filterMap
+  filterMap,
+  setTimestamp
 } from '@/store/slices/notifications';
 
 export default function NotificationsProfile() {
@@ -25,17 +26,32 @@ export default function NotificationsProfile() {
   const { unReadNotification, setUnReadNotification } = useFilterContext();
   const [tempUnReadNotication, setTempUnReadNotification] = useState(0);
   const { putTimestampNotification, pubky, mutedUsers, notificationPreferences, timestamp } = usePubkyClientContext();
+  const hasInitialized = useRef(false);
+  const hasFetchedInitial = useRef(false);
+
+  const fetchNotificationsData = useCallback(() => {
+    if (!pubky || !notificationPreferences || !timestamp) return;
+
+    dispatch(
+      fetchNotifications({
+        pubky,
+        mutedUsers,
+        notificationPreferences,
+        timestamp
+      })
+    );
+  }, [pubky, notificationPreferences, mutedUsers, timestamp, dispatch]);
 
   const handleLoadMore = async () => {
-    if (pubky && notificationPreferences) {
-      dispatch(
-        loadMoreNotifications({
-          pubky,
-          mutedUsers,
-          notificationPreferences
-        })
-      );
-    }
+    if (!pubky || !notificationPreferences) return;
+
+    dispatch(
+      loadMoreNotifications({
+        pubky,
+        mutedUsers,
+        notificationPreferences
+      })
+    );
   };
 
   const loader = useInfiniteScroll(handleLoadMore, loadingNotifications);
@@ -46,30 +62,48 @@ export default function NotificationsProfile() {
 
   const displayedNotifications = filteredNotifications.slice(tempUnReadNotication);
 
+  // Efeito único para controlar todo o fluxo de inicialização e fetch
+  useEffect(() => {
+    const initialize = async () => {
+      // Se não temos as dependências necessárias, não fazemos nada
+      if (!pubky || !notificationPreferences) return;
+
+      // Se ainda não inicializamos, fazemos a inicialização
+      if (!hasInitialized.current) {
+        try {
+          await putTimestampNotification();
+          hasInitialized.current = true;
+        } catch (error) {
+          console.error('Error initializing notifications:', error);
+          return;
+        }
+      }
+
+      // Se temos um timestamp válido e ainda não fizemos o fetch inicial
+      if (timestamp && !hasFetchedInitial.current) {
+        dispatch(setTimestamp(timestamp));
+        hasFetchedInitial.current = true;
+        fetchNotificationsData();
+        return;
+      }
+
+      // Se já fizemos o fetch inicial e o filtro mudou
+      if (hasFetchedInitial.current && selectedFilter) {
+        fetchNotificationsData();
+      }
+    };
+
+    initialize();
+  }, [pubky, notificationPreferences, timestamp, selectedFilter, dispatch, fetchNotificationsData]);
+
+  // Efeito para lidar com notificações não lidas
   useEffect(() => {
     if (unReadNotification) {
       setTempUnReadNotification(unReadNotification);
       setTimeout(() => setTempUnReadNotification(0), 3000);
+      setUnReadNotification(0);
     }
-    setUnReadNotification(0);
-    const putTimestamp = async () => {
-      await putTimestampNotification();
-    };
-    putTimestamp();
-  }, []);
-
-  useEffect(() => {
-    if (pubky && notificationPreferences) {
-      dispatch(
-        fetchNotifications({
-          pubky,
-          mutedUsers,
-          notificationPreferences,
-          timestamp
-        })
-      );
-    }
-  }, [selectedFilter, pubky, notificationPreferences, mutedUsers, timestamp, dispatch]);
+  }, [unReadNotification, setUnReadNotification]);
 
   const handleFilterChange = (newFilter: typeof selectedFilter) => {
     dispatch(setReduxSelectedFilter(newFilter));
