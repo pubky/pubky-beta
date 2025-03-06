@@ -39,12 +39,23 @@ Cypress.Commands.add(
       }
     }
 
-    passInviteCode();
-
     cy.get('#onboarding-sign-up-link').click();
     cy.location('pathname').should('eq', '/onboarding/sign-up');
 
     cy.get('#onboarding-name-input').type(profileName);
+
+    // request invite code from homeserver and input it
+    cy.request({
+      method: 'GET',
+      url: 'http://localhost:6286/admin/generate_signup_token',
+      headers: {
+        'X-Admin-Password': 'admin'
+      }
+    }).then((response) => {
+      const inviteCode = response.body;
+      cy.get('#onboarding-token-input').type(inviteCode);
+    });
+
     profileBio ? cy.get('#onboarding-bio-input').type(profileBio) : null;
 
     cy.get('#onboarding-submit-button').click();
