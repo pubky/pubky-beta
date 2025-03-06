@@ -3,6 +3,7 @@ import { openModal as openModalAction, closeModal as closeModalAction, selectMod
 
 export function useModal() {
   const dispatch = useAppDispatch();
+  const modalState = useAppSelector((state) => state.modals);
 
   const openModal = (modalId: string, props: Record<string, any> = {}) => {
     dispatch(openModalAction({ modalId, props }));
@@ -12,7 +13,9 @@ export function useModal() {
     dispatch(closeModalAction(modalId));
   };
 
-  const isOpen = (modalId: string) => useAppSelector((state) => selectModalIsOpen(state, modalId));
+  const isOpen = (modalId: string) => {
+    return modalState[modalId]?.isOpen ?? false;
+  };
 
   return { openModal, closeModal, isOpen };
 }
