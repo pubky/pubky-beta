@@ -1,8 +1,6 @@
 // <reference types="cypress" />
 
 import { CheckIndexed, HasBackedUp, SkipOnboardingSlides } from './types/enums';
-import { passInviteCode } from './common';
-
 // ***********************************************
 // This example commands.ts shows you how to
 // create various custom commands and overwrite
@@ -103,7 +101,6 @@ Cypress.Commands.add('signIn', (backupFilepath: string, passcode = '123456') => 
   cy.location('pathname').then((currentPath) => {
     if (currentPath !== '/sign-in') {
       cy.visit('/sign-in');
-      passInviteCode();
     }
   });
 
@@ -373,14 +370,6 @@ Cypress.Commands.add('findFirstPostInFeedFiltered', (filterText, checkIndexed = 
 // useful for finding a specific post by index with optional filter text
 Cypress.Commands.add('findPostInFeed', (postIdx = 0, filterText?, checkIndexed = CheckIndexed.Yes) => {
   findPostInFeed(postIdx, filterText, checkIndexed);
-});
-
-// workaround for intermittent error seen in CI
-Cypress.Commands.add('mockInviteCodeApi', () => {
-  cy.intercept('POST', '/api/invite-code', {
-    statusCode: 200,
-    body: { valid: true } // Mock response body
-  }).as('mockInviteCode');
 });
 
 // To prevent Cypress from failing the test when running pubky-app with dev build:

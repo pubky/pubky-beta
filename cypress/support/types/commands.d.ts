@@ -35,7 +35,6 @@ declare global {
         filterText?: string,
         checkIndexed?: CheckIndexed
       ): Chainable<JQuery<HTMLElement>>;
-      mockInviteCodeApi(): Chainable<void>;
     }
   }
 }

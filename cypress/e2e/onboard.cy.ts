@@ -10,7 +10,6 @@ describe('onboarding', () => {
 
   beforeEach(() => {
     cy.deleteDownloadsFolder();
-    cy.mockInviteCodeApi();
   });
 
   it('can onboard as a new user, viewing onboarding slides, go to home and logout', () => {

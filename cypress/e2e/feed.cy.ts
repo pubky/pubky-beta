@@ -48,7 +48,6 @@ const profile4 = {
 describe('feed and filters', () => {
   before(() => {
     slowCypressDown();
-    cy.mockInviteCodeApi();
     cy.deleteDownloadsFolder();
 
     // * create profile 1 of 4 and post
@@ -102,10 +101,6 @@ describe('feed and filters', () => {
       });
     });
     cy.signOut(HasBackedUp.Yes);
-  });
-
-  beforeEach(() => {
-    cy.mockInviteCodeApi();
   });
 
   it('can filter to view all posts in the recent sorting order (default view)', () => {

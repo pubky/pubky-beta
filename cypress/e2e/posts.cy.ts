@@ -25,7 +25,6 @@ const username = 'Poster';
 describe('posts', () => {
   before(() => {
     slowCypressDown();
-    cy.mockInviteCodeApi();
     cy.deleteDownloadsFolder();
 
     // create profile to post from
@@ -37,7 +36,6 @@ describe('posts', () => {
   beforeEach(() => {
     // in case it gets changed by a test and not reset
     cy.slowDown(defaultMs);
-    cy.mockInviteCodeApi();
 
     // sign in if not already
     cy.location('pathname').then((currentPath) => {

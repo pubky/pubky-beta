@@ -14,7 +14,6 @@ const profile2 = { username: 'Notif #2', pubkyAlias: 'pubky_2' };
 describe('notifications', () => {
   before(() => {
     slowCypressDown();
-    cy.mockInviteCodeApi();
     cy.deleteDownloadsFolder();
 
     // * create profile 1
@@ -31,7 +30,6 @@ describe('notifications', () => {
   });
 
   beforeEach(() => {
-    cy.mockInviteCodeApi();
     // TODO: store pubkys as environment variables in before to avoid need to create from aliases here
     // Re-create the aliases in beforeEach
     cy.log('Re-creating aliases in beforeEach');
