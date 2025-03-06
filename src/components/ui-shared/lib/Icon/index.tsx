@@ -76,7 +76,8 @@ import {
   DotsThreeOutline,
   UploadSimple,
   SignOut,
-  SignIn
+  SignIn,
+  XCircle
 } from './_System';
 import {
   Android,
@@ -112,7 +113,7 @@ import {
 import { Asterisk, PaperPlaneRight, ChatCircleText, Broadcast, Envelope } from './_Communication';
 import { Activity } from './_Health';
 import { Fire } from './_Weather';
-import { Key, Lock, LockKeyOpen, Warning, Shield, Question, Flag, WarningOctagon } from './_Security';
+import { Key, Lock, LockKey, LockKeyOpen, Warning, Shield, Question, Flag, WarningOctagon } from './_Security';
 import { Synonym, Slashtags, Blocktank, Bitkit, Bitcoin, Tether, PubkyIcon } from './_Tag';
 
 export const Icon = {
@@ -184,6 +185,7 @@ export const Icon = {
   LoadingSpin,
   LineHorizontal,
   Lock,
+  LockKey,
   LockKeyOpen,
   Lightbulb,
   MagnifyingGlass,
@@ -245,5 +247,6 @@ export const Icon = {
   Warning,
   WarningOctagon,
   Youtube,
-  X
+  X,
+  XCircle
 };

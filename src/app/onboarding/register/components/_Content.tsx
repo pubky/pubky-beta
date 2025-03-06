@@ -124,7 +124,7 @@ export default function Index() {
     <Onboarding.Layout currentStep={3}>
       <Input.Cursor
         placeholder="Your Name"
-        className="h-14 text-[40px] font-bold sm:h-[106px] sm:text-[64px] placeholder:text-opacity-20"
+        className="h-auto text-[40px] font-bold sm:h-[106px] sm:text-[64px] placeholder:text-opacity-20"
         defaultValue={name}
         disabled={loading}
         maxLength={25}
