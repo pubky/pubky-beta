@@ -6,7 +6,6 @@ import { getUserNotifications } from '@/services/userService';
 interface NotificationsState {
   notifications: NotificationView[];
   loading: boolean;
-  selectedFilter: FilterNotificationPreferences;
   skip: number;
   limit: number;
   hasMore: boolean;
@@ -17,24 +16,11 @@ interface NotificationsState {
 const initialState: NotificationsState = {
   notifications: [],
   loading: false,
-  selectedFilter: 'all',
   skip: 0,
   limit: 30,
   hasMore: true,
   unreadCount: 0,
   timestamp: 0
-};
-
-export const filterMap: Record<FilterNotificationPreferences, string[]> = {
-  all: [],
-  follow: ['follow'],
-  new_friend: ['new_friend'],
-  tagged: ['tag_profile', 'tag_post'],
-  mention: ['mention'],
-  reply: ['reply'],
-  repost: ['repost'],
-  post_deleted: ['post_deleted'],
-  post_edited: ['post_edited']
 };
 
 const extractSenderPubky = (notification: BodyNotification) => {
@@ -73,8 +59,7 @@ export const fetchNotifications = createAsyncThunk(
       return (
         senderPubky &&
         !mutedUsers?.includes(senderPubky) &&
-        notificationPreferences[notification.body.type as keyof typeof notificationPreferences] &&
-        (selectedFilter === 'all' || filterMap[selectedFilter]?.includes(notification.body.type))
+        notificationPreferences[notification.body.type as keyof typeof notificationPreferences]
       );
     });
 
@@ -104,7 +89,7 @@ export const loadMoreNotifications = createAsyncThunk(
   'notifications/loadMore',
   async ({ pubky, mutedUsers = [], notificationPreferences = {} }: LoadMoreNotificationsParams, { getState }) => {
     const state = getState() as RootState;
-    const { skip, limit, selectedFilter } = state.notifications;
+    const { skip, limit } = state.notifications;
 
     const notifications = await getUserNotifications(pubky, undefined, undefined, skip + limit, limit);
 
@@ -114,8 +99,7 @@ export const loadMoreNotifications = createAsyncThunk(
       return (
         senderPubky &&
         !mutedUsers?.includes(senderPubky) &&
-        notificationPreferences[notification.body.type as keyof typeof notificationPreferences] &&
-        (selectedFilter === 'all' || filterMap[selectedFilter]?.includes(notification.body.type))
+        notificationPreferences[notification.body.type as keyof typeof notificationPreferences]
       );
     });
 
@@ -154,7 +138,7 @@ const notificationsSlice = createSlice({
       .addCase(fetchNotifications.fulfilled, (state, action) => {
         state.loading = false;
         state.notifications = action.payload.notifications;
-        state.hasMore = action.payload.notifications.length > 0;
+        state.hasMore = action.payload.notifications.length > 0 && action.payload.notifications.length >= state.limit;
 
         // Calculate unread count when we get new notifications
         if (state.timestamp) {
@@ -173,8 +157,9 @@ const notificationsSlice = createSlice({
       })
       .addCase(loadMoreNotifications.fulfilled, (state, action) => {
         state.loading = false;
-        state.notifications = [...state.notifications, ...action.payload.notifications];
-        state.hasMore = action.payload.notifications.length > 0;
+        state.notifications = [...state.notifications, ...action.payload];
+        state.hasMore = action.payload.length > 0 && action.payload.length >= state.limit;
+        state.skip = state.skip + state.limit;
       })
       .addCase(loadMoreNotifications.rejected, (state) => {
         state.loading = false;
@@ -187,7 +172,6 @@ export const { setSelectedFilter, setTimestamp, setUnreadCount, resetNotificatio
 // Selectors
 export const selectNotifications = (state: RootState) => state.notifications.notifications;
 export const selectNotificationsLoading = (state: RootState) => state.notifications.loading;
-export const selectSelectedFilter = (state: RootState) => state.notifications.selectedFilter;
 export const selectUnreadCount = (state: RootState) => state.notifications.unreadCount;
 export const selectHasMore = (state: RootState) => state.notifications.hasMore;
 export const selectTimestamp = (state: RootState) => state.notifications.timestamp;

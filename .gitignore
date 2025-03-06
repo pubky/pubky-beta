@@ -49,3 +49,6 @@ Thumbs.db
 cypress/download
 cypress/screenshots
 cypress/videos
+
+# Cursor
+.cursor.json
