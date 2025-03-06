@@ -3,13 +3,14 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Button, Icon, Input, Tooltip, Typography } from '@social/ui-shared';
-import { useAlertContext, useModal, usePubkyClientContext } from '@/contexts';
+import { useModal, usePubkyClientContext } from '@/contexts';
+import { useAlert } from '@/hooks/useAlert';
 import Link from 'next/link';
 
 export default function Account() {
   const router = useRouter();
   const { seed, mnemonic, downloadData, importData } = usePubkyClientContext();
-  const { addAlert } = useAlertContext();
+  const { addAlert } = useAlert();
   const { openModal } = useModal();
   const [fileName, setFileName] = useState('file.zip');
   const [loadingDownload, setLoadingDownload] = useState(false);

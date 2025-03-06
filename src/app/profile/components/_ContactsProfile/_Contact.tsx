@@ -3,13 +3,14 @@ import Link from 'next/link';
 import { ImageByUri } from '@/components/ImageByUri';
 import { Button, Icon, PostUtil, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useAlert } from '@/hooks/useAlert';
 import { useEffect, useState } from 'react';
 import { LoadingContacts } from '@/types';
 
 export default function Contact({ contacts, isLoading }: { contacts: UserView[] | undefined; isLoading: boolean }) {
   const { pubky, createTagProfile, deleteTagProfile, follow, unfollow } = usePubkyClientContext();
-  const { addAlert } = useAlertContext();
+  const { addAlert } = useAlert();
   const [loadingContacts, setLoadingContacts] = useState<LoadingContacts>({});
   const [followed, setFollowed] = useState<{ [pubky: string]: boolean }>({});
   const [profileTags, setProfileTags] = useState<{

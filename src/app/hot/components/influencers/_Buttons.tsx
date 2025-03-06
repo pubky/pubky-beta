@@ -2,7 +2,8 @@
 
 import { Button, Icon } from '@social/ui-shared';
 import { UserView } from '@/types/User';
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useAlert } from '@/hooks/useAlert';
 import { LoadingInfluencers } from './_MainContent';
 
 interface ButtonsProps {
@@ -25,7 +26,7 @@ export function Buttons({
   loadingInfluencers
 }: ButtonsProps) {
   const { follow, unfollow } = usePubkyClientContext();
-  const { addAlert } = useAlertContext();
+  const { addAlert } = useAlert();
 
   const followUser = async (pubkyFollow: string) => {
     try {

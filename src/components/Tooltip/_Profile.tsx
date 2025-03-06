@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { Icon, Tooltip, Post as PostUI, Button, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useAlert } from '@/hooks/useAlert';
 import { PostView } from '@/types/Post';
 import { UseUserFollowers, UseUserFollowing, useUserProfile } from '@/hooks/useUser';
 import { getUserDetails } from '@/services/userService';
@@ -17,7 +18,7 @@ interface ProfileProps {
 
 export default function Profile({ post, profileId }: ProfileProps) {
   const { pubky, follow, unfollow } = usePubkyClientContext();
-  const { addAlert } = useAlertContext();
+  const { addAlert } = useAlert();
   const [followingImages, setFollowingImages] = useState<{ alt: string; src: string }[]>([]);
   const [followersImages, setFollowersImages] = useState<{ alt: string; src: string }[]>([]);
   const idAuthor = post?.details?.author || profileId || '';

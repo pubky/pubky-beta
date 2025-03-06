@@ -21,6 +21,7 @@ import SocialLinks from './SocialLinks';
 import Toast from './Toast';
 import ProtectedRoutes from './ProtectedRoutes';
 import RemindBackup from './RemindBackup';
+import Alerts from './Alerts';
 
 export {
   Influencers,
@@ -45,5 +46,6 @@ export {
   SocialLinks,
   Toast,
   ProtectedRoutes,
-  RemindBackup
+  RemindBackup,
+  Alerts
 };

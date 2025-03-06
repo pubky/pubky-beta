@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import CreateContent from '../CreateContent';
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useAlert } from '@/hooks/useAlert';
 import { Button, Icon } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { PubkyAppPostKind } from 'pubky-app-specs';
@@ -14,7 +15,7 @@ interface CreateQuickPostProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export default function CreateQuickPost({ largeView = false, loadingFeed }: CreateQuickPostProps) {
   const { createPost } = usePubkyClientContext();
-  const { addAlert } = useAlertContext();
+  const { addAlert } = useAlert();
   const [contentPost, setContentPost] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [sendingPost, setSendingPost] = useState(false);

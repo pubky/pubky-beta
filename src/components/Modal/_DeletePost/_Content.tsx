@@ -1,8 +1,9 @@
 'use client';
 
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
-import { PostView } from '@/types/Post';
+import { usePubkyClientContext } from '@/contexts';
 import { Button, Icon, Modal, Typography } from '@social/ui-shared';
+import { useAlert } from '@/hooks/useAlert';
+import { PostView } from '@/types/Post';
 
 interface DeletePostProps {
   setShowModalDeletePost: React.Dispatch<React.SetStateAction<boolean>>;
@@ -12,7 +13,7 @@ interface DeletePostProps {
 
 export default function ContentDeletePost({ setShowModalDeletePost, setShowMenu, post }: DeletePostProps) {
   const { deletePost } = usePubkyClientContext();
-  const { addAlert } = useAlertContext();
+  const { addAlert } = useAlert();
 
   const handleDeletePost = async () => {
     try {

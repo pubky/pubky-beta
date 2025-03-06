@@ -1,5 +1,6 @@
 import { ImageByUri } from '@/components/ImageByUri';
-import { useAlertContext, useModal, usePubkyClientContext } from '@/contexts';
+import { useModal, usePubkyClientContext } from '@/contexts';
+import { useAlert } from '@/hooks/useAlert';
 import { Button, Card, Icon } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
 import * as jdenticon from 'jdenticon';
@@ -13,7 +14,7 @@ interface PicProps {
 
 export default function Pic({ image, setImage, loading }: PicProps) {
   const { pubky, profile } = usePubkyClientContext();
-  const { addAlert } = useAlertContext();
+  const { addAlert } = useAlert();
   const { openModal } = useModal();
   const [defaultImage, setDefaultImage] = useState<File | string>();
 

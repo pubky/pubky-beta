@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useAlert } from '@/hooks/useAlert';
 import { PostTag, PostView } from '@/types/Post';
 import { getUserProfile } from '@/services/userService';
 import { UserView } from '@/types/User';
@@ -10,7 +11,7 @@ import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 import { useTagsLogic } from '@/components/Post/Tags/components/TagsUtils';
 
 export const useUtilsTag = (post: PostView) => {
-  const { addAlert } = useAlertContext();
+  const { addAlert } = useAlert();
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const { handleAddTag, handleDeleteTag } = useTagsLogic(post);
   const [tag, setTag] = useState('');

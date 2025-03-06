@@ -6,7 +6,8 @@ import { useEffect, useState } from 'react';
 import { Button, Input, Icon, Typography } from '@social/ui-shared';
 import { Onboarding } from '../../components';
 import { Card } from '../Card';
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useAlert } from '@/hooks/useAlert';
 import { Links } from '@/types/Post';
 import { Utils } from '@social/utils-shared';
 import Link from 'next/link';
@@ -27,7 +28,7 @@ const profileSchema = z.object({
 
 export default function Index() {
   const { pubky, profile, saveProfile } = usePubkyClientContext();
-  const { addAlert } = useAlertContext();
+  const { addAlert } = useAlert();
 
   const router = useRouter();
 

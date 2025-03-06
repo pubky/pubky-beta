@@ -1,12 +1,13 @@
 import { Button, Icon, Input, Typography } from '@social/ui-shared';
 import { useEffect, useRef, useState } from 'react';
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { UserView } from '@/types/User';
 import Image from 'next/image';
 import { useStreamSearchUsersByUsername } from '@/hooks/useStream';
 import { Section } from '@/components/CreateContent/Section';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { useAlert } from '@/hooks/useAlert';
 
 interface CreateArticleProps {
   setShowModalArticle: React.Dispatch<React.SetStateAction<boolean>>;
@@ -18,7 +19,7 @@ export default function ContentCreateArticle({ setShowModalArticle, setShowModal
   const [isDragging, setIsDragging] = useState(false);
   const isMobile = useIsMobile();
   const [isError, setIsError] = useState(false);
-  const { addAlert } = useAlertContext();
+  const { addAlert } = useAlert();
   const [errorFile, setErrorFile] = useState('');
   const [contentTitle, setContentTitle] = useState('');
   const [contentArticle, setContentArticle] = useState('');

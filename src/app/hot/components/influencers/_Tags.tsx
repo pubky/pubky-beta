@@ -3,7 +3,8 @@
 import { Icon, PostUtil, Typography } from '@social/ui-shared';
 import { UserTags, UserView } from '@/types/User';
 import { Utils } from '@social/utils-shared';
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useAlert } from '@/hooks/useAlert';
 import { useEffect, useState } from 'react';
 
 interface TagsProps {
@@ -11,7 +12,7 @@ interface TagsProps {
 }
 
 export function Tags({ influencer }: TagsProps) {
-  const { addAlert } = useAlertContext();
+  const { addAlert } = useAlert();
   const { pubky, createTagProfile, deleteTagProfile } = usePubkyClientContext();
   const userPubky = influencer?.details?.id || pubky || '';
   const [profileTags, setProfileTags] = useState<UserTags[]>(influencer?.tags ?? []);

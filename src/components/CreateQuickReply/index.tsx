@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import CreateContent from '../CreateContent';
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
 import { Button, Icon } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { PostView } from '@/types/Post';
 import { parse_uri, PubkyAppPostKind } from 'pubky-app-specs';
+import { useAlert } from '@/hooks/useAlert';
 
 interface CreateQuickPostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -14,7 +15,7 @@ interface CreateQuickPostProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export default function CreateQuickReply({ post }: CreateQuickPostProps) {
   const { pubky, createReply, createTag } = usePubkyClientContext();
-  const { addAlert } = useAlertContext();
+  const { addAlert } = useAlert();
   const [contentReply, setContentReply] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [sendingReply, setSendingReply] = useState(false);
@@ -30,9 +31,6 @@ export default function CreateQuickReply({ post }: CreateQuickPostProps) {
 
   const handleReply = async (content: string) => {
     setSendingReply(true);
-    // const rootUri = post.relationships?.replied
-    //   ? post.relationships?.replied
-    //   : post?.details?.uri;
 
     const sendReply = await createReply(post?.details?.uri, content, PubkyAppPostKind.Short, selectedFiles, quote);
 

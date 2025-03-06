@@ -7,7 +7,8 @@ import { useEffect, useState } from 'react';
 import { TLayouts, TSize } from '@/types';
 import { PostView } from '@/types/Post';
 import { Utils } from '@social/utils-shared';
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useAlert } from '@/hooks/useAlert';
 import { useUserProfile } from '@/hooks/useUser';
 import { getPost } from '@/services/postService';
 
@@ -52,7 +53,7 @@ export default function Post({
 }: PostProps) {
   const router = useRouter();
   const { pubky, deletePost } = usePubkyClientContext();
-  const { addAlert } = useAlertContext();
+  const { addAlert } = useAlert();
   const isMobile = useIsMobile();
   const { data } = useUserProfile(post?.details?.author, pubky ?? '');
   const [showModalTag, setShowModalTag] = useState(false);

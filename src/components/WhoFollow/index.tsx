@@ -3,14 +3,15 @@
 import { Icon, SideCard, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import Skeletons from '../Skeletons';
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useAlert } from '@/hooks/useAlert';
 import { useEffect, useState } from 'react';
 import { useStreamUsers } from '@/hooks/useStream';
 import Link from 'next/link';
 
 export default function WhoFollow() {
   const { pubky, follow, unfollow } = usePubkyClientContext();
-  const { addAlert } = useAlertContext();
+  const { addAlert } = useAlert();
   const { data: recommendedProfiles, isLoading } = useStreamUsers(pubky ?? '', pubky ?? '', 'recommended', 0, 3);
 
   const [loading, setLoading] = useState<{

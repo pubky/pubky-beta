@@ -1,20 +1,22 @@
 import { configureStore } from '@reduxjs/toolkit';
 import notificationsReducer from './slices/notifications';
+import alertsReducer from './slices/alerts';
 
 export const store = configureStore({
   reducer: {
-    notifications: notificationsReducer
+    notifications: notificationsReducer,
+    alerts: alertsReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: false // Desabilitando temporariamente para lidar com possíveis objetos não serializáveis
+      serializableCheck: false // Temporarily disabled to handle possible non-serializable objects
     })
 });
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
-// Hooks tipados para usar em vez de useDispatch e useSelector
+// Typed hooks to use instead of useDispatch and useSelector
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 export const useAppDispatch: () => AppDispatch = useDispatch;
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;

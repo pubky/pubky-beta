@@ -1,6 +1,7 @@
 import { Button, Icon } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useAlert } from '@/hooks/useAlert';
 import { PostView } from '@/types/Post';
 import CreateContent from '@/components/CreateContent';
 import { Utils } from '@/components/utils-shared';
@@ -14,7 +15,7 @@ interface CreateEditPostProps {
 
 export default function ContentEditPost({ setShowModalEditPost, post, setShowMenu, className }: CreateEditPostProps) {
   const { editPost } = usePubkyClientContext();
-  const { addAlert } = useAlertContext();
+  const { addAlert } = useAlert();
   const [contentEditPost, setContentEditPost] = useState('');
   const [sendingEditPost, setSendingEditPost] = useState(false);
   const [isValidContent, setIsValidContent] = useState(false);

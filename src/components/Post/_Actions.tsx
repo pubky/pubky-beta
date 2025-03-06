@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { Icon, Button, Post as PostUI } from '@social/ui-shared';
-import { useAlertContext, useModal, usePubkyClientContext, useToastContext } from '@/contexts';
+import { useModal, usePubkyClientContext, useToastContext } from '@/contexts';
+import { useAlert } from '@/hooks/useAlert';
 import { PostView } from '@/types/Post';
 import { useUserProfile } from '@/hooks/useUser';
 import { useIsMobile } from '@/hooks/useIsMobile';
@@ -84,7 +85,7 @@ const MenuButton = ({ post, repost }: { post: PostView; repost?: PostView }) => 
 
 export default function Actions({ post, repost, deleteRepost = false }: PostProps) {
   const { pubky } = usePubkyClientContext();
-  const { addAlert } = useAlertContext();
+  const { addAlert } = useAlert();
   const { openModal, isOpen } = useModal();
   const { data: author } = useUserProfile(post?.details?.author, pubky ?? '');
   const { data: authorRepost } = useUserProfile(repost?.details?.author ?? '', pubky ?? '');

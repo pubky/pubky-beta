@@ -1,7 +1,8 @@
 import { Button, Icon } from '@social/ui-shared';
 
 import { useEffect, useState } from 'react';
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useAlert } from '@/hooks/useAlert';
 import { PostView } from '@/types/Post';
 import CreateContent from '@/components/CreateContent';
 import { Utils } from '@/components/utils-shared';
@@ -20,7 +21,7 @@ export default function ContentEditArticle({
   className
 }: CreateEditArticleProps) {
   const { editPost } = usePubkyClientContext();
-  const { addAlert } = useAlertContext();
+  const { addAlert } = useAlert();
   const [isError, setIsError] = useState(false);
   const [initTitle, setInitTitle] = useState('');
   const [contentEditArticle, setContentEditArticle] = useState('');

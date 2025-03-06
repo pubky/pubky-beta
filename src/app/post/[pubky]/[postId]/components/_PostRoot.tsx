@@ -7,12 +7,13 @@ import Participants from './_Participants';
 import Replies from './_Replies';
 import CreateContent from '@/components/CreateContent';
 import { PostView } from '@/types/Post';
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useAlert } from '@/hooks/useAlert';
 import { parse_uri, PubkyAppPostKind } from 'pubky-app-specs';
 
 export default function PostRoot({ post }: { uri: string; post: PostView }) {
   const { pubky, createReply, createTag } = usePubkyClientContext();
-  const { addAlert } = useAlertContext();
+  const { addAlert } = useAlert();
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [isValidContent, setIsValidContent] = useState(false);

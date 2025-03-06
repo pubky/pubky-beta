@@ -1,5 +1,6 @@
 import { ImageByUri } from '@/components/ImageByUri';
-import { useAlertContext, useModal } from '@/contexts';
+import { useModal } from '@/contexts';
+import { useAlert } from '@/hooks/useAlert';
 import { Button, Card, Icon } from '@social/ui-shared';
 
 interface PicProps {
@@ -9,7 +10,7 @@ interface PicProps {
 }
 
 export default function Pic({ image, setImage, defaultImage }: PicProps) {
-  const { addAlert } = useAlertContext();
+  const { addAlert } = useAlert();
   const { openModal } = useModal();
 
   const handleUploadImage = () => {

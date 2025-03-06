@@ -1,7 +1,8 @@
 'use client';
 
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Button, Icon, Modal, Typography } from '@social/ui-shared';
+import { usePubkyClientContext } from '@/contexts';
+import { useAlert } from '@/hooks/useAlert';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -12,7 +13,7 @@ interface DeleteAccountProps {
 export default function ContentDeleteAccount({ setShowModalDeleteAccount }: DeleteAccountProps) {
   const { deleteAccount } = usePubkyClientContext();
   const router = useRouter();
-  const { addAlert } = useAlertContext();
+  const { addAlert } = useAlert();
   const [deleteProgress, setDeleteProgress] = useState(0);
   const [deletingAccount, setDeletingAccount] = useState(false);
 

@@ -1,5 +1,5 @@
 import { Button, Icon } from '@social/ui-shared';
-import { useAlertContext, useModal, usePubkyClientContext, useToastContext } from '@/contexts';
+import { useModal, usePubkyClientContext, useToastContext } from '@/contexts';
 import { useRouter } from 'next/navigation';
 import { Utils } from '@social/utils-shared';
 import Tooltip from '@/components/Tooltip';
@@ -7,6 +7,7 @@ import { UserView } from '@/types/User';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { useAlert } from '@/hooks/useAlert';
 
 interface ButtonsProps extends React.HTMLAttributes<HTMLDivElement> {
   creatorPubky: string | null | undefined;
@@ -35,7 +36,7 @@ export default function Buttons({
   const { openModal } = useModal();
   const isMobile = useIsMobile();
   const { addToast } = useToastContext();
-  const { addAlert } = useAlertContext();
+  const { addAlert } = useAlert();
   const router = useRouter();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 

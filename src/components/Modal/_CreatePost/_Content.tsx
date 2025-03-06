@@ -1,7 +1,8 @@
 import { Button, Icon } from '@social/ui-shared';
 
 import { useEffect, useState } from 'react';
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useAlert } from '@/hooks/useAlert';
 import { Utils } from '@social/utils-shared';
 import CreateContent from '@/components/CreateContent';
 import { PubkyAppPostKind } from 'pubky-app-specs';
@@ -13,7 +14,7 @@ interface CreatePostProps {
 
 export default function ContentCreatePost({ setShowModalPost, className }: CreatePostProps) {
   const { createPost } = usePubkyClientContext();
-  const { addAlert } = useAlertContext();
+  const { addAlert } = useAlert();
   const [contentPost, setContentPost] = useState('');
   const [sendingPost, setSendingPost] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);

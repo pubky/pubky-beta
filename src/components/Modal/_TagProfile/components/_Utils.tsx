@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { UserTags, UserView } from '@/types/User';
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useAlert } from '@/hooks/useAlert';
 import { getUserProfile } from '@/services/userService';
 import { PostTag } from '@/types/Post';
 import { useTagsUser } from '@/hooks/useTag';
@@ -19,7 +20,7 @@ interface UtilsProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const useUtilsTag = ({ profileTags, setProfileTags, pubkyUser, user }: UtilsProps) => {
   const { pubky, follow, unfollow, createTagProfile, deleteTagProfile } = usePubkyClientContext();
-  const { addAlert } = useAlertContext();
+  const { addAlert } = useAlert();
   const [tag, setTag] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 

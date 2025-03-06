@@ -1,6 +1,7 @@
 import { Button, Icon } from '@social/ui-shared';
 import { useState } from 'react';
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useAlert } from '@/hooks/useAlert';
 import { Utils } from '@social/utils-shared';
 
 import { PostView } from '@/types/Post';
@@ -16,7 +17,7 @@ interface CreateRepostProps {
 
 export default function ContentCreateRepost({ setShowModalRepost, post, className }: CreateRepostProps) {
   const { pubky, createRepost, createTag } = usePubkyClientContext();
-  const { addAlert } = useAlertContext();
+  const { addAlert } = useAlert();
   const [contentRepost, setContentRepost] = useState('');
   const [isValidContent, setIsValidContent] = useState(false);
   const [sendingRepost, setSendingRepost] = useState(false);

@@ -3,7 +3,8 @@ import { Utils } from '@social/utils-shared';
 import Tooltip from '@/components/Tooltip';
 import Parsing from '@/components/Content/_Parsing';
 import { ImageByUri } from '@/components/ImageByUri';
-import { useAlertContext, useModal, usePubkyClientContext } from '@/contexts';
+import { useModal, usePubkyClientContext } from '@/contexts';
+import { useAlert } from '@/hooks/useAlert';
 import { UserView } from '@/types/User';
 
 interface UserInfoProps {
@@ -40,7 +41,7 @@ export default function UserInfo({
   setLoadingFollowed
 }: UserInfoProps) {
   const { pubky, follow, unfollow } = usePubkyClientContext();
-  const { addAlert } = useAlertContext();
+  const { addAlert } = useAlert();
   const { openModal } = useModal();
 
   const followUser = async () => {

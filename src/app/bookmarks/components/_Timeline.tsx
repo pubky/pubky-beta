@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Button, Icon } from '@social/ui-shared';
-import { useAlertContext, useFilterContext, usePubkyClientContext } from '@/contexts';
+import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useStreamPost } from '@/hooks/useStream';
 import { PostView } from '@/types/Post';
@@ -10,11 +10,12 @@ import { ContentNotFound, Post, Skeleton } from '@/components';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useAlert } from '@/hooks/useAlert';
 
 export const Timeline = () => {
   const limit = 10;
   const { pubky, addBookmark, deleteBookmark } = usePubkyClientContext();
-  const { addAlert } = useAlertContext();
+  const { addAlert } = useAlert();
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [start, setStart] = useState<number | undefined>(undefined);
   const [skip, setSkip] = useState<number>(0);

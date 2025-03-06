@@ -1,7 +1,8 @@
 import { Button, Icon } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
 
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useAlert } from '@/hooks/useAlert';
 import { Utils } from '@social/utils-shared';
 import { PostView } from '@/types/Post';
 import Post from '@/components/Post';
@@ -16,7 +17,7 @@ interface CreateReplyProps {
 
 export default function ContentCreateReply({ setShowModalReply, post, className }: CreateReplyProps) {
   const { pubky, createReply, createTag } = usePubkyClientContext();
-  const { addAlert } = useAlertContext();
+  const { addAlert } = useAlert();
   const [contentReply, setContentReply] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);

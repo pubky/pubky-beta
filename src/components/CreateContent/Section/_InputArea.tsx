@@ -2,7 +2,7 @@
 
 import { Icon, Input } from '@social/ui-shared';
 import { useState } from 'react';
-import { useAlertContext } from '@/contexts';
+import { useAlert } from '@/hooks/useAlert';
 import Modal from '../../Modal';
 import { Utils } from '@social/utils-shared';
 import { UserView } from '@/types/User';
@@ -57,7 +57,7 @@ export default function InputArea({
   setCharCountArticle
 }: InputAreaProps) {
   const [isDragging, setIsDragging] = useState(false);
-  const { addAlert } = useAlertContext();
+  const { addAlert } = useAlert();
 
   const handleDragEnter = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();

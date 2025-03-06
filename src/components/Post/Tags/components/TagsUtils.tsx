@@ -2,7 +2,8 @@
 import { useState, useEffect, useRef } from 'react';
 
 import { PostTag, PostView } from '@/types/Post';
-import { useAlertContext, useModal, usePubkyClientContext } from '@/contexts';
+import { useModal, usePubkyClientContext } from '@/contexts';
+import { useAlert } from '@/hooks/useAlert';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { getUserProfile } from '@/services/userService';
@@ -15,7 +16,7 @@ export const useTagsLogic = (post: PostView) => {
   const [profileImages, setProfileImages] = useState({});
   const [addTagInput, setAddTagInput] = useState<boolean>(false);
   const { pubky, setTimeline, createTag, deleteTag } = usePubkyClientContext();
-  const { addAlert } = useAlertContext();
+  const { addAlert } = useAlert();
   const { openModal } = useModal();
   const isMobile = useIsMobile();
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
