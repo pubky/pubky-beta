@@ -60,7 +60,7 @@ export default function TagsLargeView({ post }: TagsProps) {
           </TooltipUI.Root>
         )}
       </div>
-      <div className="flex-col inline-flex gap-2 overflow-y-auto max-h-[280px] scrollbar-thin scrollbar-webkit">
+      <div className="flex-col inline-flex gap-0.5 overflow-y-auto max-h-[280px] scrollbar-thin scrollbar-webkit">
         {tags.map((tagObj, index) => {
           const isTagFound = tagObj?.relationship || false;
 
@@ -143,7 +143,7 @@ export default function TagsLargeView({ post }: TagsProps) {
                               style={{
                                 top: `${tooltipPosition.top}px`,
                                 left: `${tooltipPosition.left}px`,
-                                transform: 'translateX(-50%)' // Per centrare esattamente sopra l'immagine
+                                transform: 'translateX(-50%)'
                               }}
                             >
                               <Tooltip.Profile profileId={taggers[imageIndex]} />

@@ -146,7 +146,13 @@ export default function Actions({ post, repost, deleteRepost = false }: PostProp
 
     if (!isBookmarked) {
       addToast(
-        `This post by ${repost ? authorRepost?.details?.name : author?.details?.name} was saved to your bookmarks.`,
+        <>
+          This post by{' '}
+          <span className="text-opacity-100 font-bold">
+            {repost ? authorRepost?.details?.name : author?.details?.name}
+          </span>{' '}
+          was saved to your bookmarks.
+        </>,
         'bookmark'
       );
     }

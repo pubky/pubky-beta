@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { Button, Content, Header, Icon, Typography } from '@social/ui-shared';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import Link from 'next/link';
@@ -9,8 +10,10 @@ export default function Index() {
   const { logout } = usePubkyClientContext();
   const { resetDefault } = useFilterContext();
 
-  resetDefault();
-  logout();
+  useEffect(() => {
+    resetDefault();
+    logout();
+  }, []);
 
   return (
     <Content.Main className="sm:pt-[125px]">
@@ -37,7 +40,7 @@ export default function Index() {
           </div>
         </div>
         <div className="flex-col justify-center items-center flex">
-          <Link href={'/sign-in'} className="w-full sm:w-[154px]" id="logout-link">
+          <Link href="/sign-in" className="w-full sm:w-[154px]" id="logout-link">
             <Button.Large id="sign-back-in-btn" variant="secondary" icon={<Icon.Key size="16" />}>
               Sign back in
             </Button.Large>
