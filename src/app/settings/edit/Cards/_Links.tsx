@@ -1,5 +1,5 @@
 import { socialLinks } from '@/app/profile/components/Sidebar/_LinksSection';
-import { useModal } from '@/contexts';
+import { useModal } from '@/hooks/useModal';
 import { Button, Card, Icon, Input } from '@social/ui-shared';
 
 interface Errors {

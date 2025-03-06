@@ -1,4 +1,4 @@
-import { useModal } from '@/contexts';
+import { useModal } from '@/hooks/useModal';
 import { Icon, Tooltip } from '@social/ui-shared';
 
 interface ReportProfileProps {

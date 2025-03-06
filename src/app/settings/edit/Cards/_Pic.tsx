@@ -1,5 +1,6 @@
 import { ImageByUri } from '@/components/ImageByUri';
-import { useModal, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useModal } from '@/hooks/useModal';
 import { useAlert } from '@/hooks/useAlert';
 import { Button, Card, Icon } from '@social/ui-shared';
 import { useEffect, useState } from 'react';

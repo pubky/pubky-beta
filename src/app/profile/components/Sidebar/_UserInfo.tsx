@@ -3,7 +3,8 @@ import { Utils } from '@social/utils-shared';
 import Tooltip from '@/components/Tooltip';
 import Parsing from '@/components/Content/_Parsing';
 import { ImageByUri } from '@/components/ImageByUri';
-import { useModal, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useModal } from '@/hooks/useModal';
 import { useAlert } from '@/hooks/useAlert';
 import { UserView } from '@/types/User';
 

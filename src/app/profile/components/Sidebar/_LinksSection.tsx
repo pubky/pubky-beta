@@ -1,4 +1,4 @@
-import { useModal } from '@/contexts';
+import { useModal } from '@/hooks/useModal';
 import { Icon, SideCard, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import Link from 'next/link';

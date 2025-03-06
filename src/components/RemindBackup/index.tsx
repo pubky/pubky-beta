@@ -3,7 +3,8 @@
 import { Button, Icon, Typography } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
 import { Utils } from '@social/utils-shared';
-import { useModal, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useModal } from '@/hooks/useModal';
 
 export default function RemindBackup() {
   const { seed, profile, mnemonic } = usePubkyClientContext();

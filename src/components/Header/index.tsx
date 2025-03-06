@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Header as HeaderUI, Input, Icon, Button, PostUtil } from '@social/ui-shared';
-import { useFilterContext, usePubkyClientContext, useModal } from '@/contexts';
+import { useFilterContext, usePubkyClientContext } from '@/contexts';
+import { useModal } from '@/hooks/useModal';
 import { ImageByUri } from '../ImageByUri';
 import { usePathname, useRouter } from 'next/navigation';
 import Modal from '../Modal';

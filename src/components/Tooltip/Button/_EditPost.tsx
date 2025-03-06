@@ -1,5 +1,6 @@
 import { Icon, Tooltip } from '@social/ui-shared';
-import { useModal, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useModal } from '@/hooks/useModal';
 import { PostView } from '@/types/Post';
 import { PubkyAppPostKind } from 'pubky-app-specs';
 

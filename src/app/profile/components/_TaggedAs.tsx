@@ -2,7 +2,8 @@
 
 import { ContentNotFound, Skeleton } from '@/components';
 import { useUserProfile } from '@/hooks/useUser';
-import { useModal, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useModal } from '@/hooks/useModal';
 import { UserTags } from '@/types/User';
 import { Button, Icon, PostUtil, SideCard, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';

@@ -1,7 +1,8 @@
 'use client';
 
 import * as Components from '@/components';
-import { useModal, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useModal } from '@/hooks/useModal';
 import { Icon } from '@social/ui-shared';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';

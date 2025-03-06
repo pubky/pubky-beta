@@ -1,7 +1,8 @@
 'use client';
 
 import { Button, Icon, SideCard } from '@social/ui-shared';
-import { useFilterContext, useModal, usePubkyClientContext } from '@/contexts';
+import { useFilterContext, usePubkyClientContext } from '@/contexts';
+import { useModal } from '@/hooks/useModal';
 import { ICustomFeed } from '@/types';
 import { useEffect, useState } from 'react';
 import { Utils } from '@social/utils-shared';

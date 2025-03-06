@@ -5,7 +5,8 @@ import { useEffect, useState } from 'react';
 import { Button, Icon, Tooltip, Typography } from '@social/ui-shared';
 import { Onboarding } from '../../components';
 import Image from 'next/image';
-import { useModal, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useModal } from '@/hooks/useModal';
 
 export default function Index() {
   const { seed, mnemonic } = usePubkyClientContext();

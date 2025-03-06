@@ -3,7 +3,8 @@
 import { useRouter } from 'next/navigation';
 import { Icon, Typography } from '@social/ui-shared';
 import { Skeleton } from '@/components';
-import { useModal, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useModal } from '@/hooks/useModal';
 import { UserCounts } from '@/types/User';
 import { useAppSelector } from '@/store';
 import { selectUnreadCount } from '@/store/slices/notifications';

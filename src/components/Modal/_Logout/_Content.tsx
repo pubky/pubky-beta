@@ -1,6 +1,6 @@
 'use client';
 
-import { useModal } from '@/contexts';
+import { useModal } from '@/hooks/useModal';
 import { Button, Icon, Modal, Typography } from '@social/ui-shared';
 import Link from 'next/link';
 

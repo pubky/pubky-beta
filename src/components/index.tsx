@@ -23,6 +23,7 @@ import ProtectedRoutes from './ProtectedRoutes';
 import RemindBackup from './RemindBackup';
 import Alerts from './Alerts';
 import Toasts from './Toasts';
+import Modals from './Modals';
 
 export {
   Influencers,
@@ -49,5 +50,6 @@ export {
   ProtectedRoutes,
   RemindBackup,
   Alerts,
-  Toasts
+  Toasts,
+  Modals
 };

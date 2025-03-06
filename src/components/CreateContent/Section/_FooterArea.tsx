@@ -2,7 +2,7 @@
 
 import { Button, Icon, Input, Post, PostUtil, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
-import { useModal } from '@/contexts';
+import { useModal } from '@/hooks/useModal';
 import { useAlert } from '@/hooks/useAlert';
 import { useRef, useState } from 'react';
 import EmojiPicker from '@/components/EmojiPicker';

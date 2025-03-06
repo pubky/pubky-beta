@@ -2,7 +2,8 @@
 import { useState, useEffect, useRef } from 'react';
 
 import { PostTag, PostView } from '@/types/Post';
-import { useModal, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useModal } from '@/hooks/useModal';
 import { useAlert } from '@/hooks/useAlert';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 import { useIsMobile } from '@/hooks/useIsMobile';

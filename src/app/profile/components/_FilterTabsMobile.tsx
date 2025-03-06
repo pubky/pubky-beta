@@ -1,7 +1,8 @@
 'use client';
 
 import { Icon, Typography } from '@social/ui-shared';
-import { useModal, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useModal } from '@/hooks/useModal';
 import { UserCounts } from '@/types/User';
 import { useRouter } from 'next/navigation';
 import { useAppSelector } from '@/store';

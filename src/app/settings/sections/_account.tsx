@@ -3,7 +3,8 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Button, Icon, Input, Tooltip, Typography } from '@social/ui-shared';
-import { useModal, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useModal } from '@/hooks/useModal';
 import { useAlert } from '@/hooks/useAlert';
 import Link from 'next/link';
 

@@ -1,5 +1,5 @@
 import { ImageByUri } from '@/components/ImageByUri';
-import { useModal } from '@/contexts';
+import { useModal } from '@/hooks/useModal';
 import { useAlert } from '@/hooks/useAlert';
 import { Button, Card, Icon } from '@social/ui-shared';
 

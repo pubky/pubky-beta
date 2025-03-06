@@ -1,6 +1,7 @@
 import { Skeleton } from '@/components';
 import { useUtilsTag } from '@/components/Modal/_TagProfile/components/_Utils';
-import { useModal, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useModal } from '@/hooks/useModal';
 import { UserTags, UserView } from '@/types/User';
 import { Button, Icon, PostUtil, SideCard, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';

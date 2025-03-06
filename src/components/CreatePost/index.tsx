@@ -1,7 +1,8 @@
 'use client';
 
 import { Button } from '@social/ui-shared';
-import { usePubkyClientContext, useModal } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useModal } from '@/hooks/useModal';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import useIsScrollup from '@/hooks/useIsScrollUp';
 

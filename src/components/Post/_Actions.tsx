@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { Icon, Button, Post as PostUI } from '@social/ui-shared';
-import { useModal, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useModal } from '@/hooks/useModal';
 import { useToast } from '@/hooks/useToast';
 import { useAlert } from '@/hooks/useAlert';
 import { PostView } from '@/types/Post';

@@ -3,7 +3,8 @@
 import { SideCard, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { ImageByUri } from '../ImageByUri';
-import { useModal, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useModal } from '@/hooks/useModal';
 import Link from 'next/link';
 
 export default function Feedback() {

@@ -1,6 +1,7 @@
 'use client';
 
-import { useModal, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useModal } from '@/hooks/useModal';
 import { useRouter, usePathname } from 'next/navigation';
 import NextTopLoader from 'nextjs-toploader';
 import React, { useEffect, useState } from 'react';

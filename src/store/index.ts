@@ -2,12 +2,14 @@ import { configureStore } from '@reduxjs/toolkit';
 import notificationsReducer from './slices/notifications';
 import alertsReducer from './slices/alerts';
 import toastsReducer from './slices/toasts';
+import modalsReducer from './slices/modals';
 
 export const store = configureStore({
   reducer: {
     notifications: notificationsReducer,
     alerts: alertsReducer,
-    toasts: toastsReducer
+    toasts: toastsReducer,
+    modals: modalsReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

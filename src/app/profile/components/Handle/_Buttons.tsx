@@ -1,5 +1,6 @@
 import { Button, Icon } from '@social/ui-shared';
-import { useModal, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useModal } from '@/hooks/useModal';
 import { useRouter } from 'next/navigation';
 import { Utils } from '@social/utils-shared';
 import Tooltip from '@/components/Tooltip';

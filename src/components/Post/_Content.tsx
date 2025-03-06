@@ -14,7 +14,7 @@ import { Spotify } from 'react-spotify-embed';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import Link from 'next/link';
 import { PubkyAppPostKind } from 'pubky-app-specs';
-import { useModal } from '@/contexts';
+import { useModal } from '@/hooks/useModal';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
