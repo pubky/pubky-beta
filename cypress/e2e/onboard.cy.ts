@@ -64,7 +64,6 @@ describe('onboarding', () => {
     cy.get('#onboarding-create-account-btn').click();
     cy.location('pathname').should('eq', '/onboarding/intro');
 
-
     cy.get('#onboarding-skip-intro-btn').click();
 
     cy.get('#onboarding-sign-up-link').click();

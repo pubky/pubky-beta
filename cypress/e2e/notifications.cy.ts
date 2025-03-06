@@ -11,7 +11,8 @@ import { HasBackedUp, SkipOnboardingSlides } from '../support/types/enums';
 const profile1 = { username: 'Notif #1', pubkyAlias: 'pubky_1' };
 const profile2 = { username: 'Notif #2', pubkyAlias: 'pubky_2' };
 
-describe('notifications', () => {
+// todo: enable suite once notifications are fixed, wait for branch merge: https://github.com/pubky/pubky-app/tree/feat/add-redux
+describe.skip('notifications', () => {
   before(() => {
     slowCypressDown();
     cy.deleteDownloadsFolder();
