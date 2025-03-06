@@ -260,12 +260,12 @@ describe('feed and filters', () => {
     // function to add a tag when creating a custom feed
     const addTag = (name: string) => {
       // type the tag name
-      cy.get('#create-feed-tag-input').type(name);
+      cy.get('#create-feed-add-tag-input').type(name);
       // check the add tag button is visible and click it
-      cy.get('#add-tag-btn').should('be.visible').click();
+      cy.get('#create-feed-add-tag-btn').should('be.visible').click();
       // check the add tag button is not visible
-      cy.get('#create-feed-tag-input').then(($body) => {
-        assert($body.find('#add-tag-btn').length === 0, 'Add tag button should not exist.');
+      cy.get('#create-feed-add-tag-input').then(($body) => {
+        assert($body.find('#create-feed-add-tag-btn').length === 0, 'Add tag button should not exist.');
       });
     };
 

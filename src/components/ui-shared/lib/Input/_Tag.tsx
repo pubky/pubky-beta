@@ -2,9 +2,9 @@ import { Icon } from '../../index';
 
 export interface InputTagProps {
   /**
-   * The id of the tag input
+   * The id prefix of the tag elements
    */
-  id?: string;
+  idPrefix?: string;
   /**
    * The current value of the tag input
    */
@@ -80,7 +80,7 @@ export interface InputTagProps {
 }
 
 export const Tag = ({
-  id,
+  idPrefix,
   value,
   onChange,
   onAddTag,
@@ -125,7 +125,7 @@ export const Tag = ({
       className={`flex items-center ${containerSizeClasses} border border-white border-opacity-30 border-dashed bg-transparent ${className}`}
     >
       <input
-        id={id}
+        id={idPrefix ? `${idPrefix}-add-tag-input` : 'add-tag-input'}
         ref={ref}
         type="text"
         placeholder="tag"
@@ -146,7 +146,7 @@ export const Tag = ({
               </div>
             ) : (
               <div
-                id="add-tag-btn"
+                id={idPrefix ? `${idPrefix}-add-tag-btn` : 'add-tag-btn'}
                 onClick={!disabled && !loading ? () => onAddTag(value) : undefined}
                 className={`cursor-pointer ${buttonClasses} ${loading ? 'opacity-50' : 'opacity-80 hover:opacity-100'}`}
               >
@@ -158,7 +158,7 @@ export const Tag = ({
 
         {showEmojiPicker && onEmojiPickerClick && (
           <div
-            id="emoji-picker-btn"
+            id={idPrefix ? `${idPrefix}-emoji-picker-btn` : 'emoji-picker-btn'}
             onClick={!disabled && !loading ? onEmojiPickerClick : undefined}
             className={`${variant === 'small' ? 'hidden mr-1 lg:flex' : 'hidden ml-2 lg:flex'} cursor-pointer ${buttonClasses} opacity-80 hover:opacity-100`}
           >
@@ -168,7 +168,7 @@ export const Tag = ({
 
         {showCloseButton && onClose && (
           <div
-            id="close-tag-btn"
+            id={idPrefix ? `${idPrefix}-close-tag-btn` : 'close-tag-btn'}
             onClick={onClose}
             className={`cursor-pointer ${buttonClasses} opacity-80 hover:opacity-100`}
           >

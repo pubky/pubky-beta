@@ -113,7 +113,7 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
               </>
             )}
             <Input.Tag
-              id="create-feed-tag-input"
+              idPrefix="create-feed"
               value={tag}
               onChange={(value) => setTag(value)}
               onAddTag={handleAddTag}
