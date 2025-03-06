@@ -1,5 +1,5 @@
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
-import { useFilterContext } from '@/contexts';
+import { useFilters } from '@/hooks/useFilters';
 
 const icons = {
   following: <Icon.UsersRight />,
@@ -15,7 +15,7 @@ interface ContentReachProps {
 }
 
 export default function ContentReach({ setDropdownValue, setOpenDropdown }: ContentReachProps) {
-  const { reach, setReach } = useFilterContext();
+  const { reach, setReach } = useFilters();
 
   return (
     <>

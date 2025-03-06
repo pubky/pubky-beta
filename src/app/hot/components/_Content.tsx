@@ -8,14 +8,15 @@ import Filter from '@/components/Filter';
 import { useHotTags } from '@/hooks/useTag';
 import React, { useEffect, useState } from 'react';
 import { useStreamUsers } from '@/hooks/useStream';
-import { useFilterContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useFilters } from '@/hooks/useFilters';
 import { Hot } from '.';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { usePathname } from 'next/navigation';
 
 export default function Index() {
   const { pubky } = usePubkyClientContext();
-  const { hotTagsReach, timeframe } = useFilterContext();
+  const { hotTagsReach, timeframe } = useFilters();
   const isMobile = useIsMobile(1024);
   const pathname = usePathname();
   const { data, isLoading, isError } = useHotTags(pubky, hotTagsReach, undefined, undefined, undefined, timeframe);

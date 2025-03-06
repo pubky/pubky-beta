@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
 import { DropDown } from '..';
-import { useFilterContext } from '@/contexts';
+import { useFilters } from '@/hooks/useFilters';
 
 interface TagsTime {
   type?: 'icon' | 'text';
@@ -12,7 +12,7 @@ interface TagsTime {
 }
 
 export default function TagsTimeframe({ type = 'icon', subtitle, disabled = false }: TagsTime) {
-  const { timeframe, setTimeframe } = useFilterContext();
+  const { timeframe, setTimeframe } = useFilters();
   const [openDropdown, setOpenDropdown] = useState(false);
 
   const labels = {

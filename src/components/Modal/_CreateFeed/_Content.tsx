@@ -1,6 +1,7 @@
 import { BottomSheet } from '@/components/BottomSheet';
 import DropDown from '@/components/DropDown';
-import { useFilterContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useFilters } from '@/hooks/useFilters';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { ICustomFeed } from '@/types';
 import { Button, Icon, Input, PostUtil, Typography } from '@social/ui-shared';
@@ -16,7 +17,7 @@ interface CreateFeedProps {
 
 export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFeeds }: CreateFeedProps) {
   const { saveFeed, searchTags } = usePubkyClientContext();
-  const { reach, layout, sort } = useFilterContext();
+  const { reach, layout, sort } = useFilters();
   const isMobile = useIsMobile();
   const [tag, setTag] = useState('');
   const [tagsFeed, setTagsFeed] = useState<string[]>([]);

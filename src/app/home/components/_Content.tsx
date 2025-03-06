@@ -4,13 +4,13 @@ import { useState } from 'react';
 import { Content, Menu } from '@social/ui-shared';
 import * as Components from '@/components';
 import { Filter } from '@/components/Filter';
-import { useFilterContext } from '@/contexts';
+import { useFilters } from '@/hooks/useFilters';
 import { LeftSidebar } from './_LeftSidebar';
 import { RightSidebar } from './_RightSidebar';
 import { MainContent } from './_MainContent';
 
 export default function ContentHome() {
-  const { layout, selectedFeed, setSelectedFeed } = useFilterContext();
+  const { layout, selectedFeed, setSelectedFeed } = useFilters();
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
   const [loadingFeed, setLoadingFeed] = useState(true);
 

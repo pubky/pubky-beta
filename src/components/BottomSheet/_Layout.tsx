@@ -3,7 +3,7 @@
 import { BottomSheet, Icon, Typography } from '@social/ui-shared';
 import ContentLayout from '../DropDown/_Layout/_Content';
 import { useState } from 'react';
-import { useFilterContext } from '@/contexts';
+import { useFilters } from '@/hooks/useFilters';
 
 interface LayoutProps {
   title?: string;
@@ -19,7 +19,7 @@ const icons = {
 };
 
 export default function Layout({ title, className }: LayoutProps) {
-  const { layout } = useFilterContext();
+  const { layout } = useFilters();
   const [show, setShow] = useState(false);
   const [dropdownValue, setDropdownValue] = useState({
     value: layout || 'columns',

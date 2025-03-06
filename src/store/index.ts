@@ -3,13 +3,15 @@ import notificationsReducer from './slices/notifications';
 import alertsReducer from './slices/alerts';
 import toastsReducer from './slices/toasts';
 import modalsReducer from './slices/modals';
+import filtersReducer from './slices/filters';
 
 export const store = configureStore({
   reducer: {
     notifications: notificationsReducer,
     alerts: alertsReducer,
     toasts: toastsReducer,
-    modals: modalsReducer
+    modals: modalsReducer,
+    filters: filtersReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

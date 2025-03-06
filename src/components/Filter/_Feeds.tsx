@@ -1,14 +1,15 @@
 'use client';
 
 import { Button, Icon, SideCard } from '@social/ui-shared';
-import { useFilterContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useFilters } from '@/hooks/useFilters';
 import { useModal } from '@/hooks/useModal';
 import { ICustomFeed } from '@/types';
 import { useEffect, useState } from 'react';
 import { Utils } from '@social/utils-shared';
 
 export default function Feeds() {
-  const { reach, selectedFeed, setSelectedFeed } = useFilterContext();
+  const { reach, selectedFeed, setSelectedFeed } = useFilters();
   const { openModal } = useModal();
   const [feeds, setFeeds] = useState<{ feed: ICustomFeed; name: string }[]>();
   const { loadFeeds, deleteFeed } = usePubkyClientContext();

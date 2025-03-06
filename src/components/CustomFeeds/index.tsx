@@ -1,6 +1,7 @@
 'use client';
 
-import { useFilterContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useFilters } from '@/hooks/useFilters';
 import { useModal } from '@/hooks/useModal';
 import { ICustomFeed } from '@/types';
 import { Icon, Typography } from '@social/ui-shared';
@@ -20,7 +21,7 @@ export default function CustomFeeds({ selectedFeed, setSelectedFeed, loading, se
     'cursor-pointer hover:bg-opacity-10 py-3 px-5 justify-center items-center gap-2 hidden lg:inline-flex bg-white bg-opacity-5 rounded-tl-lg rounded-tr-lg';
   const activeCSS = 'bg-white bg-opacity-10 rounded-tr-lg';
   const { openModal } = useModal();
-  const { reach } = useFilterContext();
+  const { reach } = useFilters();
   const [feeds, setFeeds] = useState<{ feed: ICustomFeed; name: string }[]>();
   const { loadFeeds, deleteFeed } = usePubkyClientContext();
 

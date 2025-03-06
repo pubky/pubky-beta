@@ -5,7 +5,8 @@ import { Icon, PostUtil } from '@social/ui-shared';
 import { twMerge } from 'tailwind-merge';
 import Link from 'next/link';
 import { ImageByUri } from '../ImageByUri';
-import { useFilterContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useNotifications } from '@/hooks/useNotifications';
 import useIsScrollup from '@/hooks/useIsScrollUp';
 
 interface FooterMobileProps {
@@ -21,7 +22,7 @@ const FooterMobile = ({ title }: FooterMobileProps) => {
   const activeCSS = 'bg-white/30';
 
   const { profile } = usePubkyClientContext();
-  const { unReadNotification } = useFilterContext();
+  const { unReadNotification } = useNotifications();
 
   if (!pubky) return;
 

@@ -20,7 +20,8 @@ import init, {
   PubkyAppPostEmbed,
   PubkyAppUserLink
 } from 'pubky-app-specs';
-import { defaultPreferences } from './_filters';
+import { useAppSelector } from '@/store';
+import { selectPreferences } from '@/store/slices/notifications';
 
 const TESTNET = process.env.NEXT_PUBLIC_TESTNET?.toLowerCase() === 'true';
 const NEXT_PUBLIC_DEFAULT_HTTP_RELAY = process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY || 'https://demo.httprelay.io/link/';
@@ -131,7 +132,6 @@ type PubkyClientContextType = {
   timestamp: number;
   setTimestamp: React.Dispatch<React.SetStateAction<number>>;
   notificationPreferences: NotificationPreferences;
-  setNotificationPreferences: React.Dispatch<React.SetStateAction<NotificationPreferences>>;
   newPosts: PostView[];
   setNewPosts: React.Dispatch<React.SetStateAction<PostView[]>>;
   deletedPosts: string[];
@@ -160,10 +160,10 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
   const [searchTags, setSearchTags] = useState<string[]>([]);
   const [repliesArray, setRepliesArray] = useState<PostView[]>({} as PostView[]);
   const [timestamp, setTimestamp] = useState<number>(0);
-  const [notificationPreferences, setNotificationPreferences] = useState<NotificationPreferences>(defaultPreferences);
   const [newPosts, setNewPosts] = useState<PostView[]>([]);
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [deletedPosts, setDeletedPosts] = useState<string[]>([]);
+  const preferences = useAppSelector(selectPreferences);
 
   useEffect(() => {
     init()
@@ -174,7 +174,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
   useEffect(() => {
     // On first time new user we save `/settings
     if (newUser) {
-      saveSettings(defaultPreferences);
+      saveSettings(preferences);
     }
   }, [newUser]);
 
@@ -973,33 +973,32 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
     return true;
   });
 
-  const loadSettings = withAuth(async () => {
-    if (!pubky) return null;
-
-    // pubky.app/settings is not covered by the specs!
-    const settingsUrl = `${baseUriBuilder(pubky)}settings`;
-
-    const response = await homeserver.get(settingsUrl);
-
-    if (!response.ok) {
-      return { notifications: defaultPreferences };
+  const loadSettings = async () => {
+    try {
+      await ensureReady();
+      const url = baseUriBuilder(pubky);
+      const settings = await homeserver.get(`${url}settings`);
+      return settings;
+    } catch (error) {
+      return { notifications: preferences };
     }
+  };
 
-    const settings = await response.json();
-    return settings;
-  });
-
-  const saveSettings = withAuth(
-    async (notifications: NotificationPreferences, privacysafety?: any, language?: string) => {
-      const settings = { notifications, privacysafety, language };
-
-      const settingsUrl = `${baseUriBuilder(pubky!)}settings`;
-
-      await homeserver.put(settingsUrl, JSON.stringify(settings));
-
+  const saveSettings = async (notifications: NotificationPreferences, privacysafety?: any, language?: string) => {
+    try {
+      await ensureReady();
+      const settings = {
+        notifications,
+        privacysafety,
+        language
+      };
+      const url = baseUriBuilder(pubky);
+      await homeserver.put(`${url}settings`, settings);
       return true;
+    } catch (error) {
+      return false;
     }
-  );
+  };
 
   const deletePost = withAuth(async (post: PostView): Promise<boolean> => {
     // delete the post from the timeline
@@ -1225,34 +1224,28 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
   return (
     <PubkyClientContext.Provider
       value={{
-        deletedPosts,
-        newPosts,
-        setNewPosts,
-        replies,
-        setReplies,
-        newUser,
-        setNewUser,
         pubky,
         seed,
-        profile,
+        setSeed,
         mnemonic,
+        setMnemonic,
+        profile,
+        newUser,
+        setNewUser,
         generateAuthUrl,
         loginWithFile,
-        loginWithMnemonic,
         loginWithAuthUrl,
+        loginWithMnemonic,
         isLoggedIn,
         isSessionActive,
         logout,
         signUp,
-        setSeed,
-        setMnemonic,
         saveProfile,
-        saveFeed,
-        deleteFeed,
-        loadFeeds,
         createPost,
         editPost,
-        deletePost,
+        createArticle,
+        createRepost,
+        createReply,
         follow,
         unfollow,
         deleteFile,
@@ -1260,37 +1253,42 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
         unmute,
         addBookmark,
         deleteBookmark,
-        createRepost,
-        createReply,
         createTag,
-        createArticle,
         deleteTag,
+        saveFeed,
+        deleteFeed,
+        loadFeeds,
         createTagProfile,
         deleteTagProfile,
-        deleteAccount,
         getRecoveryFile,
         storeProfile,
         updateStatus,
-        setTimeline,
         timeline,
+        setTimeline,
         setSearchTags,
         searchTags,
         repliesArray,
         setRepliesArray,
         timelineProfile,
         setTimelineProfile,
-        getTimestampNotification,
-        putTimestampNotification,
-        saveSettings,
-        loadSettings,
+        deletePost,
+        deleteAccount,
         downloadData,
         importData,
-        mutedUsers,
+        getTimestampNotification,
+        putTimestampNotification,
+        loadSettings,
+        saveSettings,
+        setReplies,
+        replies,
         setMutedUsers,
+        mutedUsers,
         timestamp,
         setTimestamp,
-        notificationPreferences,
-        setNotificationPreferences
+        notificationPreferences: preferences,
+        newPosts,
+        setNewPosts,
+        deletedPosts
       }}
     >
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>

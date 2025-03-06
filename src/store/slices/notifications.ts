@@ -1,7 +1,34 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { NotificationView, FilterNotificationPreferences, BodyNotification } from '@/types/User';
+import { NotificationView, BodyNotification } from '@/types/User';
 import { RootState } from '../index';
 import { getUserNotifications } from '@/services/userService';
+import { FilterNotificationPreferences } from '@/types';
+
+export interface NotificationPreferences {
+  follow: boolean;
+  new_friend: boolean;
+  lost_friend: boolean;
+  tag_post: boolean;
+  tag_profile: boolean;
+  mention: boolean;
+  reply: boolean;
+  repost: boolean;
+  post_deleted: boolean;
+  post_edited: boolean;
+}
+
+export const defaultPreferences: NotificationPreferences = {
+  follow: true,
+  new_friend: true,
+  lost_friend: true,
+  tag_post: true,
+  tag_profile: true,
+  mention: true,
+  reply: true,
+  repost: true,
+  post_deleted: true,
+  post_edited: true
+};
 
 interface NotificationsState {
   notifications: NotificationView[];
@@ -11,6 +38,7 @@ interface NotificationsState {
   hasMore: boolean;
   unreadCount: number;
   timestamp: number;
+  preferences: NotificationPreferences;
 }
 
 const initialState: NotificationsState = {
@@ -20,7 +48,8 @@ const initialState: NotificationsState = {
   limit: 30,
   hasMore: true,
   unreadCount: 0,
-  timestamp: 0
+  timestamp: 0,
+  preferences: defaultPreferences
 };
 
 const extractSenderPubky = (notification: BodyNotification) => {
@@ -49,7 +78,7 @@ export const fetchNotifications = createAsyncThunk(
     { getState }
   ) => {
     const state = getState() as RootState;
-    const { skip, limit, selectedFilter } = state.notifications;
+    const { skip, limit } = state.notifications;
 
     const notifications = await getUserNotifications(pubky, undefined, undefined, skip, limit);
 
@@ -128,6 +157,16 @@ const notificationsSlice = createSlice({
       state.skip = 0;
       state.hasMore = true;
       state.unreadCount = 0;
+    },
+    setPreferences: (state, action: PayloadAction<NotificationPreferences>) => {
+      state.preferences = action.payload;
+    },
+    togglePreference: (state, action: PayloadAction<keyof NotificationPreferences>) => {
+      const key = action.payload;
+      state.preferences[key] = !state.preferences[key];
+    },
+    resetPreferences: (state) => {
+      state.preferences = defaultPreferences;
     }
   },
   extraReducers: (builder) => {
@@ -167,7 +206,15 @@ const notificationsSlice = createSlice({
   }
 });
 
-export const { setSelectedFilter, setTimestamp, setUnreadCount, resetNotifications } = notificationsSlice.actions;
+export const {
+  setSelectedFilter,
+  setTimestamp,
+  setUnreadCount,
+  resetNotifications,
+  setPreferences,
+  togglePreference,
+  resetPreferences
+} = notificationsSlice.actions;
 
 // Selectors
 export const selectNotifications = (state: RootState) => state.notifications.notifications;
@@ -175,5 +222,6 @@ export const selectNotificationsLoading = (state: RootState) => state.notificati
 export const selectUnreadCount = (state: RootState) => state.notifications.unreadCount;
 export const selectHasMore = (state: RootState) => state.notifications.hasMore;
 export const selectTimestamp = (state: RootState) => state.notifications.timestamp;
+export const selectPreferences = (state: RootState) => state.notifications.preferences;
 
 export default notificationsSlice.reducer;

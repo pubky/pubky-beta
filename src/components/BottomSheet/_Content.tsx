@@ -2,7 +2,7 @@
 
 import { BottomSheet, Icon, Typography } from '@social/ui-shared';
 import { useState } from 'react';
-import { useFilterContext } from '@/contexts';
+import { useFilters } from '@/hooks/useFilters';
 import ContentType from '../DropDown/_Content/_Content';
 
 interface ContentProps {
@@ -22,7 +22,7 @@ const icons = {
 };
 
 export default function Content({ title, className }: ContentProps) {
-  const { content } = useFilterContext();
+  const { content } = useFilters();
   const [show, setShow] = useState(false);
   const [dropdownValue, setDropdownValue] = useState({
     value: content || 'all',

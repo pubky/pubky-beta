@@ -1,7 +1,7 @@
 'use client';
 
 import { Icon, SideCard } from '@social/ui-shared';
-import { useFilterContext } from '@/contexts';
+import { useFilters } from '@/hooks/useFilters';
 import { useEffect, useState } from 'react';
 import { TSort } from '@/types';
 
@@ -10,7 +10,7 @@ interface SortProps {
 }
 
 export default function Sort({ disabled = false }: SortProps) {
-  const { sort, setSort } = useFilterContext();
+  const { sort, setSort } = useFilters();
   const [loading, setLoading] = useState(true);
 
   const icons = {

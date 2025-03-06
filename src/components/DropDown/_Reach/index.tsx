@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
 import DropDown from '../_DropDown';
-import { useFilterContext } from '@/contexts';
+import { useFilters } from '@/hooks/useFilters';
 import ContentReach from './_Content';
 
 export default function Reach() {
-  const { reach } = useFilterContext();
+  const { reach } = useFilters();
   const [openDropdown, setOpenDropdown] = useState(false);
   const icons = {
     following: <Icon.UsersRight />,

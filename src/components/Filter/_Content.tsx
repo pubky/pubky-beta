@@ -1,6 +1,6 @@
 'use client';
 
-import { useFilterContext } from '@/contexts';
+import { useFilters } from '@/hooks/useFilters';
 import { TContent } from '@/types';
 import { Icon, SideCard } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
@@ -10,7 +10,7 @@ interface ReachProps {
 }
 
 export default function Content({ disabled = false }: ReachProps) {
-  const { content, setContent } = useFilterContext();
+  const { content, setContent } = useFilters();
   const [loading, setLoading] = useState(true);
 
   const icons = {

@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
 import DropDown from '../_DropDown';
-import { useFilterContext } from '@/contexts';
+import { useFilters } from '@/hooks/useFilters';
 import ContentType from './_Content';
 
 export default function Content() {
-  const { content } = useFilterContext();
+  const { content } = useFilters();
   const [openDropdown, setOpenDropdown] = useState(false);
   const icons = {
     all: <Icon.Stack />,

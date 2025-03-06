@@ -3,12 +3,12 @@
 import { useState } from 'react';
 import { Content, Menu } from '@social/ui-shared';
 import { ButtonFilters } from '@/components';
-import { useFilterContext } from '@/contexts';
+import { useFilters } from '@/hooks/useFilters';
 import { Filter } from '@/components/Filter';
 import { SearchPage } from '.';
 
 export default function ContentSearch() {
-  const { layout } = useFilterContext();
+  const { layout } = useFilters();
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
 
   return (

@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react';
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
 import { DropDown } from '..';
-import { useFilterContext } from '@/contexts';
+import { useFilters } from '@/hooks/useFilters';
 
 export default function Contacts() {
-  const { contacts, setContacts } = useFilterContext();
+  const { contacts, setContacts } = useFilters();
   const [openDropdown, setOpenDropdown] = useState(false);
   const icons = {
     following: <Icon.UsersRight />,

@@ -1,7 +1,7 @@
 'use client';
 
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
-import { useFilterContext } from '@/contexts';
+import { useFilters } from '@/hooks/useFilters';
 
 interface ContentLayoutProps {
   setDropdownValue: any;
@@ -17,7 +17,7 @@ const icons = {
 };
 
 export default function ContentLayout({ setDropdownValue, setOpenDropdown }: ContentLayoutProps) {
-  const { layout, setLayout } = useFilterContext();
+  const { layout, setLayout } = useFilters();
 
   return (
     <>

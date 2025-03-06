@@ -2,7 +2,7 @@
 
 import { BottomSheet, Icon, Typography } from '@social/ui-shared';
 import { useState } from 'react';
-import { useFilterContext } from '@/contexts';
+import { useFilters } from '@/hooks/useFilters';
 import ContentReach from '../DropDown/_Reach/_Content';
 
 interface ReachProps {
@@ -19,7 +19,7 @@ const icons = {
 };
 
 export default function Reach({ title, className }: ReachProps) {
-  const { reach } = useFilterContext();
+  const { reach } = useFilters();
   const [show, setShow] = useState(false);
   const [dropdownValue, setDropdownValue] = useState({
     value: reach || 'all',

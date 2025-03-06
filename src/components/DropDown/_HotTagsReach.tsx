@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
 import { DropDown } from '..';
-import { useFilterContext } from '@/contexts';
+import { useFilters } from '@/hooks/useFilters';
 
 interface TagsReach {
   type?: 'icon' | 'text';
@@ -11,7 +11,7 @@ interface TagsReach {
 }
 
 export default function HotTagsReach({ type = 'icon', subtitle }: TagsReach) {
-  const { hotTagsReach, setHotTagsReach } = useFilterContext();
+  const { hotTagsReach, setHotTagsReach } = useFilters();
   const [openDropdown, setOpenDropdown] = useState(false);
   const icons = {
     following: <Icon.UsersRight />,

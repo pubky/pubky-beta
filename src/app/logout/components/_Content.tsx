@@ -2,13 +2,14 @@
 
 import { useEffect } from 'react';
 import { Button, Content, Header, Icon, Typography } from '@social/ui-shared';
-import { useFilterContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useFilters } from '@/hooks/useFilters';
 import Link from 'next/link';
 import Image from 'next/image';
 
 export default function Index() {
   const { logout } = usePubkyClientContext();
-  const { resetDefault } = useFilterContext();
+  const { resetDefault } = useFilters();
 
   useEffect(() => {
     resetDefault();

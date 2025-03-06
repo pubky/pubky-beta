@@ -6,12 +6,14 @@ import { useRouter, usePathname } from 'next/navigation';
 import NextTopLoader from 'nextjs-toploader';
 import React, { useEffect, useState } from 'react';
 import { getUserMuted, getUserProfile } from '@/services/userService';
-import { defaultPreferences } from '@/contexts/_filters';
 import { PubkyAppUser } from 'pubky-app-specs';
+import { useAppDispatch } from '@/store';
+import { defaultPreferences, setPreferences } from '@/store/slices/notifications';
 
 export default function ProtectedRoutes({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
+  const dispatch = useAppDispatch();
   const {
     pubky,
     storeProfile,
@@ -20,7 +22,6 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
     getTimestampNotification,
     setTimestamp,
     loadSettings,
-    setNotificationPreferences,
     newUser,
     setNewUser,
     isSessionActive,
@@ -64,9 +65,9 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
     try {
       const result = await loadSettings();
       if (result?.notifications) {
-        setNotificationPreferences(result.notifications);
+        dispatch(setPreferences(result.notifications));
       } else {
-        setNotificationPreferences(defaultPreferences);
+        dispatch(setPreferences(defaultPreferences));
       }
     } catch (error) {
       console.log(error);

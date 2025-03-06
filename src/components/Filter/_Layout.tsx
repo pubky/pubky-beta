@@ -1,7 +1,7 @@
 'use client';
 
 import { Icon, SideCard } from '@social/ui-shared';
-import { useFilterContext } from '@/contexts';
+import { useFilters } from '@/hooks/useFilters';
 import { useEffect, useState } from 'react';
 import { TLayouts } from '@/types';
 
@@ -10,7 +10,7 @@ interface LayoutProps {
 }
 
 export default function Layout({ setDrawerFilterOpen }: LayoutProps) {
-  const { layout, setLayout } = useFilterContext();
+  const { layout, setLayout } = useFilters();
   const [loading, setLoading] = useState(true);
 
   const icons = {

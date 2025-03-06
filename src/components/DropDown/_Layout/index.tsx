@@ -2,12 +2,12 @@
 
 import { useState } from 'react';
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
-import { useFilterContext } from '@/contexts';
+import { useFilters } from '@/hooks/useFilters';
 import DropDown from '../_DropDown';
 import ContentLayout from './_Content';
 
 export default function Layout() {
-  const { layout } = useFilterContext();
+  const { layout } = useFilters();
   const [openDropdown, setOpenDropdown] = useState(false);
   const icons = {
     columns: <Icon.ThreeColumns />,

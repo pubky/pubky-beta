@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
 import DropDown from '../_DropDown';
-import { useFilterContext } from '@/contexts';
+import { useFilters } from '@/hooks/useFilters';
 import ContentSortPosts from './_Content';
 
 export default function SortPosts() {
-  const { sort } = useFilterContext();
+  const { sort } = useFilters();
   const [openDropdown, setOpenDropdown] = useState(false);
 
   const icons = {

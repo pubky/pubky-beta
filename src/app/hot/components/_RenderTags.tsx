@@ -6,7 +6,7 @@ import { Utils } from '@social/utils-shared';
 import { HotTag } from '@/types/Tag';
 import { Hot } from '.';
 import Link from 'next/link';
-import { useFilterContext } from '@/contexts';
+import { useFilters } from '@/hooks/useFilters';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
 interface RenderTagsProps {
@@ -15,7 +15,7 @@ interface RenderTagsProps {
 }
 
 const RenderTags = ({ hotTags, loadingReachTags }: RenderTagsProps) => {
-  const { timeframe } = useFilterContext();
+  const { timeframe } = useFilters();
   const isMobile = useIsMobile(640);
   const numberImagesUser = isMobile ? 3 : 5;
   const timeframeLabel = timeframe === 'all_time' ? 'all time' : timeframe === 'this_month' ? 'this month' : 'today';

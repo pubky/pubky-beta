@@ -1,6 +1,6 @@
 'use client';
 
-import { useFilterContext } from '@/contexts';
+import { useFilters } from '@/hooks/useFilters';
 import { TTimeframe } from '@/types';
 import { Icon, SideCard } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
@@ -10,7 +10,7 @@ interface TimeframeProps {
 }
 
 export default function TagsTimeFrame({ disabled }: TimeframeProps) {
-  const { timeframe, setTimeframe } = useFilterContext();
+  const { timeframe, setTimeframe } = useFilters();
   const [loading, setLoading] = useState(true);
 
   const icons = {

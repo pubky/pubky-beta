@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { Icon } from '@social/ui-shared';
-import { useFilterContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useFilters } from '@/hooks/useFilters';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useStreamPost } from '@/hooks/useStream';
 import { PostView } from '@/types/Post';
@@ -18,7 +19,7 @@ export const Timeline = () => {
   const [skip, setSkip] = useState<number>(0);
   const [fetching, setFetching] = useState<boolean>(false);
   const isMobile = useIsMobile(1280);
-  const { reach, layout, sort, content } = useFilterContext();
+  const { reach, layout, sort, content } = useFilters();
 
   const { data, isLoading } = useStreamPost(
     pubky ?? '',

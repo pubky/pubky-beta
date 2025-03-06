@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
 import { DropDown } from '..';
-import { useFilterContext } from '@/contexts';
+import { useFilters } from '@/hooks/useFilters';
 
 interface ContactsLayout {
   type?: 'icon' | 'text';
@@ -11,7 +11,7 @@ interface ContactsLayout {
 }
 
 export default function ContactsLayout({ type = 'icon', subtitle }: ContactsLayout) {
-  const { contactsLayout, setContactsLayout } = useFilterContext();
+  const { contactsLayout, setContactsLayout } = useFilters();
   const [openDropdown, setOpenDropdown] = useState(false);
   const icons = {
     ranking: <Icon.ListNumbers />,

@@ -1,32 +1,27 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { usePubkyClientContext } from '@/contexts';
 import { Icon, Input, Typography } from '@social/ui-shared';
+import { useAppDispatch, useAppSelector } from '@/store';
+import {
+  selectPreferences,
+  togglePreference,
+  setPreferences,
+  NotificationPreferences
+} from '@/store/slices/notifications';
 
-const defaultPreferences = {
-  follow: true,
-  new_friend: true,
-  lost_friend: true,
-  tag_post: true,
-  tag_profile: true,
-  mention: true,
-  reply: true,
-  repost: true,
-  post_deleted: true,
-  post_edited: true
-};
-
-type NotificationType = keyof typeof defaultPreferences;
+type NotificationType = keyof NotificationPreferences;
 
 export default function Notifications() {
   const { saveSettings, loadSettings } = usePubkyClientContext();
-  const [preferences, setPreferences] = useState(defaultPreferences);
+  const dispatch = useAppDispatch();
+  const preferences = useAppSelector(selectPreferences);
 
   const handleLoadSettings = async () => {
     const result = await loadSettings();
     if (result) {
-      setPreferences(result.notifications);
+      dispatch(setPreferences(result.notifications));
     } else {
       saveSettings(preferences);
     }
@@ -37,9 +32,8 @@ export default function Notifications() {
   }, []);
 
   const handleToggle = (type: NotificationType) => {
-    const updatedPreferences = { ...preferences, [type]: !preferences[type] };
-    setPreferences(updatedPreferences);
-    saveSettings(updatedPreferences);
+    dispatch(togglePreference(type));
+    saveSettings({ ...preferences, [type]: !preferences[type] });
   };
 
   return (

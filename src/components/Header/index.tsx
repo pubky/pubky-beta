@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Header as HeaderUI, Input, Icon, Button, PostUtil } from '@social/ui-shared';
-import { useFilterContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useNotifications } from '@/hooks/useNotifications';
 import { useModal } from '@/hooks/useModal';
 import { ImageByUri } from '../ImageByUri';
 import { usePathname, useRouter } from 'next/navigation';
@@ -18,7 +19,7 @@ export default function Header({ title }: HeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { pubky, isLoggedIn, setSearchTags, searchTags, profile } = usePubkyClientContext();
-  const { unReadNotification } = useFilterContext();
+  const { unReadNotification } = useNotifications();
   const { openModal } = useModal();
 
   const [searchInputCard, setSearchInputCard] = useState(false);

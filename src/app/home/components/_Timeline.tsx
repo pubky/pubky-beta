@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { Button, Icon } from '@social/ui-shared';
-import { useFilterContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useFilters } from '@/hooks/useFilters';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useStreamPost } from '@/hooks/useStream';
 import { PostView } from '@/types/Post';
@@ -21,7 +22,7 @@ interface TimelineProps {
 
 // Custom hook to manage filters
 const useTimelineFilters = (selectedFeed) => {
-  const { reach, layout, sort, content, setReach, setLayout, setSort, setContent } = useFilterContext();
+  const { reach, layout, sort, content, setReach, setLayout, setSort, setContent } = useFilters();
   const [tagsFeed, setTagsFeed] = useState<string[]>();
 
   useEffect(() => {

@@ -1,7 +1,7 @@
 'use client';
 
 import { Icon, SideCard } from '@social/ui-shared';
-import { useFilterContext } from '@/contexts';
+import { useFilters } from '@/hooks/useFilters';
 import { useEffect, useState } from 'react';
 import { THotTagsReach } from '@/types';
 
@@ -10,7 +10,7 @@ interface HotTagsReachProps {
 }
 
 export default function HotTagsReach({ disabled }: HotTagsReachProps) {
-  const { hotTagsReach, setHotTagsReach } = useFilterContext();
+  const { hotTagsReach, setHotTagsReach } = useFilters();
   const [loading, setLoading] = useState(true);
 
   const icons = {

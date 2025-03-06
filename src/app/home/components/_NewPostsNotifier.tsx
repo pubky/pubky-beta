@@ -3,12 +3,13 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { Button } from '@social/ui-shared';
 import { PostView } from '@/types/Post';
-import { useFilterContext, usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useFilters } from '@/hooks/useFilters';
 import { useStreamPost } from '@/hooks/useStream';
 import { UseQueryOptions } from '@tanstack/react-query';
 
 export function NewPostsNotifier() {
-  const { reach, sort, content } = useFilterContext();
+  const { reach, sort, content } = useFilters();
   const { timeline, setTimeline, pubky, deletedPosts } = usePubkyClientContext();
 
   const [newPosts, setNewPosts] = useState<PostView[]>([]);

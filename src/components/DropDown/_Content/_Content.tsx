@@ -1,5 +1,5 @@
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
-import { useFilterContext } from '@/contexts';
+import { useFilters } from '@/hooks/useFilters';
 
 const icons = {
   all: <Icon.Stack />,
@@ -18,7 +18,7 @@ interface ContentProps {
 }
 
 export default function ContentType({ setDropdownValue, setOpenDropdown }: ContentProps) {
-  const { content, setContent } = useFilterContext();
+  const { content, setContent } = useFilters();
 
   return (
     <>
