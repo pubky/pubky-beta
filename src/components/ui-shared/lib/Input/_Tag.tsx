@@ -146,6 +146,7 @@ export const Tag = ({
               </div>
             ) : (
               <div
+                id="add-tag-btn"
                 onClick={!disabled && !loading ? () => onAddTag(value) : undefined}
                 className={`cursor-pointer ${buttonClasses} ${loading ? 'opacity-50' : 'opacity-80 hover:opacity-100'}`}
               >
@@ -157,6 +158,7 @@ export const Tag = ({
 
         {showEmojiPicker && onEmojiPickerClick && (
           <div
+            id="emoji-picker-btn"
             onClick={!disabled && !loading ? onEmojiPickerClick : undefined}
             className={`${variant === 'small' ? 'hidden mr-1 lg:flex' : 'hidden ml-2 lg:flex'} cursor-pointer ${buttonClasses} opacity-80 hover:opacity-100`}
           >
@@ -165,7 +167,11 @@ export const Tag = ({
         )}
 
         {showCloseButton && onClose && (
-          <div onClick={onClose} className={`cursor-pointer ${buttonClasses} opacity-80 hover:opacity-100`}>
+          <div
+            id="close-tag-btn"
+            onClick={onClose}
+            className={`cursor-pointer ${buttonClasses} opacity-80 hover:opacity-100`}
+          >
             <Icon.X size={variant === 'small' ? '12' : '24'} />
           </div>
         )}

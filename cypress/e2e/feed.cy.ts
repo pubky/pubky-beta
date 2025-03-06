@@ -262,10 +262,10 @@ describe('feed and filters', () => {
       // type the tag name
       cy.get('#create-feed-tag-input').type(name);
       // check the add tag button is visible and click it
-      cy.get('#add-btn').should('be.visible').click();
+      cy.get('#add-tag-btn').should('be.visible').click();
       // check the add tag button is not visible
       cy.get('#create-feed-tag-input').then(($body) => {
-        assert($body.find('#add-btn').length === 0, 'Add tag button should not exist.');
+        assert($body.find('#add-tag-btn').length === 0, 'Add tag button should not exist.');
       });
     };
 
