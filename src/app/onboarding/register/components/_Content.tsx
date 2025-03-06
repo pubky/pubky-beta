@@ -127,7 +127,7 @@ export default function Index() {
         className="h-14 text-[40px] font-bold sm:h-[106px] sm:text-[64px] placeholder:text-opacity-20"
         defaultValue={name}
         disabled={loading}
-        maxLength={25}
+        maxLength={24}
         autoCorrect="off"
         error={errors.name}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}

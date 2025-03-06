@@ -22,7 +22,7 @@ export default function UserInfo({ name, setName, handler, errors, loading }: Us
         className="h-auto text-[40px] font-bold sm:text-[64px] placeholder:text-opacity-20"
         defaultValue={name}
         disabled={loading}
-        maxLength={25}
+        maxLength={24}
         autoCorrect="off"
         error={errors.name}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
