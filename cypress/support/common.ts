@@ -34,7 +34,7 @@ export const addTagsWithModal = (tags: string[]) => {
     // add tags to the post
     for (const tag of tags) {
       cy.get('input').type(tag);
-      cy.get('#add-btn').should('be.visible').click();
+      cy.get('#add-tag-btn').should('be.visible').click();
     }
 
     // TODO: uncomment once bug is fixed, see https://github.com/pubky/pubky-app/issues/541
