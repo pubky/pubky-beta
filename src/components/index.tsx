@@ -22,6 +22,7 @@ import Toast from './Toast';
 import ProtectedRoutes from './ProtectedRoutes';
 import RemindBackup from './RemindBackup';
 import Alerts from './Alerts';
+import Toasts from './Toasts';
 
 export {
   Influencers,
@@ -47,5 +48,6 @@ export {
   Toast,
   ProtectedRoutes,
   RemindBackup,
-  Alerts
+  Alerts,
+  Toasts
 };

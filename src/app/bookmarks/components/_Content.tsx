@@ -4,14 +4,15 @@ import { useState, useEffect } from 'react';
 import { Content, Menu } from '@social/ui-shared';
 import * as Components from '@/components';
 import { Filter } from '@/components/Filter';
-import { useFilterContext, useToastContext } from '@/contexts';
+import { useFilterContext } from '@/contexts';
+import { useToast } from '@/hooks/useToast';
 import { LeftSidebar } from './_LeftSidebar';
 import { RightSidebar } from './_RightSidebar';
 import { BookmarksPage } from '.';
 
 export default function ContentBookmarks() {
   const { layout } = useFilterContext();
-  const { addToast } = useToastContext();
+  const { addToast } = useToast();
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
 
   useEffect(() => {

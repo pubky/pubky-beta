@@ -1,5 +1,5 @@
 import { Icon, Tooltip } from '@social/ui-shared';
-import { useToastContext } from '@/contexts';
+import { useToast } from '@/hooks/useToast';
 import { PostView } from '@/types/Post';
 import { Utils } from '@social/utils-shared';
 
@@ -9,7 +9,7 @@ interface CopyLinkPostProps {
 }
 
 export default function CopyLinkPost({ post, setShowMenu }: CopyLinkPostProps) {
-  const { addToast } = useToastContext();
+  const { addToast } = useToast();
 
   return (
     <Tooltip.Item

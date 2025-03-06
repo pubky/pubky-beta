@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { Icon, Button, Post as PostUI } from '@social/ui-shared';
-import { useModal, usePubkyClientContext, useToastContext } from '@/contexts';
+import { useModal, usePubkyClientContext } from '@/contexts';
+import { useToast } from '@/hooks/useToast';
 import { useAlert } from '@/hooks/useAlert';
 import { PostView } from '@/types/Post';
 import { useUserProfile } from '@/hooks/useUser';
@@ -90,7 +91,7 @@ export default function Actions({ post, repost, deleteRepost = false }: PostProp
   const { data: author } = useUserProfile(post?.details?.author, pubky ?? '');
   const { data: authorRepost } = useUserProfile(repost?.details?.author ?? '', pubky ?? '');
   const { addBookmark, deleteBookmark } = usePubkyClientContext();
-  const { addToast } = useToastContext();
+  const { addToast } = useToast();
   const [loadingBookmarks, setLoadingBookmarks] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(
     repost?.bookmark?.id ? repost?.bookmark?.id : (post?.bookmark?.id ?? '')

@@ -1,6 +1,6 @@
 'use client';
 
-import { ToastVariant } from '@/contexts/_toast';
+import { ToastVariant } from '@/store/slices/toasts';
 import { Typography } from '@social/ui-shared';
 import React, { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';

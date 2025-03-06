@@ -1,8 +1,8 @@
 import './global.css';
 import DynamicMeta from '@/components/DynamicMeta';
 
-import { FilterWrapper, ToastWrapper, PubkyClientWrapper, ModalProvider } from '@/contexts';
-import { ProtectedRoutes, Alerts } from '@/components';
+import { FilterWrapper, PubkyClientWrapper, ModalProvider } from '@/contexts';
+import { ProtectedRoutes, Toasts, Alerts } from '@/components';
 import { Providers } from '@/store/provider';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -15,12 +15,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Providers>
           <PubkyClientWrapper>
             <FilterWrapper>
-              <ToastWrapper>
-                <ModalProvider>
-                  <ProtectedRoutes>{children}</ProtectedRoutes>
-                  <Alerts />
-                </ModalProvider>
-              </ToastWrapper>
+              <ModalProvider>
+                <ProtectedRoutes>{children}</ProtectedRoutes>
+                <Alerts />
+                <Toasts />
+              </ModalProvider>
             </FilterWrapper>
           </PubkyClientWrapper>
         </Providers>

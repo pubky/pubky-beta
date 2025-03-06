@@ -4,7 +4,8 @@ import Image from 'next/image';
 
 import { Content, Card, Typography, Icon, Button } from '@social/ui-shared';
 import Link from 'next/link';
-import { usePubkyClientContext, useToastContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useToast } from '@/hooks/useToast';
 import { useAlert } from '@/hooks/useAlert';
 import { useEffect, useRef, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
@@ -16,7 +17,7 @@ export default function Join() {
   const { generateAuthUrl, loginWithAuthUrl } = usePubkyClientContext();
   const isMobile = useIsMobile(640);
   const router = useRouter();
-  const { addToast } = useToastContext();
+  const { addToast } = useToast();
   const { addAlert } = useAlert();
   const appLink = 'pubkyring://';
   const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);

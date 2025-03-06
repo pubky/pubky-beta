@@ -1,5 +1,5 @@
 import { Icon, Tooltip } from '@social/ui-shared';
-import { useToastContext } from '@/contexts';
+import { useToast } from '@/hooks/useToast';
 import { PostView } from '@/types/Post';
 import { Utils } from '@social/utils-shared';
 import { PubkyAppPostKind } from 'pubky-app-specs';
@@ -10,7 +10,7 @@ interface CopyTextPostProps {
 }
 
 export default function CopyTextPost({ post, setShowMenu }: CopyTextPostProps) {
-  const { addToast } = useToastContext();
+  const { addToast } = useToast();
 
   return (
     <>

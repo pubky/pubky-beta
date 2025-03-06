@@ -1,5 +1,5 @@
 import { Icon, Tooltip } from '@social/ui-shared';
-import { useToastContext } from '@/contexts';
+import { useToast } from '@/hooks/useToast';
 import { Utils } from '@social/utils-shared';
 
 interface CopyUserPubkyProps {
@@ -8,7 +8,7 @@ interface CopyUserPubkyProps {
 }
 
 export default function CopyUserPubky({ pk, setShowMenu }: CopyUserPubkyProps) {
-  const { addToast } = useToastContext();
+  const { addToast } = useToast();
 
   return (
     <Tooltip.Item

@@ -2,13 +2,14 @@
 
 import Link from 'next/link';
 import { Button, Icon, Typography } from '@social/ui-shared';
-import { usePubkyClientContext, useToastContext } from '@/contexts';
+import { usePubkyClientContext } from '@/contexts';
+import { useToast } from '@/hooks/useToast';
 import { Onboarding } from '../../components';
 import Image from 'next/image';
 
 export default function Index() {
   const { pubky } = usePubkyClientContext();
-  const { addToast } = useToastContext();
+  const { addToast } = useToast();
 
   const handleCopy = async () => {
     try {
