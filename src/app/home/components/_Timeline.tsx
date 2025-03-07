@@ -206,6 +206,11 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
     return () => clearInterval(interval);
   }, [newPosts, pubky, reach, sort, tagsFeed, start]);
 
+  // Effect to handle selectedFeed changes
+  useEffect(() => {
+    clearTimeline();
+  }, [selectedFeed, clearTimeline]);
+
   return (
     <div id="timeline" className="flex flex-col gap-3">
       {!isLoading && <NewPostsNotifier />}

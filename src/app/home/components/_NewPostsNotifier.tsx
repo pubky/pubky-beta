@@ -9,24 +9,34 @@ import { useStreamPost } from '@/hooks/useStream';
 import { UseQueryOptions } from '@tanstack/react-query';
 
 export function NewPostsNotifier() {
-  const { reach, sort, content } = useFilters();
+  const { reach, sort, content, selectedFeed } = useFilters();
   const { timeline, setTimeline, pubky, deletedPosts } = usePubkyClientContext();
 
   const [newPosts, setNewPosts] = useState<PostView[]>([]);
   const [newPostsCount, setNewPostsCount] = useState(0);
   const [shouldFetch, setShouldFetch] = useState(false);
   const [latestTimestamp, setLatestTimestamp] = useState<number | null>(null);
+  const [tagsFeed, setTagsFeed] = useState<string[] | undefined>(undefined);
 
   // Scroll-related refs
   const lastScrollY = useRef(0);
   const throttleTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  // Update tags when selectedFeed changes
+  useEffect(() => {
+    if (selectedFeed?.tags?.length > 0) {
+      setTagsFeed(selectedFeed.tags);
+    } else {
+      setTagsFeed(undefined);
+    }
+  }, [selectedFeed]);
 
   useEffect(() => {
     setNewPosts([]);
     setNewPostsCount(0);
     setLatestTimestamp(null);
     setShouldFetch(false);
-  }, [sort, reach, content]);
+  }, [sort, reach, content, selectedFeed]);
 
   // Update latestTimestamp whenever the timeline changes
   useEffect(() => {
@@ -76,11 +86,11 @@ export function NewPostsNotifier() {
     latestTimestamp ? latestTimestamp + 1 : undefined,
     undefined,
     sort,
-    undefined,
+    tagsFeed,
     content,
     {
       enabled: shouldFetch && latestTimestamp !== null,
-      queryKey: ['new-posts', latestTimestamp]
+      queryKey: ['new-posts', latestTimestamp, tagsFeed, reach, sort, content]
     } as UseQueryOptions<unknown, Error>
   );
 
