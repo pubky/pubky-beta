@@ -243,7 +243,7 @@ export default function Content({ post, fullContent = false, largeView = false, 
           {tweetId && (
             <div
               onClick={(event) => event.stopPropagation()}
-              className="no-scrollbar w-full max-w-[384px] overflow-y-auto"
+              className="no-scrollbar w-full max-w-[300px] sm:max-w-[384px] overflow-y-auto"
             >
               <Tweet id={tweetId} />
             </div>
