@@ -39,7 +39,15 @@ export default function Index() {
     { url: '', title: 'x (twitter)', placeHolder: '@user' }
   ]);
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [errors, setErrors] = useState({ name: '', token: '', bio: '' });
+  const iconInviteCode = errors.token ? (
+    <Icon.XCircle size="26" color="#FF0000" />
+  ) : success ? (
+    <Icon.CheckCircle size="26" color="#C8FF00" />
+  ) : (
+    <Icon.LockKey size="26" />
+  );
 
   useEffect(() => {
     const generateAndSetImage = async () => {
@@ -99,6 +107,7 @@ export default function Index() {
           throw new Error('Something went wrong');
         }
         router.push('/onboarding/pubky');
+        setSuccess(true);
       } catch (error) {
         console.log(error);
         setLoading(false);
@@ -111,32 +120,39 @@ export default function Index() {
 
   return (
     <Onboarding.Layout currentStep={2}>
-      <Input.Cursor
-        placeholder="Your Name"
-        className="h-14 text-[40px] font-bold sm:h-[106px] sm:text-[64px] placeholder:text-opacity-20"
-        defaultValue={name}
-        disabled={loading}
-        maxLength={24}
-        autoFocus
-        id="onboarding-name-input"
-        autoCorrect="off"
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
-        error={errors.name}
-      />
-      <Input.Cursor
-        defaultValue={token}
-        disabled={loading}
-        maxLength={14}
-        id="onboarding-token-input"
-        autoCorrect="off"
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setToken(e.target.value)}
-        error={errors.token}
-        className="h-12 uppercase placeholder:normal-case placeholder:text-opacity-20 text-[24px]"
-        placeholder="Add invite code"
-      />
-      <Typography.Body variant="large" className="text-[22px] sm:text-2xl leading-tight text-opacity-50">
-        Enter your bio, add some links, and upload a user picture.
-      </Typography.Body>
+      <div className="w-full flex flex-col gap-4 lg:flex-row">
+        <div>
+          <Input.Cursor
+            placeholder="Your Name"
+            className="h-auto text-[40px] font-bold sm:h-[106px] sm:text-[64px] placeholder:text-opacity-20"
+            defaultValue={name}
+            disabled={loading}
+            maxLength={30}
+            autoFocus
+            id="onboarding-name-input"
+            autoCorrect="off"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+            error={errors.name}
+          />
+          <Typography.Body variant="large" className="text-[22px] sm:text-2xl leading-tight text-opacity-50">
+            Enter your bio, add some links, and upload a user picture.
+          </Typography.Body>
+        </div>
+        <div className="flex flex-col lg:justify-self-end lg:mt-4">
+          <Input.Text
+            icon={iconInviteCode}
+            defaultValue={token}
+            disabled={loading || success}
+            maxLength={14}
+            id="onboarding-token-input"
+            autoCorrect="off"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setToken(e.target.value)}
+            error={errors.token}
+            className={`${success && 'border-[#C8FF00] text-[#C8FF00]'} border-opacity-100 h-auto lg:w-[280px] pl-14 pr-6 py-5 uppercase placeholder:text-opacity-40 text-opacity-100 text-[17px]`}
+            placeholder="Invite code"
+          />
+        </div>
+      </div>
       <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-8 gap-6 mt-6">
         <Card.Bio bio={bio} setBio={setBio} errors={errors} loading={loading} />
         <Card.Links links={links} setLinks={setLinks} errors={errors} loading={loading} />

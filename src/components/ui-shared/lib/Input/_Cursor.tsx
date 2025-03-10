@@ -13,9 +13,9 @@ interface CursorProps extends React.HTMLAttributes<HTMLInputElement> {
 export const Cursor = ({ children, error, required, maxLength, disabled, placeholder = '', ...rest }: CursorProps) => {
   const baseCSS = `w-full h-24 bg-transparent rounded-[5px] outline-none text-white text-[17px] placeholder:text-white placeholder:text-opacity-30 font-normal font-InterTight leading-snug tracking-wide`;
 
-  const errorCSS = `text-red-500 text-sm mt-2`;
+  const errorCSS = `text-red-500 text-sm`;
 
-  const inputWithErrorStyle = `border border-red-500`;
+  const inputWithErrorStyle = `placeholder:text-red-500`;
 
   return (
     <div className="relative">
