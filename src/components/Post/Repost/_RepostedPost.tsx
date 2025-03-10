@@ -1,13 +1,13 @@
 import { Post as PostUI, Typography } from '@social/ui-shared';
 import { twMerge } from 'tailwind-merge';
-import Header from './_Header';
-import Content from './_Content';
-import Actions from './_Actions';
-import Tags from './Tags';
+import Header from '../_Header';
+import Content from '../_Content';
+import Actions from '../_Actions';
+import Tags from '../Tags';
 
 import { PostView } from '@/types/Post';
 import { Utils } from '@social/utils-shared';
-import { Skeleton } from '..';
+import { Skeleton } from '../..';
 import { useRouter } from 'next/navigation';
 
 interface RepostedPostProps {
@@ -18,15 +18,11 @@ interface RepostedPostProps {
   line?: boolean;
   lineStyle?: string;
   repostView: boolean;
-  showModalTag: boolean;
-  setShowModalTag: any;
-  showSheetTag: boolean;
-  setShowSheetTag: any;
   restClassName?: string;
   notFoundClassName?: string;
 }
 
-export default function RepostedPost({
+export default function Post({
   repostedPost,
   loadingRepostedPost,
   largeView,

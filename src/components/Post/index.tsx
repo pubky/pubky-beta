@@ -1,29 +1,19 @@
 'use client';
 
 import { twMerge } from 'tailwind-merge';
-import { Post as PostUI, Icon, Button, Tooltip as TooltipUI, Typography } from '@social/ui-shared';
+import { Post as PostUI, Icon } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
 
 import { TLayouts, TSize } from '@/types';
 import { PostView } from '@/types/Post';
 import { Utils } from '@social/utils-shared';
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
-import { useUserProfile } from '@/hooks/useUser';
+import { usePubkyClientContext } from '@/contexts';
 import { getPost } from '@/services/postService';
-
-import Header from './_Header';
-import Content from './_Content';
-import Actions from './_Actions';
-import Tags from './Tags';
-import Tooltip from '../Tooltip';
-
-import RepostedPost from './_RepostedPost';
 import DeletedPostMessage from './_DeletedPostMessage';
 import MainPostContent from './_MainPostContent';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useIsMobile } from '@/hooks/useIsMobile';
 import { parse_uri } from 'pubky-app-specs';
+import Repost from './Repost';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   repostView?: boolean;
@@ -51,25 +41,10 @@ export default function Post({
   ...rest
 }: PostProps) {
   const router = useRouter();
-  const { pubky, deletePost } = usePubkyClientContext();
-  const { addAlert } = useAlertContext();
-  const isMobile = useIsMobile();
-  const { data } = useUserProfile(post?.details?.author, pubky ?? '');
-  const [showModalTag, setShowModalTag] = useState(false);
-  const [showSheetTag, setShowSheetTag] = useState(false);
-  const [showTooltipProfile, setShowTooltipProfile] = useState('');
+  const { pubky } = usePubkyClientContext();
   const [repostedPost, setRepostedPost] = useState<PostView>();
   const [loadingRepostedPost, setLoadingRepostedPost] = useState(true);
   const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-full border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[0.5px]`;
-
-  const handleDeletePost = async () => {
-    const result = await deletePost(post);
-    if (result) {
-      addAlert('Post deleted!');
-    } else {
-      addAlert('Something wrong. Try again', 'warning');
-    }
-  };
 
   const fetchRepostedPost = async () => {
     if (post?.relationships?.reposted) {
@@ -111,121 +86,27 @@ export default function Post({
           <div>
             {post?.relationships?.reposted && !repostView ? (
               post?.details?.content || post?.details?.attachments ? (
-                <div className="flex items-center relative">
-                  {line && (
-                    <>
-                      <div className={twMerge(lineBaseCSS, lineStyle)} />
-                      <div className="absolute ml-[10px]">
-                        <Icon.LineHorizontal size="14" color="#444447" />
-                      </div>
-                    </>
-                  )}
-                  <PostUI.MainCard
-                    className={twMerge(
-                      line && 'ml-6',
-                      largeView && 'p-12 inline-flex flex-row gap-6 xl:gap-12',
-                      'relative',
-                      rest.className
-                    )}
-                  >
-                    <div className="w-full flex-col justify-between inline-flex">
-                      <div>
-                        <Header post={post} largeView={largeView} />
-                        <Content largeView={largeView} post={post} fullContent={fullContent} />
-                      </div>
-                      <RepostedPost
-                        repostedPost={repostedPost}
-                        loadingRepostedPost={loadingRepostedPost}
-                        fullContent={fullContent}
-                        lineStyle={lineStyle}
-                        repostView
-                        showModalTag={showModalTag}
-                        setShowModalTag={setShowModalTag}
-                        showSheetTag={showSheetTag}
-                        setShowSheetTag={setShowSheetTag}
-                        restClassName="mt-4"
-                      />
-                      <div className={`flex flex-col md:flex-row ${largeView ? 'gap-2' : 'justify-between'}`}>
-                        {!repostView && <Tags.Standard largeView={largeView} post={post} />}
-                        {!repostView && <Actions post={post} />}
-                      </div>
-                    </div>
-                    {largeView && <Tags.LargeView post={post} />}
-                  </PostUI.MainCard>
-                </div>
+                <Repost.Blank
+                  post={post}
+                  repostedPost={repostedPost}
+                  loadingRepostedPost={loadingRepostedPost}
+                  repostView={repostView}
+                  line={line}
+                  lineStyle={lineStyle}
+                  largeView={largeView}
+                  fullContent={fullContent}
+                />
               ) : (
-                <>
-                  <div className="flex items-center relative">
-                    {line && (
-                      <>
-                        <div className={twMerge(lineBaseCSS, lineStyle)} />
-                        <div className="absolute ml-[10px]">
-                          <Icon.LineHorizontal size="14" color="#444447" />
-                        </div>
-                      </>
-                    )}
-                    {/* Repost Card */}
-                    <div className={twMerge(`${line && 'ml-6'} w-full`, rest.className)}>
-                      <PostUI.RepostCard className="relative">
-                        <div className="flex gap-2 items-center">
-                          <Button.Action
-                            className="bg-black bg-opacity-100 hover:bg-opacity-100 cursor-default"
-                            size="small"
-                            variant="custom"
-                            icon={<Icon.Repost size="16" />}
-                          />
-                          <TooltipUI.Root delay={500} tagId="1" setShowTooltip={setShowTooltipProfile}>
-                            <Link
-                              href={`/profile/${post?.details?.author}`}
-                              onClick={(event) => {
-                                event.stopPropagation();
-                              }}
-                            >
-                              <PostUI.Username className="text-[13px] text-opacity-80">
-                                <span className="cursor-pointer hover:underline hover:decoration-solid">
-                                  {data?.details?.name && Utils.minifyText(data?.details?.name, 14)}{' '}
-                                </span>
-                                reposted{' '}
-                              </PostUI.Username>
-                            </Link>
-                            {showTooltipProfile !== '' && !isMobile && <Tooltip.Profile post={post} />}
-                          </TooltipUI.Root>
-                          {(!post?.details?.content || !post?.relationships?.reposted) &&
-                            post?.details?.author === pubky && (
-                              <Typography.Body
-                                variant="small-bold"
-                                className="text-[13px] text-red-500 text-opacity-80 hover:text-opacity-100 underline decoration-solid"
-                                onClick={(event) => {
-                                  event.stopPropagation();
-                                  handleDeletePost();
-                                }}
-                              >
-                                Undo repost
-                              </Typography.Body>
-                            )}
-                        </div>
-                        <PostUI.Time>{Utils.timeAgo(post?.details?.indexed_at, isMobile)}</PostUI.Time>
-                      </PostUI.RepostCard>
-                      <RepostedPost
-                        repostedPost={repostedPost}
-                        loadingRepostedPost={loadingRepostedPost}
-                        largeView={largeView}
-                        fullContent={fullContent}
-                        lineStyle={lineStyle}
-                        repostView={repostView}
-                        showModalTag={showModalTag}
-                        setShowModalTag={setShowModalTag}
-                        showSheetTag={showSheetTag}
-                        setShowSheetTag={setShowSheetTag}
-                        restClassName={twMerge(
-                          'rounded-tl-none rounded-tr-none',
-                          largeView && 'p-12 inline-flex flex-row gap-12'
-                        )}
-                        notFoundClassName="rounded-t-none rounded-b-lg mt-0"
-                      />
-                    </div>
-                  </div>
-                </>
+                <Repost.Quote
+                  post={post}
+                  repostedPost={repostedPost}
+                  loadingRepostedPost={loadingRepostedPost}
+                  repostView={repostView}
+                  line={line}
+                  lineStyle={lineStyle}
+                  largeView={largeView}
+                  fullContent={fullContent}
+                />
               )
             ) : post?.details?.content === '[DELETED]' ? (
               <div className="relative cursor-default" onClick={(event) => event.stopPropagation()}>
