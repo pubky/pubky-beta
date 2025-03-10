@@ -4,7 +4,6 @@ import NotificationTagGroup from './_NotificationTagGroup';
 import NotificationTagPostGroup from './_NotificationTagPostGroup';
 import Root from './_Root';
 import Content from './_Content';
-import FilterTabs from './_FilterTabs';
 
 export const Notifications = {
   Notification,
@@ -12,6 +11,5 @@ export const Notifications = {
   NotificationTagGroup,
   NotificationTagPostGroup,
   Root,
-  Content,
-  FilterTabs
+  Content
 };
