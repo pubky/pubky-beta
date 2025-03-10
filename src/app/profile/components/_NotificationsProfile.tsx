@@ -52,7 +52,7 @@ export default function NotificationsProfile() {
       ) : (
         <div className="flex flex-col gap-1">
           <Notifications.FilterTabs selectedFilter={selectedFilter} setSelectedFilter={setSelectedFilter} />
-          <div className="px-6 py-[18px] bg-white/10 rounded-b-lg">
+          <div id="notifications-list" className="px-6 py-[18px] bg-white/10 rounded-b-lg">
             {tempUnReadNotication > 0 && (
               <div>
                 {notifications.slice(0, tempUnReadNotication).map((notification, index) => (

@@ -7,7 +7,6 @@ describe('profile', () => {
   });
 
   beforeEach(() => {
-    cy.mockInviteCodeApi();
     cy.onboardAsNewUser('Edit Me', 'This bio is editable');
   });
 

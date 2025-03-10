@@ -10,7 +10,6 @@ describe('onboarding', () => {
 
   beforeEach(() => {
     cy.deleteDownloadsFolder();
-    cy.mockInviteCodeApi();
   });
 
   it('can onboard as a new user, viewing onboarding slides, go to home and logout', () => {
@@ -54,5 +53,31 @@ describe('onboarding', () => {
     cy.get('#quick-post-create-content').innerTextShouldContain('anonymous');
     cy.get('#header-profile-pic').click();
     cy.get('#profile-username-header').should('have.text', 'anonymous');
+  });
+
+  // test that invalid invite code is rejected
+  it('should reject invalid invite code', () => {
+    cy.visit('/');
+
+    cy.location('pathname').should('eq', '/onboarding');
+
+    cy.get('#onboarding-create-account-btn').click();
+    cy.location('pathname').should('eq', '/onboarding/intro');
+
+    cy.get('#onboarding-skip-intro-btn').click();
+
+    cy.get('#onboarding-sign-up-link').click();
+    cy.location('pathname').should('eq', '/onboarding/sign-up');
+
+    // test that a code with less than 14 characters is rejected
+    cy.get('#onboarding-name-input').type('I have an invalid invite code');
+    cy.get('#onboarding-token-input').type('invalidcode');
+    cy.get('#onboarding-submit-button').click();
+    cy.get('#onboarding-token-input').siblings('div').should('contain.text', 'must be 14 characters');
+
+    // test that a wrong code is rejected
+    cy.get('#onboarding-token-input').type('invalidcode123');
+    cy.get('#onboarding-submit-button').click();
+    cy.get('#onboarding-token-input').siblings('div').should('contain.text', 'Invalid');
   });
 });

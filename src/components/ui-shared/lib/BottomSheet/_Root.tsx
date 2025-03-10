@@ -18,7 +18,7 @@ export default function Root({ show, setShow, title, children, homeIndicatorCSS,
   const [startY, setStartY] = useState<number | null>(null);
 
   const baseCSS =
-    'max-h-[90vh] overflow-y-auto min-h-[320px] relative w-full bg-[#05050a] rounded-t-3xl mx-1 px-6 pb-24 border border-white border-dashed border-opacity-30 z-50 transition-transform duration-300 touch-action-none';
+    'max-h-[90vh] overflow-y-auto min-h-[250px] relative w-full bg-[#05050a] rounded-t-3xl mx-1 px-6 pb-12 border border-white border-dashed border-opacity-30 z-50 transition-transform duration-300 touch-action-none';
 
   useEffect(() => {
     if (show) {

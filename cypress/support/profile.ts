@@ -78,7 +78,7 @@ export const clickFollowButton = () => {
 export const waitForNotificationsToLoad = (attempts: number = 5) => {
   if (attempts <= 0) assert(false, `waitForNotificationsToLoad: Notifications not loaded`);
 
-  cy.get('#profile-tab-content > div').then(($notificationsList) => {
+  cy.get('#notifications-list').then(($notificationsList) => {
     cy.wrap($notificationsList)
       .invoke('text')
       .then((text) => {
@@ -94,7 +94,7 @@ export const waitForNotificationsToLoad = (attempts: number = 5) => {
 // wait for notification dot to disappear from all listed notifications (useful to prevent 'no longer attached to the DOM' error when checking list of notifications)
 const waitForNotificationDotToDisappear = (t: number = 25) => {
   if (t === 0) assert(false, `waitForNotificationDotToDisappear: Notification dot id not disappear`);
-  cy.get('#profile-tab-content > div').then(($firstNotif) => {
+  cy.get('#notifications-list').then(($firstNotif) => {
     if ($firstNotif.find('#notification-unread-dot').length > 0) {
       cy.log('waitForNotificationDotToDisappear: Notification dot is still visible; waiting 200ms and checking again');
       cy.wait(200);
@@ -107,7 +107,8 @@ export const checkLatestNotification = (expectedContent: string[], profileToNavi
   waitForNotificationsToLoad();
   waitForNotificationDotToDisappear();
   // assert that each expected string is present in the first notification listed
-  cy.get('#profile-tab-content > div')
+  cy.get('#notifications-list')
+    .should('be.visible')
     .children()
     .should('have.length.at.least', 1)
     .first()
@@ -118,7 +119,8 @@ export const checkLatestNotification = (expectedContent: string[], profileToNavi
     });
   // if profile name is provided, navigate to it in the notification
   if (profileToNavigateTo) {
-    cy.get('#profile-tab-content > div')
+    cy.get('#notifications-list')
+      .should('be.visible')
       .children()
       .should('have.length.at.least', 1)
       .first()

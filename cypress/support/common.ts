@@ -34,7 +34,7 @@ export const addTagsWithModal = (tags: string[]) => {
     // add tags to the post
     for (const tag of tags) {
       cy.get('input').type(tag);
-      cy.get('#add-btn').should('be.visible').click();
+      cy.get('#add-tag-btn').should('be.visible').click();
     }
 
     // TODO: uncomment once bug is fixed, see https://github.com/pubky/pubky-app/issues/541
@@ -47,23 +47,5 @@ export const addTagsWithModal = (tags: string[]) => {
 
     // close modal
     cy.get('#close-btn').click();
-  });
-};
-
-// input invite code and proceed
-export const passInviteCode = () => {
-  // TODO: improve detection of page finished loading and redirecting
-  cy.wait(1000);
-  cy.location('pathname').then((path) => {
-    if (path === '/invite-code') {
-      // Enter invite code
-      cy.get('input').type('53SU23U3');
-      // Click continue button
-      cy.contains('button', 'Continue').click();
-      // Ensure we moved past the invite code page
-      cy.location('pathname').should('eq', '/onboarding/sign-in');
-      // TODO: improve detection of page finished loading and redirecting
-      cy.wait(1000);
-    }
   });
 };

@@ -24,7 +24,14 @@ export default function Reach() {
   });
 
   return (
-    <DropDown open={openDropdown} setOpen={setOpenDropdown} value={dropdownValue} labelIcon="Reach" type="text">
+    <DropDown
+      idPrefix="reach"
+      open={openDropdown}
+      setOpen={setOpenDropdown}
+      value={dropdownValue}
+      labelIcon="Reach"
+      type="text"
+    >
       <DropDownUI.Content className="right-0 mt-0 px-4 py-2" isOpen={openDropdown}>
         <ContentReach setDropdownValue={setDropdownValue} setOpenDropdown={setOpenDropdown} />
       </DropDownUI.Content>

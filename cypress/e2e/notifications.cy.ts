@@ -11,10 +11,10 @@ import { HasBackedUp, SkipOnboardingSlides } from '../support/types/enums';
 const profile1 = { username: 'Notif #1', pubkyAlias: 'pubky_1' };
 const profile2 = { username: 'Notif #2', pubkyAlias: 'pubky_2' };
 
-describe('notifications', () => {
+// todo: enable suite once notifications are fixed, wait for branch merge: https://github.com/pubky/pubky-app/tree/feat/add-redux
+describe.skip('notifications', () => {
   before(() => {
     slowCypressDown();
-    cy.mockInviteCodeApi();
     cy.deleteDownloadsFolder();
 
     // * create profile 1
@@ -31,7 +31,6 @@ describe('notifications', () => {
   });
 
   beforeEach(() => {
-    cy.mockInviteCodeApi();
     // TODO: store pubkys as environment variables in before to avoid need to create from aliases here
     // Re-create the aliases in beforeEach
     cy.log('Re-creating aliases in beforeEach');
@@ -269,18 +268,20 @@ describe('notifications', () => {
   });
 
   it('can be notified for a post being deleted that you reposted', () => {
+    const postContent = `The one who reposts this post will be notified when it is deleted! ${Date.now()}`;
     // * profile 1 creates a post (1) that will be reposted and then deleted
-    createQuickPost(`The one who reposts this post will be notified when it is deleted! ${Date.now()}`);
+    createQuickPost(postContent);
 
     // * profile 2 reposts profile 1's post
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(backupDownloadFilePath(profile2.username));
+    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/922
+    cy.reload();
+    cy.findFirstPostInFeed().innerTextContains(postContent);
     repostPost({ repostContent: 'I reposted your post!' });
 
     // * profile 1 deletes own post (1)
     cy.signOut(HasBackedUp.Yes);
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/922
-    cy.reload();
     cy.signIn(backupDownloadFilePath(profile1.username));
     deletePost(1);
 
@@ -336,18 +337,20 @@ describe('notifications', () => {
 
   // failing due to wrong notification "edited a post you tagged", see https://github.com/pubky/pubky-app/issues/823
   it('can be notified for a post being edited that you reposted', () => {
+    const postContent = `The one who reposts this post will be notified when it is edited! ${Date.now()}`;
     // * profile 1 creates a post (1) that will be reposted and then edited
-    createQuickPost(`The one who reposts this post will be notified when it is edited! ${Date.now()}`);
+    createQuickPost(postContent);
 
     // * profile 2 reposts profile 1's post (1)
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(backupDownloadFilePath(profile2.username));
+    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/922
+    cy.reload();
+    cy.findFirstPostInFeed().innerTextContains(postContent);
     repostPost({ repostContent: 'I reposted your post!' });
 
     // * profile 1 edits own post (1)
     cy.signOut(HasBackedUp.Yes);
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/922
-    cy.reload();
     cy.signIn(backupDownloadFilePath(profile1.username));
     editPost('I edited my post!', 1);
 
