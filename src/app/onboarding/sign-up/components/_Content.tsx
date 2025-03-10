@@ -42,11 +42,11 @@ export default function Index() {
   const [success, setSuccess] = useState(false);
   const [errors, setErrors] = useState({ name: '', token: '', bio: '' });
   const iconInviteCode = errors.token ? (
-    <Icon.XCircle size="24" color="#FF0000" />
+    <Icon.XCircle size="26" color="#FF0000" />
   ) : success ? (
-    <Icon.CheckCircle size="24" color="#C8FF00" />
+    <Icon.CheckCircle size="26" color="#C8FF00" />
   ) : (
-    <Icon.LockKey size="24" color={token ? 'white' : 'gray'} />
+    <Icon.LockKey size="26" />
   );
 
   useEffect(() => {
@@ -120,7 +120,7 @@ export default function Index() {
 
   return (
     <Onboarding.Layout currentStep={2}>
-      <div className="w-full flex flex-col gap-4 lg:flex-row lg:items-center">
+      <div className="w-full flex flex-col gap-4 lg:flex-row">
         <div>
           <Input.Cursor
             placeholder="Your Name"
@@ -138,17 +138,17 @@ export default function Index() {
             Enter your bio, add some links, and upload a user picture.
           </Typography.Body>
         </div>
-        <div className="flex flex-col lg:justify-self-end">
+        <div className="flex flex-col lg:justify-self-end lg:mt-4">
           <Input.Text
             icon={iconInviteCode}
             defaultValue={token}
-            disabled={loading}
+            disabled={loading || success}
             maxLength={14}
             id="onboarding-token-input"
             autoCorrect="off"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setToken(e.target.value)}
             error={errors.token}
-            className={`${success && 'border-[#C8FF00] border-opacity-100'} h-auto lg:w-[300px] pl-12 pr-6 py-4 uppercase placeholder:normal-case placeholder:text-opacity-20 text-[24px]`}
+            className={`${success && 'border-[#C8FF00] text-[#C8FF00]'} border-opacity-100 h-auto lg:w-[300px] pl-12 pr-6 py-4 uppercase placeholder:normal-case placeholder:text-opacity-40 text-opacity-100 text-[24px]`}
             placeholder="Invite code"
           />
         </div>
