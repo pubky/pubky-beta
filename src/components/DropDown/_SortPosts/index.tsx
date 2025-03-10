@@ -22,7 +22,14 @@ export default function SortPosts() {
   });
 
   return (
-    <DropDown open={openDropdown} setOpen={setOpenDropdown} value={dropdownValue} labelIcon="Sort" type="text">
+    <DropDown
+      idPrefix="sort"
+      open={openDropdown}
+      setOpen={setOpenDropdown}
+      value={dropdownValue}
+      labelIcon="Sort"
+      type="text"
+    >
       <DropDownUI.Content className="right-0 mt-0 px-4 py-2" isOpen={openDropdown}>
         <ContentSortPosts setDropdownValue={setDropdownValue} setOpenDropdown={setOpenDropdown} />
       </DropDownUI.Content>

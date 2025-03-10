@@ -10,7 +10,6 @@ describe('settings', () => {
 
   beforeEach(() => {
     cy.deleteDownloadsFolder();
-    cy.mockInviteCodeApi();
   });
 
   it('Account settings function correctly', () => {

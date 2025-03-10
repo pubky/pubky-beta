@@ -44,7 +44,7 @@ export default function FilterTabs({ selectedFilter, setSelectedFilter }: Filter
   const activeCSS = 'bg-white bg-opacity-10 rounded-tr-lg';
 
   return (
-    <div className="max-w-full overflow-x-auto no-scrollbar flex gap-1">
+    <div id="filter-tabs" className="max-w-full overflow-x-auto no-scrollbar flex gap-1">
       {filterOptions.map(
         ({ key, label }) =>
           (key === 'all' ||

@@ -116,7 +116,7 @@ export default function Index() {
         className="h-14 text-[40px] font-bold sm:h-[106px] sm:text-[64px] placeholder:text-opacity-20"
         defaultValue={name}
         disabled={loading}
-        maxLength={30}
+        maxLength={24}
         autoFocus
         id="onboarding-name-input"
         autoCorrect="off"

@@ -84,6 +84,7 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
         <div className="w-full order-2 sm:order-1">
           <div>
             <Input.Text
+              id="create-feed-name-input"
               value={nameFeed}
               maxLength={20}
               autoFocus
@@ -112,6 +113,7 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
               </>
             )}
             <Input.Tag
+              idPrefix="create-feed"
               value={tag}
               onChange={(value) => setTag(value)}
               onAddTag={handleAddTag}
@@ -123,7 +125,7 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
           </div>
           <div className="mt-2 justify-start items-start">
             {tagsFeed && tagsFeed.length > 0 ? (
-              <div className="justify-start items-start">
+              <div id="create-feed-tags-container" className="justify-start items-start">
                 {tagsFeed.map((tag, index) => (
                   <PostUtil.Tag
                     key={index}
@@ -174,6 +176,7 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
         </div>
       </div>
       <Button.Medium
+        id="create-feed-save-btn"
         loading={loading}
         disabled={!nameFeed || tagsFeed?.length === 0}
         icon={<Icon.Activity size="16" color={!nameFeed || tagsFeed?.length === 0 ? 'grey' : 'white'} />}
