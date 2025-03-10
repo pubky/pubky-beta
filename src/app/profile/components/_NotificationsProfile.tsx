@@ -13,12 +13,10 @@ export default function NotificationsProfile() {
     notifications,
     loading: loadingNotifications,
     loadMoreNotifications,
-    fetchNotifications,
-    selectedFilter,
-    setSelectedFilter
+    selectedFilter
   } = useNotificationsContext();
   const { unReadNotification, setUnReadNotification } = useFilterContext();
-  const [tempUnReadNotication, setTempUnReadNotification] = useState(0);
+  const [tempUnReadNotification, setTempUnReadNotification] = useState(0);
   const { putTimestampNotification } = usePubkyClientContext();
 
   const loader = useInfiniteScroll(loadMoreNotifications, loadingNotifications);
@@ -27,7 +25,7 @@ export default function NotificationsProfile() {
     (notification) => selectedFilter === 'all' || filterMap[selectedFilter]?.includes(notification.body.type)
   );
 
-  const displayedNotifications = filteredNotifications.slice(tempUnReadNotication);
+  const displayedNotifications = filteredNotifications.slice(tempUnReadNotification);
 
   useEffect(() => {
     if (unReadNotification) {
@@ -41,21 +39,16 @@ export default function NotificationsProfile() {
     putTimestamp();
   }, []);
 
-  useEffect(() => {
-    fetchNotifications();
-  }, [selectedFilter]);
-
   return (
     <>
       {loadingNotifications && notifications.length === 0 ? (
         <Skeleton.Simple />
       ) : (
         <div className="flex flex-col gap-1">
-          <Notifications.FilterTabs selectedFilter={selectedFilter} setSelectedFilter={setSelectedFilter} />
-          <div id="notifications-list" className="px-6 py-[18px] bg-white/10 rounded-b-lg">
-            {tempUnReadNotication > 0 && (
+          <div id="notifications-list" className="px-6 py-[18px] bg-white/10 rounded-lg">
+            {tempUnReadNotification > 0 && (
               <div>
-                {notifications.slice(0, tempUnReadNotication).map((notification, index) => (
+                {notifications.slice(0, tempUnReadNotification).map((notification, index) => (
                   <Notifications.Notification key={index} notification={notification} unread />
                 ))}
               </div>
