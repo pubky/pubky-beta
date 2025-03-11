@@ -10,6 +10,7 @@ import * as Components from '@/components';
 import { getFile } from '@/services/fileService';
 import { getUserDetails } from '@/services/userService';
 import { PubkyAppPostKind } from 'pubky-app-specs';
+import { PostWrapper } from '@/contexts';
 
 const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
 const BASE_URL = `${NEXT_PUBLIC_NEXUS}`;
@@ -65,15 +66,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Index({ params }: Props) {
   return (
-    <Content.Main className="pt-[80px]">
-      <Post.Header />
+    <PostWrapper>
+      <Content.Main className="pt-[80px]">
+        <Post.Header />
 
-      <Content.Grid className="flex justify-between flex-col gap-3">
-        <Post.Root params={params} />
-      </Content.Grid>
+        <Content.Grid className="flex justify-between flex-col gap-3">
+          <Post.Root params={params} />
+        </Content.Grid>
 
-      <CreatePost />
-      <Components.FooterMobile />
-    </Content.Main>
+        <CreatePost />
+        <Components.FooterMobile />
+      </Content.Main>
+    </PostWrapper>
   );
 }

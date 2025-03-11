@@ -4,7 +4,7 @@ import { usePubkyClientContext, PubkyClientWrapper } from './_pubky';
 import { useNotificationsContext, NotificationsWrapper } from './_notifications';
 import { useToastContext, ToastWrapper } from './_toast';
 import { useModal, ModalProvider } from './_modals';
-
+import { usePostContext, PostWrapper } from './_post';
 export {
   useAlertContext,
   useFilterContext,
@@ -17,5 +17,7 @@ export {
   usePubkyClientContext,
   PubkyClientWrapper,
   useModal,
-  ModalProvider
+  ModalProvider,
+  usePostContext,
+  PostWrapper
 };

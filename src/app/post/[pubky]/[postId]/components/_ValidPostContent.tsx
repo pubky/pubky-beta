@@ -12,8 +12,10 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 import { usePubkyClientContext } from '@/contexts';
 import Link from 'next/link';
 import Tags from '@/components/Post/Tags';
+import { PostView } from '@/types/Post';
+import { PubkyAppPostKind } from 'pubky-app-specs';
 
-export function ValidPostContent({ postRef, data }) {
+export function ValidPostContent({ postRef, data }: { postRef: React.RefObject<HTMLDivElement>; data: PostView }) {
   const { pubky } = usePubkyClientContext();
   const user = useUserProfile(data?.details?.author, pubky ?? '');
 
@@ -22,7 +24,11 @@ export function ValidPostContent({ postRef, data }) {
       {data?.relationships?.replied && <Post.RootParent postRef={postRef} parentURI={data?.relationships?.replied} />}
 
       <div ref={postRef} key={data?.details?.uri}>
-        {data?.details?.kind === 'long' ? <LongPost data={data} user={user} /> : <NormalPost data={data} />}
+        {data?.details?.kind === PubkyAppPostKind.Long ? (
+          <LongPost data={data} user={user} />
+        ) : (
+          <NormalPost data={data} />
+        )}
       </div>
       <div className="mt-3">
         <Post.PostRoot uri={data?.details.id} post={data} />
