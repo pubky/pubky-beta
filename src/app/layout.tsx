@@ -1,5 +1,6 @@
 import './global.css';
 import DynamicMeta from '@/components/DynamicMeta';
+import PullDownRefresh from '@/components/PullDownRefresh';
 
 import {
   AlertWrapper,
@@ -18,6 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <DynamicMeta />
       </head>
       <body className="overflow-x-hidden max-w-full">
+        <PullDownRefresh />
         <PubkyClientWrapper>
           <FilterWrapper>
             <AlertWrapper>
