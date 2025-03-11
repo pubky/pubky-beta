@@ -120,7 +120,7 @@ export default function Index() {
 
   return (
     <Onboarding.Layout currentStep={2}>
-      <div className="w-full flex flex-col gap-4 lg:flex-row">
+      <div className="w-full flex flex-col gap-4 lg:flex-row justify-between">
         <div>
           <Input.Cursor
             placeholder="Your Name"
