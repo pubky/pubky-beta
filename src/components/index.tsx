@@ -21,7 +21,8 @@ import SocialLinks from './SocialLinks';
 import Toast from './Toast';
 import ProtectedRoutes from './ProtectedRoutes';
 import RemindBackup from './RemindBackup';
-
+import Tooltip from './Tooltip';
+import { ImageByUri } from './ImageByUri';
 export {
   Influencers,
   BottomSheet,
@@ -45,5 +46,7 @@ export {
   SocialLinks,
   Toast,
   ProtectedRoutes,
-  RemindBackup
+  RemindBackup,
+  Tooltip,
+  ImageByUri
 };
