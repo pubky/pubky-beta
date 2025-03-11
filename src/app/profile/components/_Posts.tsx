@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Icon } from '@social/ui-shared';
+import { Button, Icon } from '@social/ui-shared';
 import { ContentNotFound, Post, Skeleton } from '@/components';
-import { usePubkyClientContext } from '@/contexts';
+import { useModal, usePubkyClientContext } from '@/contexts';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { PostView } from '@/types/Post';
 import { useStreamPost } from '@/hooks/useStream';
@@ -12,6 +12,7 @@ import Image from 'next/image';
 export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   const limit = 10;
   const { pubky } = usePubkyClientContext();
+  const { openModal } = useModal();
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [start, setStart] = useState<number | undefined>(undefined);
   const [fetching, setFetching] = useState<boolean>(false);
@@ -82,6 +83,13 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
           title="No posts yet"
           description="Start writing your first post."
         >
+          <Button.Medium
+            onClick={() => (pubky ? openModal('createPost') : openModal('join'))}
+            className="z-10 w-auto"
+            icon={<Icon.Plus size="24" />}
+          >
+            Create a Post
+          </Button.Medium>
           <div className="absolute top-12 z-0">
             <Image alt="not-found-posts" width={656} height={438} src="/images/webp/not-found/posts.webp" />
           </div>

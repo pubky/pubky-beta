@@ -7,6 +7,7 @@ import { Icon } from '@social/ui-shared';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useEffect, useState } from 'react';
 import { filterMap } from '@/contexts/_notifications';
+import Image from 'next/image';
 
 export default function NotificationsProfile() {
   const {
@@ -43,6 +44,16 @@ export default function NotificationsProfile() {
     <>
       {loadingNotifications && notifications.length === 0 ? (
         <Skeleton.Simple />
+      ) : notifications?.length === 0 ? (
+        <ContentNotFound
+          icon={<Icon.SmileySad size="48" color="#C8FF00" />}
+          title="Nothing to see here yet"
+          description="Tags, follows, reposts, and account information will be displayed here."
+        >
+          <div className="absolute top-32 z-0">
+            <Image alt="not-found-notification" width={477} height={271} src="/images/webp/not-found/search.webp" />
+          </div>
+        </ContentNotFound>
       ) : (
         <div className="flex flex-col gap-1">
           <div id="notifications-list" className="px-6 py-[18px] bg-white/10 rounded-lg">
