@@ -8,7 +8,7 @@ import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { getUserProfile } from '@/services/userService';
 import { UserView } from '@/types/User';
 
-export default function Participants({ author }: { author: string }) {
+export function Participants({ author }: { author: string }) {
   const { pubky, follow, unfollow, replies, mutedUsers } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const { data: authorData } = useUserProfile(author, pubky ?? '');
@@ -245,3 +245,5 @@ export default function Participants({ author }: { author: string }) {
     </div>
   );
 }
+
+export default Participants;

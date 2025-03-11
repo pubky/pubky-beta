@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { parse_uri } from 'pubky-app-specs';
+
 import { Post, Skeleton } from '@/components';
 import { Typography } from '@social/ui-shared';
 import { PostView } from '@/types/Post';
 import { getPost } from '@/services/postService';
 import { usePubkyClientContext } from '@/contexts';
-import { parse_uri } from 'pubky-app-specs';
 
 interface ParentPostState {
   [uri: string]: {
@@ -15,13 +16,7 @@ interface ParentPostState {
   };
 }
 
-export default function RootParent({
-  parentURI,
-  postRef
-}: {
-  parentURI: string;
-  postRef: React.RefObject<HTMLDivElement>;
-}) {
+export function RootParent({ parentURI, postRef }: { parentURI: string; postRef: React.RefObject<HTMLDivElement> }) {
   const { pubky } = usePubkyClientContext();
   const [isMobile, setIsMobile] = useState(false);
   const [parentURIs, setParentURIs] = useState<string[]>([]);
@@ -143,3 +138,5 @@ export default function RootParent({
     );
   });
 }
+
+export default RootParent;

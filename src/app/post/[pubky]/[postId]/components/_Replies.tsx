@@ -12,7 +12,7 @@ import { ReplyReplies } from './_ReplyReplies';
 import { PostView } from '@/types/Post';
 import { getPost } from '@/services/postService';
 
-export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; postId: string }) {
+export function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; postId: string }) {
   const { pubky, setReplies, mutedUsers, replies, deletedPosts } = usePubkyClientContext();
   const limit = 5;
   const loaderRef = useRef<HTMLDivElement>(null);
@@ -36,7 +36,7 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
     undefined,
     replies.length > 0 ? replies[0]?.details?.indexed_at + 1 : undefined,
     {
-      enabled: true
+      enabled: false
       // refetchInterval: 3000,
     }
   );
@@ -201,3 +201,5 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
     </>
   );
 }
+
+export default Replies;

@@ -118,3 +118,5 @@ const LongPost = ({ data, user }) => {
     </div>
   );
 };
+
+export default ValidPostContent;

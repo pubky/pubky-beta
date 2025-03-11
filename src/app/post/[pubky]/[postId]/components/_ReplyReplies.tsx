@@ -26,13 +26,9 @@ export const ReplyReplies = ({ reply }: { reply: PostView }) => {
   if (!replyReplies || replyReplies.length === 0) return null;
 
   const filteredReplies = replyReplies.filter((reply) => !mutedUsers?.includes(reply?.details?.author));
-
   const displayedReplies = filteredReplies.slice(0, 1);
-
   const mutedRepliesCount = replyReplies.filter((reply) => mutedUsers?.includes(reply?.details?.author)).length;
-
   const repliesLeft = reply?.counts?.replies - displayedReplies.length - mutedRepliesCount;
-
   const showQuickReply = displayedReplies.length > 0;
 
   return (

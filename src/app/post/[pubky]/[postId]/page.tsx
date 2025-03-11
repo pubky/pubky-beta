@@ -1,12 +1,11 @@
 import type { Metadata } from 'next';
-import { useRouter } from 'next/navigation';
 import { Content, Icon } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 
 import { getSeoMetadata } from '@components/HeaderSEO';
 import { CreatePost } from '@/components';
-import { Post } from './components';
 import * as Components from '@/components';
+import { Post } from './components';
 
 import { getFile } from '@/services/fileService';
 import { getUserDetails } from '@/services/userService';
@@ -66,24 +65,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function Index({ params }: Props) {
-  const router = useRouter();
-
   return (
     <PostWrapper>
       <Content.Main className="pt-[80px]">
         <Components.Header title="Post" />
-        <Components.HeaderMobile
-          leftIcon={
-            <div className="cursor-pointer" onClick={() => router.back()}>
-              <Icon.ArrowLeft size="20" />
-            </div>
-          }
-        />
-
+        <Components.HeaderMobile leftIcon={<Icon.ArrowLeft size="20" />} />
         <Content.Grid className="flex justify-between flex-col gap-3">
           <Post.Root params={params} />
         </Content.Grid>
-
         <CreatePost />
         <Components.FooterMobile />
       </Content.Main>

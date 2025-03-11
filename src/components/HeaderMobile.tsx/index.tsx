@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Header as HeaderUI, Icon } from '@social/ui-shared';
 import { useModal, usePubkyClientContext } from '@/contexts';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import useIsScrollup from '@/hooks/useIsScrollUp';
 
 interface HeaderMobileProps {
@@ -13,6 +13,7 @@ interface HeaderMobileProps {
 }
 
 export default function HeaderMobile({ leftIcon, rightIcon, children }: HeaderMobileProps) {
+  const router = useRouter();
   const pathname = usePathname();
   const { openModal } = useModal();
   const { pubky, isLoggedIn, setSearchTags } = usePubkyClientContext();
@@ -42,7 +43,11 @@ export default function HeaderMobile({ leftIcon, rightIcon, children }: HeaderMo
   return (
     <HeaderUI.Root className={`flex lg:hidden items-center ${!isVisible && 'hidden'}`}>
       <div className="relative flex w-full items-center">
-        {pubky && <div className="absolute left-0">{leftIcon}</div>}
+        {pubky && (
+          <div className="cursor-pointer" onClick={() => router.back()}>
+            <div className="absolute left-0">{leftIcon}</div>
+          </div>
+        )}
 
         <div className="mx-auto flex gap-4 items-center">
           <HeaderUI.Logo link={logoLink} />

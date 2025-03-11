@@ -1,15 +1,16 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-
-import { usePostContext, usePubkyClientContext } from '@/contexts';
-import { Post } from '.';
-import { usePost } from '@/hooks/usePost';
-import Skeletons from '@/components/Skeletons';
-import { Typography } from '@/components/ui-shared';
 import Link from 'next/link';
 
-export default function Root({ params }: { params: Promise<{ pubky: string; postId: string }> }) {
+import { Post } from '.';
+
+import { usePost } from '@/hooks/usePost';
+import { usePostContext, usePubkyClientContext } from '@/contexts';
+import { Skeletons } from '@/components/Skeletons';
+import { Typography } from '@/components/ui-shared';
+
+export function Root({ params }: { params: Promise<{ pubky: string; postId: string }> }) {
   const { pubky, setReplies } = usePubkyClientContext();
   const { setPost } = usePostContext();
 
@@ -74,3 +75,5 @@ export default function Root({ params }: { params: Promise<{ pubky: string; post
 
   return <Post.ValidPostContent postRef={null} data={data} />;
 }
+
+export default Root;

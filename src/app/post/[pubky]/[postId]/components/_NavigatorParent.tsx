@@ -16,7 +16,7 @@ interface NavigatorParentProps {
   };
 }
 
-export default function NavigatorParent({ parentPost }: { parentPost: string }) {
+export function NavigatorParent({ parentPost }: { parentPost: string }) {
   const { pubky } = usePubkyClientContext();
   const [parentURIs, setParentURIs] = useState<string[]>([]);
   const [parentPosts, setParentPosts] = useState<NavigatorParentProps>({});
@@ -114,3 +114,5 @@ export default function NavigatorParent({ parentPost }: { parentPost: string }) 
     </>
   );
 }
+
+export default NavigatorParent;

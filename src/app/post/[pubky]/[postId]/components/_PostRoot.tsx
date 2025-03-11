@@ -10,7 +10,7 @@ import { PostView } from '@/types/Post';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { parse_uri, PubkyAppPostKind } from 'pubky-app-specs';
 
-export default function PostRoot({ post }: { uri: string; post: PostView }) {
+export function PostRoot({ post }: { uri: string; post: PostView }) {
   const { pubky, createReply, createTag } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [arrayTags, setArrayTags] = useState<string[]>([]);
@@ -105,3 +105,5 @@ export default function PostRoot({ post }: { uri: string; post: PostView }) {
     </div>
   );
 }
+
+export default PostRoot;

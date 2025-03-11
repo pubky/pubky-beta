@@ -1,10 +1,10 @@
-import NavigatorParent from './_NavigatorParent';
-import Participants from './_Participants';
-import PostRoot from './_PostRoot';
-import Replies from './_Replies';
-import RootParent from './_RootParent';
+import { NavigatorParent } from './_NavigatorParent';
+import { Participants } from './_Participants';
+import { PostRoot } from './_PostRoot';
+import { Replies } from './_Replies';
+import { RootParent } from './_RootParent';
 import { ValidPostContent } from './_ValidPostContent';
-import Root from './_Root';
+import { Root } from './_Root';
 
 export const Post = {
   NavigatorParent,
@@ -15,3 +15,5 @@ export const Post = {
   ValidPostContent,
   Root
 };
+
+export default Post;
