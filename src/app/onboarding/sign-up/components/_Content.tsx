@@ -148,7 +148,7 @@ export default function Index() {
             autoCorrect="off"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setToken(e.target.value)}
             error={errors.token}
-            className={`${success && 'border-[#C8FF00] text-[#C8FF00]'} border-opacity-100 h-auto lg:w-[280px] pl-14 pr-6 py-5 uppercase placeholder:text-opacity-40 text-opacity-100 text-[17px]`}
+            className={`${success && 'border-[#C8FF00] text-[#C8FF00]'} border-opacity-100 h-auto lg:w-[280px] pl-16 pr-6 py-5 uppercase placeholder:text-opacity-40 text-opacity-100 text-[17px]`}
             placeholder="Invite code"
           />
         </div>

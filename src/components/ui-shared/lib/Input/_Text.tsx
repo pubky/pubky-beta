@@ -62,7 +62,7 @@ export const Text = ({
     <div className="relative w-full">
       <div>
         {icon && (
-          <div className={`${error ? 'top-[35%]' : 'top-1/2'} absolute left-4 transform -translate-y-1/2 text-white`}>
+          <div className={`${error ? 'top-[35%]' : 'top-1/2'} absolute left-6 transform -translate-y-1/2 text-white`}>
             {icon}
           </div>
         )}
