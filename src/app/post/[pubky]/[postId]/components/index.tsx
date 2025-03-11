@@ -1,4 +1,3 @@
-import { Header } from './_Header';
 import NavigatorParent from './_NavigatorParent';
 import Participants from './_Participants';
 import PostRoot from './_PostRoot';
@@ -8,7 +7,6 @@ import { ValidPostContent } from './_ValidPostContent';
 import Root from './_Root';
 
 export const Post = {
-  Header,
   NavigatorParent,
   Participants,
   PostRoot,
