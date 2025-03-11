@@ -8,7 +8,7 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   largeView?: boolean;
 }
 
-export default function Standard({ post, largeView = false }: PostProps) {
+export function Standard({ post, largeView = false }: PostProps) {
   const { tags, isMobile } = useTagsLogic(post);
   return (
     <div className="lg:mt-3 cursor-default" onClick={(event) => event.stopPropagation()}>
@@ -25,3 +25,5 @@ export default function Standard({ post, largeView = false }: PostProps) {
     </div>
   );
 }
+
+export default Standard;

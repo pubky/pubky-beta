@@ -46,6 +46,56 @@ export function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; postId: 
     return [...existingReplies, ...newReplies.filter((reply) => !existingIds.has(reply.details.id))];
   };
 
+  const fetchNexusData = async () => {
+    if (!replies.length) return;
+
+    const homeserverReplies = replies.filter((reply) => reply.cached === 'homeserver' || reply.cached === undefined);
+    if (!homeserverReplies.length) return;
+
+    try {
+      const nexusData = await getPost(
+        homeserverReplies[0].details.author,
+        homeserverReplies[0].details.id,
+        pubky ?? '',
+        undefined,
+        undefined
+      );
+
+      if (!nexusData) return;
+
+      // Update replies with nexus data
+      setReplies((prev) => {
+        const existingReply = prev.find((p) => p.details.id === nexusData.details.id);
+
+        if (existingReply) {
+          return prev.map((p) => (p.details.id === nexusData.details.id ? nexusData : p));
+        }
+
+        return prev;
+      });
+
+      // Update local replies as well
+      setRepliesLocal((prev) => {
+        const existingReply = prev.find((p) => p.details.id === nexusData.details.id);
+
+        if (existingReply) {
+          return prev.map((p) => (p.details.id === nexusData.details.id ? nexusData : p));
+        }
+
+        return prev;
+      });
+    } catch (error) {
+      console.log('Error fetching Nexus data:', error);
+    }
+  };
+
+  const handleNewReplies = () => {
+    setRepliesLocal((prev) => mergeReplies(newReplies, prev));
+    setReplies((prev) => mergeReplies(newReplies, prev));
+    setNewReplies([]);
+    setNewRepliesCount(0);
+  };
+
   const fetchReplies = useCallback(() => {
     if (isLoading || !repliesData) return;
 
@@ -74,13 +124,6 @@ export function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; postId: 
 
     setIsInitialLoad(false);
   }, [isLoading, repliesData, mutedUsers, initialLoadComplete, deletedPosts]);
-
-  const handleNewReplies = () => {
-    setRepliesLocal((prev) => mergeReplies(newReplies, prev));
-    setReplies((prev) => mergeReplies(newReplies, prev));
-    setNewReplies([]);
-    setNewRepliesCount(0);
-  };
 
   useEffect(() => {
     if (newRepliesData) {
@@ -126,49 +169,6 @@ export function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; postId: 
   }, []);
 
   useEffect(() => {
-    const fetchNexusData = async () => {
-      if (!replies.length) return;
-
-      const homeserverReplies = replies.filter((reply) => reply.cached === 'homeserver' || reply.cached === undefined);
-      if (!homeserverReplies.length) return;
-
-      try {
-        const nexusData = await getPost(
-          homeserverReplies[0].details.author,
-          homeserverReplies[0].details.id,
-          pubky ?? '',
-          undefined,
-          undefined
-        );
-
-        if (!nexusData) return;
-
-        // Update replies with nexus data
-        setReplies((prev) => {
-          const existingReply = prev.find((p) => p.details.id === nexusData.details.id);
-
-          if (existingReply) {
-            return prev.map((p) => (p.details.id === nexusData.details.id ? nexusData : p));
-          }
-
-          return prev;
-        });
-
-        // Update local replies as well
-        setRepliesLocal((prev) => {
-          const existingReply = prev.find((p) => p.details.id === nexusData.details.id);
-
-          if (existingReply) {
-            return prev.map((p) => (p.details.id === nexusData.details.id ? nexusData : p));
-          }
-
-          return prev;
-        });
-      } catch (error) {
-        console.log('Error fetching Nexus data:', error);
-      }
-    };
-
     const interval = setInterval(fetchNexusData, 2000); // Poll every 2 seconds
 
     return () => clearInterval(interval);

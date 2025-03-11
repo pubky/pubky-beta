@@ -22,17 +22,6 @@ export function Participants({ author }: { author: string }) {
     [pubky: string]: boolean;
   }>({});
 
-  useEffect(() => {
-    setInitLoadingAuthor(true);
-    if (authorData) {
-      setFollowedUser((prevState) => ({
-        ...prevState,
-        [authorData.details.id]: authorData.relationship?.following || false
-      }));
-    }
-    setInitLoadingAuthor(false);
-  }, [authorData]);
-
   const fetchParticipants = async () => {
     if (!Array.isArray(replies) || replies.length === 0) return;
     setInitLoadingFollowers(true);
@@ -63,10 +52,6 @@ export function Participants({ author }: { author: string }) {
       setInitLoadingFollowers(false);
     }
   };
-  useEffect(() => {
-    fetchParticipants();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [replies]);
 
   const followUser = async (pubkyFollow: string) => {
     try {
@@ -125,6 +110,21 @@ export function Participants({ author }: { author: string }) {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    setInitLoadingAuthor(true);
+    if (authorData) {
+      setFollowedUser((prevState) => ({
+        ...prevState,
+        [authorData.details.id]: authorData.relationship?.following || false
+      }));
+    }
+    setInitLoadingAuthor(false);
+  }, [authorData]);
+
+  useEffect(() => {
+    fetchParticipants();
+  }, [replies]);
 
   const getAuthorButton = () => {
     const authorId = authorData ? authorData.details.id : '';

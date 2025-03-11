@@ -1,19 +1,22 @@
 'use client';
 
+import Link from 'next/link';
+
+import { Post } from '.';
+
+import { PubkyAppPostKind } from 'pubky-app-specs';
 import { Typography, Post as PostUI, Icon } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
+
 import { Post as PostComponent } from '@/components';
+import { Tags } from '@/components/Post/Tags';
 import { ImageByUri } from '@/components/ImageByUri';
-import { Post } from '.';
 
 import { useUserProfile } from '@/hooks/useUser';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
 import { usePubkyClientContext } from '@/contexts';
-import Link from 'next/link';
-import Tags from '@/components/Post/Tags';
 import { PostView } from '@/types/Post';
-import { PubkyAppPostKind } from 'pubky-app-specs';
 
 export function ValidPostContent({ postRef, data }: { postRef: React.RefObject<HTMLDivElement>; data: PostView }) {
   const { pubky } = usePubkyClientContext();

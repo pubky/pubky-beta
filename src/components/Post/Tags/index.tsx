@@ -1,7 +1,7 @@
-import Standard from './_Standard';
-import LargeView from './_LargeView';
+import { Standard } from './_Standard';
+import { LargeView } from './_LargeView';
 
-const Tags = {
+export const Tags = {
   Standard,
   LargeView
 };

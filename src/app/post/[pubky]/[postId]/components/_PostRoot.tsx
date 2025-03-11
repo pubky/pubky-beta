@@ -23,9 +23,7 @@ export function PostRoot({ post }: { uri: string; post: PostView }) {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [placeholder, setPlaceholder] = useState('');
 
-  useEffect(() => {
-    setPlaceholder(Utils.promptPlaceholder('reply'));
-  }, []);
+  if (!pubky) return;
 
   const handleReply = async (content: string) => {
     setSendingReply(true);
@@ -60,7 +58,9 @@ export function PostRoot({ post }: { uri: string; post: PostView }) {
     }
   };
 
-  if (!pubky) return;
+  useEffect(() => {
+    setPlaceholder(Utils.promptPlaceholder('reply'));
+  }, []);
 
   return (
     <div ref={wrapperRef} className="grid gap-6 xl:grid-cols-3">

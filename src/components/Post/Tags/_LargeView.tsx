@@ -16,7 +16,7 @@ import { InputTagSinglePost } from './components';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { getUserProfile } from '@/services/userService';
 
-export default function LargeView({ post }: { post: PostView }) {
+export function LargeView({ post }: { post: PostView }) {
   const { pubky } = usePubkyClientContext();
   const [localPost, setLocalPost] = useState(post);
 
@@ -274,3 +274,5 @@ export default function LargeView({ post }: { post: PostView }) {
     </div>
   );
 }
+
+export default LargeView;
