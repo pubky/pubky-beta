@@ -1,6 +1,7 @@
 import { ImageByUri } from '@/components/ImageByUri';
 import { useAlertContext, useModal, usePubkyClientContext } from '@/contexts';
 import { Button, Card, Icon } from '@social/ui-shared';
+import { useEffect, useState } from 'react';
 
 interface PicProps {
   image: File | string | undefined;
@@ -12,6 +13,11 @@ export default function Pic({ image, setImage, loading }: PicProps) {
   const { pubky } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const { openModal } = useModal();
+  const [idImage, setIdImage] = useState('');
+
+  useEffect(() => {
+    setIdImage(pubky || Math.random().toString(36).substring(2, 15));
+  }, [pubky]);
 
   const handleUploadImage = () => {
     if (!image) {
@@ -70,7 +76,7 @@ export default function Pic({ image, setImage, loading }: PicProps) {
     <Card.Primary className="justify-start z-10 w-full col-span-2" title="Picture">
       <div className="relative flex items-center justify-center">
         <ImageByUri
-          id={pubky || Math.random().toString(36).substring(2, 15)}
+          id={idImage}
           width={100}
           height={100}
           className="w-72 h-72 lg:w-36 lg:h-36 xl:w-52 xl:h-52 mt-[20px] lg:mt-[50px] rounded-full"
