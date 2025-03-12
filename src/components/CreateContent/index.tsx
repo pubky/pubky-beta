@@ -164,8 +164,18 @@ export default function CreateContent({
   }, [isValidContent, content, arrayTags]);
 
   const removeFile = (index: number) => {
-    setSelectedFiles && setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
-    setFilePreviews((prevPreviews) => prevPreviews.filter((_, i) => i !== index));
+    setSelectedFiles((prevFiles) => {
+      const newFiles = [...prevFiles];
+      newFiles.splice(index, 1);
+      return newFiles;
+    });
+
+    setFilePreviews((prevPreviews) => {
+      const newPreviews = [...prevPreviews];
+      URL.revokeObjectURL(newPreviews[index]);
+      newPreviews.splice(index, 1);
+      return newPreviews;
+    });
   };
 
   useEffect(() => {
@@ -270,6 +280,7 @@ export default function CreateContent({
           selectedFiles={selectedFiles}
           setArrayTags={setArrayTags}
           arrayTags={arrayTags}
+          filePreviews={filePreviews}
           setFilePreviews={setFilePreviews}
           showEmojis={showEmojis}
           setShowEmojis={setShowEmojis}

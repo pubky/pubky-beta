@@ -19,6 +19,7 @@ interface FooterAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   selectedFiles?: File[];
   setArrayTags?: React.Dispatch<React.SetStateAction<string[]>>;
   arrayTags?: string[];
+  filePreviews?: string[];
   setFilePreviews?: React.Dispatch<React.SetStateAction<string[]>>;
   showEmojis: boolean;
   setShowEmojis: React.Dispatch<React.SetStateAction<boolean>>;
@@ -48,6 +49,7 @@ export default function FooterArea({
   arrayTags,
   showEmojis,
   //largeView,
+  filePreviews,
   setFilePreviews,
   setShowEmojis,
   wrapperRefEmojis,
@@ -114,13 +116,11 @@ export default function FooterArea({
         return;
       }
 
-      const newFiles = selectedFiles && validFiles.slice(0, 4 - selectedFiles.length);
-      setSelectedFiles && newFiles && setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles].slice(0, 4));
+      const newFiles = validFiles.slice(0, 4 - (selectedFiles?.length || 0));
+      filePreviews.forEach((preview) => URL.revokeObjectURL(preview));
 
-      const newFilePreviews = newFiles && newFiles.map((file) => URL.createObjectURL(file));
-      newFilePreviews &&
-        setFilePreviews &&
-        setFilePreviews((prevPreviews) => [...prevPreviews, ...newFilePreviews].slice(0, 4));
+      setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles].slice(0, 4));
+      setFilePreviews(newFiles.map((file) => URL.createObjectURL(file)));
     }
     event.target.value = '';
   };
