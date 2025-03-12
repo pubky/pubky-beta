@@ -261,12 +261,12 @@ export default function Content({ post, fullContent = false, largeView = false, 
           {fileContents.length > 0 && String(post?.details?.kind) !== PubkyAppPostKind[1].toLocaleLowerCase() && (
             <div className="mt-4 flex flex-col gap-4">
               {fileContents.some((file) => file?.content_type.startsWith('image')) && (
-                <div className="grid gap-1 overflow-hidden">
+                <div className="grid gap-1 overflow-hidden max-h-[544px]">
                   {(() => {
                     const imageFiles = fileContents.filter((file) => file?.content_type.startsWith('image'));
 
                     let layoutClass = '';
-                    const widthImg = imageFiles.length === 1 && 'md:min-w-[400px]';
+                    const widthImg = imageFiles.length === 1 ? 'w-auto md:min-w-[400px]' : 'w-full';
                     if (imageFiles.length === 1) {
                       layoutClass = 'grid-cols-1';
                     } else if (imageFiles.length === 2) {
@@ -278,13 +278,14 @@ export default function Content({ post, fullContent = false, largeView = false, 
                     }
 
                     return (
-                      <div className={`grid ${layoutClass} gap-1`}>
+                      <div className={`grid ${layoutClass} gap-1 max-h-[544px]`}>
                         {imageFiles.map((file, index) => (
                           <div
                             key={index}
                             className={`relative cursor-pointer ${
-                              imageFiles.length === 3 && index === 0 ? 'row-span-2' : ''
+                              imageFiles.length === 3 && index === 0 ? 'row-span-2 col-span-2 pb-1' : ''
                             }`}
+                            style={{ height: imageFiles.length === 1 ? 'auto' : 'calc(544px / 2)' }}
                           >
                             <img
                               src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
