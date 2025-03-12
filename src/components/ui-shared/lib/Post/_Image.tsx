@@ -2,6 +2,7 @@ import { twMerge } from 'tailwind-merge';
 import { ImageByUri } from '@components/ImageByUri/index';
 
 type ImageProps = {
+  id?: string;
   width?: number;
   height?: number;
   alt: string;
@@ -9,10 +10,11 @@ type ImageProps = {
   className?: string;
 };
 
-export const ImageUser = ({ width = 32, height = 32, alt = 'userpic', uriImage, ...rest }: ImageProps) => {
+export const ImageUser = ({ id, width = 32, height = 32, alt = 'userpic', uriImage, ...rest }: ImageProps) => {
   return (
     <ImageByUri
       {...rest}
+      id={id}
       width={width}
       height={height}
       style={{ width: `${width}px`, height: `${height}px` }}

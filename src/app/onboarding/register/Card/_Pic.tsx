@@ -1,25 +1,25 @@
 import { ImageByUri } from '@/components/ImageByUri';
-import { useAlertContext, useModal } from '@/contexts';
+import { useAlertContext, useModal, usePubkyClientContext } from '@/contexts';
 import { Button, Card, Icon } from '@social/ui-shared';
 
 interface PicProps {
   image: File | string | undefined;
   setImage: React.Dispatch<React.SetStateAction<File | string | undefined>>;
-  defaultImage: File | undefined;
 }
 
-export default function Pic({ image, setImage, defaultImage }: PicProps) {
+export default function Pic({ image, setImage }: PicProps) {
+  const { pubky } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const { openModal } = useModal();
 
   const handleUploadImage = () => {
-    if (image === defaultImage) {
+    if (!image) {
       const fileInput = document.getElementById('fileInput');
       if (fileInput) {
         fileInput.click();
       }
     } else {
-      defaultImage && setImage(defaultImage);
+      setImage(undefined);
     }
   };
 
@@ -46,7 +46,7 @@ export default function Pic({ image, setImage, defaultImage }: PicProps) {
   };
 
   const getButtonIconImage = () => {
-    return image === defaultImage ? (
+    return !image ? (
       <div>
         <Icon.File size="16" />
       </div>
@@ -58,33 +58,32 @@ export default function Pic({ image, setImage, defaultImage }: PicProps) {
   };
 
   const getButtonLabelImage = () => {
-    return image === defaultImage ? 'Choose file' : undefined;
+    return !image ? 'Choose file' : undefined;
   };
 
   const getButtonWidthImage = () => {
-    return image === defaultImage ? 'w-[120px] lg:w-[85%] xl:w-8/12' : 'w-[38px] h-[38px]';
+    return !image ? 'w-[120px] lg:w-[85%] xl:w-8/12' : 'w-[38px] h-[38px]';
   };
 
   return (
     <Card.Primary className="justify-start z-10 w-full col-span-2" title="Picture">
-      {image && (
-        <div className="relative flex items-center justify-center">
-          <ImageByUri
-            width={100}
-            height={100}
-            className="w-72 h-72 lg:w-36 lg:h-36 xl:w-52 xl:h-52 mt-[20px] lg:mt-[50px] rounded-full"
-            alt="user"
-            uri={image}
-          />
-          <Button.Transparent
-            icon={getButtonIconImage()}
-            onClick={handleUploadImage}
-            className={`${getButtonWidthImage()} mt-2 md:mt-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`}
-          >
-            {getButtonLabelImage()}
-          </Button.Transparent>
-        </div>
-      )}
+      <div className="relative flex items-center justify-center">
+        <ImageByUri
+          id={pubky}
+          width={100}
+          height={100}
+          className="w-72 h-72 lg:w-36 lg:h-36 xl:w-52 xl:h-52 mt-[20px] lg:mt-[50px] rounded-full"
+          alt="user"
+          uri={image}
+        />
+        <Button.Transparent
+          icon={getButtonIconImage()}
+          onClick={handleUploadImage}
+          className={`${getButtonWidthImage()} mt-2 md:mt-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`}
+        >
+          {getButtonLabelImage()}
+        </Button.Transparent>
+      </div>
       <input id="fileInput" type="file" accept="image/*" onChange={UploadPic} className="hidden" />
     </Card.Primary>
   );

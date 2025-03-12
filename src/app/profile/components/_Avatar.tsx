@@ -1,16 +1,18 @@
 import { ImageByUri } from '@/components/ImageByUri';
 
 interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
+  id?: string;
   username?: string;
   uriImage: string | undefined;
   alt?: string;
   status?: string;
 }
 
-export default function Avatar({ username = 'user-pic', uriImage, status, ...rest }: AvatarProps) {
+export default function Avatar({ id, username = 'user-pic', uriImage, status, ...rest }: AvatarProps) {
   return (
     <div {...rest} className={rest.className}>
       <ImageByUri
+        id={id}
         alt={username}
         width={136}
         height={136}

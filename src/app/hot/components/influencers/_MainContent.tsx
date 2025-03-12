@@ -13,7 +13,7 @@ export interface LoadingInfluencers {
 export default function MainContent() {
   const { pubky } = usePubkyClientContext();
   const { data: influencers, isLoading, isError } = useStreamUsers(pubky ?? '', pubky ?? '', 'influencers');
-  if (isError) console.error(isError);
+  if (isError) console.warn(isError);
 
   const [loadingInfluencers, setLoadingInfluencers] = useState<LoadingInfluencers>({});
   const [followed, setFollowed] = useState<{ [pubky: string]: boolean }>({});

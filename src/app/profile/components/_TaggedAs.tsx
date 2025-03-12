@@ -159,6 +159,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                       <div onClick={handleOpenModal} className="cursor-pointer flex items-center">
                         {displayedImages?.map((image, imageIndex) => (
                           <ImageByUri
+                            id={user?.details?.id}
                             width={32}
                             height={32}
                             key={`${tag?.label}-${imageIndex}`}

@@ -1,9 +1,6 @@
 import { ImageByUri } from '@/components/ImageByUri';
 import { useAlertContext, useModal, usePubkyClientContext } from '@/contexts';
 import { Button, Card, Icon } from '@social/ui-shared';
-import { useEffect, useState } from 'react';
-import * as jdenticon from 'jdenticon';
-import { Utils } from '@social/utils-shared';
 
 interface PicProps {
   image: File | string | undefined;
@@ -12,46 +9,18 @@ interface PicProps {
 }
 
 export default function Pic({ image, setImage, loading }: PicProps) {
-  const { pubky, profile } = usePubkyClientContext();
+  const { pubky } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const { openModal } = useModal();
-  const [defaultImage, setDefaultImage] = useState<File | string>();
-
-  useEffect(() => {
-    if (!image) {
-      const fetchJdenticon = async () => {
-        const id = pubky ?? Math.random().toString(36).substring(2, 15);
-        const size = 200;
-        const svgCode = jdenticon.toSvg(id, size);
-
-        try {
-          const pngBlob = await Utils.svgToPng(svgCode, size);
-          const pngFile = new File([pngBlob], `${id}.png`, {
-            type: 'image/png'
-          });
-
-          setDefaultImage(pngFile);
-          setImage(pngFile);
-        } catch (error) {
-          console.error('Error converting SVG to PNG:', error);
-        }
-      };
-
-      fetchJdenticon();
-    } else if (image === profile?.image) {
-      setDefaultImage(profile?.image);
-      setImage(profile?.image);
-    }
-  }, [profile?.image, image]);
 
   const handleUploadImage = () => {
-    if (image === defaultImage) {
+    if (!image) {
       const fileInput = document.getElementById('fileInput');
       if (fileInput) {
         fileInput.click();
       }
     } else {
-      defaultImage && setImage(defaultImage);
+      setImage(undefined);
     }
   };
 
@@ -78,7 +47,7 @@ export default function Pic({ image, setImage, loading }: PicProps) {
   };
 
   const getButtonIconImage = () => {
-    return image === defaultImage ? (
+    return !image ? (
       <div>
         <Icon.File size="16" />
       </div>
@@ -90,32 +59,31 @@ export default function Pic({ image, setImage, loading }: PicProps) {
   };
 
   const getButtonLabelImage = () => {
-    return image === defaultImage ? 'Choose file' : undefined;
+    return !image ? 'Choose file' : undefined;
   };
 
   const getButtonWidthImage = () => {
-    return image === defaultImage ? 'w-[120px] lg:w-[85%] xl:w-8/12' : 'w-[38px] h-[38px]';
+    return !image ? 'w-[120px] lg:w-[85%] xl:w-8/12' : 'w-[38px] h-[38px]';
   };
   return (
     <Card.Primary className="justify-start z-10 w-full col-span-2" title="Picture">
-      {image && (
-        <div className="relative flex items-center justify-center">
-          <ImageByUri
-            width={100}
-            height={100}
-            className="w-72 h-72 lg:w-36 lg:h-36 xl:w-52 xl:h-52 mt-[20px] lg:mt-[50px] rounded-full"
-            alt="user"
-            uri={image}
-          />
-          <Button.Transparent
-            icon={getButtonIconImage()}
-            onClick={handleUploadImage}
-            className={`${getButtonWidthImage()} mt-2 md:mt-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`}
-          >
-            {getButtonLabelImage()}
-          </Button.Transparent>
-        </div>
-      )}
+      <div className="relative flex items-center justify-center">
+        <ImageByUri
+          id={pubky}
+          width={100}
+          height={100}
+          className="w-72 h-72 lg:w-36 lg:h-36 xl:w-52 xl:h-52 mt-[20px] lg:mt-[50px] rounded-full"
+          alt="user"
+          uri={image}
+        />
+        <Button.Transparent
+          icon={getButtonIconImage()}
+          onClick={handleUploadImage}
+          className={`${getButtonWidthImage()} mt-2 md:mt-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`}
+        >
+          {getButtonLabelImage()}
+        </Button.Transparent>
+      </div>
       <input id="fileInput" type="file" accept="image/*" onChange={UploadPic} className="hidden" disabled={loading} />
     </Card.Primary>
   );

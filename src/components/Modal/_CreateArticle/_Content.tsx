@@ -301,7 +301,7 @@ export default function ContentCreateArticle({ setShowModalArticle, setShowModal
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setContentTitle(e.target.value)}
               />
               <Section.UserArea
-                uriPic={(profile?.image as string) ?? '/images/webp/Userpic.webp'}
+                uriPic={profile?.image ?? '/images/webp/Userpic.webp'}
                 name={profile?.name ?? Utils.minifyPubky(pubky ?? '')}
                 largeView={!isMobile}
               />

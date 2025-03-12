@@ -18,8 +18,8 @@ interface ProfileProps {
 export default function Profile({ post, profileId }: ProfileProps) {
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
-  const [followingImages, setFollowingImages] = useState<{ alt: string; src: string }[]>([]);
-  const [followersImages, setFollowersImages] = useState<{ alt: string; src: string }[]>([]);
+  const [followingImages, setFollowingImages] = useState<{ id: string; alt: string; src: string }[]>([]);
+  const [followersImages, setFollowersImages] = useState<{ id: string; alt: string; src: string }[]>([]);
   const idAuthor = post?.details?.author || profileId || '';
 
   const { data: author } = useUserProfile(idAuthor, pubky ?? '');
@@ -103,6 +103,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
             followersList.slice(0, 3).map(async (user, index) => {
               const userDetails = await getUserDetails(user);
               return {
+                id: userDetails.id,
                 alt: `userPic-${index + 1}`,
                 src: userDetails?.image || '/images/webp/Userpic.webp'
               };
@@ -129,6 +130,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
             followingList.slice(0, 3).map(async (user, index) => {
               const userDetails = await getUserDetails(user);
               return {
+                id: userDetails?.id,
                 alt: `userPic-${index + 1}`,
                 src: userDetails?.image || '/images/webp/Userpic.webp'
               };
@@ -150,7 +152,11 @@ export default function Profile({ post, profileId }: ProfileProps) {
     <Tooltip.Main onClick={(event) => event.stopPropagation()} className="cursor-default w-[300px]">
       <div className="w-full flex flex-col justify-between">
         <Link href={`/profile/${idAuthor}`} className="justify-start items-center gap-2 flex cursor-pointer">
-          <PostUI.ImageUser uriImage={author?.details?.image || '/images/webp/Userpic.webp'} alt="user" />
+          <PostUI.ImageUser
+            id={author.details?.id}
+            uriImage={author?.details?.image || '/images/webp/Userpic.webp'}
+            alt="user"
+          />
           <div className={`flex flex-col justify-start`}>
             <PostUI.Username className={`hover:underline hover:decoration-solid`}>
               {author?.details?.name && Utils.minifyText(author?.details?.name, 18)}

@@ -47,6 +47,7 @@ export default function NotificationTagPostGroup({ notifications }: Notification
           ) : (
             <Link href={`/profile/${user.userId}`} className="flex gap-2 items-center">
               <ImageByUri
+                id={user.userId}
                 width={32}
                 height={32}
                 className="w-[32px] h-[32px] rounded-full"

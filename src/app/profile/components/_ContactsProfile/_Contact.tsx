@@ -179,6 +179,7 @@ export default function Contact({ contacts, isLoading }: { contacts: UserView[] 
                   <div className="w-full flex justify-between items-center">
                     <Link className="flex gap-2 w-full" href={`/profile/${contact?.details?.id}`}>
                       <ImageByUri
+                        id={contact?.details?.id}
                         width={48}
                         height={48}
                         uri={contact?.details?.image || '/images/webp/Userpic.webp'}

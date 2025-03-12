@@ -20,6 +20,7 @@ export default function Feedback() {
           <div className="flex flex-col gap-3">
             <Link href="/profile" className="flex gap-1 items-center">
               <ImageByUri
+                id={pubky}
                 alt="user"
                 uri={profile?.image ?? '/images/webp/Userpic.webp'}
                 width={32}

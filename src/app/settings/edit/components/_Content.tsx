@@ -36,8 +36,8 @@ export default function Index() {
           setName(profile?.name);
           setStatus(profile?.status);
           setBio(profile?.bio || '');
-          setImage(profile?.image || '/images/webp/Userpic.webp');
-          setPrevImage(profile.image || '/images/webp/Userpic.webp');
+          setImage(profile?.image);
+          setPrevImage(profile.image);
           if (profile.links && profile.links.length > 0) setLinks(profile?.links);
         }
       } catch (error) {

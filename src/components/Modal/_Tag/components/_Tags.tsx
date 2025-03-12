@@ -81,6 +81,7 @@ export default function Tags({ post }: TagsProps) {
                     >
                       {displayedImages.map((image, imageIndex) => (
                         <ImageByUri
+                          id={userProfiles?.[tag?.label]?.details?.id}
                           width={32}
                           height={32}
                           key={imageIndex}
@@ -88,7 +89,7 @@ export default function Tags({ post }: TagsProps) {
                             imageIndex > 0 && '-ml-2'
                           }`}
                           alt={`tag-${imageIndex + 1}`}
-                          uri={String(image)}
+                          uri={image}
                         />
                       ))}
                       {extraImagesCount > 0 && (

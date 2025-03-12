@@ -47,6 +47,7 @@ export default function ContentFeedback({ setShowModal }: FeedbackProps) {
           <div className="mt-6 p-6 w-full rounded-lg border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex">
             <div className="justify-start items-center gap-3 flex">
               <ImageByUri
+                id={pubky}
                 width={32}
                 height={32}
                 className="w-[32px] h-[32px] rounded-full"

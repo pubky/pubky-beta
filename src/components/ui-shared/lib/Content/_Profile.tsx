@@ -29,6 +29,7 @@ export const Profile = ({ profile }: ProfileProps) => {
           <Typography.Label className="text-opacity-50">{handler}</Typography.Label>
         </div>
         <ImageByUri
+          id={handler}
           width={64}
           height={64}
           className="w-[64px] h-[64px] rounded-full overflow-hidden"

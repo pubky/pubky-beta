@@ -2,7 +2,7 @@ import { ImageByUri } from '@components/ImageByUri/index';
 import { twMerge } from 'tailwind-merge';
 
 interface UserPicProps extends React.HTMLAttributes<HTMLDivElement> {
-  images: { alt: string; src: string }[];
+  images: { id: string; alt: string; src: string }[];
   className?: string;
 }
 
@@ -13,6 +13,7 @@ export const UserPic = ({ images, ...rest }: UserPicProps) => {
       {images &&
         images.map((image, index) => (
           <ImageByUri
+            id={image.id}
             width={32}
             height={32}
             key={index}

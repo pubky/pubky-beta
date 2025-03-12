@@ -43,9 +43,10 @@ export default function LayoutProfile({ children }: { children: React.ReactNode 
           />
           <div className="w-full rounded-2xl p-6 lg:p-0 bg-white lg:bg-transparent bg-opacity-10 flex flex-col text-center lg:flex-row items-center gap-3 lg:gap-12 relative">
             <Profile.Avatar
+              id={pubky}
               className="lg:pl-12 cursor-pointer"
               username={profile?.name || Utils.minifyPubky(pubky ?? '')}
-              uriImage={profile?.image as string}
+              uriImage={profile?.image}
               onClick={() => setIsAvatarOpen(true)}
             />
             <Profile.Handle profileUser={userData} pubkey={pubky ?? ''} />
@@ -77,11 +78,12 @@ export default function LayoutProfile({ children }: { children: React.ReactNode 
         >
           <div onClick={(event) => event?.stopPropagation()} className="relative p-4 bg-transparent rounded-full">
             <ImageByUri
+              id={pubky}
               alt={profile?.name || Utils.minifyPubky(pubky ?? '')}
               width={362}
               height={362}
               className="rounded-full shadow-[0px_20px_40px_0px_rgba(5,5,10,0.50)]"
-              uri={profile?.image as string}
+              uri={profile?.image}
             />
           </div>
         </div>

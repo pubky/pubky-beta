@@ -9,11 +9,10 @@ interface RankProps extends React.HTMLAttributes<HTMLHeadingElement> {
   tag: string | JSX.Element;
   color: string;
   counter?: React.ReactNode;
-  images?: { alt: string; src: string }[];
   boxShadow?: boolean;
   href?: string;
 }
-export const Rank = ({ rank, tag, counter, color, images, href, boxShadow = true, ...rest }: RankProps) => {
+export const Rank = ({ rank, tag, counter, color, href, boxShadow = true, ...rest }: RankProps) => {
   const baseCSS = 'justify-start items-center gap-3 inline-flex';
   return (
     <div {...rest} className={twMerge(baseCSS, rest.className)}>
@@ -27,8 +26,6 @@ export const Rank = ({ rank, tag, counter, color, images, href, boxShadow = true
           </div>
         </PostUtil.Tag>
       </Link>
-      {/**{counter && <PostUtil.Counter counter={counter} />}*/}
-      {images && <Post.UserPic images={images} />}
     </div>
   );
 };
