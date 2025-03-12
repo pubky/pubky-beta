@@ -235,7 +235,7 @@ export default function SearchInputCard({ refCard, inputValue, ...rest }: Search
             </Typography.Body>
           ) : hotTags && hotTags?.length > 0 ? (
             <>
-              <Typography.Label className="text-opacity-30">Hot tags</Typography.Label>
+              <Typography.Label className="text-opacity-30">Hot Tags</Typography.Label>
               <div className="mt-2 justify-start items-start">
                 {hotTags.slice(0, 10).map((tag, index) => (
                   <PostUtil.Tag
