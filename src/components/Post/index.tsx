@@ -1,19 +1,19 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Post as PostUI, Icon } from '@social/ui-shared';
-import { useEffect, useState } from 'react';
+import { parse_uri } from 'pubky-app-specs';
+import { useRouter } from 'next/navigation';
 
 import { TLayouts, TSize } from '@/types';
 import { PostView } from '@/types/Post';
+
 import { Utils } from '@social/utils-shared';
 import { usePubkyClientContext } from '@/contexts';
 import { getPost } from '@/services/postService';
-import DeletedPostMessage from './_DeletedPostMessage';
-import MainPostContent from './_MainPostContent';
-import { useRouter } from 'next/navigation';
-import { parse_uri } from 'pubky-app-specs';
-import Repost from './Repost';
+import { PostComponents } from './components';
+import { Repost } from './Repost';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   repostView?: boolean;
@@ -42,6 +42,7 @@ export default function Post({
 }: PostProps) {
   const router = useRouter();
   const { pubky } = usePubkyClientContext();
+
   const [repostedPost, setRepostedPost] = useState<PostView>();
   const [loadingRepostedPost, setLoadingRepostedPost] = useState(true);
   const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-full border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[0.5px]`;
@@ -118,12 +119,12 @@ export default function Post({
                     </div>
                   </>
                 )}
-                <DeletedPostMessage
+                <PostComponents.DeletedPostMessage
                   className={`${post?.relationships?.replied && homeView && 'ml-6'} cursor-default`}
                 />
               </div>
             ) : (
-              <MainPostContent
+              <PostComponents.MainPostContent
                 post={post}
                 largeView={largeView}
                 fullContent={fullContent}

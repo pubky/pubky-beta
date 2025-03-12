@@ -6,7 +6,7 @@ import { useAlertContext, useModal, usePubkyClientContext, useToastContext } fro
 import { PostView } from '@/types/Post';
 import { useUserProfile } from '@/hooks/useUser';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import Tooltip from '../Tooltip';
+import Tooltip from '../../Tooltip';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -82,7 +82,7 @@ const MenuButton = ({ post, repost }: { post: PostView; repost?: PostView }) => 
   );
 };
 
-export default function Actions({ post, repost, deleteRepost = false }: PostProps) {
+export function Actions({ post, repost, deleteRepost = false }: PostProps) {
   const { pubky } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const { openModal, isOpen } = useModal();
@@ -229,3 +229,5 @@ export default function Actions({ post, repost, deleteRepost = false }: PostProp
     </div>
   );
 }
+
+export default Actions;

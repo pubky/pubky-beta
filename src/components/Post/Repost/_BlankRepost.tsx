@@ -1,8 +1,6 @@
-import { Icon, Post as PostUI, Typography } from '@social/ui-shared';
+import { Icon, Post as PostUI } from '@social/ui-shared';
 import { twMerge } from 'tailwind-merge';
-import Header from '../_Header';
-import Content from '../_Content';
-import Actions from '../_Actions';
+import { PostComponents } from '../components';
 import Tags from '../Tags';
 
 import { PostView } from '@/types/Post';
@@ -52,8 +50,8 @@ export default function Blank({
       >
         <div className="w-full flex-col justify-between inline-flex">
           <div>
-            <Header post={post} largeView={largeView} />
-            <Content largeView={largeView} post={post} fullContent={fullContent} />
+            <PostComponents.Header post={post} largeView={largeView} />
+            <PostComponents.Content largeView={largeView} post={post} fullContent={fullContent} />
           </div>
           <Post
             repostedPost={repostedPost}
@@ -65,7 +63,7 @@ export default function Blank({
           />
           <div className={`flex flex-col md:flex-row ${largeView ? 'gap-2' : 'justify-between'}`}>
             {!repostView && <Tags.Standard largeView={largeView} post={post} />}
-            {!repostView && <Actions post={post} />}
+            {!repostView && <PostComponents.Actions post={post} />}
           </div>
         </div>
         {largeView && <Tags.LargeView post={post} />}

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import LinkParser from 'react-link-parser';
-import ProfileLink from '../Post/_ProfileLink';
+import ProfileLink from '../Post/components/_ProfileLink';
 import { Icon, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import Link from 'next/link';

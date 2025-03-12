@@ -6,7 +6,7 @@ import LinkPreview from '@/components/ui-shared/lib/Post/_Preview';
 import { GitHub } from '@/components/ui-shared/lib/Preview/Github';
 import { useEffect, useState } from 'react';
 import { Tweet } from 'react-tweet';
-import Parsing from '../Content/_Parsing';
+import Parsing from '../../Content/_Parsing';
 import { Button, Icon, Typography } from '@social/ui-shared';
 import { FileView, PostView } from '@/types/Post';
 import { getFile } from '@/services/fileService';
@@ -71,6 +71,65 @@ export default function Content({ post, fullContent = false, largeView = false, 
     return text.replace(/\n{3,}/g, '\n\n');
   };
 
+  const fetchFile = async (
+    fileUri: string,
+    retryCount = 0,
+    retryInterval: number,
+    retryTimeouts: NodeJS.Timeout[]
+  ): Promise<FileView | null> => {
+    try {
+      const fetchedFile = await getFile(fileUri);
+      return fetchedFile;
+    } catch (error) {
+      // Return skeleton and schedule retry
+      if (retryCount < 5) {
+        // Limit retries to prevent infinite loops
+        const timeoutId = setTimeout(async () => {
+          const result = await fetchFile(fileUri, retryCount + 1, retryInterval, retryTimeouts);
+          if (result) {
+            // Update the specific file in fileContents
+            setFileContents((prev) =>
+              prev.map((f) => (f.urls === JSON.stringify({ main: 'skeleton' }) ? { ...result, urls: result.urls } : f))
+            );
+          }
+        }, retryInterval);
+        retryTimeouts.push(timeoutId);
+      }
+      return {
+        content_type: 'skeleton',
+        urls: JSON.stringify({ main: 'skeleton' }),
+        name: 'Loading...',
+        created_at: Date.now(),
+        src: 'skeleton',
+        uri: fileUri,
+        id: `skeleton-${fileUri}`,
+        indexed_at: Date.now(),
+        owner_id: `skeleton-${fileUri}`,
+        size: 0
+      };
+    }
+  };
+
+  const fetchFiles = async (retryInterval: number, retryTimeouts: NodeJS.Timeout[]) => {
+    if (files) {
+      setLoading(true);
+      const fileUris = Object.values(files).map((file) => file);
+      const fetchedFiles = await Promise.all(
+        fileUris.map((fileUri) => fetchFile(fileUri, 0, retryInterval, retryTimeouts))
+      );
+
+      setFileContents(
+        fetchedFiles
+          .filter((file): file is FileView => file !== null)
+          .map((file) => ({
+            ...file,
+            urls: file.urls
+          }))
+      );
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const cleanedText = cleanText(text.toString());
     const words = cleanedText.split(/\s+/);
@@ -81,61 +140,7 @@ export default function Content({ post, fullContent = false, largeView = false, 
     const retryInterval = 5000; // 5 seconds
     let retryTimeouts: NodeJS.Timeout[] = [];
 
-    const fetchFile = async (fileUri: string, retryCount = 0): Promise<FileView | null> => {
-      try {
-        const fetchedFile = await getFile(fileUri);
-        return fetchedFile;
-      } catch (error) {
-        // Return skeleton and schedule retry
-        if (retryCount < 5) {
-          // Limit retries to prevent infinite loops
-          const timeoutId = setTimeout(async () => {
-            const result = await fetchFile(fileUri, retryCount + 1);
-            if (result) {
-              // Update the specific file in fileContents
-              setFileContents((prev) =>
-                prev.map((f) =>
-                  f.urls === JSON.stringify({ main: 'skeleton' }) ? { ...result, urls: result.urls } : f
-                )
-              );
-            }
-          }, retryInterval);
-          retryTimeouts.push(timeoutId);
-        }
-        return {
-          content_type: 'skeleton',
-          urls: JSON.stringify({ main: 'skeleton' }),
-          name: 'Loading...',
-          created_at: Date.now(),
-          src: 'skeleton',
-          uri: fileUri,
-          id: `skeleton-${fileUri}`,
-          indexed_at: Date.now(),
-          owner_id: `skeleton-${fileUri}`,
-          size: 0
-        };
-      }
-    };
-
-    const fetchFiles = async () => {
-      if (files) {
-        setLoading(true);
-        const fileUris = Object.values(files).map((file) => file);
-        const fetchedFiles = await Promise.all(fileUris.map((fileUri) => fetchFile(fileUri)));
-
-        setFileContents(
-          fetchedFiles
-            .filter((file): file is FileView => file !== null)
-            .map((file) => ({
-              ...file,
-              urls: file.urls
-            }))
-        );
-        setLoading(false);
-      }
-    };
-
-    fetchFiles();
+    fetchFiles(retryInterval, retryTimeouts);
 
     // Cleanup timeouts on unmount
     return () => {

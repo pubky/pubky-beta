@@ -1,17 +1,17 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { Post as PostUI, Typography, Tooltip as TooltipUI, Icon } from '@social/ui-shared';
 
 import { Utils } from '@social/utils-shared';
-import Tooltip from '../Tooltip';
 import { PostView } from '@/types/Post';
 import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import { UserDetails } from '@/types/User';
-import { useRouter } from 'next/navigation';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import Tooltip from '../../Tooltip';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -19,7 +19,7 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   repostView?: boolean;
 }
 
-export default function Header({ post, largeView = false, repostView = false }: PostProps) {
+export function Header({ post, largeView = false, repostView = false }: PostProps) {
   const router = useRouter();
   const { pubky } = usePubkyClientContext();
   const isMobile = useIsMobile();
@@ -98,3 +98,5 @@ export default function Header({ post, largeView = false, repostView = false }: 
     </PostUI.Header>
   );
 }
+
+export default Header;

@@ -1,8 +1,8 @@
 import { Post as PostUI, Typography } from '@social/ui-shared';
 import { twMerge } from 'tailwind-merge';
-import Header from '../_Header';
-import Content from '../_Content';
-import Actions from '../_Actions';
+import Header from '../components/_Header';
+import Content from '../components/_Content';
+import Actions from '../components/_Actions';
 import Tags from '../Tags';
 
 import { PostView } from '@/types/Post';

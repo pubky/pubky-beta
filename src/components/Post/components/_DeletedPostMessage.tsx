@@ -4,7 +4,7 @@ interface DeletedPostMessageProps {
   className?: string;
 }
 
-export default function DeletedPostMessage({ className }: DeletedPostMessageProps) {
+export function DeletedPostMessage({ className }: DeletedPostMessageProps) {
   return (
     <div className={`px-6 py-2 bg-white bg-opacity-10 rounded-lg ${className}`}>
       <Typography.Body variant="small" className="text-opacity-50">
@@ -13,3 +13,5 @@ export default function DeletedPostMessage({ className }: DeletedPostMessageProp
     </div>
   );
 }
+
+export default DeletedPostMessage;

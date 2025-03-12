@@ -2,7 +2,7 @@ import Post from './_RepostedPost';
 import Quote from './_QuoteRepost';
 import Blank from './_BlankRepost';
 
-const Repost = {
+export const Repost = {
   Post,
   Quote,
   Blank

@@ -1,10 +1,9 @@
 import { twMerge } from 'tailwind-merge';
 import { Icon, Post as PostUI } from '@social/ui-shared';
-import Header from './_Header';
-import Content from './_Content';
-import Actions from './_Actions';
+
 import { PostView } from '@/types/Post';
-import Tags from './Tags';
+import Tags from '../Tags';
+import { PostComponents } from '../components';
 
 interface MainPostContentProps {
   post: PostView;
@@ -16,7 +15,7 @@ interface MainPostContentProps {
   restClassName?: string;
 }
 
-export default function MainPostContent({
+export function MainPostContent({
   post,
   largeView,
   fullContent,
@@ -42,13 +41,13 @@ export default function MainPostContent({
       >
         <div className="w-full flex-col justify-between inline-flex">
           <div>
-            <Header post={post} largeView={largeView} repostView={repostView} />
-            <Content largeView={largeView} post={post} fullContent={fullContent} />
+            <PostComponents.Header post={post} largeView={largeView} repostView={repostView} />
+            <PostComponents.Content largeView={largeView} post={post} fullContent={fullContent} />
           </div>
           <div>
             <div className={`flex flex-col md:flex-row ${largeView ? '' : 'justify-between'}`}>
               {!repostView && <Tags.Standard largeView={largeView} post={post} />}
-              {!repostView && <Actions post={post} />}
+              {!repostView && <PostComponents.Actions post={post} />}
             </div>
           </div>
         </div>
@@ -57,3 +56,5 @@ export default function MainPostContent({
     </div>
   );
 }
+
+export default MainPostContent;
