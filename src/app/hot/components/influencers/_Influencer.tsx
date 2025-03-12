@@ -14,6 +14,7 @@ export function Influencer({ influencer }: InfluencerProps) {
   return (
     <Link className="flex gap-2 w-full" href={`/profile/${influencer?.details?.id}`}>
       <ImageByUri
+        id={influencer?.details?.id}
         width={48}
         height={48}
         uri={influencer?.details?.image || '/images/webp/Userpic.webp'}

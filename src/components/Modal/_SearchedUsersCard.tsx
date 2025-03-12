@@ -99,6 +99,7 @@ export default function SearchedUsersCard({ searchedUsers, handleUserClick, clas
             key={`${index}-${user?.details?.id}`}
           >
             <ImageByUri
+              id={data?.details?.id}
               width={40}
               height={40}
               className="rounded-full max-w-none h-none"

@@ -10,6 +10,7 @@ export const UserProfileForTag = ({ userId }: { userId: string }) => {
 
   return (
     <ImageByUri
+      id={pubky}
       width={32}
       height={32}
       alt={`pic-${userId}`}

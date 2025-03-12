@@ -52,6 +52,7 @@ export default function Tag({ tags, setShowModalTags, setSelectedTag }: TagProps
             >
               {displayedImages.map((image, imageIndex) => (
                 <ImageByUri
+                  id={tags.from[imageIndex]?.author.id}
                   width={32}
                   height={32}
                   key={imageIndex}

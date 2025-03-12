@@ -218,12 +218,12 @@ export default function Header({ title }: HeaderProps) {
                 </PostUtil.Counter>
               )}
               <ImageByUri
-                id="header-profile-pic"
+                id={pubky}
                 width={48}
                 height={48}
                 className={`rounded-full w-[48px] h-[48px]`}
                 alt="user-pic"
-                uri={String(profile?.image)}
+                uri={profile?.image}
               />
             </Link>
           </div>

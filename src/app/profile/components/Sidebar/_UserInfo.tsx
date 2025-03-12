@@ -87,6 +87,7 @@ export default function UserInfo({
         <div className="items-center inline-flex justify-between">
           <div className="justify-start items-center gap-2 inline-flex">
             <ImageByUri
+              id={pubkyUser}
               width={32}
               height={32}
               className="w-[32px] h-[32px] rounded-full"

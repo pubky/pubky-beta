@@ -33,7 +33,6 @@ export default function Index() {
   const [token, setToken] = useState('');
   const [bio, setBio] = useState(profile?.bio || '');
   const [image, setImage] = useState<File | string | undefined>();
-  const [generatedImage, setGeneratedImage] = useState<File>();
   const [links, setLinks] = useState<Links[]>([
     { url: '', title: 'website', placeHolder: 'https://' },
     { url: '', title: 'x (twitter)', placeHolder: '@user' }
@@ -48,19 +47,6 @@ export default function Index() {
   ) : (
     <Icon.LockKey size="26" />
   );
-
-  useEffect(() => {
-    const generateAndSetImage = async () => {
-      if (!profile?.image && !image) {
-        const id = Math.random().toString(36).substring(2, 15);
-        const generatedImage = await genJdenticon(id);
-        setGeneratedImage(generatedImage);
-        setImage(generatedImage);
-      }
-    };
-
-    generateAndSetImage();
-  }, [profile?.image, image]);
 
   const handleSubmit = async () => {
     if (loading) {
@@ -156,7 +142,7 @@ export default function Index() {
       <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-8 gap-6 mt-6">
         <Card.Bio bio={bio} setBio={setBio} errors={errors} loading={loading} />
         <Card.Links links={links} setLinks={setLinks} errors={errors} loading={loading} />
-        <Card.Pic image={image} setImage={setImage} loading={loading} defaultImage={generatedImage} />
+        <Card.Pic image={image} setImage={setImage} loading={loading} />
         {/**<Content.MainBg alt="Onboard Pubky" imgSrc="/images/webp/bg-image-2.webp" />*/}
       </div>
       <div className="w-full max-w-[1200px] mt-6 justify-between items-center inline-flex">

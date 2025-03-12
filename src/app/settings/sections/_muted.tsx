@@ -124,6 +124,7 @@ export default function MutedUsers() {
                       <div className="flex-col md:flex-row justify-start gap-4 inline-flex w-full">
                         <Link className="flex gap-2 w-full" href={`/profile/${mutedUser?.details?.id}`}>
                           <ImageByUri
+                            id={mutedUser?.details?.id}
                             width={48}
                             height={48}
                             uri={mutedUser?.details?.image || '/images/webp/Userpic.webp'}

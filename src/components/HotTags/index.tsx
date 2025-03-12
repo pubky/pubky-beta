@@ -11,7 +11,7 @@ export default function HotTags() {
   const { pubky } = usePubkyClientContext();
   const { data, isLoading, isError } = useHotTags(pubky, undefined, 0, 8);
   const hotTags = data;
-  if (isError) console.error(isError);
+  if (isError) console.warn(isError);
 
   {
     /** const handleTagSearch = (tag: string) => {

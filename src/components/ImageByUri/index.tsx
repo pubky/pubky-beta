@@ -2,8 +2,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getFile } from '@/services/fileService';
 import Skeletons from '../Skeletons';
+import genJdenticon from '../utils-shared/lib/Helper/genJdenticon';
 
 interface ImageByUriProps {
   id?: string;
@@ -32,29 +32,26 @@ const ImageByUri = ({ id, uri, alt, width, height, className, style, loading, on
 
     const fetchImageUrl = async () => {
       try {
-        if (uri instanceof File) {
-          // Handle the case where uri is a File object
-          objectUrl = URL.createObjectURL(uri);
-          setImageUrl(objectUrl);
-        } else if (
-          typeof uri === 'string' &&
-          (uri.startsWith('http') || uri.startsWith('data:') || uri === '/images/webp/Userpic.webp')
-        ) {
-          setImageUrl(uri);
-        } else if (typeof uri === 'string') {
-          const extractedKeys = extractKeysFromUri(uri);
-          if (extractedKeys) {
-            setImageUrl(`${BASE_URL}/${extractedKeys[0]}/${extractedKeys[1]}`);
-          } else {
-            const fetchedFile = await getFile(uri);
-            if (fetchedFile?.urls) {
-              setImageUrl(`${BASE_URL}/${JSON.parse(fetchedFile?.urls).main}`);
+        if (uri && uri !== '/images/webp/Userpic.webp') {
+          if (uri instanceof File) {
+            // Handle the case where uri is a File object
+            objectUrl = URL.createObjectURL(uri);
+            setImageUrl(objectUrl);
+          } else if (typeof uri === 'string' && (uri.startsWith('http') || uri.startsWith('data:'))) {
+            setImageUrl(uri);
+          } else if (typeof uri === 'string') {
+            const extractedKeys = extractKeysFromUri(uri);
+            if (extractedKeys) {
+              setImageUrl(`${BASE_URL}/${extractedKeys[0]}/${extractedKeys[1]}`);
             }
           }
+        } else {
+          const generatedImage = await genJdenticon(id);
+          objectUrl = URL.createObjectURL(generatedImage);
+          setImageUrl(objectUrl);
         }
       } catch (error) {
-        //console.error('Error fetching image:', error);
-        setImageUrl('/images/webp/Userpic.webp');
+        console.warn('Error fetching image:', error);
       }
     };
 
@@ -65,7 +62,7 @@ const ImageByUri = ({ id, uri, alt, width, height, className, style, loading, on
         URL.revokeObjectURL(objectUrl);
       }
     };
-  }, [uri]);
+  }, [id, uri]);
 
   return (
     <>

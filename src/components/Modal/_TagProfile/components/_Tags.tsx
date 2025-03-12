@@ -83,6 +83,7 @@ export default function Tags({ profileTags, setProfileTags, pubkyUser, user }: T
                     >
                       {displayedImages.map((image, imageIndex) => (
                         <ImageByUri
+                          id={userProfiles?.[tag?.label]?.details?.id}
                           width={32}
                           height={32}
                           key={imageIndex}

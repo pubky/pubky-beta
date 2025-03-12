@@ -21,6 +21,7 @@ export const Contacts = ({ contacts }: ContactsListProps) => {
           <Content.Divider />
           <div className="justify-start items-center gap-4 inline-flex">
             <ImageByUri
+              id={contact.handler}
               width={48}
               height={48}
               className="w-[48px] h-[48px] rounded-full overflow-hidden"

@@ -184,6 +184,7 @@ export default function Notification({ notification, unread }: { notification: N
         <div className="flex gap-2">
           {user && (
             <ImageByUri
+              id={user?.details?.id}
               width={32}
               height={32}
               className="w-[32px] h-[32px] rounded-full sm:hidden"
@@ -195,6 +196,7 @@ export default function Notification({ notification, unread }: { notification: N
             <Link href={`/profile/${userId}`} className="flex gap-2 items-center">
               {user && (
                 <ImageByUri
+                  id={user?.details?.id}
                   width={32}
                   height={32}
                   className="w-[32px] h-[32px] rounded-full hidden sm:flex"

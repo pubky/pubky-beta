@@ -10,7 +10,6 @@ import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Links } from '@/types/Post';
 import { Utils } from '@social/utils-shared';
 import Link from 'next/link';
-import genJdenticon from '@/components/utils-shared/lib/Helper/genJdenticon';
 import { processUserLinks } from './processUserLinks';
 
 interface FormErrors {
@@ -26,7 +25,7 @@ const profileSchema = z.object({
 });
 
 export default function Index() {
-  const { pubky, profile, saveProfile } = usePubkyClientContext();
+  const { pubky, saveProfile } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
 
   const router = useRouter();
@@ -34,7 +33,6 @@ export default function Index() {
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
   const [image, setImage] = useState<File | string | undefined>();
-  const [generatedImage, setGeneratedImage] = useState<File>();
   const [links, setLinks] = useState<Links[]>([
     { url: '', title: 'website', placeHolder: 'https://' },
     { url: '', title: 'x (twitter)', placeHolder: '@user' }
@@ -44,22 +42,6 @@ export default function Index() {
     name: '',
     bio: ''
   });
-
-  useEffect(() => {
-    if (!profile?.image && !image) {
-      const generateAndSetImage = async () => {
-        if (!profile?.image && !image) {
-          const id = pubky ?? Math.random().toString(36).substring(2, 15);
-          const generatedImage = await genJdenticon(id);
-          setGeneratedImage(generatedImage);
-          setImage(generatedImage);
-        }
-      };
-
-      generateAndSetImage();
-    }
-  }, [profile?.image, image]);
-
   useEffect(() => {
     addAlert('Add info, your profile is empty.', 'warning');
   }, [pubky]);
@@ -138,7 +120,7 @@ export default function Index() {
       <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-8 gap-6 mt-6">
         <Card.Bio bio={bio} setBio={setBio} errors={errors} />
         <Card.Links links={links} setLinks={setLinks} errors={errors} loading={loading} />
-        <Card.Pic image={image} setImage={setImage} defaultImage={generatedImage} />
+        <Card.Pic image={image} setImage={setImage} />
       </div>
       <div className="w-full max-w-[1200px] mt-6 justify-between gap-6 items-center inline-flex">
         <Link href="/logout">

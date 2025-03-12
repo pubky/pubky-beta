@@ -19,6 +19,7 @@ export default function UserArea({ largeView, uriPic, name, variant }: UserAreaP
   return (
     <Link href="/profile" className={`${!variant && 'items-center'} justify-start gap-2 flex`}>
       <ImageByUri
+        id={pubky}
         width={largeView ? 48 : 32}
         height={largeView ? 48 : 32}
         className={`${largeView ? 'w-[48px] h-[48px]' : 'w-[32px] h-[32px]'} rounded-full`}

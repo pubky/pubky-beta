@@ -79,6 +79,7 @@ export default function CreatorpubkyLayout({
             />
             <div className="w-full rounded-2xl p-6 lg:p-0 bg-white lg:bg-transparent bg-opacity-10 flex flex-col text-center lg:flex-row items-center gap-3 lg:gap-14 relative">
               <Profile.Avatar
+                id={profile.details?.id}
                 className="lg:pl-12 cursor-pointer"
                 username={profile?.details?.name || Utils.minifyPubky(creatorPubky)}
                 uriImage={profile?.details?.image || '/images/webp/Userpic.webp'}
@@ -113,11 +114,12 @@ export default function CreatorpubkyLayout({
           >
             <div onClick={(event) => event?.stopPropagation()} className="relative p-4 bg-transparent rounded-full">
               <ImageByUri
+                id={profile?.details?.id}
                 alt={profile?.details?.name || Utils.minifyPubky(creatorPubky)}
                 width={362}
                 height={362}
                 className="rounded-full shadow-[0px_20px_40px_0px_rgba(5,5,10,0.50)]"
-                uri={profile?.details?.image as string}
+                uri={profile?.details?.image}
               />
             </div>
           </div>

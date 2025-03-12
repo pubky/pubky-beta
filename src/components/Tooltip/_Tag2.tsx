@@ -48,6 +48,7 @@ export default function Tag2({ tags }: TagProps) {
             {displayedImages?.map((image, imageIndex) => (
               <div key={imageIndex}>
                 <ImageByUri
+                  id={tags?.taggers[imageIndex]}
                   width={32}
                   height={32}
                   key={imageIndex}

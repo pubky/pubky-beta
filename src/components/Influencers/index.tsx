@@ -16,7 +16,7 @@ export default function Influencers({ style }: InfluencersProps) {
   const { pubky } = usePubkyClientContext();
   const { data: influencers, isLoading, isError } = useStreamUsers(pubky ?? '', pubky ?? '', 'influencers', 0, 3);
 
-  if (isError) console.error(isError);
+  if (isError) console.warn(isError);
 
   return (
     <div className={twMerge('mb-8', style)}>

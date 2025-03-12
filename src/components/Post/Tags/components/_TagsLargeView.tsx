@@ -118,6 +118,7 @@ export default function TagsLargeView({ post }: TagsProps) {
                         tagId={image}
                       >
                         <ImageByUri
+                          id={taggers[imageIndex]}
                           width={32}
                           height={32}
                           onClick={(e) => {
