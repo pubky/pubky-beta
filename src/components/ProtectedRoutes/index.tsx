@@ -150,7 +150,8 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
     if (pubky) logout();
 
     // Check if the not logged user is trying to access a public route
-    if (!publicRoutes.includes(pathname) && !isDynamicPublicRoute(pathname)) {
+    // Condition to show dynamicPublicRoute: !isDynamicPublicRoute(pathname)
+    if (!publicRoutes.includes(pathname)) {
       openModal('sessionExpired');
       router.push('/onboarding');
       setTimeout(() => {
