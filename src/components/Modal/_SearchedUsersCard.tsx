@@ -20,7 +20,7 @@ export default function SearchedUsersCard({ searchedUsers, handleUserClick, clas
   const cardRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<HTMLDivElement[]>([]);
   const baseCSS =
-    'outline-none md:w-[300px] max-w-[300px] z-50 overflow-y-auto max-h-[200px] scrollbar-thin scrollbar-webkit rounded-2xl border border-white border-opacity-30 flex flex-col fixed bg-gradient-to-t p-2 from-[#07040a] to-[#1b1820]';
+    'outline-none md:w-[300px] max-w-[300px] z-50 overflow-y-auto max-h-[200px] scrollbar-thin scrollbar-webkit rounded-2xl border border-white border-opacity-30 flex flex-col absolute bg-gradient-to-t p-2 from-[#07040a] to-[#1b1820]';
 
   useEffect(() => {
     async function fetchProfiles() {
