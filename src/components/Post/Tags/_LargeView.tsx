@@ -11,7 +11,7 @@ import { PostView } from '@/types/Post';
 import { Button, Icon, Post as PostUI, PostUtil, Tooltip as TooltipUI, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { ImageByUri, Tooltip } from '@/components';
-import { InputTagSinglePost } from './components';
+import { InputTagStandard } from './components';
 
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { getUserProfile } from '@/services/userService';
@@ -262,7 +262,7 @@ export function LargeView({ post }: { post: PostView }) {
         </div>
 
         <div className="flex">
-          <InputTagSinglePost
+          <InputTagStandard
             handleAddTag={loadingTags === '' ? handleAddTag : () => {}}
             loadingTags={loadingTags !== ''}
             tagInput={tagInput}

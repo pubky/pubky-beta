@@ -1,22 +1,19 @@
 import { useState, useRef } from 'react';
-import { PostView } from '@/types/Post';
 import { usePubkyClientContext, useModal } from '@/contexts';
 import EmojiPicker from '@/components/EmojiPicker';
 import { Icon, Input } from '@social/ui-shared';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 
 interface InputTagStandardProps {
-  post: PostView;
   tagInput: string;
   setTagInput: (value: string) => void;
-  loadingTags: string;
+  loadingTags: string | boolean;
   handleAddTag: (tag: string) => void;
   addTagInput: boolean;
   setAddTagInput: (value: boolean) => void;
 }
 
 export function InputTagStandard({
-  post,
   tagInput,
   setTagInput,
   loadingTags,
@@ -30,6 +27,8 @@ export function InputTagStandard({
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
 
   useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
+
+  const isLoading = typeof loadingTags === 'boolean' ? loadingTags : loadingTags !== '';
 
   return (
     <>
@@ -54,7 +53,7 @@ export function InputTagStandard({
             onEmojiPickerClick={() => setShowEmojis(true)}
             showCloseButton={true}
             onClose={() => setAddTagInput(false)}
-            loading={loadingTags !== ''}
+            loading={isLoading}
             variant="small"
             autoFocus
             className="w-max"

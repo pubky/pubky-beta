@@ -143,7 +143,6 @@ export function Standard({ post, largeView = false }: PostProps) {
           {!largeView && (
             <div className="hidden md:flex">
               <InputTagStandard
-                post={post}
                 tagInput={tagInput}
                 setTagInput={setTagInput}
                 loadingTags={loadingTags}
