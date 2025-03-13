@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { Post as PostUI, Icon } from '@social/ui-shared';
 import { parse_uri } from 'pubky-app-specs';
 import { useRouter } from 'next/navigation';
 
 import { TLayouts, TSize } from '@/types';
 import { PostView } from '@/types/Post';
 
+import { Post as PostUI, Icon } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { usePubkyClientContext } from '@/contexts';
 import { getPost } from '@/services/postService';

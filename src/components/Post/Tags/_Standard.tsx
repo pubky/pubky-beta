@@ -6,7 +6,7 @@ import { useAlertContext, useModal } from '@/contexts';
 import { PostView } from '@/types/Post';
 
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { InputTagStandard } from './components';
+import { InputTagStandard, TagsCommonFunctions } from './components';
 import { Icon, Post, PostUtil, Tooltip as TooltipUI, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import Tooltip from '@/components/Tooltip';
@@ -33,68 +33,21 @@ export function Standard({ post, largeView = false }: PostProps) {
   }, [post]);
 
   const handleAddTag = async (tag: string) => {
-    if (!tag) return;
-
-    // check if the tag already exists in the localPost.tags array, and the author is not the author of the post, and the count is greater than 0
-    const tagExists = localPost.tags.some(
-      (t) => t.label === tag && t.taggers.includes(localPost.details.author) && t.taggers_count > 0
+    await TagsCommonFunctions.handleAddTag(
+      tag,
+      localPost,
+      createTag,
+      setLocalPost,
+      addAlert,
+      tagInput,
+      setTagInput,
+      setAddTagInput,
+      setLoadingTags
     );
-    if (tagExists) {
-      addAlert('Tag already exists', 'warning');
-      return;
-    }
-
-    setLoadingTags(tag);
-    const response = await createTag(localPost.details.author, localPost.details.id, tag);
-    if (response) {
-      // check if the tag already exists in the localPost.tags array
-      const tagExists = localPost.tags.some((t) => t.label === tag);
-      if (tagExists) {
-        const updatedTags = localPost.tags.map((t) =>
-          t.label === tag
-            ? { ...t, taggers: [...t.taggers, localPost.details.author], taggers_count: t.taggers_count + 1 }
-            : t
-        );
-        setLocalPost({ ...localPost, tags: updatedTags });
-      } else {
-        const updatedTags = [...localPost.tags, { label: tag, taggers: [localPost.details.author], taggers_count: 1 }];
-        setLocalPost({ ...localPost, tags: updatedTags });
-      }
-      if (tag === tagInput) {
-        setTagInput('');
-        setAddTagInput(false);
-      }
-    } else {
-      addAlert('Something went wrong', 'warning');
-    }
-    setLoadingTags('');
   };
 
   const handleDeleteTag = async (tag: string) => {
-    setLoadingTags(tag);
-    const response = await deleteTag(localPost.details.author, localPost.details.id, tag);
-    if (response) {
-      // check if pubky already is a tagger of the tag
-      const tagExists = localPost.tags.some((t) => t.taggers.includes(localPost.details.author));
-      if (tagExists) {
-        const updatedTags = localPost.tags.map((t) =>
-          t.label === tag
-            ? {
-                ...t,
-                taggers: t.taggers.filter((tagger) => tagger !== localPost.details.author),
-                taggers_count: t.taggers_count - 1
-              }
-            : t
-        );
-        setLocalPost({ ...localPost, tags: updatedTags });
-      } else {
-        const updatedTags = localPost.tags.filter((t) => t.label !== tag);
-        setLocalPost({ ...localPost, tags: updatedTags });
-      }
-    } else {
-      addAlert('Something went wrong', 'warning');
-    }
-    setLoadingTags('');
+    await TagsCommonFunctions.handleDeleteTag(tag, localPost, deleteTag, setLocalPost, addAlert, setLoadingTags);
   };
 
   return (
