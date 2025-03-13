@@ -205,7 +205,7 @@ export default function LinksSection({ links }: LinksSectionProps) {
                             checkLink === false
                               ? () => window.open(link.url, '_blank')
                               : () => {
-                                  openModal('checkLink', { clickedLink });
+                                  openModal('checkLink', { clickedLink: clickedLink });
                                   setClickedLink(link.url);
                                 }
                           }
