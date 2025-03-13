@@ -167,7 +167,7 @@ export default function Content({ post, fullContent = false, largeView = false, 
               const parsedContent = JSON.parse(contentText);
               if (parsedContent.title && parsedContent.body) {
                 const truncatedBody =
-                  parsedContent.body.length > 300 ? parsedContent.body.substring(0, 300) + '...' : parsedContent.body;
+                  parsedContent.body.length > 500 ? parsedContent.body.substring(0, 500) + '...' : parsedContent.body;
 
                 return (
                   <div className="w-full justify-between flex flex-col md:flex-row gap-8">
