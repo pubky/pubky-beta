@@ -18,13 +18,13 @@ import { getUserProfile } from '@/services/userService';
 
 export function LargeView({ post }: { post: PostView }) {
   const { pubky } = usePubkyClientContext();
-  const [localPost, setLocalPost] = useState(post);
-
-  const tooltipRef = useRef(null);
-  const isMobile = useIsMobile();
   const { addAlert } = useAlertContext();
   const { createTag, deleteTag } = usePubkyClientContext();
 
+  const tooltipRef = useRef(null);
+  const isMobile = useIsMobile();
+
+  const [localPost, setLocalPost] = useState(post);
   const [showTooltipPostChecked, setShowTooltipPostChecked] = useState('');
   const [tooltipPosition, setTooltipPosition] = useState<{ top: number; left: number } | null>(null);
   const [showTooltipProfile, setShowTooltipProfile] = useState<{ tagIndex: number; imageIndex: number } | null>(null);
@@ -218,6 +218,7 @@ export function LargeView({ post }: { post: PostView }) {
                           tagId={image}
                         >
                           <ImageByUri
+                            id={taggers[imageIndex]}
                             width={32}
                             height={32}
                             onClick={(e) => {

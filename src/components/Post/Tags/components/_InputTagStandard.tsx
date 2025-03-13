@@ -1,27 +1,35 @@
+import { useState, useRef } from 'react';
 import { PostView } from '@/types/Post';
-import { useTagsLogic } from './_TagsUtils';
-import { usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext, useModal } from '@/contexts';
 import EmojiPicker from '@/components/EmojiPicker';
 import { Icon, Input } from '@social/ui-shared';
+import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 
-interface InputTagProps {
+interface InputTagStandardProps {
   post: PostView;
+  tagInput: string;
+  setTagInput: (value: string) => void;
+  loadingTags: string;
+  handleAddTag: (tag: string) => void;
+  addTagInput: boolean;
+  setAddTagInput: (value: boolean) => void;
 }
 
-export function InputTag({ post }: InputTagProps) {
-  const {
-    tagInput,
-    setTagInput,
-    showEmojis,
-    setShowEmojis,
-    loadingTags,
-    handleAddTag,
-    wrapperRefEmojis,
-    openModal,
-    addTagInput,
-    setAddTagInput
-  } = useTagsLogic(post);
+export function InputTagStandard({
+  post,
+  tagInput,
+  setTagInput,
+  loadingTags,
+  handleAddTag,
+  addTagInput,
+  setAddTagInput
+}: InputTagStandardProps) {
   const { pubky } = usePubkyClientContext();
+  const { openModal } = useModal();
+  const [showEmojis, setShowEmojis] = useState(false);
+  const wrapperRefEmojis = useRef<HTMLDivElement>(null);
+
+  useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
 
   return (
     <>
@@ -65,4 +73,4 @@ export function InputTag({ post }: InputTagProps) {
   );
 }
 
-export default InputTag;
+export default InputTagStandard;

@@ -7,7 +7,7 @@ import { useTagsPost } from '@/hooks/useTag';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { usePostTagTaggers } from '@/hooks/useUser';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
-import { useTagsLogic } from '@/components/Post/Tags/components/TagsUtils';
+import { useTagsLogic } from '@/components/Post/Tags/components';
 
 export const useUtilsTag = (post: PostView) => {
   const { addAlert } = useAlertContext();

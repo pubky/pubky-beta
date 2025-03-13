@@ -23,6 +23,7 @@ import ProtectedRoutes from './ProtectedRoutes';
 import RemindBackup from './RemindBackup';
 import Tooltip from './Tooltip';
 import { ImageByUri } from './ImageByUri';
+import EmojiPicker from './EmojiPicker';
 
 export {
   Influencers,
@@ -49,5 +50,6 @@ export {
   ProtectedRoutes,
   RemindBackup,
   Tooltip,
-  ImageByUri
+  ImageByUri,
+  EmojiPicker
 };

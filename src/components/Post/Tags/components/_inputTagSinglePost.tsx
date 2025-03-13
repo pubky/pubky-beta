@@ -1,8 +1,8 @@
-import { usePubkyClientContext } from '@/contexts';
-import EmojiPicker from '@/components/EmojiPicker';
-import { Icon, Input } from '@social/ui-shared';
-import { useModal } from '@/contexts';
 import { useRef, useState } from 'react';
+
+import { usePubkyClientContext, useModal } from '@/contexts';
+import { EmojiPicker } from '@/components';
+import { Icon, Input } from '@social/ui-shared';
 
 interface InputTagProps {
   handleAddTag: (tag: string) => void;
@@ -13,7 +13,7 @@ interface InputTagProps {
   setAddTagInput: (addTagInput: boolean) => void;
 }
 
-export default function InputTagSinglePost({
+export function InputTagSinglePost({
   handleAddTag,
   loadingTags,
   tagInput,
@@ -67,3 +67,5 @@ export default function InputTagSinglePost({
     </>
   );
 }
+
+export default InputTagSinglePost;
