@@ -105,9 +105,13 @@ export default function SearchInputCard({ refCard, inputValue, ...rest }: Search
       value: user.details.id
     };
 
-    const updatedHistory = [userEntry, ...searchHistory.filter((item: any) => item.id !== user.details.id)].slice(0, 5);
+    const updatedHistory = [
+      userEntry,
+      ...searchHistory.filter((item: any) => item.value !== user.details.id) // Corretto il filtro
+    ].slice(0, 5);
 
     Utils.storage.set('searchHistory', JSON.stringify(updatedHistory));
+    setSearchHistory(updatedHistory);
 
     router.push(`/profile/${user.details.id}`);
   };
@@ -195,7 +199,7 @@ export default function SearchInputCard({ refCard, inputValue, ...rest }: Search
                         <div key={index}>
                           <SideCard.UserSmall
                             id={`user-${index}`}
-                            uri={profileUser?.details?.id}
+                            uri={item.value}
                             uriImage={profileUser?.details?.image || '/images/webp/Userpic.webp'}
                             username={Utils.minifyText(profileUser?.details?.name, 20)}
                             label={Utils.minifyPubky(profileUser?.details?.id)}
