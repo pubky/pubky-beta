@@ -54,11 +54,15 @@ const MarkdownEditorComponent = ({ id, placeHolder, autoFocus, onChange, setChar
 
   useEffect(() => {
     if (quill && autoFocus) quill.focus();
-  }, []);
+  }, [quill, autoFocus]);
 
   useEffect(() => {
     if (quill && value !== quill.getText().trim()) {
+      const currentSelection = quill.getSelection();
       quill.setText(value);
+      if (currentSelection) {
+        quill.setSelection(currentSelection.index);
+      }
     }
   }, [value, quill]);
 
