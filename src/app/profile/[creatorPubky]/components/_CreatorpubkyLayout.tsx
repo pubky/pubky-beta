@@ -78,13 +78,15 @@ export default function CreatorpubkyLayout({
               creatorPubky={creatorPubky}
             />
             <div className="w-full rounded-2xl p-6 lg:p-0 bg-white lg:bg-transparent bg-opacity-10 flex flex-col text-center lg:flex-row items-center gap-3 lg:gap-14 relative">
-              <Profile.Avatar
-                id={profile.details?.id}
-                className="lg:pl-12 cursor-pointer"
-                username={profile?.details?.name || Utils.minifyPubky(creatorPubky)}
-                uriImage={profile?.details?.image || '/images/webp/Userpic.webp'}
-                onClick={() => setIsAvatarOpen(true)}
-              />
+              {profile?.details?.id && (
+                <Profile.Avatar
+                  id={profile?.details?.id}
+                  className="lg:pl-12 cursor-pointer"
+                  username={profile?.details?.name || Utils.minifyPubky(creatorPubky)}
+                  uriImage={profile?.details?.image || '/images/webp/Userpic.webp'}
+                  onClick={() => setIsAvatarOpen(true)}
+                />
+              )}
               <Profile.Handle profileUser={profile} pubkey={creatorPubky ?? ''} creatorPubky={creatorPubky} />
             </div>
           </Content.Grid>
