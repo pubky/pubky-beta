@@ -44,7 +44,7 @@ const MarkdownEditorComponent = ({ id, placeHolder, autoFocus, onChange, setChar
           if (setCharCount && typeof setCharCount === 'function') {
             setCharCount(text.length);
           }
-          onChange(quill.root.innerHTML);
+          onChange(quill.root.innerText);
         } else {
           quill.deleteText(maxLength, quill.getLength());
         }
@@ -57,8 +57,8 @@ const MarkdownEditorComponent = ({ id, placeHolder, autoFocus, onChange, setChar
   }, []);
 
   useEffect(() => {
-    if (quill && value !== quill.root.innerHTML) {
-      quill.root.innerHTML = value;
+    if (quill && value !== quill.getText().trim()) {
+      quill.setText(value);
     }
   }, [value, quill]);
 
