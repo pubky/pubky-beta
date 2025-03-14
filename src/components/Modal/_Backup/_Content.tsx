@@ -41,17 +41,18 @@ export default function ContentBackup({
   const [phrase, setPhrase] = useState(false);
   const [file, setFile] = useState(false);
 
-  const handleDownloadRecoveryFile = async ({ recoveryFile, filename }: { recoveryFile: Buffer; filename: string }) => {
+  const handleDownloadRecoveryFile = ({ recoveryFile, filename }) => {
     try {
-      const element = document.createElement('a');
+      const blob = new Blob([recoveryFile], { type: 'application/octet-stream' });
 
-      const fileBlob = new Blob([recoveryFile]);
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
 
-      element.href = URL.createObjectURL(fileBlob);
-      element.download = filename;
-      document.body.appendChild(element); // Required for this to work in FireFox
-      element.click();
-
+      URL.revokeObjectURL(link.href);
       setSeed(undefined);
       setMnemonic(undefined);
     } catch (error) {
@@ -60,16 +61,13 @@ export default function ContentBackup({
   };
 
   const handleSubmit = async () => {
-    if (loading) {
-      return;
-    }
+    if (loading) return;
+
     try {
       setLoading(true);
       setErrors('');
 
-      const result = passwordSchema.safeParse({
-        password
-      });
+      const result = passwordSchema.safeParse({ password });
 
       if (!result.success) {
         setErrors(result.error.errors.map((err) => err.message).join(', '));

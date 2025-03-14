@@ -4,7 +4,6 @@ import { ICustomFeed } from '@/types';
 import { BottomSheet } from '@social/ui-shared';
 import ContentCreateFeed from '../Modal/_CreateFeed/_Content';
 
-
 interface CreateFeedProps {
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
