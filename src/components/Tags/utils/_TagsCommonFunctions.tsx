@@ -1,3 +1,4 @@
+'use client';
 import { useRef, useState } from 'react';
 import { PostTag, PostView } from '@/types/Post';
 import { getUserProfile } from '@/services/userService';
@@ -117,6 +118,54 @@ export const sanitizeTagInput = (value: string): string => {
 };
 
 /**
+ * Function to add a simple tag to an array
+ * @param tag Tag to be added
+ * @param tags Current tags array
+ * @param setTags Function to update tags array
+ * @param setTag Function to update tag input
+ * @param setTagsError Function to update tags error state
+ * @returns Boolean indicating if the tag was added
+ */
+export const handleAddSimpleTag = (
+  tag: string,
+  tags: string[],
+  setTags: (tags: string[]) => void,
+  setTag: (tag: string) => void,
+  setTagsError: (error: boolean) => void
+): boolean => {
+  const trimmedTag = tag.trim();
+  if (!trimmedTag || tags.includes(trimmedTag)) return false;
+
+  if (tags.length >= 4) {
+    setTagsError(true);
+    return false;
+  }
+
+  const updatedTags = [...tags, trimmedTag];
+  setTags(updatedTags);
+  setTag('');
+  return true;
+};
+
+/**
+ * Function to remove a simple tag from an array
+ * @param indexToRemove Index of the tag to be removed
+ * @param tags Current tags array
+ * @param setTags Function to update tags array
+ * @param setTagsError Function to update tags error state
+ */
+export const handleRemoveSimpleTag = (
+  indexToRemove: number,
+  tags: string[],
+  setTags: (tags: string[]) => void,
+  setTagsError: (error: boolean) => void
+): void => {
+  const updatedTags = tags.filter((_, index) => index !== indexToRemove);
+  setTags(updatedTags);
+  if (updatedTags.length < 4) setTagsError(false);
+};
+
+/**
  * Function to fetch profile images for tags
  * @param tag Tag object
  * @param pubky Current user pubky
@@ -233,6 +282,40 @@ export const useEmojiPicker = () => {
 };
 
 /**
+ * Hook to handle simple tags
+ * @param initialTags Initial tags array
+ * @returns Tags state and functions
+ */
+export const useSimpleTags = (initialTags: string[] = []) => {
+  const [tags, setTags] = useState<string[]>(initialTags);
+  const [tag, setTag] = useState('');
+  const [tagsError, setTagsError] = useState(false);
+  const { showEmojis, setShowEmojis, wrapperRefEmojis } = useEmojiPicker();
+
+  const addTag = () => {
+    handleAddSimpleTag(tag, tags, setTags, setTag, setTagsError);
+  };
+
+  const removeTag = (indexToRemove: number) => {
+    handleRemoveSimpleTag(indexToRemove, tags, setTags, setTagsError);
+  };
+
+  return {
+    tags,
+    setTags,
+    tag,
+    setTag,
+    tagsError,
+    setTagsError,
+    showEmojis,
+    setShowEmojis,
+    wrapperRefEmojis,
+    addTag,
+    removeTag
+  };
+};
+
+/**
  * Function to fetch profiles for taggers
  * @param taggers Array of tagger IDs
  * @param pubky Current user pubky
@@ -278,7 +361,10 @@ export const TagsCommonFunctions = {
   fetchProfileImages,
   updateTagsAndTimeline,
   useEmojiPicker,
-  fetchProfiles
+  fetchProfiles,
+  handleAddSimpleTag,
+  handleRemoveSimpleTag,
+  useSimpleTags
 };
 
 export default TagsCommonFunctions;

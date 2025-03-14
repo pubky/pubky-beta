@@ -1,69 +1,58 @@
 'use client';
-
-import { useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
 import { Icon, PostUtil, Input, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import EmojiPicker from '@/components/EmojiPicker';
-import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
+import { Utils as TagsUtils } from '../utils';
 
-interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
+interface SimpleTagInputProps {
   arrayTags: string[];
   setArrayTags: React.Dispatch<React.SetStateAction<string[]>>;
+  className?: string;
 }
 
-export default function ContentTagCreatePost({ arrayTags, setArrayTags }: TagProps) {
-  const [tag, setTag] = useState('');
-  const [tagsError, setTagsError] = useState(false);
-  const [showEmojis, setShowEmojis] = useState(false);
-  const [localTags, setLocalTags] = useState<string[]>(arrayTags);
-  const wrapperRefEmojis = useRef<HTMLDivElement>(null);
-  useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
+export function InputTagSimple({ arrayTags, setArrayTags, className }: SimpleTagInputProps) {
+  const {
+    tags,
+    setTags,
+    tag,
+    setTag,
+    tagsError,
+    setTagsError,
+    showEmojis,
+    setShowEmojis,
+    wrapperRefEmojis,
+    addTag,
+    removeTag
+  } = TagsUtils.TagsCommonFunctions.useSimpleTags(arrayTags);
 
   useEffect(() => {
-    setLocalTags(arrayTags);
-  }, [arrayTags]);
+    setTags(arrayTags);
+  }, [arrayTags, setTags]);
 
-  const handleAddTag = () => {
-    const trimmedTag = tag.trim();
-    if (!trimmedTag || localTags.includes(trimmedTag)) return;
-
-    if (localTags.length >= 4) {
-      setTagsError(true);
-      return;
-    }
-
-    const updatedTags = [...localTags, trimmedTag];
-    setLocalTags(updatedTags);
-    setArrayTags(updatedTags);
-    setTag('');
-  };
-
-  const handleRemoveTag = (indexToRemove: number) => {
-    const updatedTags = localTags.filter((_, index) => index !== indexToRemove);
-    setLocalTags(updatedTags);
-    setArrayTags(updatedTags);
-    if (updatedTags.length <= 4) setTagsError(false);
-  };
+  useEffect(() => {
+    setArrayTags(tags);
+  }, [tags, setArrayTags]);
 
   return (
-    <div className="w-full flex-col inline-flex">
+    <div className={`w-full flex-col inline-flex ${className}`}>
       <div>
         <div className="mt-2 justify-start items-start">
-          {localTags.length > 0 ? (
+          {tags.length > 0 ? (
             <div className="justify-start items-start">
-              {localTags.map((tag, index) => (
+              {tags.map((tagItem, index) => (
                 <PostUtil.Tag
                   key={index}
                   action={
-                    <div className="flex items-center" onClick={() => handleRemoveTag(index)}>
+                    <div className="flex items-center" onClick={() => removeTag(index)}>
                       <Icon.X size="16" />
                     </div>
                   }
                   clicked
-                  color={tag && Utils.generateRandomColor(tag)}
+                  color={tagItem && Utils.generateRandomColor(tagItem)}
                   className="mr-2 my-1"
                 >
-                  {tag}
+                  {tagItem}
                 </PostUtil.Tag>
               ))}
             </div>
@@ -97,7 +86,7 @@ export default function ContentTagCreatePost({ arrayTags, setArrayTags }: TagPro
         <Input.Tag
           value={tag}
           onChange={(value) => setTag(value)}
-          onAddTag={handleAddTag}
+          onAddTag={addTag}
           onEmojiPickerClick={() => setShowEmojis(true)}
           variant="default"
           className="w-full"
@@ -112,3 +101,5 @@ export default function ContentTagCreatePost({ arrayTags, setArrayTags }: TagPro
     </div>
   );
 }
+
+export default InputTagSimple;

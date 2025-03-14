@@ -3,9 +3,10 @@
 import { Button, Icon, Input, Post, PostUtil, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { useAlertContext, useModal } from '@/contexts';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import EmojiPicker from '@/components/EmojiPicker';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
+import { Tags } from '@/components/Tags';
 
 interface FooterAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   visibleTextArea: boolean;
@@ -189,37 +190,11 @@ export default function FooterArea({
             )}
             <div id="add-tag-container" className="w-auto hidden lg:flex flex-col self-center">
               {addTagInput ? (
-                <>
-                  {showEmojisFastTag && (
-                    <div className="absolute translate-y-[10%] translate-x-[30%] z-10" ref={wrapperRefEmojisFastTag}>
-                      <EmojiPicker
-                        onEmojiSelect={(emojiObject) => {
-                          setTagInput(tagInput + emojiObject.native);
-                          setShowEmojisFastTag(false);
-                        }}
-                        maxLength={20}
-                        currentInput={tagInput}
-                      />
-                    </div>
-                  )}
-
-                  <Input.Tag
-                    value={tagInput}
-                    onChange={setTagInput}
-                    onAddTag={handleAddTag}
-                    onEmojiPickerClick={() => setShowEmojisFastTag(true)}
-                    showCloseButton
-                    onClose={() => setAddTagInput(false)}
-                    variant="small"
-                    autoFocus
-                  />
-
-                  {errorTag && addTagInput && (
-                    <Typography.Body className="whitespace-nowrap text-[#e95164]" variant="small">
-                      Max 4 tags
-                    </Typography.Body>
-                  )}
-                </>
+                <Tags.InlineTagInput
+                  arrayTags={arrayTags || []}
+                  setArrayTags={setArrayTags || (() => {})}
+                  onClose={() => setAddTagInput(false)}
+                />
               ) : (
                 <div
                   id="show-add-tag-input-btn"

@@ -1,4 +1,5 @@
-// TagsUtils.tsx
+'use client';
+
 import { useState, useEffect } from 'react';
 
 import { PostTag, PostView } from '@/types/Post';
