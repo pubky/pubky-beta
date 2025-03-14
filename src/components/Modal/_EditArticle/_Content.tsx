@@ -28,8 +28,21 @@ export default function ContentEditArticle({
   const [isValidContent, setIsValidContent] = useState(false);
 
   useEffect(() => {
-    setContentEditArticle(article?.details?.content ? JSON.parse(article?.details?.content).body : '');
-    setInitTitle(article?.details?.content ? JSON.parse(article?.details?.content).title : '');
+    try {
+      if (article?.details?.content) {
+        const parsedContent = JSON.parse(article?.details?.content);
+        setContentEditArticle(parsedContent.body || '');
+        setInitTitle(parsedContent.title || '');
+      } else {
+        setContentEditArticle('');
+        setInitTitle('');
+      }
+    } catch (error) {
+      console.error('Error parsing content JSON:', error);
+      setContentEditArticle('');
+      setInitTitle('');
+      addAlert('Error loading article content', 'warning');
+    }
   }, [article]);
 
   const handleSubmit = async (content: string) => {

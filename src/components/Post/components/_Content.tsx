@@ -169,42 +169,70 @@ export default function Content({ post, fullContent = false, largeView = false, 
         {(() => {
           try {
             if (String(post?.details?.kind) === PubkyAppPostKind[1].toLocaleLowerCase()) {
-              const parsedContent = JSON.parse(contentText);
-              if (parsedContent.title && parsedContent.body) {
-                const truncatedBody =
-                  parsedContent.body.length > 500 ? parsedContent.body.substring(0, 500) + '...' : parsedContent.body;
-
+              // Verificar se o contentText é muito grande (próximo de 50000 caracteres)
+              if (contentText && contentText.length > 49000) {
                 return (
-                  <div className="w-full justify-between flex flex-col md:flex-row gap-8">
-                    <div>
-                      <Typography.Body className="mb-2" variant="large-bold">
-                        {parsedContent.title}
-                      </Typography.Body>
-                      <div className="opacity-70" dangerouslySetInnerHTML={{ __html: truncatedBody }} />
+                  <div className="w-full">
+                    <Typography.Body className="mb-2 text-red-500" variant="large-bold">
+                      Error: Content too large to display
+                    </Typography.Body>
+                    <div className="opacity-70">
+                      The content of this post is too large and cannot be processed correctly.
                     </div>
-                    {fileContents.length > 0 && (
+                  </div>
+                );
+              }
+
+              try {
+                const parsedContent = JSON.parse(contentText);
+                if (parsedContent.title && parsedContent.body) {
+                  const truncatedBody =
+                    parsedContent.body.length > 500 ? parsedContent.body.substring(0, 500) + '...' : parsedContent.body;
+
+                  return (
+                    <div className="w-full justify-between flex flex-col md:flex-row gap-8">
                       <div>
-                        {loading
-                          ? renderSkeleton()
-                          : fileContents.map((file, index) => {
-                              return (
-                                <div key={index} className="relative">
-                                  {file.content_type === 'skeleton' ? (
-                                    renderSkeleton()
-                                  ) : (
-                                    <img
-                                      src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
-                                      alt={`Fetched file ${index}`}
-                                      width={360}
-                                      height={200}
-                                      className="w-full h-auto max-w-[360px] max-h-[200px] min-w-[200px] object-cover rounded-[10px] overflow-hidden"
-                                    />
-                                  )}
-                                </div>
-                              );
-                            })}
+                        <Typography.Body className="mb-2" variant="large-bold">
+                          {parsedContent.title}
+                        </Typography.Body>
+                        <div className="opacity-70" dangerouslySetInnerHTML={{ __html: truncatedBody }} />
                       </div>
-                    )}
+                      {fileContents.length > 0 && (
+                        <div>
+                          {loading
+                            ? renderSkeleton()
+                            : fileContents.map((file, index) => {
+                                return (
+                                  <div key={index} className="relative">
+                                    {file.content_type === 'skeleton' ? (
+                                      renderSkeleton()
+                                    ) : (
+                                      <img
+                                        src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
+                                        alt={`Fetched file ${index}`}
+                                        width={360}
+                                        height={200}
+                                        className="w-full h-auto max-w-[360px] max-h-[200px] min-w-[200px] object-cover rounded-[10px] overflow-hidden"
+                                      />
+                                    )}
+                                  </div>
+                                );
+                              })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+              } catch (jsonError) {
+                console.error('Error parsing JSON:', jsonError);
+                return (
+                  <div className="w-full">
+                    <Typography.Body className="mb-2 text-red-500" variant="large-bold">
+                      Error processing content
+                    </Typography.Body>
+                    <div className="opacity-70">
+                      The content of this post could not be processed. The format may be incorrect.
+                    </div>
                   </div>
                 );
               }

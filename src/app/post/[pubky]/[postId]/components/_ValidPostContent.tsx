@@ -68,12 +68,24 @@ const NormalPost = ({ data }) => {
 
 const LongPost = ({ data, user }) => {
   const isMobile = useIsMobile();
+
+  let title = '';
+  let body = '';
+
+  try {
+    const parsedContent = JSON.parse(data?.details?.content || '{}');
+    title = parsedContent.title || '';
+    body = parsedContent.body || '';
+  } catch (error) {
+    console.error('Error parsing content JSON:', error);
+    title = 'Error loading content';
+    body = 'The content of this post could not be processed. The format may be incorrect.';
+  }
+
   return (
     <div className="flex flex-col lg:flex-row gap-6">
       <div className="w-auto lg:w-[1200px] flex flex-col gap-4">
-        <Typography.Display className="sm:leading-[64px] break-all">
-          {JSON.parse(data?.details?.content).title}
-        </Typography.Display>
+        <Typography.Display className="sm:leading-[64px] break-all">{title}</Typography.Display>
         <div className="flex w-full gap-4 justify-between items-center">
           <div className="justify-start gap-3 flex items-center mt-4 mb-2">
             <ImageByUri
@@ -113,7 +125,7 @@ const LongPost = ({ data, user }) => {
         <div
           className="text-white break-words"
           dangerouslySetInnerHTML={{
-            __html: JSON.parse(data?.details?.content).body
+            __html: body
           }}
         ></div>
       </div>

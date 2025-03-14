@@ -27,13 +27,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const post = await response.json();
     const fetchedFile = post?.details?.attachments && (await getFile(post?.details?.attachments[0]));
     const fileType = fetchedFile?.content_type;
-    const file = fetchedFile && `${BASE_URL}/static/files/${JSON.parse(fetchedFile?.urls).main}`;
+
+    let file = null;
+    try {
+      file = fetchedFile && `${BASE_URL}/static/files/${JSON.parse(fetchedFile?.urls || '{}').main}`;
+    } catch (error) {
+      console.error('Error parsing URL JSON:', error);
+    }
 
     // title with just 20 characters
-    const postTitle =
-      post?.details?.kind === PubkyAppPostKind[1].toLocaleLowerCase()
-        ? Utils.truncateText(JSON.parse(post?.details?.content).title, 50)
-        : Utils.truncateText(post.details.content, 50);
+    let postTitle = '';
+    try {
+      postTitle =
+        post?.details?.kind === PubkyAppPostKind[1].toLocaleLowerCase()
+          ? Utils.truncateText(JSON.parse(post?.details?.content || '{}').title || '', 50)
+          : Utils.truncateText(post.details.content, 50);
+    } catch (error) {
+      console.error('Error parsing content JSON:', error);
+      postTitle = Utils.truncateText(post.details.content, 50);
+    }
+
     const profile = await getUserDetails(post?.details.author);
     const profileName = Utils.truncateText(profile?.name, 20);
     const description = Utils.truncateText(post.details.content, 100);
