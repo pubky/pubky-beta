@@ -1,16 +1,14 @@
 // TagsUtils.tsx
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 
 import { PostTag, PostView } from '@/types/Post';
 import { useAlertContext, useModal, usePubkyClientContext } from '@/contexts';
-import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { getUserProfile } from '@/services/userService';
+import { TagsCommonFunctions } from './_TagsCommonFunctions';
 
 export const TagsUtils = (post: PostView) => {
   const [tags, setTags] = useState<PostTag[]>([]);
   const [tagInput, setTagInput] = useState('');
-  const [showEmojis, setShowEmojis] = useState(false);
   const [loadingTags, setLoadingTags] = useState('');
   const [profileImages, setProfileImages] = useState({});
   const [addTagInput, setAddTagInput] = useState<boolean>(false);
@@ -18,77 +16,15 @@ export const TagsUtils = (post: PostView) => {
   const { addAlert } = useAlertContext();
   const { openModal } = useModal();
   const isMobile = useIsMobile();
-  const wrapperRefEmojis = useRef<HTMLDivElement>(null);
-
-  useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
-
-  const updateTagsAndTimeline = (tag: string, isAdding: boolean) => {
-    let newTags = tags;
-    const existingTag = tags.find((t) => t.label === tag);
-    let uniqueTagsChange = 0;
-
-    if (isAdding) {
-      if (!existingTag) {
-        newTags = [
-          ...tags,
-          {
-            label: tag,
-            taggers_count: 1,
-            taggers: [pubky ?? ''],
-            relationship: true
-          }
-        ];
-        uniqueTagsChange = 1;
-      } else if (!existingTag.taggers.includes(pubky ?? '')) {
-        newTags = tags.map((t) =>
-          t.label === tag
-            ? {
-                ...t,
-                taggers_count: t.taggers_count + 1,
-                taggers: [...t.taggers, pubky ?? ''],
-                relationship: true
-              }
-            : t
-        );
-        if (existingTag.taggers_count === 0) uniqueTagsChange = 1;
-      }
-    } else {
-      newTags = tags.map((t) =>
-        t.label === tag
-          ? {
-              ...t,
-              taggers_count: t.taggers_count - 1,
-              taggers: t.taggers.filter((tg) => tg !== pubky),
-              relationship: false
-            }
-          : t
-      );
-      if (existingTag?.taggers_count === 1) uniqueTagsChange = -1;
-    }
-
-    setTags(newTags);
-    setTimeline((prev) =>
-      prev.map((p) =>
-        p.details.id === post.details.id
-          ? {
-              ...p,
-              tags: newTags,
-              counts: {
-                ...p.counts,
-                unique_tags: Math.max(0, p.counts.unique_tags + uniqueTagsChange)
-              }
-            }
-          : p
-      )
-    );
-  };
+  const { useEmojiPicker } = TagsCommonFunctions;
+  const { showEmojis, setShowEmojis, wrapperRefEmojis } = useEmojiPicker();
 
   const handleAddTag = async (tag: string) => {
     if (!tag) return;
     setLoadingTags(tag);
     const response = await createTag(post.details.author, post.details.id, tag);
     if (response) {
-      updateTagsAndTimeline(tag, true);
+      TagsCommonFunctions.updateTagsAndTimeline(tag, true, tags, pubky, setTags, setTimeline, post);
       setAddTagInput(false);
       setTagInput('');
     } else {
@@ -100,12 +36,12 @@ export const TagsUtils = (post: PostView) => {
   const handleDeleteTag = async (tag: string) => {
     setLoadingTags(tag);
     await deleteTag(post.details.author, post.details.id, tag);
-    updateTagsAndTimeline(tag, false);
+    TagsCommonFunctions.updateTagsAndTimeline(tag, false, tags, pubky, setTags, setTimeline, post);
     setLoadingTags('');
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const sanitized = e.target.value.toLowerCase().replace(/\s/g, '').replace(/!/g, '');
+    const sanitized = TagsCommonFunctions.sanitizeTagInput(e.target.value);
     setTagInput(sanitized);
   };
 
@@ -117,15 +53,19 @@ export const TagsUtils = (post: PostView) => {
     const images = {};
     const taggerPromises = tags.flatMap((tagObj) =>
       tagObj?.taggers
-        ?.map((fromItem) => {
+        ?.map(async (fromItem) => {
           if (fromItem && !images[fromItem]) {
-            return getUserProfile(fromItem, pubky ?? '')
-              .then((profile) => {
-                images[fromItem] = profile?.details?.image || '/images/webp/Userpic.webp';
-              })
-              .catch(() => {
-                images[fromItem] = '/images/webp/Userpic.webp';
-              });
+            try {
+              const profileImages = await TagsCommonFunctions.fetchProfileImages(
+                { ...tagObj, taggers: [fromItem] },
+                pubky
+              );
+              if (profileImages.length > 0) {
+                images[fromItem] = profileImages[0];
+              }
+            } catch (error) {
+              images[fromItem] = '/images/webp/Userpic.webp';
+            }
           }
           return null;
         })

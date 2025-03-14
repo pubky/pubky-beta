@@ -1,22 +1,21 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { PostTag, PostView } from '@/types/Post';
-import { getUserProfile } from '@/services/userService';
 import { UserView } from '@/types/User';
 import { useTagsPost } from '@/hooks/useTag';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { usePostTagTaggers } from '@/hooks/useUser';
-import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 import TagsUtils from './_TagsUtils';
+import { TagsCommonFunctions } from './_TagsCommonFunctions';
 
 export const TagsInteractionUtils = (post: PostView) => {
   const { addAlert } = useAlertContext();
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const [tag, setTag] = useState('');
-  const wrapperRefEmojis = useRef<HTMLDivElement>(null);
-  useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
   const inputRef = useRef<HTMLInputElement>(null);
   const { handleAddTag, handleDeleteTag } = TagsUtils(post);
+  const { useEmojiPicker } = TagsCommonFunctions;
+  const { showEmojis, setShowEmojis, wrapperRefEmojis } = useEmojiPicker();
 
   const [selectedTag, setSelectedTag] = useState<PostTag | null>(null);
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
@@ -26,7 +25,6 @@ export const TagsInteractionUtils = (post: PostView) => {
   const [followedUser, setFollowedUser] = useState<{
     [pubky: string]: boolean;
   }>({});
-  const [showEmojis, setShowEmojis] = useState(false);
   const [tagImages, setTagImages] = useState<{ [label: string]: string[] }>({});
   const [userProfiles, setUserProfiles] = useState<{ [key: string]: UserView }>({});
   const [loading, setLoading] = useState(false);
@@ -62,20 +60,6 @@ export const TagsInteractionUtils = (post: PostView) => {
       setSkipTaggers((prev) => prev + limitTaggers);
     }
   }, isLoadingTaggers);
-
-  const fetchProfileImages = async (tag: PostTag) => {
-    const images = await Promise.all(
-      tag.taggers.map(async (fromItem) => {
-        try {
-          const profile = await getUserProfile(fromItem, pubky ?? '');
-          return profile?.details?.image || '/images/webp/Userpic.webp';
-        } catch (error) {
-          return '/images/webp/Userpic.webp';
-        }
-      })
-    );
-    return images;
-  };
 
   const followUser = async (pubkyFollow: string) => {
     try {
@@ -135,11 +119,6 @@ export const TagsInteractionUtils = (post: PostView) => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const valueWithoutSpaces = e.target.value.toLowerCase().replace(/\s/g, '').replace(/!/g, '');
-    setTag(valueWithoutSpaces);
-  };
-
   const addTag = async (tag: string) => {
     try {
       setLoadingTags(tag);
@@ -173,34 +152,11 @@ export const TagsInteractionUtils = (post: PostView) => {
     const imagesMap: { [label: string]: string[] } = {};
     await Promise.all(
       allTags.map(async (tag) => {
-        const images = await fetchProfileImages(tag);
+        const images = await TagsCommonFunctions.fetchProfileImages(tag, pubky);
         imagesMap[tag.label] = images.slice(0, 4);
       })
     );
     setTagImages(imagesMap);
-  };
-
-  const fetchProfiles = async () => {
-    setInitLoadingFollowers(true);
-    const profilesMap: { [key: string]: UserView } = {};
-    const followedMap: { [key: string]: boolean } = {};
-
-    await Promise.all(
-      taggers.map(async (userId) => {
-        if (userProfiles[userId]) return;
-        try {
-          const profile = await getUserProfile(userId, pubky ?? '');
-          profilesMap[userId] = profile;
-          followedMap[userId] = profile.relationship?.following ?? false;
-        } catch (error) {
-          console.error(`Error fetching profile for user ${userId}`, error);
-        }
-      })
-    );
-
-    setUserProfiles((prev) => ({ ...prev, ...profilesMap }));
-    setFollowedUser((prev) => ({ ...prev, ...followedMap }));
-    setInitLoadingFollowers(false);
   };
 
   useEffect(() => {
@@ -244,53 +200,49 @@ export const TagsInteractionUtils = (post: PostView) => {
   useEffect(() => {
     if (taggers.length === 0) return;
 
-    fetchProfiles();
+    TagsCommonFunctions.fetchProfiles(
+      taggers,
+      pubky,
+      userProfiles,
+      setUserProfiles,
+      setFollowedUser,
+      setInitLoadingFollowers
+    );
   }, [taggers, pubky]);
 
-  // Fetch images for all tags
   useEffect(() => {
     if (allTags.length > 0) {
       fetchAllImages();
     }
   }, [allTags]);
 
-  useEffect(() => {
-    if (selectedTag) {
-      const updatedTag = allTags.find((tag) => tag.label === selectedTag.label);
-      if (updatedTag && setSelectedTag) {
-        setSelectedTag(updatedTag);
-      }
-    }
-  }, [allTags]);
-
   return {
-    tag,
-    setTag,
-    handleChange,
+    selectedTag,
     addTag,
     deleteTag,
-    showEmojis,
-    setShowEmojis,
     allTags,
-    selectedTag,
     setSelectedTag,
+    loader,
+    loadingTags,
+    tagImages,
+    hasMore,
+    pubky,
     taggers,
     userProfiles,
     followedUser,
+    initLoadingFollowers,
     followUser,
     unfollowUser,
-    loader,
     loaderTaggers,
-    loadingTags,
     loadingFollowers,
-    wrapperRefEmojis,
-    initLoadingFollowers,
-    tagImages,
-    loading,
-    inputRef,
-    hasMore,
     hasMoreTaggers,
-    pubky
+    tag,
+    setTag,
+    showEmojis,
+    setShowEmojis,
+    wrapperRefEmojis,
+    loading,
+    inputRef
   };
 };
 

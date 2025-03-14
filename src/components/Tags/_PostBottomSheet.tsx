@@ -12,10 +12,9 @@ interface TagProps {
   post: PostView;
   title?: string;
   className?: string;
-  tagsError?: boolean;
 }
 
-export function PostBottomSheet({ show, setShow, post, title, className, tagsError }: TagProps) {
+export function PostBottomSheet({ show, setShow, post, title, className }: TagProps) {
   const { selectedTag } = TagsInteractionUtils(post);
 
   return (
