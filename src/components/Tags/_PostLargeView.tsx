@@ -139,9 +139,7 @@ export function PostLargeView({ post }: { post: PostView }) {
                       color={tagObj?.label && Utils.generateRandomColor(tagObj?.label)}
                       onClick={() => {
                         if (loadingTags === tagObj?.label) return;
-                        hasAuthorTag
-                          ? async () => await handleDeleteTag(tagObj.label)
-                          : async () => await handleAddTag(tagObj.label);
+                        hasAuthorTag ? handleDeleteTag(tagObj.label) : handleAddTag(tagObj.label);
                       }}
                     >
                       <div className="flex gap-2 items-center">
@@ -219,7 +217,7 @@ export function PostLargeView({ post }: { post: PostView }) {
 
         <div className="flex">
           <InputTagStandard
-            handleAddTag={loadingTags === '' ? async () => await handleAddTag(tagInput) : () => {}}
+            handleAddTag={handleAddTag}
             loadingTags={loadingTags !== ''}
             tagInput={tagInput}
             setTagInput={setTagInput}
