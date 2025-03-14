@@ -227,6 +227,8 @@ export default function CreateContent({
             name={profile?.name ?? Utils.minifyPubky(pubky ?? '')}
             largeView={largeView}
             variant={variant}
+            content={content}
+            maxLength={maxLength}
           />
           <Section.InputArea
             selectedFiles={selectedFiles}

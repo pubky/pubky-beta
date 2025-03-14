@@ -11,43 +11,50 @@ interface UserAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   uriPic: string;
   name: string;
   variant?: 'small';
+  content?: string;
+  maxLength?: number;
 }
 
-export default function UserArea({ largeView, uriPic, name, variant }: UserAreaProps) {
+export default function UserArea({ largeView, uriPic, name, variant, content, maxLength }: UserAreaProps) {
   const { pubky } = usePubkyClientContext();
 
   return (
-    <Link href="/profile" className={`${!variant && 'items-center'} justify-start gap-2 flex`}>
-      <ImageByUri
-        id={pubky}
-        width={largeView ? 48 : 32}
-        height={largeView ? 48 : 32}
-        className={`${largeView ? 'w-[48px] h-[48px]' : 'w-[32px] h-[32px]'} rounded-full`}
-        alt="user-image"
-        uri={uriPic}
-      />
-      {!variant && (
-        <>
-          {pubky ? (
-            <div className="cursor-pointer flex gap-4 items-center">
-              <Typography.Body
-                className={`${largeView && 'text-2xl'} hover:underline hover:decoration-solid`}
-                variant="medium-bold"
-              >
-                {Utils.minifyText(name ?? Utils.minifyPubky(pubky), 24)}
-              </Typography.Body>
-              <div className="flex gap-1 cursor-pointer">
-                {/**<Icon.CheckCircle size="16" color="gray" />*/}
-                <Typography.Label className="text-opacity-30">{Utils.minifyPubky(pubky)}</Typography.Label>
+    <div className="w-full justify-between items-center flex gap-2">
+      <Link href="/profile" className={`${!variant && 'items-center'} justify-start gap-2 flex`}>
+        <ImageByUri
+          id={pubky}
+          width={largeView ? 48 : 32}
+          height={largeView ? 48 : 32}
+          className={`${largeView ? 'w-[48px] h-[48px]' : 'w-[32px] h-[32px]'} rounded-full`}
+          alt="user-image"
+          uri={uriPic}
+        />
+        {!variant && (
+          <>
+            {pubky ? (
+              <div className="cursor-pointer flex gap-4 items-center">
+                <Typography.Body
+                  className={`${largeView && 'text-2xl'} hover:underline hover:decoration-solid`}
+                  variant="medium-bold"
+                >
+                  {Utils.minifyText(name ?? Utils.minifyPubky(pubky), 24)}
+                </Typography.Body>
+                <div className="flex gap-1 cursor-pointer">
+                  {/**<Icon.CheckCircle size="16" color="gray" />*/}
+                  <Typography.Label className="text-opacity-30">{Utils.minifyPubky(pubky)}</Typography.Label>
+                </div>
               </div>
-            </div>
-          ) : (
-            <Typography.Body variant="medium-bold" className="text-opacity-50">
-              Loading...
-            </Typography.Body>
-          )}
-        </>
-      )}
-    </Link>
+            ) : (
+              <Typography.Body variant="medium-bold" className="text-opacity-50">
+                Loading...
+              </Typography.Body>
+            )}
+          </>
+        )}
+      </Link>
+      <div id="content-length" className="text-opacity-30 text-white text-sm">
+        {maxLength && `${content?.length} / ${maxLength}`}
+      </div>
+    </div>
   );
 }

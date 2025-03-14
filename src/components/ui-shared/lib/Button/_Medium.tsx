@@ -28,7 +28,7 @@ export const Medium = ({
 
   if (disabled) {
     color = 'text-opacity-30';
-    colorBorder = 'border-gray-500';
+    colorBorder = 'border-white/30';
     stateButton = 'bg-opacity-10 cursor-auto';
   }
 
