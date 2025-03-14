@@ -108,8 +108,30 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
 
       // Filter posts before setting timeline
       const filteredPosts = data.filter(
-        (post) =>
-          post?.details?.author && !mutedUsers?.includes(post.details.author) && !deletedPosts.includes(post.details.id)
+        (post) => {
+          // Basic filtering
+          if (!post?.details?.author || 
+              mutedUsers?.includes(post.details.author) || 
+              deletedPosts.includes(post.details.id)) {
+            return false;
+          }
+          
+          // Additional tag filtering for client-side verification
+          if (tagsFeed && tagsFeed.length > 0 && post.details.tags) {
+            // Check if any of the post's tags match our filter tags
+            const postTags = post.details.tags;
+            if (!postTags || postTags.length === 0) {
+              return false; // No tags on post, but we're filtering by tags
+            }
+            
+            // Check if at least one tag matches
+            return postTags.some(postTag => 
+              tagsFeed.some(feedTag => feedTag.toLowerCase() === postTag.toLowerCase())
+            );
+          }
+          
+          return true;
+        }
       );
 
       // Set timeline without conditional logic
