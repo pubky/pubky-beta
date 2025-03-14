@@ -9,7 +9,7 @@ import { usePubkyClientContext } from '@/contexts';
 
 export default function HotTags() {
   const { pubky } = usePubkyClientContext();
-  const { data, isLoading, isError } = useHotTags(pubky, undefined, 0, 8);
+  const { data, isLoading, isError } = useHotTags(pubky, undefined, 0, 8, undefined, 'today');
   const hotTags = data;
   if (isError) console.warn(isError);
 
@@ -30,7 +30,7 @@ export default function HotTags() {
 
   return (
     <div id="hot-tags" className="col-span-1 mb-8">
-      <SideCard.Header title="Hot tags">{/**<DropDown.TagsTimeframe type="text" />*/}</SideCard.Header>
+      <SideCard.Header title="Hot Tags">{/**<DropDown.TagsTimeframe type="text" />*/}</SideCard.Header>
       <SideCard.Content id="hot-tags-content">
         {isLoading ? (
           <Skeletons.Simple />
