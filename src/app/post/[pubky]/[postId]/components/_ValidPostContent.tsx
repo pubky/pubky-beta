@@ -9,7 +9,7 @@ import { Typography, Post as PostUI, Icon } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 
 import { Post as PostComponent } from '@/components';
-import { Tags } from '@/components/Post/Tags';
+import { Tags } from '@/components';
 import { ImageByUri } from '@/components/ImageByUri';
 
 import { useUserProfile } from '@/hooks/useUser';

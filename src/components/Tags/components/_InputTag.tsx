@@ -1,34 +1,27 @@
-import { useState, useRef } from 'react';
-import { usePubkyClientContext, useModal } from '@/contexts';
+import { PostView } from '@/types/Post';
+import { TagsUtils } from '../utils/_TagsUtils';
+import { usePubkyClientContext } from '@/contexts';
 import EmojiPicker from '@/components/EmojiPicker';
 import { Icon, Input } from '@social/ui-shared';
-import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 
-interface InputTagStandardProps {
-  tagInput: string;
-  setTagInput: (value: string) => void;
-  loadingTags: string | boolean;
-  handleAddTag: (tag: string) => void;
-  addTagInput: boolean;
-  setAddTagInput: (value: boolean) => void;
+interface InputTagProps {
+  post: PostView;
 }
 
-export function InputTagStandard({
-  tagInput,
-  setTagInput,
-  loadingTags,
-  handleAddTag,
-  addTagInput,
-  setAddTagInput
-}: InputTagStandardProps) {
+export function InputTag({ post }: InputTagProps) {
+  const {
+    tagInput,
+    setTagInput,
+    showEmojis,
+    setShowEmojis,
+    loadingTags,
+    handleAddTag,
+    wrapperRefEmojis,
+    openModal,
+    addTagInput,
+    setAddTagInput
+  } = TagsUtils(post);
   const { pubky } = usePubkyClientContext();
-  const { openModal } = useModal();
-  const [showEmojis, setShowEmojis] = useState(false);
-  const wrapperRefEmojis = useRef<HTMLDivElement>(null);
-
-  useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
-
-  const isLoading = typeof loadingTags === 'boolean' ? loadingTags : loadingTags !== '';
 
   return (
     <>
@@ -53,7 +46,7 @@ export function InputTagStandard({
             onEmojiPickerClick={() => setShowEmojis(true)}
             showCloseButton={true}
             onClose={() => setAddTagInput(false)}
-            loading={isLoading}
+            loading={loadingTags !== ''}
             variant="small"
             autoFocus
             className="w-max"
@@ -72,4 +65,4 @@ export function InputTagStandard({
   );
 }
 
-export default InputTagStandard;
+export default InputTag;

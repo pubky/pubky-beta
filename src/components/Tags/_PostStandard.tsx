@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 
 import { usePubkyClientContext } from '@/contexts/_pubky';
@@ -6,17 +8,18 @@ import { useAlertContext, useModal } from '@/contexts';
 import { PostView } from '@/types/Post';
 
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { InputTagStandard, TagsCommonFunctions } from './components';
+import { Utils as TagsUtils } from '@/components/Tags/utils';
 import { Icon, Post, PostUtil, Tooltip as TooltipUI, Typography } from '@social/ui-shared';
-import { Utils } from '@social/utils-shared';
-import Tooltip from '@/components/Tooltip';
+import { Tooltip } from '@/components';
+import { Utils } from '../utils-shared';
+import InputTagStandard from './components/_InputTagStandard';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
   largeView?: boolean;
 }
 
-export function Standard({ post, largeView = false }: PostProps) {
+export function PostStandard({ post, largeView = false }: PostProps) {
   const { pubky, createTag, deleteTag } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const { openModal } = useModal();
@@ -33,7 +36,7 @@ export function Standard({ post, largeView = false }: PostProps) {
   }, [post]);
 
   const handleAddTag = async (tag: string) => {
-    await TagsCommonFunctions.handleAddTag(
+    await TagsUtils.handleAddTag(
       tag,
       localPost,
       createTag,
@@ -47,7 +50,7 @@ export function Standard({ post, largeView = false }: PostProps) {
   };
 
   const handleDeleteTag = async (tag: string) => {
-    await TagsCommonFunctions.handleDeleteTag(tag, localPost, deleteTag, setLocalPost, addAlert, setLoadingTags);
+    await TagsUtils.handleDeleteTag(tag, localPost, deleteTag, setLocalPost, addAlert, setLoadingTags);
   };
 
   return (
@@ -111,4 +114,4 @@ export function Standard({ post, largeView = false }: PostProps) {
   );
 }
 
-export default Standard;
+export default PostStandard;

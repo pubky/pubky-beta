@@ -5,18 +5,19 @@ import Link from 'next/link';
 import { PubkyAppPostKind } from 'pubky-app-specs';
 
 import { usePubkyClientContext, useAlertContext } from '@/contexts';
+import { useIsMobile } from '@/hooks/useIsMobile';
+import { getUserProfile } from '@/services/userService';
 
 import { PostView } from '@/types/Post';
 
 import { Button, Icon, Post as PostUI, PostUtil, Tooltip as TooltipUI, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { ImageByUri, Tooltip } from '@/components';
-import { InputTagStandard, TagsCommonFunctions } from './components';
+import { Utils as TagsUtils } from '@/components/Tags/utils';
 
-import { useIsMobile } from '@/hooks/useIsMobile';
-import { getUserProfile } from '@/services/userService';
+import InputTagStandard from './components/_InputTagStandard';
 
-export function LargeView({ post }: { post: PostView }) {
+export function PostLargeView({ post }: { post: PostView }) {
   const { pubky } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const { createTag, deleteTag } = usePubkyClientContext();
@@ -58,8 +59,12 @@ export function LargeView({ post }: { post: PostView }) {
     setProfileImages(images);
   };
 
+  const handleDeleteTag = async (tag: string) => {
+    await TagsUtils.handleDeleteTag(tag, localPost, deleteTag, setLocalPost, addAlert, setLoadingTags);
+  };
+
   const handleAddTag = async (tag: string) => {
-    await TagsCommonFunctions.handleAddTag(
+    await TagsUtils.handleAddTag(
       tag,
       localPost,
       createTag,
@@ -70,10 +75,6 @@ export function LargeView({ post }: { post: PostView }) {
       setAddTagInput,
       setLoadingTags
     );
-  };
-
-  const handleDeleteTag = async (tag: string) => {
-    await TagsCommonFunctions.handleDeleteTag(tag, localPost, deleteTag, setLocalPost, addAlert, setLoadingTags);
   };
 
   useEffect(() => {
@@ -138,7 +139,9 @@ export function LargeView({ post }: { post: PostView }) {
                       color={tagObj?.label && Utils.generateRandomColor(tagObj?.label)}
                       onClick={() => {
                         if (loadingTags === tagObj?.label) return;
-                        hasAuthorTag ? handleDeleteTag(tagObj?.label) : handleAddTag(tagObj?.label);
+                        hasAuthorTag
+                          ? async () => await handleDeleteTag(tagObj.label)
+                          : async () => await handleAddTag(tagObj.label);
                       }}
                     >
                       <div className="flex gap-2 items-center">
@@ -216,7 +219,7 @@ export function LargeView({ post }: { post: PostView }) {
 
         <div className="flex">
           <InputTagStandard
-            handleAddTag={loadingTags === '' ? handleAddTag : () => {}}
+            handleAddTag={loadingTags === '' ? async () => await handleAddTag(tagInput) : () => {}}
             loadingTags={loadingTags !== ''}
             tagInput={tagInput}
             setTagInput={setTagInput}
@@ -229,4 +232,4 @@ export function LargeView({ post }: { post: PostView }) {
   );
 }
 
-export default LargeView;
+export default PostLargeView;

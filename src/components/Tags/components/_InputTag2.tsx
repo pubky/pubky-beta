@@ -2,7 +2,7 @@ import EmojiPicker from '@/components/EmojiPicker';
 import Post from '@/components/Post';
 import { PostView } from '@/types/Post';
 import { Input, Typography } from '@social/ui-shared';
-import { useUtilsTag } from './_Utils';
+import { Utils as TagsUtils } from '../utils';
 
 interface InputTagProps {
   post: PostView;
@@ -10,7 +10,8 @@ interface InputTagProps {
 }
 
 export default function InputTag({ post, tagsError }: InputTagProps) {
-  const { tag, setTag, addTag, showEmojis, setShowEmojis, wrapperRefEmojis, loading, inputRef } = useUtilsTag(post);
+  const { tag, setTag, addTag, showEmojis, setShowEmojis, wrapperRefEmojis, loading, inputRef } =
+    TagsUtils.useUtilsTag(post);
 
   return (
     <div>

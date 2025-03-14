@@ -3,7 +3,7 @@ import { twMerge } from 'tailwind-merge';
 import Header from '../components/_Header';
 import Content from '../components/_Content';
 import Actions from '../components/_Actions';
-import Tags from '../Tags';
+import { Tags } from '@/components';
 
 import { PostView } from '@/types/Post';
 import { Utils } from '@social/utils-shared';
@@ -66,11 +66,11 @@ export default function Post({
           </div>
 
           <div className={`flex flex-col md:flex-row ${largeView ? 'gap-2' : 'justify-between'}`}>
-            {!repostView && <Tags.Standard largeView={largeView} post={repostedPost} />}
+            {!repostView && <Tags.PostStandard largeView={largeView} post={repostedPost} />}
             {!repostView && <Actions post={repostedPost} />}
           </div>
         </div>
-        {largeView && <Tags.LargeView post={repostedPost} />}
+        {largeView && <Tags.PostLargeView post={repostedPost} />}
       </PostUI.MainCard>
     </div>
   );

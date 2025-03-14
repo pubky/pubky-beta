@@ -12,7 +12,7 @@ import Header from './Header';
 import HeaderMobile from './HeaderMobile.tsx';
 import HotTags from './HotTags';
 import LinkPreviewer from './LinkPreview';
-import Post from './Post';
+import { Post } from './Post';
 import PostsLayout from './PostsLayout';
 import Sidebar from './Sidebar';
 import WhoFollow from './WhoFollow';
@@ -24,6 +24,7 @@ import RemindBackup from './RemindBackup';
 import Tooltip from './Tooltip';
 import { ImageByUri } from './ImageByUri';
 import EmojiPicker from './EmojiPicker';
+import { Tags } from './Tags';
 
 export {
   Influencers,
@@ -51,5 +52,6 @@ export {
   RemindBackup,
   Tooltip,
   ImageByUri,
-  EmojiPicker
+  EmojiPicker,
+  Tags
 };

@@ -7,7 +7,7 @@ import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { getUserProfile } from '@/services/userService';
 
-export const useTagsLogic = (post: PostView) => {
+export const TagsUtils = (post: PostView) => {
   const [tags, setTags] = useState<PostTag[]>([]);
   const [tagInput, setTagInput] = useState('');
   const [showEmojis, setShowEmojis] = useState(false);
@@ -21,10 +21,6 @@ export const useTagsLogic = (post: PostView) => {
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
 
   useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
-
-  useEffect(() => {
-    if (post?.tags) setTags(post.tags);
-  }, [post?.tags]);
 
   const updateTagsAndTimeline = (tag: string, isAdding: boolean) => {
     let newTags = tags;
@@ -141,6 +137,10 @@ export const useTagsLogic = (post: PostView) => {
   };
 
   useEffect(() => {
+    if (post?.tags) setTags(post.tags);
+  }, [post?.tags]);
+
+  useEffect(() => {
     if (tags.length > 0) fetchProfileImages();
   }, [tags, pubky]);
 
@@ -163,3 +163,5 @@ export const useTagsLogic = (post: PostView) => {
     isMobile
   };
 };
+
+export default TagsUtils;

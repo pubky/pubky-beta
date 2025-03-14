@@ -7,16 +7,16 @@ import { useTagsPost } from '@/hooks/useTag';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { usePostTagTaggers } from '@/hooks/useUser';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
-import { useTagsLogic } from '@/components/Post/Tags/components';
+import TagsUtils from './_TagsUtils';
 
 export const useUtilsTag = (post: PostView) => {
   const { addAlert } = useAlertContext();
   const { pubky, follow, unfollow } = usePubkyClientContext();
-  const { handleAddTag, handleDeleteTag } = useTagsLogic(post);
   const [tag, setTag] = useState('');
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
   const inputRef = useRef<HTMLInputElement>(null);
+  const { handleAddTag, handleDeleteTag } = TagsUtils(post);
 
   const [selectedTag, setSelectedTag] = useState<PostTag | null>(null);
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
@@ -51,43 +51,6 @@ export const useUtilsTag = (post: PostView) => {
     limitTaggers
   );
 
-  useEffect(() => {
-    setAllTags(post?.tags);
-  }, [post?.tags]);
-  useEffect(() => {
-    if (selectedTag) {
-      const initialTaggers = selectedTag.taggers.slice(0, limitTaggers);
-      setTaggers(initialTaggers);
-      setSkipTaggers(limitTaggers);
-      setHasMoreTaggers(selectedTag.taggers_count > limitTaggers);
-    } else {
-      setTaggers([]);
-      setSkipTaggers(limitTaggers);
-      setHasMoreTaggers(false);
-    }
-  }, [selectedTag]);
-
-  useEffect(() => {
-    if (moreTaggers && moreTaggers.users) {
-      const { users } = moreTaggers;
-      setTaggers((prev) => [...new Set([...prev, ...users])]);
-      setHasMoreTaggers(users.length === limitTaggers);
-    }
-  }, [moreTaggers]);
-
-  useEffect(() => {
-    if (!isLoading && moreTags && moreTags.length) {
-      setAllTags((prev) => {
-        const updatedTags = [...prev, ...moreTags];
-        const uniqueTags = updatedTags.filter(
-          (tag, index, self) => index === self.findIndex((t) => t.label === tag.label)
-        );
-        setHasMore(uniqueTags.length > prev.length);
-        return uniqueTags;
-      });
-    }
-  }, [moreTags, isLoading]);
-
   const loader = useInfiniteScroll(() => {
     if (hasMore && !isLoading) {
       setSkip((prev) => prev + limit);
@@ -99,35 +62,6 @@ export const useUtilsTag = (post: PostView) => {
       setSkipTaggers((prev) => prev + limitTaggers);
     }
   }, isLoadingTaggers);
-
-  useEffect(() => {
-    if (taggers.length === 0) return;
-
-    const fetchProfiles = async () => {
-      setInitLoadingFollowers(true);
-      const profilesMap: { [key: string]: UserView } = {};
-      const followedMap: { [key: string]: boolean } = {};
-
-      await Promise.all(
-        taggers.map(async (userId) => {
-          if (userProfiles[userId]) return;
-          try {
-            const profile = await getUserProfile(userId, pubky ?? '');
-            profilesMap[userId] = profile;
-            followedMap[userId] = profile.relationship?.following ?? false;
-          } catch (error) {
-            console.error(`Error fetching profile for user ${userId}`, error);
-          }
-        })
-      );
-
-      setUserProfiles((prev) => ({ ...prev, ...profilesMap }));
-      setFollowedUser((prev) => ({ ...prev, ...followedMap }));
-      setInitLoadingFollowers(false);
-    };
-
-    fetchProfiles();
-  }, [taggers, pubky]);
 
   const fetchProfileImages = async (tag: PostTag) => {
     const images = await Promise.all(
@@ -142,23 +76,6 @@ export const useUtilsTag = (post: PostView) => {
     );
     return images;
   };
-
-  // Fetch images for all tags
-  useEffect(() => {
-    const fetchAllImages = async () => {
-      const imagesMap: { [label: string]: string[] } = {};
-      await Promise.all(
-        allTags.map(async (tag) => {
-          const images = await fetchProfileImages(tag);
-          imagesMap[tag.label] = images.slice(0, 4);
-        })
-      );
-      setTagImages(imagesMap);
-    };
-    if (allTags.length > 0) {
-      fetchAllImages();
-    }
-  }, [allTags]);
 
   const followUser = async (pubkyFollow: string) => {
     try {
@@ -251,6 +168,91 @@ export const useUtilsTag = (post: PostView) => {
       console.error('Error deleting tag', error);
     }
   };
+
+  const fetchAllImages = async () => {
+    const imagesMap: { [label: string]: string[] } = {};
+    await Promise.all(
+      allTags.map(async (tag) => {
+        const images = await fetchProfileImages(tag);
+        imagesMap[tag.label] = images.slice(0, 4);
+      })
+    );
+    setTagImages(imagesMap);
+  };
+
+  const fetchProfiles = async () => {
+    setInitLoadingFollowers(true);
+    const profilesMap: { [key: string]: UserView } = {};
+    const followedMap: { [key: string]: boolean } = {};
+
+    await Promise.all(
+      taggers.map(async (userId) => {
+        if (userProfiles[userId]) return;
+        try {
+          const profile = await getUserProfile(userId, pubky ?? '');
+          profilesMap[userId] = profile;
+          followedMap[userId] = profile.relationship?.following ?? false;
+        } catch (error) {
+          console.error(`Error fetching profile for user ${userId}`, error);
+        }
+      })
+    );
+
+    setUserProfiles((prev) => ({ ...prev, ...profilesMap }));
+    setFollowedUser((prev) => ({ ...prev, ...followedMap }));
+    setInitLoadingFollowers(false);
+  };
+
+  useEffect(() => {
+    setAllTags(post?.tags);
+  }, [post?.tags]);
+
+  useEffect(() => {
+    if (selectedTag) {
+      const initialTaggers = selectedTag.taggers.slice(0, limitTaggers);
+      setTaggers(initialTaggers);
+      setSkipTaggers(limitTaggers);
+      setHasMoreTaggers(selectedTag.taggers_count > limitTaggers);
+    } else {
+      setTaggers([]);
+      setSkipTaggers(limitTaggers);
+      setHasMoreTaggers(false);
+    }
+  }, [selectedTag]);
+
+  useEffect(() => {
+    if (moreTaggers && moreTaggers.users) {
+      const { users } = moreTaggers;
+      setTaggers((prev) => [...new Set([...prev, ...users])]);
+      setHasMoreTaggers(users.length === limitTaggers);
+    }
+  }, [moreTaggers]);
+
+  useEffect(() => {
+    if (!isLoading && moreTags && moreTags.length) {
+      setAllTags((prev) => {
+        const updatedTags = [...prev, ...moreTags];
+        const uniqueTags = updatedTags.filter(
+          (tag, index, self) => index === self.findIndex((t) => t.label === tag.label)
+        );
+        setHasMore(uniqueTags.length > prev.length);
+        return uniqueTags;
+      });
+    }
+  }, [moreTags, isLoading]);
+
+  useEffect(() => {
+    if (taggers.length === 0) return;
+
+    fetchProfiles();
+  }, [taggers, pubky]);
+
+  // Fetch images for all tags
+  useEffect(() => {
+    if (allTags.length > 0) {
+      fetchAllImages();
+    }
+  }, [allTags]);
 
   useEffect(() => {
     if (selectedTag) {

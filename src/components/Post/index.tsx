@@ -28,7 +28,7 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   lineStyle?: string;
 }
 
-export default function Post({
+export function Post({
   repostView = false,
   largeView = false,
   homeView = false,
@@ -140,3 +140,5 @@ export default function Post({
     </div>
   );
 }
+
+export default Post;

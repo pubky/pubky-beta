@@ -2,7 +2,7 @@ import { twMerge } from 'tailwind-merge';
 import { Icon, Post as PostUI } from '@social/ui-shared';
 
 import { PostView } from '@/types/Post';
-import Tags from '../Tags';
+import { Tags } from '@/components';
 import { PostComponents } from '../components';
 
 interface MainPostContentProps {
@@ -46,12 +46,12 @@ export function MainPostContent({
           </div>
           <div>
             <div className={`flex flex-col md:flex-row ${largeView ? '' : 'justify-between'}`}>
-              {!repostView && <Tags.Standard largeView={largeView} post={post} />}
+              {!repostView && <Tags.PostStandard largeView={largeView} post={post} />}
               {!repostView && <PostComponents.Actions post={post} />}
             </div>
           </div>
         </div>
-        {largeView && <Tags.LargeView post={post} />}
+        {largeView && <Tags.PostLargeView post={post} />}
       </PostUI.MainCard>
     </div>
   );

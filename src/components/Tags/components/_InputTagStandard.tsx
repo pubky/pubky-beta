@@ -1,27 +1,35 @@
-import { PostView } from '@/types/Post';
-import { useTagsLogic } from './_TagsUtils';
-import { usePubkyClientContext } from '@/contexts';
+'use client';
+import { useState, useRef } from 'react';
+import { usePubkyClientContext, useModal } from '@/contexts';
 import EmojiPicker from '@/components/EmojiPicker';
 import { Icon, Input } from '@social/ui-shared';
+import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 
-interface InputTagProps {
-  post: PostView;
+interface InputTagStandardProps {
+  tagInput: string;
+  setTagInput: (value: string) => void;
+  loadingTags: string | boolean;
+  handleAddTag: (tag: string) => void;
+  addTagInput: boolean;
+  setAddTagInput: (value: boolean) => void;
 }
 
-export function InputTag({ post }: InputTagProps) {
-  const {
-    tagInput,
-    setTagInput,
-    showEmojis,
-    setShowEmojis,
-    loadingTags,
-    handleAddTag,
-    wrapperRefEmojis,
-    openModal,
-    addTagInput,
-    setAddTagInput
-  } = useTagsLogic(post);
+export function InputTagStandard({
+  tagInput,
+  setTagInput,
+  loadingTags,
+  handleAddTag,
+  addTagInput,
+  setAddTagInput
+}: InputTagStandardProps) {
   const { pubky } = usePubkyClientContext();
+  const { openModal } = useModal();
+  const [showEmojis, setShowEmojis] = useState(false);
+  const wrapperRefEmojis = useRef<HTMLDivElement>(null);
+
+  useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
+
+  const isLoading = typeof loadingTags === 'boolean' ? loadingTags : loadingTags !== '';
 
   return (
     <>
@@ -46,7 +54,7 @@ export function InputTag({ post }: InputTagProps) {
             onEmojiPickerClick={() => setShowEmojis(true)}
             showCloseButton={true}
             onClose={() => setAddTagInput(false)}
-            loading={loadingTags !== ''}
+            loading={isLoading}
             variant="small"
             autoFocus
             className="w-max"
@@ -65,4 +73,4 @@ export function InputTag({ post }: InputTagProps) {
   );
 }
 
-export default InputTag;
+export default InputTagStandard;
