@@ -55,20 +55,23 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
   };
 
   const handleAddTag = () => {
-    // check if the tag is already in the array
-    if (tagsFeed?.includes(tag.trim())) {
+    const trimmedTag = tag.trim();
+    
+    // Don't add empty tags or duplicates
+    if (trimmedTag === '' || (tagsFeed && tagsFeed.includes(trimmedTag))) {
       return;
     }
 
-    if (tagsFeed.length >= 4) {
+    // Check if adding this tag would exceed the limit
+    if (tagsFeed && tagsFeed.length >= 4) {
       setTagsError(true);
-    } else {
-      const trimmedTag = tag.trim();
-      if (trimmedTag !== '' && !tagsFeed.includes(trimmedTag)) {
-        setTagsFeed([...tagsFeed, trimmedTag]);
-        setTag('');
-      }
+      return; // Don't add the tag if we've reached the limit
     }
+
+    // Add the tag
+    setTagsFeed([...tagsFeed, trimmedTag]);
+    setTag('');
+    setTagsError(false);
   };
 
   const handleRemoveTag = (indexToRemove: number) => {
