@@ -3,13 +3,13 @@ import { Button, Icon, PostUtil, SideCard, Typography } from '@social/ui-shared'
 import { Utils } from '@social/utils-shared';
 import Link from 'next/link';
 import { ImageByUri } from '@/components/ImageByUri';
-import { useUtilsTag } from '../utils/_TagsUtils2';
+import { TagsInteractionUtils } from '../utils/_TagsInteractionUtils';
 
 interface TagsProps {
   post: PostView;
 }
 
-export default function Tags({ post }: TagsProps) {
+export function TagsDisplay({ post }: TagsProps) {
   const {
     selectedTag,
     addTag,
@@ -30,7 +30,7 @@ export default function Tags({ post }: TagsProps) {
     loaderTaggers,
     loadingFollowers,
     hasMoreTaggers
-  } = useUtilsTag(post);
+  } = TagsInteractionUtils(post);
 
   return (
     <>
@@ -207,3 +207,5 @@ export default function Tags({ post }: TagsProps) {
     </>
   );
 }
+
+export default TagsDisplay;

@@ -3,9 +3,9 @@
 import { Modal as ModalUI } from '@social/ui-shared';
 import { PostView } from '@/types/Post';
 import { Input } from '@social/ui-shared';
-import { useUtilsTag } from './utils/_TagsUtils2';
-import InputTag from './components/_InputTag2';
-import Tags from './components/_Tags2';
+import { TagsInteractionUtils } from './utils/_TagsInteractionUtils';
+import InputTag from './components/_InputTagEditor';
+import Tags from './components/_TagsDisplay';
 
 interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
   showModal: boolean;
@@ -15,7 +15,7 @@ interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export function PostModal({ showModal, setShowModal, post, tagsError }: TagProps) {
-  const { selectedTag } = useUtilsTag(post);
+  const { selectedTag } = TagsInteractionUtils(post);
 
   return (
     <ModalUI.Root

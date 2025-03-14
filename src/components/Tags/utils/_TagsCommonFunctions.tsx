@@ -102,3 +102,5 @@ export const handleDeleteTag = async (
   }
   setLoadingTags('');
 };
+
+export default { handleAddTag, handleDeleteTag };

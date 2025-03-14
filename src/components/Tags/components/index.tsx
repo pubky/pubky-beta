@@ -1,13 +1,13 @@
-import InputTag from './_InputTag';
-import InputTagStandard from './_InputTagStandard';
-import InputTag2 from './_InputTag2';
-import Tags2 from './_Tags2';
+import { InputTag } from './_InputTag';
+import { InputTagStandard } from './_InputTagStandard';
+import { InputTagEditor } from './_InputTagEditor';
+import { TagsDisplay } from './_TagsDisplay';
 
 export const Components = {
   InputTag,
   InputTagStandard,
-  InputTag2,
-  Tags2
+  InputTagEditor,
+  TagsDisplay
 };
 
 export default Components;

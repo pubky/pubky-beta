@@ -9,7 +9,7 @@ import { usePostTagTaggers } from '@/hooks/useUser';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 import TagsUtils from './_TagsUtils';
 
-export const useUtilsTag = (post: PostView) => {
+export const TagsInteractionUtils = (post: PostView) => {
   const { addAlert } = useAlertContext();
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const [tag, setTag] = useState('');
@@ -293,3 +293,5 @@ export const useUtilsTag = (post: PostView) => {
     pubky
   };
 };
+
+export default TagsInteractionUtils;

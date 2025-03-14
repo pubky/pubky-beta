@@ -9,9 +9,9 @@ interface InputTagProps {
   tagsError: boolean | undefined;
 }
 
-export default function InputTag({ post, tagsError }: InputTagProps) {
+export function InputTagEditor({ post, tagsError }: InputTagProps) {
   const { tag, setTag, addTag, showEmojis, setShowEmojis, wrapperRefEmojis, loading, inputRef } =
-    TagsUtils.useUtilsTag(post);
+    TagsUtils.TagsInteractionUtils(post);
 
   return (
     <div>
@@ -59,3 +59,5 @@ export default function InputTag({ post, tagsError }: InputTagProps) {
     </div>
   );
 }
+
+export default InputTagEditor;
