@@ -360,7 +360,7 @@ export default function ContentCreateArticle({ setShowModalArticle, setShowModal
                 searchedUsers={searchedUsers}
                 setSearchedUsers={setSearchedUsers}
                 setCursorPosition={setCursorPosition}
-                maxLength={50000}
+                maxLength={30000}
                 setIsError={setIsError}
                 largeView={!isMobile}
                 setIsValidContent={setIsValidContent}
@@ -383,7 +383,7 @@ export default function ContentCreateArticle({ setShowModalArticle, setShowModal
               //setSelectedFiles={setSelectedFiles}
               //selectedFiles={selectedFiles}
               setArrayTags={setArrayTags}
-              maxLength={50000}
+              maxLength={30000}
               arrayTags={arrayTags}
               //setFilePreviews={setFilePreviews}
               showEmojis={showEmojis}
