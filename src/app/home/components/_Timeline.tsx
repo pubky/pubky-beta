@@ -10,16 +10,47 @@ import { ContentNotFound, Post, Skeleton } from '@/components';
 import { PostReplies } from './_PostReplies';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { NewPostsNotifier } from './_NewPostsNotifier';
+import { ICustomFeed, TContent, TLayouts, TSort, TSource } from '@/types';
 import { getPost } from '@/services/postService';
 import Link from 'next/link';
 import Image from 'next/image';
 
-export const Timeline = () => {
+interface TimelineProps {
+  selectedFeed: ICustomFeed | undefined;
+}
+
+// Custom hook to manage filters
+const useTimelineFilters = (selectedFeed) => {
+  const { reach, layout, sort, content, setReach, setLayout, setSort, setContent } = useFilterContext();
+  const [tagsFeed, setTagsFeed] = useState<string[]>();
+
+  useEffect(() => {
+    if (selectedFeed) {
+      setReach(selectedFeed.reach);
+      setLayout(selectedFeed.layout);
+      setSort(selectedFeed.sort);
+      if (selectedFeed?.tags?.length > 0) {
+        setTagsFeed(selectedFeed.tags);
+      }
+      setContent(selectedFeed.content);
+    } else {
+      setReach((localStorage.getItem('reach') || 'all') as TSource);
+      setLayout((localStorage.getItem('layout') || 'columns') as TLayouts);
+      setSort((localStorage.getItem('sort') || 'recent') as TSort);
+      setTagsFeed(undefined);
+      setContent((localStorage.getItem('content') || 'all') as TContent);
+    }
+  }, [selectedFeed]);
+
+  return { reach, layout, sort, tagsFeed, content };
+};
+
+export const Timeline = ({ selectedFeed }: TimelineProps) => {
   const { pubky, mutedUsers, newPosts, setNewPosts, timeline, setTimeline, deletedPosts } = usePubkyClientContext();
   const [start, setStart] = useState<number | undefined>(undefined);
   const [fetching, setFetching] = useState<boolean>(false);
   const isMobile = useIsMobile(1024);
-  const { reach, layout, sort, content } = useFilterContext();
+  const { reach, layout, sort, content, tagsFeed } = useTimelineFilters(selectedFeed);
   const [skip, setSkip] = useState<number>(0);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [isSwitchingFilters, setIsSwitchingFilters] = useState(false);
@@ -33,7 +64,7 @@ export const Timeline = () => {
     undefined,
     sort === 'popularity' ? skip : undefined,
     sort,
-    undefined,
+    tagsFeed,
     content
   );
 
@@ -131,7 +162,7 @@ export const Timeline = () => {
     };
 
     initializeTimeline();
-  }, [reach, sort, content, mutedUsers, clearTimeline]);
+  }, [reach, sort, tagsFeed, content, mutedUsers, clearTimeline]);
 
   useEffect(() => {
     const fetchNexusData = async () => {
@@ -172,7 +203,7 @@ export const Timeline = () => {
     const interval = setInterval(fetchNexusData, 2000); // Poll every 2 seconds
 
     return () => clearInterval(interval);
-  }, [newPosts, pubky, reach, sort, start]);
+  }, [newPosts, pubky, reach, tagsFeed, sort, start]);
 
   return (
     <div id="timeline" className="flex flex-col gap-3">

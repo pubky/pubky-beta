@@ -2,6 +2,7 @@ import Backup from './_Backup';
 import CheckLink from './_CheckLink';
 import Content from './_Content';
 import CreateArticle from './_CreateArticle';
+import CreateFeed from './_CreateFeed';
 import CreatePost from './_CreatePost';
 import CreateReply from './_CreateReply';
 import CreateRepost from './_CreateRepost';
@@ -34,6 +35,7 @@ export const BottomSheet = {
   CheckLink,
   Content,
   CreateArticle,
+  CreateFeed,
   CreatePost,
   CreateReply,
   CreateRepost,

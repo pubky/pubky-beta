@@ -9,9 +9,10 @@ import { PubkyAppPostKind } from 'pubky-app-specs';
 
 interface CreateQuickPostProps extends React.HTMLAttributes<HTMLDivElement> {
   largeView?: boolean;
+  loadingFeed?: boolean;
 }
 
-export default function CreateQuickPost({ largeView = false }: CreateQuickPostProps) {
+export default function CreateQuickPost({ largeView = false, loadingFeed }: CreateQuickPostProps) {
   const { createPost } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [contentPost, setContentPost] = useState('');
@@ -81,40 +82,46 @@ export default function CreateQuickPost({ largeView = false }: CreateQuickPostPr
   };
 
   return (
-    <CreateContent
-      id="quick-post-create-content"
-      className="hidden lg:flex"
-      largeView={largeView}
-      setQuote={setQuote}
-      handleSubmit={handleSubmit}
-      content={contentPost}
-      placeHolder={placeholder}
-      setContent={setContentPost}
-      setTextArea={setTextArea}
-      isValidContent={isValidContent}
-      selectedFiles={selectedFiles}
-      setSelectedFiles={setSelectedFiles}
-      arrayTags={arrayTags}
-      setArrayTags={setArrayTags}
-      setIsValidContent={setIsValidContent}
-      loading={sendingPost}
-      textArea={textArea}
-      article
-      button={
-        <Button.Medium
-          id="post-btn"
-          className="w-auto"
-          variant="line"
-          icon={<Icon.PaperPlaneRight color={!isValidContent && selectedFiles.length === 0 ? 'gray' : 'white'} />}
-          disabled={(!isValidContent && selectedFiles.length === 0) || sendingPost}
+    <>
+      {!loadingFeed && (
+        <CreateContent
+          id="quick-post-create-content"
+          className="hidden lg:flex"
+          largeView={largeView}
+          setQuote={setQuote}
+          handleSubmit={handleSubmit}
+          content={contentPost}
+          placeHolder={placeholder}
+          setContent={setContentPost}
+          setTextArea={setTextArea}
+          isValidContent={isValidContent}
+          selectedFiles={selectedFiles}
+          setSelectedFiles={setSelectedFiles}
+          arrayTags={arrayTags}
+          setArrayTags={setArrayTags}
+          setIsValidContent={setIsValidContent}
           loading={sendingPost}
-          onClick={
-            (isValidContent || selectedFiles.length > 0) && !sendingPost ? () => handleSubmit(contentPost) : undefined
+          textArea={textArea}
+          article
+          button={
+            <Button.Medium
+              id="post-btn"
+              className="w-auto"
+              variant="line"
+              icon={<Icon.PaperPlaneRight color={!isValidContent && selectedFiles.length === 0 ? 'gray' : 'white'} />}
+              disabled={(!isValidContent && selectedFiles.length === 0) || sendingPost}
+              loading={sendingPost}
+              onClick={
+                (isValidContent || selectedFiles.length > 0) && !sendingPost
+                  ? () => handleSubmit(contentPost)
+                  : undefined
+              }
+            >
+              Post
+            </Button.Medium>
           }
-        >
-          Post
-        </Button.Medium>
-      }
-    />
+        />
+      )}
+    </>
   );
 }

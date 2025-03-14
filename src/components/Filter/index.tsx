@@ -1,4 +1,5 @@
 import Content from './_Content';
+import Feeds from './_Feed';
 import HotTagsReach from './_HotTagsReach';
 import Layout from './_Layout';
 import Reach from './_Reach';
@@ -8,6 +9,7 @@ import TagsTimeFrame from './_TagsTimeFrame';
 
 export const Filter = {
   Content,
+  Feeds,
   HotTagsReach,
   Layout,
   Reach,

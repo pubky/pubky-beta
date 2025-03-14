@@ -12,7 +12,8 @@ import {
   TSort,
   TTimeframe,
   NotificationPreferences,
-  TSource
+  TSource,
+  ICustomFeed
 } from './../types';
 
 type FilterContextType = {
@@ -35,6 +36,8 @@ type FilterContextType = {
   unReadNotification: number;
   setUnReadNotification: React.Dispatch<React.SetStateAction<number>>;
   resetDefault: () => void;
+  selectedFeed: ICustomFeed | undefined;
+  setSelectedFeed: React.Dispatch<React.SetStateAction<ICustomFeed | undefined>>;
 };
 
 export const defaultPreferences: NotificationPreferences = {
@@ -69,7 +72,9 @@ const FilterContext = createContext<FilterContextType>({
   setTimeframe: () => {},
   unReadNotification: 0,
   setUnReadNotification: () => {},
-  resetDefault: () => {}
+  resetDefault: () => {},
+  selectedFeed: undefined,
+  setSelectedFeed: () => {}
 });
 
 export function FilterWrapper({ children }: { children: React.ReactNode }) {
@@ -87,6 +92,7 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
   const [content, setContent] = useState<TContent>((Utils.storage.get('content') as TContent) || 'all');
   const [timeframe, setTimeframe] = useState<TTimeframe>((Utils.storage.get('timeframe') as TTimeframe) || 'all_time');
   const [unReadNotification, setUnReadNotification] = useState<number>((Utils.storage.get('unread') as number) || 0);
+  const [selectedFeed, setSelectedFeed] = useState<ICustomFeed>();
 
   const resetDefault = () => {
     setTimeout(() => {
@@ -139,7 +145,9 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
         setTimeframe,
         unReadNotification,
         setUnReadNotification,
-        resetDefault
+        resetDefault,
+        selectedFeed,
+        setSelectedFeed
       }}
     >
       {children}
