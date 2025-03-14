@@ -7,7 +7,7 @@ import { useState } from 'react';
 
 export function Header() {
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
-  const [drawerFeedsOpen, setDrawerFeedsOpen] = useState(false);
+
   return (
     <>
       <Components.Header title="Home" />
@@ -15,11 +15,6 @@ export function Header() {
         leftIcon={
           <div className="cursor-pointer" onClick={() => setDrawerFilterOpen(true)}>
             <Icon.SlidersHorizontal size="20" />
-          </div>
-        }
-        rightIcon={
-          <div className="cursor-pointer" onClick={() => setDrawerFeedsOpen(true)}>
-            <Icon.Activity size="20" />
           </div>
         }
       >
@@ -33,16 +28,6 @@ export function Header() {
             <Filter.Reach />
             <Filter.Sort />
             <Filter.Content />
-          </div>
-        </Menu.Root>
-        <Menu.Root
-          position="right"
-          drawerOpen={drawerFeedsOpen}
-          setDrawerOpen={setDrawerFeedsOpen}
-          className="w-[70%] border-l border-white"
-        >
-          <div className="overflow-y-auto max-h-full no-scrollbar">
-            <Filter.Feeds />
           </div>
         </Menu.Root>
       </Components.HeaderMobile>
