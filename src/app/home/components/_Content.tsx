@@ -10,22 +10,15 @@ import { RightSidebar } from './_RightSidebar';
 import { MainContent } from './_MainContent';
 
 export default function ContentHome() {
-  const { layout, selectedFeed, setSelectedFeed } = useFilterContext();
+  const { layout } = useFilterContext();
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
-  const [loadingFeed, setLoadingFeed] = useState(true);
 
   return (
     <>
       {layout === 'wide' && <Components.ButtonFilters onClick={() => setDrawerFilterOpen(true)} />}
       <Content.Grid className="flex gap-6">
         {layout !== 'wide' && <LeftSidebar />}
-        <MainContent
-          layout={layout}
-          selectedFeed={selectedFeed}
-          setSelectedFeed={setSelectedFeed}
-          loadingFeed={loadingFeed}
-          setLoadingFeed={setLoadingFeed}
-        />
+        <MainContent layout={layout} />
         {layout !== 'wide' && <RightSidebar />}
       </Content.Grid>
       <Menu.Root

@@ -1,7 +1,6 @@
 import Influencers from './Influencers';
 import { BottomSheet } from './BottomSheet';
 import CreatePost from './CreatePost';
-import CustomFeeds from './CustomFeeds';
 import CreateQuickPost from './CreateQuickPost';
 import ContentNotFound from './ContentNotFound';
 import ButtonFilters from './ButtonFiltersDrawer/Index';
@@ -26,7 +25,6 @@ export {
   Influencers,
   BottomSheet,
   CreatePost,
-  CustomFeeds,
   CreateQuickPost,
   ContentNotFound,
   ButtonFilters,

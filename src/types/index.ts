@@ -136,14 +136,6 @@ export interface IPostContent {
   files?: { [key: string]: { fileId: string; fileUri: string } };
 }
 
-export interface ICustomFeed {
-  tags?: string[];
-  sort: TSort;
-  reach: TSource;
-  layout: TLayouts;
-  content: TContent;
-}
-
 export interface EmbedContent {
   post: IPost;
   type: string;

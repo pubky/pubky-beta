@@ -5,7 +5,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { Client, PublicKey, decryptRecoveryFile, Keypair, createRecoveryFile } from '@synonymdev/pubky';
 import { Utils } from '@social/utils-shared';
 import { PostCounts, PostDetails, PostView } from '@/types/Post';
-import { ICustomFeed, NotificationPreferences, TStatus } from '@/types';
+import { NotificationPreferences, TStatus } from '@/types';
 import JSZip from 'jszip';
 import * as bip39 from 'bip39';
 import init, {
@@ -96,9 +96,6 @@ type PubkyClientContextType = {
   deleteBookmark: (postId: string, authorId: string) => Promise<boolean>;
   createTag: (authorId: string, postId: string, label: string) => Promise<boolean>;
   deleteTag: (author_id: string, post_id: string, tagLabel: string) => Promise<boolean>;
-  saveFeed: (feed: ICustomFeed, name: string) => Promise<boolean>;
-  deleteFeed: (feed: ICustomFeed) => Promise<boolean>;
-  loadFeeds: () => Promise<{ feed: ICustomFeed; name: string }[]>;
   createTagProfile: (userId: string, label: string) => Promise<boolean>;
   deleteTagProfile: (userId: string, label: string) => Promise<boolean>;
   getRecoveryFile: (password: string) => Promise<any | null>;
@@ -1134,64 +1131,6 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
     return true;
   });
 
-  const saveFeed = withAuth(async (feed: ICustomFeed, name: string): Promise<boolean> => {
-    // Map the ICustomFeed to the arguments for `createFeed`:
-    // feed might have e.g. tags, reach, layout, etc.
-    const { tags, reach, layout, sort, content } = feed;
-
-    // If feed.tags is null, pass null. Otherwise pass as is.
-    const tagsValue = tags && tags.length > 0 ? tags : null;
-    const contentVal = content == 'all' ? null : content;
-
-    const result = specsBuilder!.createFeed(tagsValue, reach, layout, sort, contentVal || null, name);
-
-    const feedObj = result.feed.toJson();
-    await homeserver.put(result.meta.url, JSON.stringify(feedObj));
-
-    return true;
-  });
-
-  const loadFeeds = withAuth(async (): Promise<{ feed: ICustomFeed; name: string }[]> => {
-    // Define the feeds directory path
-    const feedsDirUrl = `pubky://${pubky}/pub/pubky.app/feeds/`;
-    const feedUris = await client.list(feedsDirUrl);
-
-    // Fetch each feed data
-    const feedsData = await Promise.all(
-      feedUris.map(async (uri) => {
-        try {
-          const response = await homeserver.get(uri);
-          const feed = await response.json();
-          return feed;
-        } catch (error) {
-          console.error(`Error fetching feed from ${uri}:`, error);
-          return null;
-        }
-      })
-    );
-
-    // Filter out any null entries and assert the result type
-    return feedsData.filter((feed): feed is { feed: ICustomFeed; name: string } => feed !== null);
-  });
-
-  const deleteFeed = withAuth(async (feed: ICustomFeed): Promise<boolean> => {
-    // Map the ICustomFeed to the arguments for `createFeed`:
-    // feed might have e.g. tags, reach, layout, etc.
-    const { tags, reach, layout, sort, content } = feed;
-
-    // If feed.tags is null, pass null. Otherwise pass as is.
-    const tagsValue = tags && tags.length > 0 ? tags : null;
-    const contentVal = content == 'all' ? null : content;
-
-    // create feed according to specs to compute ID and URL
-    const result = specsBuilder!.createFeed(tagsValue, reach, layout, sort, contentVal || null, 'placeholder');
-
-    // Delete the feed from the homeserver
-    await homeserver.del(result.meta.url);
-
-    return true;
-  });
-
   const deleteTag = withAuth(async (authorId: string, postId: string, tagLabel: string): Promise<boolean> => {
     // Compute tag URL and ID based on tag object content using the builder
     const uriPost = postUriBuilder(authorId, postId);
@@ -1247,9 +1186,6 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
         setSeed,
         setMnemonic,
         saveProfile,
-        saveFeed,
-        deleteFeed,
-        loadFeeds,
         createPost,
         editPost,
         deletePost,

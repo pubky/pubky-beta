@@ -1,7 +1,6 @@
 import Backup from './_Backup';
 import CheckLink from './_CheckLink';
 import CreateArticle from './_CreateArticle';
-import CreateFeed from './_CreateFeed';
 import CreatePost from './_CreatePost';
 import CreateReply from './_CreateReply';
 import CreateRepost from './_CreateRepost';
@@ -28,7 +27,6 @@ export const Modal = {
   Backup,
   CheckLink,
   CreateArticle,
-  CreateFeed,
   CreatePost,
   CreateReply,
   CreateRepost,
