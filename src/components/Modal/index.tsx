@@ -22,6 +22,7 @@ import SearchedUsersCard from './_SearchedUsersCard';
 import SearchInputCard from './_SearchInputCard';
 import SessionExpired from './_SessionExpired';
 import TagCreatePost from './_TagCreatePost';
+import TagPost from './../Tags/_PostModal';
 
 export const Modal = {
   Backup,
@@ -47,7 +48,8 @@ export const Modal = {
   SearchedUsersCard,
   SearchInputCard,
   SessionExpired,
-  TagCreatePost
+  TagCreatePost,
+  TagPost
 };
 
 export default Modal;

@@ -1,9 +1,11 @@
+import Link from 'next/link';
+
 import { PostView } from '@/types/Post';
+
 import { Button, Icon, PostUtil, SideCard, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
-import Link from 'next/link';
 import { ImageByUri } from '@/components/ImageByUri';
-import { TagsInteractionUtils } from '../utils/_TagsInteractionUtils';
+import { Utils as TagsUtils } from '@/components/Tags/utils';
 
 interface TagsProps {
   post: PostView;
@@ -30,7 +32,7 @@ export function TagsDisplay({ post }: TagsProps) {
     loaderTaggers,
     loadingFollowers,
     hasMoreTaggers
-  } = TagsInteractionUtils(post);
+  } = TagsUtils.TagsInteractionUtils(post);
 
   return (
     <>

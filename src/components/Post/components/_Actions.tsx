@@ -159,12 +159,12 @@ export function Actions({ post, repost, deleteRepost = false }: PostProps) {
   };
 
   const handleOpenModal = () => {
-    openModal('tags', { post });
+    openModal('tagPost', { post });
   };
 
   // Update post in Modal when post.tags changes
   useEffect(() => {
-    if (isOpen('tags')) {
+    if (isOpen('tagPost')) {
       handleOpenModal();
     }
   }, [post?.tags]);

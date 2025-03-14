@@ -70,6 +70,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     menuPost: 'Menu',
     menuProfile: 'MenuProfile',
     tags: 'Tag',
+    tagPost: 'TagPost',
     profileTags: 'ProfileTag'
   };
 
