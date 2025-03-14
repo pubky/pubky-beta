@@ -60,11 +60,18 @@ export function PostLargeView({ post }: { post: PostView }) {
   };
 
   const handleDeleteTag = async (tag: string) => {
-    await TagsUtils.handleDeleteTag(tag, localPost, deleteTag, setLocalPost, addAlert, setLoadingTags);
+    await TagsUtils.TagsCommonFunctions.handleDeleteTag(
+      tag,
+      localPost,
+      deleteTag,
+      setLocalPost,
+      addAlert,
+      setLoadingTags
+    );
   };
 
   const handleAddTag = async (tag: string) => {
-    await TagsUtils.handleAddTag(
+    await TagsUtils.TagsCommonFunctions.handleAddTag(
       tag,
       localPost,
       createTag,

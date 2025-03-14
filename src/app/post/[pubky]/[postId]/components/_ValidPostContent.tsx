@@ -117,7 +117,7 @@ const LongPost = ({ data, user }) => {
           }}
         ></div>
       </div>
-      <Tags.LargeView post={data} />
+      <Tags.PostLargeView post={data} />
     </div>
   );
 };

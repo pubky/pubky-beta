@@ -103,4 +103,6 @@ export const handleDeleteTag = async (
   setLoadingTags('');
 };
 
-export default { handleAddTag, handleDeleteTag };
+export const TagsCommonFunctions = { handleAddTag, handleDeleteTag };
+
+export default TagsCommonFunctions;

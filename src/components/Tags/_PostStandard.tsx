@@ -36,7 +36,7 @@ export function PostStandard({ post, largeView = false }: PostProps) {
   }, [post]);
 
   const handleAddTag = async (tag: string) => {
-    await TagsUtils.handleAddTag(
+    await TagsUtils.TagsCommonFunctions.handleAddTag(
       tag,
       localPost,
       createTag,
@@ -50,7 +50,14 @@ export function PostStandard({ post, largeView = false }: PostProps) {
   };
 
   const handleDeleteTag = async (tag: string) => {
-    await TagsUtils.handleDeleteTag(tag, localPost, deleteTag, setLocalPost, addAlert, setLoadingTags);
+    await TagsUtils.TagsCommonFunctions.handleDeleteTag(
+      tag,
+      localPost,
+      deleteTag,
+      setLocalPost,
+      addAlert,
+      setLoadingTags
+    );
   };
 
   return (
