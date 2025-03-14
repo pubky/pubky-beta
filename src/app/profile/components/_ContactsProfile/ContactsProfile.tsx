@@ -1,24 +1,25 @@
 'use client';
 
 import { useEffect, useState, Suspense } from 'react';
-import { Icon } from '@social/ui-shared';
+import { Button, Icon } from '@social/ui-shared';
 import Skeletons from '@/components/Skeletons';
 import { TContacts } from '@/types';
 import Root from './_Root';
 import Contact from './_Contact';
-import { usePubkyClientContext } from '@/contexts';
+import { useModal, usePubkyClientContext } from '@/contexts';
 import { useStreamUsers } from '@/hooks/useStream';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { UserView } from '@/types/User';
 import { ContentNotFound } from '@/components';
 import Image from 'next/image';
+import Link from 'next/link';
 
 type ContactsContentProps = {
   contacts: TContacts;
   creatorPubky?: string;
 };
 
-const caseNotFoundMessages = {
+const getCaseNotFoundMessages = (pubky: string | undefined, openModal: (modal: string) => void) => ({
   followers: {
     icon: <Icon.UsersLeft size="48" color="#C8FF00" />,
     title: 'Looking for followers?',
@@ -28,40 +29,79 @@ const caseNotFoundMessages = {
         <br />
         Start posting and engaging with others to grow your followers.
       </>
+    ),
+    content: (
+      <Button.Medium
+        onClick={() => (pubky ? openModal('createPost') : openModal('join'))}
+        className="z-10 w-auto"
+        icon={<Icon.Plus size="24" />}
+      >
+        Create a Post
+      </Button.Medium>
     )
   },
   following: {
-    icon: <Icon.UsersRight size="48" color="#C8FF00" />,
-    title: 'Looking for following?',
+    icon: <Icon.UserPlus size="48" color="#C8FF00" />,
+    title: 'You are the algorithm',
     description: (
       <>
         Following accounts is a simple way to curate your timeline.
         <br />
         Stay updated on the topics and people that interest you.
       </>
+    ),
+    content: (
+      <div className="flex gap-3 z-10 justify-center flex-wrap">
+        <Link href="/who-to-follow">
+          <Button.Medium icon={<Icon.UserPlus size="16" />} className="whitespace-nowrap">
+            Who to Follow
+          </Button.Medium>
+        </Link>
+        <Link href="/hot#popular">
+          <Button.Medium icon={<Icon.UserPlus size="16" />} className="whitespace-nowrap">
+            Popular Users
+          </Button.Medium>
+        </Link>
+      </div>
     )
   },
   friends: {
     icon: <Icon.Smiley size="48" color="#C8FF00" />,
-    title: 'Looking for friends?',
+    title: 'No friends yet',
     description: (
       <>
-        Connect with your friends and follow each other
-        <br />
-        Start posting and engaging with others to grow your friends.
+        Follow someone, and if they follow you back, you&apos;ll become friends! <br />
+        Start following Pubky users, you never know who might follow you back!
       </>
+    ),
+    content: (
+      <div className="flex gap-3 z-10 justify-center flex-wrap">
+        <Link href="/who-to-follow">
+          <Button.Medium icon={<Icon.UserPlus size="16" />} className="whitespace-nowrap">
+            Who to Follow
+          </Button.Medium>
+        </Link>
+        <Link href="/hot#popular">
+          <Button.Medium icon={<Icon.UserPlus size="16" />} className="whitespace-nowrap">
+            Popular Users
+          </Button.Medium>
+        </Link>
+      </div>
     )
   },
   default: {
     icon: <Icon.User size="48" color="#C8FF00" />,
     title: 'Looking for contacts?',
-    description: 'No contacts to show.'
+    description: 'No contacts to show.',
+    content: null
   }
-};
+});
 
 const ContactsContent = ({ contacts, creatorPubky }: ContactsContentProps) => {
   const { pubky } = usePubkyClientContext();
-  const currentContact = caseNotFoundMessages[contacts] || caseNotFoundMessages.default;
+  const { openModal } = useModal();
+  const currentContact =
+    getCaseNotFoundMessages(pubky, openModal)[contacts] || getCaseNotFoundMessages(pubky, openModal).default;
   const limit = 10;
   const [usersList, setUsersList] = useState<UserView[]>([]);
   const [skip, setSkip] = useState(0);
@@ -110,6 +150,7 @@ const ContactsContent = ({ contacts, creatorPubky }: ContactsContentProps) => {
           title={currentContact.title}
           description={currentContact.description}
         >
+          {currentContact.content}
           <div className="absolute top-0 z-0">
             <Image alt="not-found-contacts" width={400} height={485} src="/images/webp/not-found/contacts.webp" />
           </div>

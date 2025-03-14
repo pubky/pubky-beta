@@ -38,6 +38,11 @@ const RenderInfluencers = ({ influencers, initLoadingInfluencers }: RenderInflue
   return (
     <div className="flex flex-col gap-3">
       <Typography.H2 className="hidden lg:block text-opacity-50 font-light">Popular Users</Typography.H2>
+      {(!influencers || influencers?.length === 0) && (
+        <Typography.Body variant="small" className="text-opacity-50">
+          No users to show
+        </Typography.Body>
+      )}
       {influencers &&
         influencers.map((influencer) => {
           const pubkeyUser = pubky && influencer?.details?.id.includes(pubky);
