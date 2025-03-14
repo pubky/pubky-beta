@@ -37,7 +37,7 @@ type FilterContextType = {
   setUnReadNotification: React.Dispatch<React.SetStateAction<number>>;
   resetDefault: () => void;
   selectedFeed: ICustomFeed | undefined;
-  setSelectedFeed: React.Dispatch<React.SetStateAction<ICustomFeed | undefined>>;
+  setSelectedFeed: (feed: ICustomFeed | undefined) => void;
 };
 
 export const defaultPreferences: NotificationPreferences = {
@@ -92,7 +92,24 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
   const [content, setContent] = useState<TContent>((Utils.storage.get('content') as TContent) || 'all');
   const [timeframe, setTimeframe] = useState<TTimeframe>((Utils.storage.get('timeframe') as TTimeframe) || 'all_time');
   const [unReadNotification, setUnReadNotification] = useState<number>((Utils.storage.get('unread') as number) || 0);
-  const [selectedFeed, setSelectedFeed] = useState<ICustomFeed>();
+  const [selectedFeed, setSelectedFeed] = useState<ICustomFeed | undefined>(Utils.storage.get('feed') as ICustomFeed);
+
+  const handleSetSelectedFeed = (feed: ICustomFeed | undefined) => {
+    if (feed) {
+      Utils.storage.set('feed', feed);
+      setReach(feed.reach);
+      setLayout(feed.layout);
+      setSort(feed.sort);
+      setContent(feed.content);
+    } else {
+      Utils.storage.remove('feed');
+      setReach((Utils.storage.get('reach') as TSource) || 'all');
+      setLayout((Utils.storage.get('layout') as TLayouts) || 'columns');
+      setSort((Utils.storage.get('sort') as TSort) || 'recent');
+      setContent((Utils.storage.get('content') as TContent) || 'all');
+    }
+    setSelectedFeed(feed);
+  };
 
   const resetDefault = () => {
     setTimeout(() => {
@@ -105,10 +122,10 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
       setContent('all');
       setTimeframe('all_time');
       setUnReadNotification(0);
+      handleSetSelectedFeed(undefined);
     });
   };
 
-  // save filters to local storage
   useEffect(() => {
     Utils.storage.set('layout', layout);
     Utils.storage.set('sort', sort);
@@ -147,7 +164,7 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
         setUnReadNotification,
         resetDefault,
         selectedFeed,
-        setSelectedFeed
+        setSelectedFeed: handleSetSelectedFeed
       }}
     >
       {children}
