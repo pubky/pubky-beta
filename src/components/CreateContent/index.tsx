@@ -221,7 +221,7 @@ export default function CreateContent({
       )}
     >
       <div ref={wrapperRef} className="w-full flex justify-between gap-3 items-start flex-col">
-        <div className={variant ? 'flex w-full gap-4' : 'w-full'}>
+        <div className={variant ? 'flex w-full gap-4 items-center' : 'w-full'}>
           <Section.UserArea
             uriPic={profile?.image ?? '/images/webp/Userpic.webp'}
             name={profile?.name ?? Utils.minifyPubky(pubky ?? '')}
@@ -252,6 +252,11 @@ export default function CreateContent({
             handlePaste={handlePaste}
             styleSearchedUsers={styleSearchedUsers}
           />
+          {variant && (
+            <div id="content-length" className="whitespace-nowrap text-opacity-30 text-white text-sm">
+              {maxLength && `${content?.length} / ${maxLength}`}
+            </div>
+          )}
         </div>
         <LinkPreviewer setQuote={setQuote} content={content} />
         {selectedFiles && selectedFiles.length > 0 && (

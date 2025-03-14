@@ -147,7 +147,7 @@ export default function SearchInputCard({ refCard, inputValue, ...rest }: Search
       {...rest}
       refCard={refCard}
       className={twMerge('outline-none absolute top-12 rounded-b-2xl rounded-t-none p-6 pt-2', rest.className)}
-      background="bg-[#05050A] border border-t-0 border-white border-opacity-20 z-20"
+      background="bg-gradient-to-b from-[#05050A] to-transparent backdrop-blur-[32px] shadow-md border border-t-0 border-white border-opacity-20 z-20"
       onKeyDown={handleKeyDown}
       tabIndex={-1}
       onMouseEnter={(e) => {

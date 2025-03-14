@@ -19,7 +19,7 @@ export default function UserArea({ largeView, uriPic, name, variant, content, ma
   const { pubky } = usePubkyClientContext();
 
   return (
-    <div className="w-full justify-between items-center flex gap-2">
+    <div className={!variant ? 'w-full justify-between items-center flex gap-2' : ''}>
       <Link href="/profile" className={`${!variant && 'items-center'} justify-start gap-2 flex`}>
         <ImageByUri
           id={pubky}
@@ -52,9 +52,11 @@ export default function UserArea({ largeView, uriPic, name, variant, content, ma
           </>
         )}
       </Link>
-      <div id="content-length" className="text-opacity-30 text-white text-sm">
-        {maxLength && `${content?.length} / ${maxLength}`}
-      </div>
+      {!variant && (
+        <div id="content-length" className="text-opacity-30 text-white text-sm">
+          {maxLength && `${content?.length} / ${maxLength}`}
+        </div>
+      )}
     </div>
   );
 }
