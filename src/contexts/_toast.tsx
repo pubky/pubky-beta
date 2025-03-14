@@ -29,7 +29,11 @@ export function ToastWrapper({ children }: { children: React.ReactNode }) {
     setToasts((prev) => [...prev, { id, content, variant, title }]);
 
     setTimeout(() => {
-      setToasts((prev) => prev.filter((toast) => toast.id !== id));
+      setToasts((prev) => prev.map((toast) => (toast.id === id ? { ...toast, closing: true } : toast)));
+
+      setTimeout(() => {
+        setToasts((prev) => prev.filter((toast) => toast.id !== id));
+      }, 300);
     }, 2000);
   };
 
