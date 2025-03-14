@@ -73,8 +73,8 @@ export async function getStreamPosts(
     }
   }
 
-  if (tags) {
-    queryParams.append('tags', String(tags));
+  if (tags && tags.length > 0) {
+    queryParams.append('tags', tags.join(','));
   }
 
   if (kind !== undefined && kind !== 'all') {
