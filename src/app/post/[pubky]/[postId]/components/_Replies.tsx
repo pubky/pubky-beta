@@ -34,11 +34,7 @@ export function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; postId: 
     undefined,
     10,
     undefined,
-    replies.length > 0 ? replies[0]?.details?.indexed_at + 1 : undefined,
-    {
-      enabled: false
-      // refetchInterval: 3000,
-    }
+    replies.length > 0 ? replies[0]?.details?.indexed_at + 1 : undefined
   );
 
   const mergeReplies = (existingReplies: PostView[], newReplies: PostView[]) => {
@@ -167,12 +163,6 @@ export function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; postId: 
   useEffect(() => {
     return () => setReplies([]);
   }, []);
-
-  useEffect(() => {
-    const interval = setInterval(fetchNexusData, 2000); // Poll every 2 seconds
-
-    return () => clearInterval(interval);
-  }, [replies, pubky]);
 
   return (
     <>
