@@ -134,7 +134,7 @@ export default function FooterArea({
     }
 
     setArrayTags((prevTags) => {
-      if (prevTags.length >= 5) {
+      if (prevTags.length >= 4) {
         setErrorTag(true);
         return prevTags;
       } else {
