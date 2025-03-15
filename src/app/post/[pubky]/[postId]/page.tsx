@@ -5,12 +5,12 @@ import { Utils } from '@social/utils-shared';
 import { getSeoMetadata } from '@components/HeaderSEO';
 import { CreatePost } from '@/components';
 import * as Components from '@/components';
-import { Post } from './components';
 
 import { getFile } from '@/services/fileService';
 import { getUserDetails } from '@/services/userService';
 import { PubkyAppPostKind } from 'pubky-app-specs';
 import { PostWrapper } from '@/contexts';
+import { PostPage } from './PostPage';
 
 const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
 const BASE_URL = `${NEXT_PUBLIC_NEXUS}`;
@@ -84,7 +84,7 @@ export default async function Index({ params }: Props) {
         <Components.Header title="Post" />
         <Components.HeaderMobile leftIcon={<Icon.ArrowLeft size="20" />} />
         <Content.Grid className="flex justify-between flex-col gap-3">
-          <Post.Root params={params} />
+          <PostPage params={params} />
         </Content.Grid>
         <CreatePost />
         <Components.FooterMobile />
