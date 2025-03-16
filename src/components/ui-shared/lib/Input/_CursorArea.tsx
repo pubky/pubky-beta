@@ -5,6 +5,7 @@ import { twMerge } from 'tailwind-merge';
 
 interface CursorAreaProps extends React.HTMLAttributes<HTMLTextAreaElement> {
   children?: string;
+  ref?: React.RefObject<HTMLTextAreaElement>;
   error?: string;
   value?: string;
   maxLength?: number;
@@ -14,6 +15,7 @@ interface CursorAreaProps extends React.HTMLAttributes<HTMLTextAreaElement> {
 
 export const CursorArea = ({
   children,
+  ref,
   error,
   value,
   maxLength,
@@ -21,7 +23,7 @@ export const CursorArea = ({
   placeholder = '',
   ...rest
 }: CursorAreaProps) => {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const textareaRef = ref && useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (textareaRef.current) {

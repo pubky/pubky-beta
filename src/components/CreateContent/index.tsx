@@ -76,6 +76,7 @@ export default function CreateContent({
   const { profile, pubky } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [showEmojis, setShowEmojis] = useState(false);
+  const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
@@ -179,12 +180,17 @@ export default function CreateContent({
   };
 
   useEffect(() => {
-    document.addEventListener('paste', handlePaste);
-
-    return () => {
-      document.removeEventListener('paste', handlePaste);
+    const handlePasteEvent = (event: ClipboardEvent) => {
+      if (textAreaRef.current && document.activeElement === textAreaRef.current) {
+        handlePaste(event);
+      }
     };
-  }, [selectedFiles, addAlert, textArea, setSelectedFiles, setFilePreviews]);
+
+    textAreaRef.current?.addEventListener('paste', handlePasteEvent);
+    return () => {
+      textAreaRef.current?.removeEventListener('paste', handlePasteEvent);
+    };
+  }, [selectedFiles, addAlert, setSelectedFiles, setFilePreviews]);
 
   const handlePaste = (event: ClipboardEvent) => {
     const items = event.clipboardData?.items;
@@ -231,6 +237,7 @@ export default function CreateContent({
             maxLength={maxLength}
           />
           <Section.InputArea
+            textAreaRef={textAreaRef}
             selectedFiles={selectedFiles}
             setSelectedFiles={setSelectedFiles}
             content={content}
