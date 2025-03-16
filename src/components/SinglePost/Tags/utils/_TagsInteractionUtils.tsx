@@ -16,7 +16,7 @@ export const TagsInteractionUtils = (post: PostView | undefined) => {
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const [tag, setTag] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
-  const { handleAddTag, handleDeleteTag } = TagsUtils(post);
+  const { handleAddTag, handleDeleteTag, tags: localTags } = TagsUtils(post);
   const { useEmojiPicker } = TagsCommonFunctions;
   const { showEmojis, setShowEmojis, wrapperRefEmojis } = useEmojiPicker();
 
@@ -31,8 +31,8 @@ export const TagsInteractionUtils = (post: PostView | undefined) => {
   const [tagImages, setTagImages] = useState<{ [label: string]: string[] }>({});
   const [userProfiles, setUserProfiles] = useState<{ [key: string]: UserView }>({});
   const [loading, setLoading] = useState(false);
-  const limit = 5;
-  const [allTags, setAllTags] = useState<PostTag[]>(post?.tags);
+  const limit = 100;
+  const [allTags, setAllTags] = useState<PostTag[]>(post?.tags || []);
   const [loadingTags, setLoadingTags] = useState('');
   const [skip, setSkip] = useState(limit);
   const [hasMore, setHasMore] = useState(post?.counts?.tags > limit);
@@ -43,6 +43,12 @@ export const TagsInteractionUtils = (post: PostView | undefined) => {
 
   const { data: moreTags, isLoading } = useTagsPost(post?.details?.author, post?.details?.id, pubky, skip, limit);
 
+  const loader = useInfiniteScroll(() => {
+    if (hasMore && !isLoading) {
+      setSkip((prev) => prev + limit);
+    }
+  }, isLoading);
+
   const { data: moreTaggers, isLoading: isLoadingTaggers } = usePostTagTaggers(
     post?.details?.author,
     post?.details?.id,
@@ -51,12 +57,6 @@ export const TagsInteractionUtils = (post: PostView | undefined) => {
     skipTaggers,
     limitTaggers
   );
-
-  const loader = useInfiniteScroll(() => {
-    if (hasMore && !isLoading) {
-      setSkip((prev) => prev + limit);
-    }
-  }, isLoading);
 
   const loaderTaggers = useInfiniteScroll(() => {
     if (hasMoreTaggers && !isLoadingTaggers) {
@@ -124,6 +124,14 @@ export const TagsInteractionUtils = (post: PostView | undefined) => {
 
   const addTag = async (tag: string) => {
     try {
+      // Check if tag already exists
+      const tagExists = allTags.some((existingTag) => existingTag.label.toLowerCase() === tag.toLowerCase());
+      if (tagExists) {
+        addAlert('This tag has already been added.', 'warning');
+        setTag('');
+        return;
+      }
+
       setLoadingTags(tag);
       setLoading(true);
       await handleAddTag(tag);
@@ -163,8 +171,21 @@ export const TagsInteractionUtils = (post: PostView | undefined) => {
   };
 
   useEffect(() => {
-    setAllTags(post?.tags);
-  }, [post?.tags]);
+    if (localTags?.length > 0) {
+      setAllTags((prevTags) => {
+        // Get all existing tags that are not in localTags
+        const existingTags = prevTags.filter(
+          (prevTag) => !localTags.some((localTag) => localTag.label === prevTag.label)
+        );
+        // Combine existing tags with new localTags and ensure relationship is set for new tags
+        const updatedLocalTags = localTags.map((tag) => ({
+          ...tag,
+          relationship: true // Set relationship to true for newly added tags
+        }));
+        return [...existingTags, ...updatedLocalTags];
+      });
+    }
+  }, [localTags]);
 
   useEffect(() => {
     if (selectedTag) {
@@ -188,19 +209,6 @@ export const TagsInteractionUtils = (post: PostView | undefined) => {
   }, [moreTaggers]);
 
   useEffect(() => {
-    if (!isLoading && moreTags && moreTags.length) {
-      setAllTags((prev) => {
-        const updatedTags = [...prev, ...moreTags];
-        const uniqueTags = updatedTags.filter(
-          (tag, index, self) => index === self.findIndex((t) => t.label === tag.label)
-        );
-        setHasMore(uniqueTags.length > prev.length);
-        return uniqueTags;
-      });
-    }
-  }, [moreTags, isLoading]);
-
-  useEffect(() => {
     if (taggers.length === 0) return;
 
     TagsCommonFunctions.fetchProfiles(
@@ -214,10 +222,29 @@ export const TagsInteractionUtils = (post: PostView | undefined) => {
   }, [taggers, pubky]);
 
   useEffect(() => {
-    if (allTags.length > 0) {
+    if (allTags?.length > 0) {
       fetchAllImages();
     }
   }, [allTags]);
+
+  useEffect(() => {
+    if (!isLoading && moreTags && moreTags.length) {
+      setAllTags((prev) => {
+        // Combine existing tags with new moreTags
+        const updatedTags = [...prev];
+        moreTags.forEach((newTag) => {
+          if (!updatedTags.some((existingTag) => existingTag.label === newTag.label)) {
+            updatedTags.push({
+              ...newTag,
+              relationship: newTag.relationship || false
+            });
+          }
+        });
+        setHasMore(moreTags.length === limit);
+        return updatedTags;
+      });
+    }
+  }, [moreTags, isLoading, limit]);
 
   return {
     selectedTag,
