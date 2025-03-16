@@ -71,6 +71,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     menuProfile: 'MenuProfile',
     tags: 'Tag',
     tagPost: 'TagPost',
+    tagSinglePost: 'TagSinglePost',
     profileTags: 'ProfileTag'
   };
 

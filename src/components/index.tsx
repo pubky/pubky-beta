@@ -24,7 +24,9 @@ import RemindBackup from './RemindBackup';
 import Tooltip from './Tooltip';
 import { ImageByUri } from './ImageByUri';
 import EmojiPicker from './EmojiPicker';
-import { Tags } from './Tags';
+import Tags from './Post/Tags';
+import SinglePost from './SinglePost';
+import { SimplePostTags } from './SinglePost/Tags';
 
 export {
   Influencers,
@@ -53,5 +55,7 @@ export {
   Tooltip,
   ImageByUri,
   EmojiPicker,
-  Tags
+  Tags,
+  SinglePost,
+  SimplePostTags
 };

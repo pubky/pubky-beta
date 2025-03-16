@@ -7,7 +7,7 @@ import { PubkyAppPostKind, parse_uri } from 'pubky-app-specs';
 // UI Components
 import { Icon, Button, Typography, SideCard, Post as PostUI } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
-import { Post as PostComponent, Tags, ImageByUri } from '@/components';
+import { SinglePost as PostComponent, SimplePostTags, ImageByUri } from '@/components';
 import { Skeletons } from '@/components/Skeletons';
 import CreateContent from '@/components/CreateContent';
 
@@ -707,7 +707,7 @@ const ArticlePost = ({ data }) => {
           }}
         ></div>
       </div>
-      <Tags.PostLargeView post={data} />
+      <SimplePostTags.PostLargeView post={data} />
     </div>
   );
 };

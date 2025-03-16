@@ -3,7 +3,7 @@
 import { PostView } from '@/types/Post';
 import { Input } from '@social/ui-shared';
 import { Components } from './components';
-import Root from '../ui-shared/lib/BottomSheet/_Root';
+import Root from '../../ui-shared/lib/BottomSheet/_Root';
 import { TagsInteractionUtils } from './utils/_TagsInteractionUtils';
 
 interface TagProps {

@@ -13,7 +13,7 @@ import { PostView } from '@/types/Post';
 import { Button, Icon, Post as PostUI, PostUtil, Tooltip as TooltipUI, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { ImageByUri, Tooltip } from '@/components';
-import { Utils as TagsUtils } from '@/components/Tags/utils';
+import { Utils as TagsUtils } from '@/components/SinglePost/Tags/utils';
 
 import InputTagStandard from './components/_InputTagStandard';
 

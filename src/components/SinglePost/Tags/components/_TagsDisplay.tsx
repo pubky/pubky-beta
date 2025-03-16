@@ -5,7 +5,7 @@ import { PostView } from '@/types/Post';
 import { Button, Icon, PostUtil, SideCard, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { ImageByUri } from '@/components/ImageByUri';
-import { Utils as TagsUtils } from '@/components/Tags/utils';
+import { Utils as TagsUtils } from '@/components/SinglePost/Tags/utils';
 
 interface TagsProps {
   post: PostView;

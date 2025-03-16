@@ -1,12 +1,12 @@
 'use client';
 
-import { Button, Icon, Input, Post, PostUtil, Typography } from '@social/ui-shared';
+import { Button, Icon, Post, PostUtil } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { useAlertContext, useModal } from '@/contexts';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
 import EmojiPicker from '@/components/EmojiPicker';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
-import { Tags } from '@/components/Tags';
+import { Tags } from '@/components/Post/Tags';
 
 interface FooterAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   visibleTextArea: boolean;

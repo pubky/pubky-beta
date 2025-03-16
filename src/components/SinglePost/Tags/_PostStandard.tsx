@@ -8,10 +8,10 @@ import { useAlertContext, useModal } from '@/contexts';
 import { PostView } from '@/types/Post';
 
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { Utils as TagsUtils } from '@/components/Tags/utils';
+import { Utils as TagsUtils } from '@/components/SinglePost/Tags/utils';
 import { Icon, Post, PostUtil, Tooltip as TooltipUI, Typography } from '@social/ui-shared';
 import { Tooltip } from '@/components';
-import { Utils } from '../utils-shared';
+import { Utils } from '@social/utils-shared';
 import InputTagStandard from './components/_InputTagStandard';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
