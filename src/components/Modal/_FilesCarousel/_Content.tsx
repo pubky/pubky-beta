@@ -49,6 +49,21 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex }:
     }
   };
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        showPreviousFile();
+      } else if (e.key === 'ArrowRight') {
+        showNextFile();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   const currentFile = mediaFiles[localFileIndex];
   const isVideo = currentFile?.content_type.startsWith('video');
 
