@@ -70,14 +70,14 @@ describe('onboarding', () => {
     cy.location('pathname').should('eq', '/onboarding/sign-up');
 
     // test that a code with less than 14 characters is rejected
-    cy.get('#onboarding-name-input').type('I have an invalid invite code');
+    cy.get('#onboarding-name-input').type('invalid invite code');
     cy.get('#onboarding-token-input').type('invalidcode');
     cy.get('#onboarding-submit-button').click();
-    cy.get('#onboarding-token-input').siblings('div').should('contain.text', 'must be 14 characters');
+    cy.get('#onboarding-token-input-error').should('contain.text', 'must be 14 characters');
 
     // test that a wrong code is rejected
     cy.get('#onboarding-token-input').type('invalidcode123');
     cy.get('#onboarding-submit-button').click();
-    cy.get('#onboarding-token-input').siblings('div').should('contain.text', 'Invalid');
+    cy.get('#onboarding-token-input-error').should('contain.text', 'Invalid');
   });
 });

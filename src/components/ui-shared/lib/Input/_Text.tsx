@@ -89,7 +89,7 @@ export const Text = ({
           </div>
         )}
       </div>
-      {error && <div className={errorCSS}>{error}</div>}
+      {error && <div id={`${rest.id}-error`} className={errorCSS}>{error}</div>}
     </div>
   );
 };

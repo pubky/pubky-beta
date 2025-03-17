@@ -208,7 +208,7 @@ export default function Header({ title }: HeaderProps) {
                 icon={<Icon.GearSix size="24" />}
               />
             </Link>
-            <Link href="/profile" className="w-[48px] relative">
+            <Link id="header-profile-pic" href="/profile" className="w-[48px] relative">
               {unReadNotification !== 0 && (
                 <PostUtil.Counter
                   id="header-notification-counter"
