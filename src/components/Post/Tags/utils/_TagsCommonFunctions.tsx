@@ -16,6 +16,7 @@ import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
  * @param setTagInput Function to update tag input
  * @param setAddTagInput Function to update add tag state
  * @param setLoadingTags Function to update loading state
+ * @param pubky Current user pubky
  */
 export const handleAddTag = async (
   tag: string,
@@ -26,14 +27,13 @@ export const handleAddTag = async (
   tagInput: string,
   setTagInput: (value: string) => void,
   setAddTagInput: (value: boolean) => void,
-  setLoadingTags: (value: string) => void
+  setLoadingTags: (value: string) => void,
+  pubky: string
 ) => {
   if (!tag) return;
 
-  // check if the tag already exists in the localPost.tags array, and the author is not the author of the post, and the count is greater than 0
-  const tagExists = localPost.tags.some(
-    (t) => t.label === tag && t.taggers.includes(localPost.details.author) && t.taggers_count > 0
-  );
+  // check if the tag already exists in the localPost.tags array, and the user is not already a tagger, and the count is greater than 0
+  const tagExists = localPost.tags.some((t) => t.label === tag && t.taggers.includes(pubky) && t.taggers_count > 0);
   if (tagExists) {
     addAlert('Tag already exists', 'warning');
     return;
@@ -46,13 +46,11 @@ export const handleAddTag = async (
     const tagExists = localPost.tags.some((t) => t.label === tag);
     if (tagExists) {
       const updatedTags = localPost.tags.map((t) =>
-        t.label === tag
-          ? { ...t, taggers: [...t.taggers, localPost.details.author], taggers_count: t.taggers_count + 1 }
-          : t
+        t.label === tag ? { ...t, taggers: [...t.taggers, pubky], taggers_count: t.taggers_count + 1 } : t
       );
       setLocalPost({ ...localPost, tags: updatedTags });
     } else {
-      const updatedTags = [...localPost.tags, { label: tag, taggers: [localPost.details.author], taggers_count: 1 }];
+      const updatedTags = [...localPost.tags, { label: tag, taggers: [pubky], taggers_count: 1 }];
       setLocalPost({ ...localPost, tags: updatedTags });
     }
     if (tag === tagInput) {
@@ -73,6 +71,7 @@ export const handleAddTag = async (
  * @param setLocalPost Function to update local post
  * @param addAlert Function to display alerts
  * @param setLoadingTags Function to update loading state
+ * @param pubky Current user pubky
  */
 export const handleDeleteTag = async (
   tag: string,
@@ -80,19 +79,20 @@ export const handleDeleteTag = async (
   deleteTag: (author: string, postId: string, tag: string) => Promise<any>,
   setLocalPost: (post: PostView) => void,
   addAlert: (message: string, type: string) => void,
-  setLoadingTags: (value: string) => void
+  setLoadingTags: (value: string) => void,
+  pubky: string
 ) => {
   setLoadingTags(tag);
   const response = await deleteTag(localPost.details.author, localPost.details.id, tag);
   if (response) {
     // check if pubky already is a tagger of the tag
-    const tagExists = localPost.tags.some((t) => t.taggers.includes(localPost.details.author));
+    const tagExists = localPost.tags.some((t) => t.taggers.includes(pubky));
     if (tagExists) {
       const updatedTags = localPost.tags.map((t) =>
         t.label === tag
           ? {
               ...t,
-              taggers: t.taggers.filter((tagger) => tagger !== localPost.details.author),
+              taggers: t.taggers.filter((tagger) => tagger !== pubky),
               taggers_count: t.taggers_count - 1
             }
           : t

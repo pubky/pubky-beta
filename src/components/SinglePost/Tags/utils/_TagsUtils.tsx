@@ -25,34 +25,7 @@ export const TagsUtils = (post: PostView) => {
     setLoadingTags(tag);
     const response = await createTag(post.details.author, post.details.id, tag);
     if (response) {
-      const tagExists = tags.some((t) => t.label === tag);
-      let updatedTags;
-      if (tagExists) {
-        updatedTags = tags.map((t) =>
-          t.label === tag
-            ? { ...t, taggers: [...t.taggers, post.details.author], taggers_count: t.taggers_count + 1 }
-            : t
-        );
-      } else {
-        updatedTags = [...tags, { label: tag, taggers: [post.details.author], taggers_count: 1 }];
-      }
-      setTags(updatedTags);
-
-      setTimeline((prev) =>
-        prev.map((p) =>
-          p.details.id === post.details.id
-            ? {
-                ...p,
-                tags: updatedTags,
-                counts: {
-                  ...p.counts,
-                  unique_tags: Math.max(0, p.counts.unique_tags + (tagExists ? 0 : 1))
-                }
-              }
-            : p
-        )
-      );
-
+      TagsCommonFunctions.updateTagsAndTimeline(tag, true, tags, pubky, setTags, setTimeline, post);
       setAddTagInput(false);
       setTagInput('');
     } else {
@@ -63,43 +36,8 @@ export const TagsUtils = (post: PostView) => {
 
   const handleDeleteTag = async (tag: string) => {
     setLoadingTags(tag);
-    const response = await deleteTag(post.details.author, post.details.id, tag);
-    if (response) {
-      const tagExists = tags.some((t) => t.taggers.includes(post.details.author));
-      let updatedTags;
-      if (tagExists) {
-        updatedTags = tags.map((t) =>
-          t.label === tag
-            ? {
-                ...t,
-                taggers: t.taggers.filter((tagger) => tagger !== post.details.author),
-                taggers_count: t.taggers_count - 1
-              }
-            : t
-        );
-      } else {
-        updatedTags = tags.filter((t) => t.label !== tag);
-      }
-      setTags(updatedTags);
-
-      setTimeline((prev) =>
-        prev.map((p) =>
-          p.details.id === post.details.id
-            ? {
-                ...p,
-                tags: updatedTags,
-                counts: {
-                  ...p.counts,
-                  unique_tags: Math.max(
-                    0,
-                    p.counts.unique_tags - (tagExists && updatedTags.length < tags.length ? 1 : 0)
-                  )
-                }
-              }
-            : p
-        )
-      );
-    }
+    await deleteTag(post.details.author, post.details.id, tag);
+    TagsCommonFunctions.updateTagsAndTimeline(tag, false, tags, pubky, setTags, setTimeline, post);
     setLoadingTags('');
   };
 

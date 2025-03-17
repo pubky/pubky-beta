@@ -45,7 +45,8 @@ export function PostStandard({ post, largeView = false }: PostProps) {
       tagInput,
       setTagInput,
       setAddTagInput,
-      setLoadingTags
+      setLoadingTags,
+      pubky
     );
   };
 
@@ -56,7 +57,8 @@ export function PostStandard({ post, largeView = false }: PostProps) {
       deleteTag,
       setLocalPost,
       addAlert,
-      setLoadingTags
+      setLoadingTags,
+      pubky
     );
   };
 
@@ -67,7 +69,7 @@ export function PostStandard({ post, largeView = false }: PostProps) {
           <>
             {!largeView &&
               localPost.tags.slice(0, 3).map((tagObj, index) => {
-                const isTagFound = tagObj?.taggers?.includes(localPost.details.author) || false;
+                const isTagFound = tagObj?.taggers?.includes(pubky) || false;
 
                 return (
                   <Post.Footer key={index}>

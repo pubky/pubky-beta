@@ -66,7 +66,8 @@ export function PostLargeView({ post }: { post: PostView }) {
       deleteTag,
       setLocalPost,
       addAlert,
-      setLoadingTags
+      setLoadingTags,
+      pubky
     );
   };
 
@@ -80,7 +81,8 @@ export function PostLargeView({ post }: { post: PostView }) {
       tagInput,
       setTagInput,
       setAddTagInput,
-      setLoadingTags
+      setLoadingTags,
+      pubky
     );
   };
 
@@ -134,7 +136,7 @@ export function PostLargeView({ post }: { post: PostView }) {
 
             const extraImagesCount = tagObj?.taggers_count - displayedImages.length;
             const taggers = tagObj.taggers;
-            const hasAuthorTag = tagObj?.taggers.includes(localPost?.details?.author);
+            const isTagFound = tagObj?.taggers?.includes(pubky) || false;
 
             return (
               <React.Fragment key={`${index}-${tagObj?.label}`}>
@@ -142,11 +144,11 @@ export function PostLargeView({ post }: { post: PostView }) {
                   <div className="flex gap-2">
                     <PostUtil.Tag
                       id={`tag-${index}`}
-                      clicked={hasAuthorTag}
+                      clicked={isTagFound}
                       color={tagObj?.label && Utils.generateRandomColor(tagObj?.label)}
                       onClick={() => {
                         if (loadingTags === tagObj?.label) return;
-                        hasAuthorTag ? handleDeleteTag(tagObj.label) : handleAddTag(tagObj.label);
+                        isTagFound ? handleDeleteTag(tagObj.label) : handleAddTag(tagObj.label);
                       }}
                     >
                       <div className="flex gap-2 items-center">

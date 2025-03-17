@@ -45,7 +45,8 @@ export function PostStandard({ post, largeView = false }: PostProps) {
       tagInput,
       setTagInput,
       setAddTagInput,
-      setLoadingTags
+      setLoadingTags,
+      pubky
     );
   };
 
@@ -56,7 +57,8 @@ export function PostStandard({ post, largeView = false }: PostProps) {
       deleteTag,
       setLocalPost,
       addAlert,
-      setLoadingTags
+      setLoadingTags,
+      pubky
     );
   };
 

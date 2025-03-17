@@ -66,7 +66,8 @@ export function PostLargeView({ post }: { post: PostView }) {
       deleteTag,
       setLocalPost,
       addAlert,
-      setLoadingTags
+      setLoadingTags,
+      pubky
     );
   };
 
@@ -80,7 +81,8 @@ export function PostLargeView({ post }: { post: PostView }) {
       tagInput,
       setTagInput,
       setAddTagInput,
-      setLoadingTags
+      setLoadingTags,
+      pubky
     );
   };
 
