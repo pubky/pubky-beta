@@ -466,7 +466,7 @@ export function PostPage({ params }: { params: Promise<{ pubky: string; postId: 
     <div className="w-full">
       {/* Parent Posts Chain */}
       {postData?.relationships?.replied && (
-        <div className="mb-6">
+        <div>
           {!allParentPostsLoaded ? (
             <Skeletons.Simple />
           ) : (
@@ -487,7 +487,7 @@ export function PostPage({ params }: { params: Promise<{ pubky: string; postId: 
               }
 
               return (
-                <div key={parentURI} className="mb-6 relative">
+                <div key={parentURI} className="mb-3 relative">
                   <PostComponent post={post.post} size="full" homeView largeView={!isMobileParent} line={isLine} />
                   {index < parentURIs.length - 1 && (
                     <div className="absolute left-[10px] bottom-[-24px] border-l-[1px] border-[#444447] h-[24px]" />
@@ -509,7 +509,7 @@ export function PostPage({ params }: { params: Promise<{ pubky: string; postId: 
       </div>
 
       {/* Reply Section and Participants */}
-      <div className="mt-8">
+      <div className="mt-6">
         <div className="grid gap-6 xl:grid-cols-3">
           <div className="col-span-2">
             {/* Create Reply Form */}
@@ -551,12 +551,12 @@ export function PostPage({ params }: { params: Promise<{ pubky: string; postId: 
             />
 
             {/* Replies List */}
-            <div className="mt-4">
+            <div className="mt-3 flex flex-col gap-3">
               {repliesLocal
                 .filter((reply) => !mutedUsers.includes(reply.details.author))
                 .filter((reply) => !deletedPosts.includes(reply.details.id))
                 .map((reply, index) => (
-                  <div key={`reply-${reply.details.author}-${reply.details.id}-${index}`} className="mb-4">
+                  <div key={`reply-${reply.details.author}-${reply.details.id}-${index}`}>
                     <PostComponent post={reply} size="full" className="w-full" />
                   </div>
                 ))}
