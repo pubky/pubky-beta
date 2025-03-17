@@ -127,112 +127,119 @@ export function PostLargeView({ post }: { post: PostView }) {
             </TooltipUI.Root>
           )}
         </div>
-        <div className="flex-col inline-flex gap-0.5 overflow-y-auto max-h-[280px] scrollbar-thin scrollbar-webkit">
-          {localPost?.tags.map((tagObj, index) => {
-            const displayedImages = tagObj?.taggers
-              .slice(0, 4)
-              .map((fromItem) => profileImages[fromItem])
-              .filter(Boolean);
+        <div className="flex flex-col gap-2">
+          <div className="flex-col inline-flex gap-2 overflow-y-auto max-h-[280px] scrollbar-thin scrollbar-webkit transition-all duration-300 ease-in-out">
+            {localPost?.tags.map((tagObj, index) => {
+              const displayedImages = tagObj?.taggers
+                .slice(0, 4)
+                .map((fromItem) => profileImages[fromItem])
+                .filter(Boolean);
 
-            const extraImagesCount = tagObj?.taggers_count - displayedImages.length;
-            const taggers = tagObj.taggers;
-            const isTagFound = tagObj?.taggers?.includes(pubky) || false;
+              const extraImagesCount = tagObj?.taggers_count - displayedImages.length;
+              const taggers = tagObj.taggers;
+              const isTagFound = tagObj?.taggers?.includes(pubky) || false;
 
-            return (
-              <React.Fragment key={`${index}-${tagObj?.label}`}>
-                <PostUI.Footer>
-                  <div className="flex gap-2">
-                    <PostUtil.Tag
-                      id={`tag-${index}`}
-                      clicked={isTagFound}
-                      color={tagObj?.label && Utils.generateRandomColor(tagObj?.label)}
-                      onClick={() => {
-                        if (loadingTags === tagObj?.label) return;
-                        isTagFound ? handleDeleteTag(tagObj.label) : handleAddTag(tagObj.label);
-                      }}
-                    >
-                      <div className="flex gap-2 items-center">
-                        {Utils.minifyText(tagObj?.label, 20)}
-                        {loadingTags === tagObj?.label ? (
-                          <Icon.LoadingSpin size="12" />
-                        ) : (
-                          <Typography.Caption id={`tag-${index}-count`} variant="bold" className="text-opacity-60">
-                            {tagObj?.taggers_count}
-                          </Typography.Caption>
-                        )}
-                      </div>
-                    </PostUtil.Tag>
-                    <Link href={pubky ? `/search?tags=${tagObj?.label}` : ''}>
-                      <Button.Action
-                        variant="custom"
-                        size="small"
-                        icon={<Icon.MagnifyingGlassLeft size="14" />}
-                        className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
-                      />
-                    </Link>
-                  </div>
-                  <div className="flex">
-                    {displayedImages.map((image, imageIndex) => (
-                      <div key={imageIndex}>
-                        <TooltipUI.Root
-                          className="static"
-                          delay={0}
-                          setShowTooltip={() => setShowTooltipProfile(null)}
-                          tagId={image}
-                        >
-                          <ImageByUri
-                            id={taggers[imageIndex]}
-                            width={32}
-                            height={32}
-                            onClick={(e) => {
-                              const rect = e.currentTarget.getBoundingClientRect();
-                              setShowTooltipProfile({ tagIndex: index, imageIndex });
-                              setTooltipPosition({
-                                top: rect.top - 10,
-                                left: rect.left + rect.width / 2
-                              });
-                            }}
-                            className={`cursor-pointer min-w-[32px] max-w-[32px] min-h-[32px] max-h-[32px] rounded-full shadow justify-center items-center flex ${
-                              imageIndex > 0 && '-ml-2'
-                            }`}
-                            alt={`tag-${imageIndex + 1}`}
-                            uri={image}
-                          />
-                          {showTooltipProfile?.tagIndex === index &&
-                            showTooltipProfile?.imageIndex === imageIndex &&
-                            tooltipPosition && (
-                              <TooltipUI.Main
-                                ref={tooltipRef}
-                                className="z-50 w-auto shadow-none px-0 pb-5 bg-transparent border-0 cursor-default fixed"
-                                style={{
-                                  top: `${tooltipPosition.top}px`,
-                                  left: `${tooltipPosition.left}px`,
-                                  transform: 'translateX(-50%)'
-                                }}
-                              >
-                                <Tooltip.Profile profileId={taggers[imageIndex]} />
-                              </TooltipUI.Main>
-                            )}
-                        </TooltipUI.Root>
-                      </div>
-                    ))}
-                    {extraImagesCount > 0 && <PostUtil.Counter className="-ml-2">+{extraImagesCount}</PostUtil.Counter>}
-                  </div>
-                </PostUI.Footer>
-              </React.Fragment>
-            );
-          })}
-        </div>
+              return (
+                <div
+                  key={`${index}-${tagObj?.label}`}
+                  className="animate-fadeIn transition-all duration-100 ease-in-out"
+                >
+                  <PostUI.Footer>
+                    <div className="flex gap-2">
+                      <PostUtil.Tag
+                        id={`tag-${index}`}
+                        clicked={isTagFound}
+                        color={tagObj?.label && Utils.generateRandomColor(tagObj?.label)}
+                        onClick={() => {
+                          if (loadingTags === tagObj?.label) return;
+                          isTagFound ? handleDeleteTag(tagObj.label) : handleAddTag(tagObj.label);
+                        }}
+                      >
+                        <div className="flex gap-2 items-center">
+                          {Utils.minifyText(tagObj?.label, 20)}
+                          {loadingTags === tagObj?.label ? (
+                            <Icon.LoadingSpin size="12" />
+                          ) : (
+                            <Typography.Caption id={`tag-${index}-count`} variant="bold" className="text-opacity-60">
+                              {tagObj?.taggers_count}
+                            </Typography.Caption>
+                          )}
+                        </div>
+                      </PostUtil.Tag>
+                      <Link href={pubky ? `/search?tags=${tagObj?.label}` : ''}>
+                        <Button.Action
+                          variant="custom"
+                          size="small"
+                          icon={<Icon.MagnifyingGlassLeft size="14" />}
+                          className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
+                        />
+                      </Link>
+                    </div>
+                    <div className="flex">
+                      {displayedImages.map((image, imageIndex) => (
+                        <React.Fragment key={imageIndex}>
+                          <TooltipUI.Root
+                            className="static"
+                            delay={0}
+                            setShowTooltip={() => setShowTooltipProfile(null)}
+                            tagId={image}
+                          >
+                            <ImageByUri
+                              id={taggers[imageIndex]}
+                              width={32}
+                              height={32}
+                              onClick={(e) => {
+                                const rect = e.currentTarget.getBoundingClientRect();
+                                setShowTooltipProfile({ tagIndex: index, imageIndex });
+                                setTooltipPosition({
+                                  top: rect.top - 10,
+                                  left: rect.left + rect.width / 2
+                                });
+                              }}
+                              className={`cursor-pointer min-w-[32px] max-w-[32px] min-h-[32px] max-h-[32px] rounded-full shadow justify-center items-center flex ${
+                                imageIndex > 0 && '-ml-2'
+                              }`}
+                              alt={`tag-${imageIndex + 1}`}
+                              uri={image}
+                            />
+                            {showTooltipProfile?.tagIndex === index &&
+                              showTooltipProfile?.imageIndex === imageIndex &&
+                              tooltipPosition && (
+                                <TooltipUI.Main
+                                  ref={tooltipRef}
+                                  className="z-50 w-auto shadow-none px-0 pb-5 bg-transparent border-0 cursor-default fixed"
+                                  style={{
+                                    top: `${tooltipPosition.top}px`,
+                                    left: `${tooltipPosition.left}px`,
+                                    transform: 'translateX(-50%)'
+                                  }}
+                                >
+                                  <Tooltip.Profile profileId={taggers[imageIndex]} />
+                                </TooltipUI.Main>
+                              )}
+                          </TooltipUI.Root>
+                        </React.Fragment>
+                      ))}
+                      {extraImagesCount > 0 && (
+                        <PostUtil.Counter className="-ml-2">+{extraImagesCount}</PostUtil.Counter>
+                      )}
+                    </div>
+                  </PostUI.Footer>
+                </div>
+              );
+            })}
+          </div>
 
-        <div className="flex">
-          <InputTagStandard
-            handleAddTag={handleAddTag}
-            loadingTags={loadingTags !== ''}
-            tagInput={tagInput}
-            setTagInput={setTagInput}
-            addTagInput={addTagInput}
-            setAddTagInput={setAddTagInput}
-          />
+          <div className="flex">
+            <InputTagStandard
+              handleAddTag={handleAddTag}
+              loadingTags={loadingTags !== ''}
+              tagInput={tagInput}
+              setTagInput={setTagInput}
+              addTagInput={addTagInput}
+              setAddTagInput={setAddTagInput}
+            />
+          </div>
         </div>
       </div>
     </div>

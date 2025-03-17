@@ -184,7 +184,7 @@ export function PostBottomSheet({ show, setShow, post, title, className, tagsErr
           )}
           {selectedTag && (
             <>
-              <div className="flex gap-2 items-center mb-2">
+              <div className="flex gap-2 items-center">
                 <div onClick={() => setSelectedTag && setSelectedTag(null)} className="cursor-pointer">
                   <Button.Action variant="custom" icon={<Icon.CaretLeft size="16" />} size="small" />
                 </div>
@@ -199,7 +199,7 @@ export function PostBottomSheet({ show, setShow, post, title, className, tagsErr
                     }}
                     color={selectedTag?.label && Utils.generateRandomColor(selectedTag?.label)}
                   >
-                    <div className="flex gap-2 items-center">
+                    <div className="flex gap-1 items-center">
                       {Utils.minifyText(selectedTag?.label, 21)}
                       {loadingTags === selectedTag?.label ? (
                         <Icon.LoadingSpin size="12" />
