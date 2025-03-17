@@ -235,7 +235,7 @@ export default function FooterArea({
             <div className="grow" />
             <div className="w-full justify-between sm:justify-end flex gap-2">
               <div id="content-length" className="text-opacity-30 text-white text-sm mt-4 mr-2">
-                {noFile && `${charCountArticle} / ${maxLength}`}
+                {noFile ? charCountArticle : content.length} / {maxLength}
               </div>
               <div className="flex gap-2">
                 <Button.Action

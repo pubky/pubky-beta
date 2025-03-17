@@ -233,8 +233,6 @@ export default function CreateContent({
             name={profile?.name ?? Utils.minifyPubky(pubky ?? '')}
             largeView={largeView}
             variant={variant}
-            content={content}
-            maxLength={maxLength}
           />
           <Section.InputArea
             textAreaRef={textAreaRef}
@@ -259,11 +257,6 @@ export default function CreateContent({
             handlePaste={handlePaste}
             styleSearchedUsers={styleSearchedUsers}
           />
-          {variant && (
-            <div id="content-length" className="whitespace-nowrap text-opacity-30 text-white text-sm">
-              {maxLength && `${content?.length} / ${maxLength}`}
-            </div>
-          )}
         </div>
         <LinkPreviewer setQuote={setQuote} content={content} />
         {selectedFiles && selectedFiles.length > 0 && (
