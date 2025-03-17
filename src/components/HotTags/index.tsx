@@ -13,24 +13,9 @@ export default function HotTags() {
   const hotTags = data;
   if (isError) console.warn(isError);
 
-  {
-    /** const handleTagSearch = (tag: string) => {
-    if (searchTags.includes(tag)) return;
-
-    if (searchTags.length < 3) {
-      setSearchTags([...searchTags, tag]);
-    } else {
-      const newSearchTags = [...searchTags.slice(1), tag];
-      setSearchTags(newSearchTags);
-    }
-    router.push('/search');
-  };
-  */
-  }
-
   return (
     <div id="hot-tags" className="col-span-1 mb-8">
-      <SideCard.Header title="Hot Tags">{/**<DropDown.TagsTimeframe type="text" />*/}</SideCard.Header>
+      <SideCard.Header title="Hot Tags" />
       <SideCard.Content id="hot-tags-content">
         {isLoading ? (
           <Skeletons.Simple />
