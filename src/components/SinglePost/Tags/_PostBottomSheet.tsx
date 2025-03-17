@@ -8,10 +8,6 @@ import { ImageByUri } from '@/components/ImageByUri';
 import EmojiPicker from '@/components/EmojiPicker';
 import Link from 'next/link';
 import React from 'react';
-import { Components } from './components';
-import { Icon as SocialIcon } from '@social/ui-shared';
-import { EmojiPicker as SocialEmojiPicker } from '@/components/EmojiPicker';
-import SinglePost from '@/components/SinglePost';
 import Root from '../../ui-shared/lib/BottomSheet/_Root';
 
 interface TagProps {
