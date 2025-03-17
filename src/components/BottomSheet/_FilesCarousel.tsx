@@ -3,6 +3,7 @@
 import { FileView } from '@/types/Post';
 import { BottomSheet } from '@social/ui-shared';
 import ContentFilesCarousel from '../Modal/_FilesCarousel/_Content';
+import { twMerge } from 'tailwind-merge';
 
 interface FilesCarouselProps {
   show: boolean;
@@ -22,7 +23,7 @@ export default function FilesCarousel({
   className
 }: FilesCarouselProps) {
   return (
-    <BottomSheet.Root show={show} setShow={setShow} title={title} className={className}>
+    <BottomSheet.Root show={show} setShow={setShow} title={title} className={twMerge('h-[90vh] px-0', className)}>
       <ContentFilesCarousel fileContents={fileContents} currentFileIndex={currentFileIndex} />
     </BottomSheet.Root>
   );
