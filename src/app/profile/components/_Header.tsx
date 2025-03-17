@@ -27,7 +27,7 @@ export function Header() {
       <Components.HeaderMobile
         leftIcon={
           <Link href="/settings/edit">
-            <Icon.Pencil size="20" />
+            <Icon.Pencil size="24" />
           </Link>
         }
         rightIcon={

@@ -15,12 +15,12 @@ export function Header() {
       <Components.HeaderMobile
         leftIcon={
           <div className="cursor-pointer" onClick={() => setDrawerFilterOpen(true)}>
-            <Icon.SlidersHorizontal size="20" />
+            <Icon.SlidersHorizontal size="24" />
           </div>
         }
         rightIcon={
           <div className="cursor-pointer" onClick={() => setDrawerFeedsOpen(true)}>
-            <Icon.Activity size="20" />
+            <Icon.Activity size="24" />
           </div>
         }
       >
