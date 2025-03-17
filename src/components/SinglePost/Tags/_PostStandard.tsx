@@ -63,7 +63,7 @@ export function PostStandard({ post, largeView = false }: PostProps) {
   return (
     <div className="lg:mt-3 cursor-default" onClick={(event) => event.stopPropagation()}>
       {!(isMobile && localPost.tags.length === 0) && (
-        <div id="tags" className="gap-2 flex-row inline-flex items-center flex-wrap mt-2 lg:mt-0">
+        <div id="tags" className="flex flex-row items-center flex-wrap mt-2 lg:mt-0">
           <>
             {!largeView &&
               localPost.tags.slice(0, 3).map((tagObj, index) => {
