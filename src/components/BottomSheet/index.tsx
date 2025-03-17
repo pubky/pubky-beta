@@ -20,6 +20,7 @@ import Link from './_Link';
 import Logout from './_Logout';
 import Menu from './_Menu';
 import MenuProfile from './_MenuProfile';
+import Post from './_Post';
 import ProfileTag from './_ProfileTag';
 import Reach from './_Reach';
 import ReportPost from './_ReportPost';
@@ -28,6 +29,8 @@ import SessionExpired from './_SessionExpired';
 import SortPosts from './_SortPosts';
 import Status from './_Status';
 import TagCreatePost from './_TagCreatePost';
+import TagSinglePost from './_TagSinglePost';
+import { PostBottomSheet as TagPost } from '../Post/Tags/_PostBottomSheet';
 
 export const BottomSheet = {
   Backup,
@@ -52,6 +55,7 @@ export const BottomSheet = {
   Logout,
   Menu,
   MenuProfile,
+  Post,
   ProfileTag,
   Reach,
   ReportPost,
@@ -59,5 +63,7 @@ export const BottomSheet = {
   SessionExpired,
   SortPosts,
   Status,
-  TagCreatePost
+  TagCreatePost,
+  TagSinglePost,
+  TagPost
 };

@@ -160,7 +160,7 @@ export const Tag = ({
           <div
             id={idPrefix ? `${idPrefix}-emoji-picker-btn` : 'emoji-picker-btn'}
             onClick={!disabled && !loading ? onEmojiPickerClick : undefined}
-            className={`${variant === 'small' ? 'hidden mr-1 lg:flex' : 'hidden ml-2 lg:flex'} cursor-pointer ${buttonClasses} opacity-80 hover:opacity-100`}
+            className={`${variant === 'small' ? 'mr-1 flex' : 'ml-2 flex'} cursor-pointer ${buttonClasses} opacity-80 hover:opacity-100`}
           >
             <Icon.Smiley size={variant === 'small' ? '12' : '24'} />
           </div>

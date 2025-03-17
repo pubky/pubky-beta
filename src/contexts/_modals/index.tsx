@@ -67,7 +67,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     reportProfile: 'ReportProfile',
     sessionExpired: 'SessionExpired',
     tagCreatePost: 'TagCreatePost',
-    menuPost: 'Menu',
+    menuPost: 'Post',
     menuProfile: 'MenuProfile',
     tags: 'Tag',
     tagPost: 'TagPost',

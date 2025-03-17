@@ -15,6 +15,7 @@ import FilesCarousel from './_FilesCarousel';
 import Join from './_Join';
 import Link from './_Link';
 import Logout from './_Logout';
+import Menu from './_Menu';
 import ProfileTag from './_TagProfile';
 import ReportPost from './_ReportPost';
 import ReportProfile from './_ReportProfile';
@@ -23,7 +24,7 @@ import SearchInputCard from './_SearchInputCard';
 import SessionExpired from './_SessionExpired';
 import TagCreatePost from './_TagCreatePost';
 import TagPost from './../Post/Tags/_PostModal';
-import TagSinglePost from './../SinglePost/Tags/_PostModal';
+import { PostModal as TagSinglePost } from './../SinglePost/Tags/_PostModal';
 
 export const Modal = {
   Backup,
@@ -43,6 +44,7 @@ export const Modal = {
   Join,
   Link,
   Logout,
+  Menu,
   ProfileTag,
   ReportPost,
   ReportProfile,
