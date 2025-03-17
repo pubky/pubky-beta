@@ -2,7 +2,7 @@
 
 import { Icon, Typography } from '@social/ui-shared';
 import { FileView } from '@/types/Post';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 interface FilesCarouselProps {
   fileContents: FileView[];
@@ -11,6 +11,8 @@ interface FilesCarouselProps {
 
 export default function ContentFilesCarousel({ fileContents, currentFileIndex }: FilesCarouselProps) {
   const [localFileIndex, setLocalFileIndex] = useState(currentFileIndex);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
   const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
   const BASE_URL = `${NEXT_PUBLIC_NEXUS}/static/files`;
   const mediaFiles = fileContents.filter(
@@ -31,6 +33,22 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex }:
     setLocalFileIndex((prevIndex) => (prevIndex === mediaFiles.length - 1 ? 0 : prevIndex + 1));
   };
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartX.current - touchEndX.current > 50) {
+      showNextFile();
+    } else if (touchEndX.current - touchStartX.current > 50) {
+      showPreviousFile();
+    }
+  };
+
   const currentFile = mediaFiles[localFileIndex];
   const isVideo = currentFile?.content_type.startsWith('video');
 
@@ -47,7 +65,12 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex }:
   }, [localFileIndex]);
 
   return (
-    <div className="relative sm:w-[50vw] sm:h-[65vh] flex items-center justify-center">
+    <div
+      className="relative sm:w-[50vw] sm:h-[65vh] flex items-center justify-center"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       {mediaFiles.length > 1 && (
         <div
           className="flex items-center justify-center cursor-pointer w-12 h-12 absolute top-1/2 left-4 transform -translate-y-1/2 bg-white bg-opacity-10 hover:bg-opacity-20 p-2 rounded-full"

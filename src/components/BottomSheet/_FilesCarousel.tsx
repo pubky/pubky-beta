@@ -23,7 +23,7 @@ export default function FilesCarousel({
   className
 }: FilesCarouselProps) {
   return (
-    <BottomSheet.Root show={show} setShow={setShow} title={title} className={twMerge('h-[90vh] px-0', className)}>
+    <BottomSheet.Root show={show} setShow={setShow} title={title} className={twMerge('min-h-[50vh] px-0', className)}>
       <ContentFilesCarousel fileContents={fileContents} currentFileIndex={currentFileIndex} />
     </BottomSheet.Root>
   );
