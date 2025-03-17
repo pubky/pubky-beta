@@ -124,8 +124,8 @@ export const TagsInteractionUtils = (post: PostView | undefined) => {
 
   const addTag = async (tag: string) => {
     try {
-      // Check if tag already exists
-      const tagExists = allTags.some((existingTag) => existingTag.label.toLowerCase() === tag.toLowerCase());
+      // Check if tag already exists and is not me
+      const tagExists = allTags.some((t) => t.label === tag && t.taggers.some((fromItem) => fromItem === pubky));
       if (tagExists) {
         addAlert('This tag has already been added.', 'warning');
         setTag('');

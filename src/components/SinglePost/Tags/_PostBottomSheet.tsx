@@ -113,14 +113,15 @@ export function PostBottomSheet({ show, setShow, post, title, className, tagsErr
                 const isTagFound = tag.relationship || false;
                 const displayedImages = tagImages[tag.label] || [];
                 const extraImagesCount = displayedImages.length > 4 ? displayedImages.length - 4 : 0;
-
+                const isTagMe = tag?.taggers.some((fromItem) => fromItem === pubky);
+                console.log(tag, isTagMe);
                 return (
                   <div className="flex gap-2" key={index}>
                     <PostUtil.Tag
-                      clicked={isTagFound}
+                      clicked={isTagMe}
                       onClick={(event) => {
                         event.stopPropagation();
-                        isTagFound ? deleteTag(tag?.label) : addTag(tag?.label);
+                        isTagMe ? deleteTag(tag?.label) : addTag(tag?.label);
                       }}
                       color={Utils.generateRandomColor(tag?.label)}
                     >

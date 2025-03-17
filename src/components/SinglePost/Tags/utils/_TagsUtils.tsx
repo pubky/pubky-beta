@@ -23,7 +23,7 @@ export const TagsUtils = (post: PostView) => {
   const handleAddTag = async (tag: string) => {
     if (!tag) return;
     setLoadingTags(tag);
-    const response = await createTag(post.details.author, post.details.id, tag);
+    const response = await createTag(pubky, post.details.id, tag);
     if (response) {
       TagsCommonFunctions.updateTagsAndTimeline(tag, true, tags, pubky, setTags, setTimeline, post);
       setAddTagInput(false);
@@ -36,7 +36,7 @@ export const TagsUtils = (post: PostView) => {
 
   const handleDeleteTag = async (tag: string) => {
     setLoadingTags(tag);
-    await deleteTag(post.details.author, post.details.id, tag);
+    await deleteTag(pubky, post.details.id, tag);
     TagsCommonFunctions.updateTagsAndTimeline(tag, false, tags, pubky, setTags, setTimeline, post);
     setLoadingTags('');
   };
