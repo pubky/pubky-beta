@@ -43,11 +43,7 @@ export default function HeaderMobile({ leftIcon, rightIcon, children }: HeaderMo
   return (
     <HeaderUI.Root className={`flex lg:hidden items-center ${!isVisible && 'hidden'}`}>
       <div className="relative flex w-full items-center">
-        {pubky && (
-          <div className="cursor-pointer" onClick={() => router.back()}>
-            <div className="absolute left-0">{leftIcon}</div>
-          </div>
-        )}
+        {pubky && <div className="absolute left-0">{leftIcon}</div>}
 
         <div className="mx-auto flex gap-4 items-center">
           <HeaderUI.Logo link={logoLink} />

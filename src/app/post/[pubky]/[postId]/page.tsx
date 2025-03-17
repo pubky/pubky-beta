@@ -11,6 +11,7 @@ import { getUserDetails } from '@/services/userService';
 import { PubkyAppPostKind } from 'pubky-app-specs';
 import { PostWrapper } from '@/contexts';
 import { PostPage } from './PostPage';
+import { Header } from './components/_Header';
 
 const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
 const BASE_URL = `${NEXT_PUBLIC_NEXUS}`;
@@ -81,8 +82,7 @@ export default async function Index({ params }: Props) {
   return (
     <PostWrapper>
       <Content.Main className="pt-[80px]">
-        <Components.Header title="Post" />
-        <Components.HeaderMobile leftIcon={<Icon.ArrowLeft size="20" />} />
+        <Header />
         <Content.Grid className="flex justify-between flex-col gap-3">
           <PostPage params={params} />
         </Content.Grid>
