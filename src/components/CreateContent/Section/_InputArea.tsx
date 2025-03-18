@@ -136,7 +136,7 @@ export default function InputArea({
   };
 
   const handleUserClick = (userId: string) => {
-    const regex = /@\w+/;
+    const regex = /@\S+/;
     const newContent = content.replace(regex, `pk:${userId}`);
 
     setContent(newContent);
