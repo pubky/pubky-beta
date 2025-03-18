@@ -36,8 +36,8 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
     undefined,
     replies.length > 0 ? replies[0]?.details?.indexed_at + 1 : undefined,
     {
-      enabled: true
-      // refetchInterval: 3000,
+      enabled: true,
+      refetchInterval: 20000
     }
   );
 
@@ -125,54 +125,42 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
     return () => setReplies([]);
   }, []);
 
-  useEffect(() => {
-    const fetchNexusData = async () => {
-      if (!replies.length) return;
+  const fetchNexusData = async () => {
+    if (!replies.length) return;
+    console.log(replies);
+    const homeserverReplies = replies.filter((reply) => reply?.cached === 'homeserver');
+    console.log('homeserverReplies', homeserverReplies);
+    if (!homeserverReplies.length) return;
 
-      const homeserverReplies = replies.filter((reply) => reply.cached === 'homeserver' || reply.cached === undefined);
-      if (!homeserverReplies.length) return;
-
-      try {
-        const nexusData = await getPost(
-          homeserverReplies[0].details.author,
-          homeserverReplies[0].details.id,
-          pubky ?? '',
-          undefined,
-          undefined
-        );
-
+    try {
+      homeserverReplies.forEach(async (reply) => {
+        const nexusData = await getPost(reply.details.author, reply.details.id, pubky ?? '', undefined, undefined);
         if (!nexusData) return;
-
         // Update replies with nexus data
         setReplies((prev) => {
           const existingReply = prev.find((p) => p.details.id === nexusData.details.id);
-
           if (existingReply) {
             return prev.map((p) => (p.details.id === nexusData.details.id ? nexusData : p));
           }
-
           return prev;
         });
-
         // Update local replies as well
         setRepliesLocal((prev) => {
           const existingReply = prev.find((p) => p.details.id === nexusData.details.id);
-
           if (existingReply) {
             return prev.map((p) => (p.details.id === nexusData.details.id ? nexusData : p));
           }
-
           return prev;
         });
-      } catch (error) {
-        console.log('Error fetching Nexus data:', error);
-      }
-    };
+      });
+    } catch (error) {
+      console.log('Error fetching Nexus data:', error);
+    }
+  };
 
-    const interval = setInterval(fetchNexusData, 2000); // Poll every 2 seconds
-
-    return () => clearInterval(interval);
-  }, [replies, pubky]);
+  useEffect(() => {
+    fetchNexusData();
+  }, [replies]);
 
   return (
     <>
