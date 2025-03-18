@@ -153,7 +153,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
       <div className="w-full flex flex-col justify-between">
         <Link href={`/profile/${idAuthor}`} className="justify-start items-center gap-2 flex cursor-pointer">
           <PostUI.ImageUser
-            id={author.details?.id}
+            id={idAuthor}
             uriImage={author?.details?.image || '/images/webp/Userpic.webp'}
             alt="user"
           />
