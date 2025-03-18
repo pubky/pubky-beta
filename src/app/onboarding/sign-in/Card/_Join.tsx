@@ -29,7 +29,6 @@ export default function Join() {
     setAppLink(`pubkyring://${authUrl}`);
   }, [authUrl]);
 
-
   const openApp = () => {
     const newTab = window.open(appLink, '_blank');
     setTimeout(() => {
