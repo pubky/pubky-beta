@@ -194,16 +194,34 @@ export default function CreateContent({
 
   const handlePaste = (event: ClipboardEvent) => {
     const items = event.clipboardData?.items;
+    const maxSizeInMB = 20;
+    const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+
     if (items) {
       for (let i = 0; i < items.length; i++) {
         const item = items[i];
         if (item.kind === 'file') {
           const file = item.getAsFile();
-          if (file && (file.type.startsWith('image/') || file.type.startsWith('video/'))) {
-            if (selectedFiles && selectedFiles.length < 4) {
-              const filePreview = URL.createObjectURL(file);
+          if (file) {
+            const isImage = file.type.startsWith('image/');
+            const isVideo = file.type.startsWith('video/');
+            const isValidType =
+              (isImage && Utils.supportedImageTypes.includes(file.type)) ||
+              (isVideo && Utils.supportedVideoTypes.includes(file.type));
 
-              setSelectedFiles && setSelectedFiles((prevFiles) => [...prevFiles, file]);
+            if (!isValidType) {
+              addAlert('File not supported', 'warning');
+              continue;
+            }
+
+            if (file.size > maxSizeInBytes) {
+              addAlert('The maximum allowed size is 20 MB', 'warning');
+              continue;
+            }
+
+            if (selectedFiles.length < 4) {
+              const filePreview = URL.createObjectURL(file);
+              setSelectedFiles((prevFiles) => [...prevFiles, file]);
               setFilePreviews((prevPreviews) => [...prevPreviews, filePreview]);
             } else {
               addAlert('Maximum of 4 files can be uploaded', 'warning');
