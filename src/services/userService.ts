@@ -40,14 +40,12 @@ export async function getUserProfile(userId: string, viewerId: string): Promise<
   if (!userId) throw new Error('User ID is required');
 
   const cache = UserProfileCache.getInstance();
-  console.log(cache.count());
+
   // Check cache first
   const cachedUser = cache.get(userId);
   if (cachedUser) {
-    console.log('Cache hit for user:', userId);
     return cachedUser;
   }
-  console.log('Cache miss for user:', userId);
 
   const queryParams = new URLSearchParams();
   if (viewerId) queryParams.append('viewer_id', viewerId);
