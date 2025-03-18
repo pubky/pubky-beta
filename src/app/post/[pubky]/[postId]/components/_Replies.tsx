@@ -125,36 +125,48 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
     return () => setReplies([]);
   }, []);
 
+  const fetchingPost = async (reply: PostView) => {
+    const nexusData = await getPost(reply.details.author, reply.details.id, pubky ?? '', undefined, undefined);
+
+    if (!nexusData) return;
+    // Update replies with nexus data
+    setReplies((prev) => {
+      const existingReply = prev.find((p) => p.details.id === nexusData.details.id);
+      if (existingReply) {
+        return prev.map((p) => (p.details.id === nexusData.details.id ? nexusData : p));
+      }
+      return prev;
+    });
+    // Update local replies as well
+    setRepliesLocal((prev) => {
+      const existingReply = prev.find((p) => p.details.id === nexusData.details.id);
+      if (existingReply) {
+        return prev.map((p) => (p.details.id === nexusData.details.id ? nexusData : p));
+      }
+      return prev;
+    });
+  };
+
   const fetchNexusData = async () => {
     if (!replies.length) return;
-    console.log(replies);
+
     const homeserverReplies = replies.filter((reply) => reply?.cached === 'homeserver');
-    console.log('homeserverReplies', homeserverReplies);
+
     if (!homeserverReplies.length) return;
 
+    const promises = homeserverReplies.map(async (reply) => {
+      return fetchingPost(reply);
+    });
+
     try {
-      homeserverReplies.forEach(async (reply) => {
-        const nexusData = await getPost(reply.details.author, reply.details.id, pubky ?? '', undefined, undefined);
-        if (!nexusData) return;
-        // Update replies with nexus data
-        setReplies((prev) => {
-          const existingReply = prev.find((p) => p.details.id === nexusData.details.id);
-          if (existingReply) {
-            return prev.map((p) => (p.details.id === nexusData.details.id ? nexusData : p));
-          }
-          return prev;
-        });
-        // Update local replies as well
-        setRepliesLocal((prev) => {
-          const existingReply = prev.find((p) => p.details.id === nexusData.details.id);
-          if (existingReply) {
-            return prev.map((p) => (p.details.id === nexusData.details.id ? nexusData : p));
-          }
-          return prev;
-        });
-      });
+      await Promise.all(promises);
     } catch (error) {
+      // try again after 2 seconds
       console.log('Error fetching Nexus data:', error);
+      setTimeout(() => {
+        fetchNexusData();
+        console.log('try again');
+      }, 2000);
     }
   };
 
