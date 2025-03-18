@@ -19,18 +19,24 @@ type ContactsContentProps = {
   creatorPubky?: string;
 };
 
-const getCaseNotFoundMessages = (pubky: string | undefined, openModal: (modal: string) => void) => ({
+const getCaseNotFoundMessages = (
+  pubky: string | undefined,
+  isMyProfile: boolean,
+  openModal: (modal: string) => void
+) => ({
   followers: {
     icon: <Icon.UsersLeft size="48" color="#C8FF00" />,
-    title: 'Looking for followers?',
-    description: (
+    title: isMyProfile ? 'Looking for followers?' : 'No followers yet',
+    description: isMyProfile ? (
       <>
         When someone follows this account, their profile will appear here.
         <br />
         Start posting and engaging with others to grow your followers.
       </>
+    ) : (
+      'There are no followers to show'
     ),
-    content: (
+    content: isMyProfile && (
       <Button.Medium
         onClick={() => (pubky ? openModal('createPost') : openModal('join'))}
         className="z-10 w-auto"
@@ -42,15 +48,17 @@ const getCaseNotFoundMessages = (pubky: string | undefined, openModal: (modal: s
   },
   following: {
     icon: <Icon.UserPlus size="48" color="#C8FF00" />,
-    title: 'You are the algorithm',
-    description: (
+    title: isMyProfile ? 'You are the algorithm' : 'No following yet',
+    description: isMyProfile ? (
       <>
         Following accounts is a simple way to curate your timeline.
         <br />
         Stay updated on the topics and people that interest you.
       </>
+    ) : (
+      'There are no following to show'
     ),
-    content: (
+    content: isMyProfile && (
       <div className="flex gap-3 z-10 justify-center flex-wrap">
         <Link href="/who-to-follow">
           <Button.Medium icon={<Icon.UserPlus size="16" />} className="whitespace-nowrap">
@@ -68,13 +76,15 @@ const getCaseNotFoundMessages = (pubky: string | undefined, openModal: (modal: s
   friends: {
     icon: <Icon.Smiley size="48" color="#C8FF00" />,
     title: 'No friends yet',
-    description: (
+    description: isMyProfile ? (
       <>
         Follow someone, and if they follow you back, you&apos;ll become friends! <br />
         Start following Pubky users, you never know who might follow you back!
       </>
+    ) : (
+      'There are no friends to show'
     ),
-    content: (
+    content: isMyProfile && (
       <div className="flex gap-3 z-10 justify-center flex-wrap">
         <Link href="/who-to-follow">
           <Button.Medium icon={<Icon.UserPlus size="16" />} className="whitespace-nowrap">
@@ -100,8 +110,10 @@ const getCaseNotFoundMessages = (pubky: string | undefined, openModal: (modal: s
 const ContactsContent = ({ contacts, creatorPubky }: ContactsContentProps) => {
   const { pubky } = usePubkyClientContext();
   const { openModal } = useModal();
+  const isMyProfile = !!(pubky === creatorPubky || !creatorPubky);
   const currentContact =
-    getCaseNotFoundMessages(pubky, openModal)[contacts] || getCaseNotFoundMessages(pubky, openModal).default;
+    getCaseNotFoundMessages(pubky, isMyProfile, openModal)[contacts] ||
+    getCaseNotFoundMessages(pubky, isMyProfile, openModal).default;
   const limit = 10;
   const [usersList, setUsersList] = useState<UserView[]>([]);
   const [skip, setSkip] = useState(0);

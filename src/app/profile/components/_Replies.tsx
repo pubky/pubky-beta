@@ -13,6 +13,7 @@ import Image from 'next/image';
 export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   const limit = 10;
   const { pubky } = usePubkyClientContext();
+  const isMyProfile = !!(pubky === creatorPubky || !creatorPubky);
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [start, setStart] = useState<number | undefined>(undefined);
   const [fetching, setFetching] = useState<boolean>(false);
@@ -96,7 +97,7 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
         <ContentNotFound
           icon={<Icon.NoteBlank size="48" color="#C8FF00" />}
           title="No replies yet"
-          description="Start writing your first reply."
+          description={isMyProfile ? 'Start writing your first reply.' : 'There are no replies to show'}
         >
           <div className="absolute top-12 z-0">
             <Image alt="not-found-replies" width={656} height={438} src="/images/webp/not-found/posts.webp" />

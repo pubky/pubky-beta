@@ -24,6 +24,7 @@ type TaggedAsProps = {
 export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
   const { openModal, isOpen } = useModal();
   const { pubky } = usePubkyClientContext();
+  const isMyProfile = !!(pubky === creatorPubky || !creatorPubky);
   const usePubky = creatorPubky || pubky || '';
   const { data: user } = useUserProfile(usePubky, pubky ?? '');
   const name = user?.details?.name;
@@ -186,13 +187,17 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
             ) : (
               <ContentNotFound
                 icon={<Icon.Tag size="48" color="#C8FF00" />}
-                title="Discover who tagged you"
+                title={isMyProfile ? 'Discover who tagged you' : 'No tags yet'}
                 description={
-                  <>
-                    Find out which posts, photos, or content include tags mentioning you.
-                    <br />
-                    Stay connected to what others are sharing about you.
-                  </>
+                  isMyProfile ? (
+                    <>
+                      Find out which posts, photos, or content include tags mentioning you.
+                      <br />
+                      Stay connected to what others are sharing about you.
+                    </>
+                  ) : (
+                    'There are no tags to show'
+                  )
                 }
               >
                 <div className="absolute top-12 z-0">
