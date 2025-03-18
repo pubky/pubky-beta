@@ -1184,22 +1184,32 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
   });
 
   const createTag = withAuth(async (authorId: string, postId: string, label: string): Promise<boolean> => {
-    const postUri = postUriBuilder(authorId, postId);
-    const result = specsBuilder!.createTag(postUri, label);
+    try {
+      const postUri = postUriBuilder(authorId, postId);
+      const result = specsBuilder!.createTag(postUri, label);
 
-    await homeserver.put(result.meta.url, JSON.stringify(result.tag.toJson()));
+      await homeserver.put(result.meta.url, JSON.stringify(result.tag.toJson()));
 
-    return true;
+      return true;
+    } catch (error) {
+      handleError(error, 'createTag');
+      return false;
+    }
   });
 
   const deleteTag = withAuth(async (authorId: string, postId: string, tagLabel: string): Promise<boolean> => {
-    // Compute tag URL and ID based on tag object content using the builder
-    const uriPost = postUriBuilder(authorId, postId);
-    const result = specsBuilder!.createTag(uriPost, tagLabel);
+    try {
+      // Compute tag URL and ID based on tag object content using the builder
+      const uriPost = postUriBuilder(authorId, postId);
+      const result = specsBuilder!.createTag(uriPost, tagLabel);
 
-    await homeserver.del(result.meta.url);
+      await homeserver.del(result.meta.url);
 
-    return true;
+      return true;
+    } catch (error) {
+      handleError(error, 'deleteTag');
+      return false;
+    }
   });
 
   const createTagProfile = withAuth(async (userId: string, label: string): Promise<boolean> => {
