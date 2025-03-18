@@ -3,19 +3,70 @@ import { UserView, UserCounts, UserDetails, Relationship, UserTag, Taggers } fro
 const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
 const BASE_URL = `${NEXT_PUBLIC_NEXUS}/v0`;
 
+// Singleton cache implementation
+class UserProfileCache {
+  private static instance: UserProfileCache;
+  private cache: Map<string, UserView>;
+
+  private constructor() {
+    this.cache = new Map();
+  }
+
+  public static getInstance(): UserProfileCache {
+    if (!UserProfileCache.instance) {
+      UserProfileCache.instance = new UserProfileCache();
+    }
+    return UserProfileCache.instance;
+  }
+
+  public get(key: string): UserView | undefined {
+    return this.cache.get(key);
+  }
+
+  public set(key: string, value: UserView): void {
+    this.cache.set(key, value);
+  }
+
+  public clear(): void {
+    this.cache.clear();
+  }
+  public count(): number {
+    return this.cache.size;
+  }
+}
+
 // User profile
 export async function getUserProfile(userId: string, viewerId: string): Promise<UserView> {
   if (!userId) throw new Error('User ID is required');
 
-  const queryParams = new URLSearchParams();
+  const cache = UserProfileCache.getInstance();
+  console.log(cache.count());
+  // Check cache first
+  const cachedUser = cache.get(userId);
+  if (cachedUser) {
+    console.log('Cache hit for user:', userId);
+    return cachedUser;
+  }
+  console.log('Cache miss for user:', userId);
 
+  const queryParams = new URLSearchParams();
   if (viewerId) queryParams.append('viewer_id', viewerId);
 
   const response = await fetch(`${BASE_URL}/user/${userId}?${queryParams}`);
 
   if (!response.ok) throw new Error('Failed to fetch user profile');
 
-  return response.json();
+  const userData = await response.json();
+
+  // Store in cache
+  cache.set(userId, userData);
+
+  return userData;
+}
+
+// Function to clear the cache if needed
+export function clearUserProfileCache(): void {
+  UserProfileCache.getInstance().clear();
 }
 
 // User counts
