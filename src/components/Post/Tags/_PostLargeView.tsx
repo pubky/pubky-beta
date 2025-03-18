@@ -136,7 +136,7 @@ export function PostLargeView({ post }: { post: PostView }) {
 
             const extraImagesCount = tagObj?.taggers_count - displayedImages.length;
             const taggers = tagObj.taggers;
-            const hasAuthorTag = tagObj?.taggers.includes(localPost?.details?.author);
+            const hasAuthorTag = tagObj?.taggers.includes(pubky);
 
             return (
               <React.Fragment key={`${index}-${tagObj?.label}`}>
