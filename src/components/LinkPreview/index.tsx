@@ -131,7 +131,7 @@ export default function LinkPreviewer({ content, setQuote }: LinkPreviewerProps)
         </div>
       )}
       {preview && !videoId && !tweetId && !githubUrl && !spotifyUrl && (
-        <div className="flex w-full overflow-hidden justify-start -mt-2 -mb-6">
+        <div className="flex w-full overflow-hidden justify-start -mt-2">
           <PostUI.LinkPreview url={preview} />
         </div>
       )}

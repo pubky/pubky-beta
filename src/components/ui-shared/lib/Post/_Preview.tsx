@@ -35,14 +35,20 @@ function LinkPreview({ url }: { url: string }) {
 
         const validImage = image ? await isValidImage(image) : false;
 
-        setPreviewData({
+        const preview = {
           title,
           description,
           image: validImage ? image : null
-        });
-        setLoading(false);
+        };
+
+        if (preview.title || preview.description || preview.image) {
+          setPreviewData(preview);
+        } else {
+          setPreviewData(null);
+        }
       } catch (error) {
         console.error(error);
+      } finally {
         setLoading(false);
       }
     };
@@ -50,13 +56,8 @@ function LinkPreview({ url }: { url: string }) {
     fetchData();
   }, [url]);
 
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
-  if (!previewData) {
-    return <p>Failed to fetch link preview.</p>;
-  }
+  if (loading) return <p>Loading...</p>;
+  if (!previewData) return null;
 
   const handleClick = () => {
     window.open(url, '_blank');
@@ -76,14 +77,12 @@ function LinkPreview({ url }: { url: string }) {
           )}
           {previewData.description ? (
             <Typography.Body variant="small" className="break-all text-opacity-80 leading-5">
-              {' '}
               {previewData.description.length > 150
                 ? previewData.description.slice(0, 150) + '...'
                 : previewData.description}
             </Typography.Body>
           ) : (
             <Typography.Body variant="small" className="break-all text-opacity-80 leading-5">
-              {' '}
               {url.length > 60 ? url.slice(0, 60) + '...' : url}
             </Typography.Body>
           )}
