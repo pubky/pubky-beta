@@ -96,6 +96,7 @@ export default function LinkPreviewer({ content, setQuote }: LinkPreviewerProps)
           setTweetId('');
           setGithubUrl('');
           setSpotifyUrl('');
+          setQuote?.(undefined);
         }
       }, 100);
 
