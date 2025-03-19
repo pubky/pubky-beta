@@ -6,6 +6,7 @@ interface SeoMetadataParams {
   image?: string;
   url?: string;
   twitterHandle?: string;
+  statusBarStyle?: 'default' | 'black-translucent';
 }
 
 export function getSeoMetadata({
@@ -15,14 +16,22 @@ export function getSeoMetadata({
   icon = '/images/pubky-logo.svg',
   image = '/images/webp/pubky-seo.webp',
   url = 'https://pubky.app',
-  twitterHandle = '@getpubky'
+  twitterHandle = '@getpubky',
+  statusBarStyle = 'default'
 }: SeoMetadataParams) {
   return {
     title,
     description,
     keywords,
     icons: {
-      icon
+      icon,
+      apple: [
+        {
+          url: '/web-app-manifest-192x192.png',
+          sizes: '192x192',
+          type: 'image/png'
+        }
+      ]
     },
     openGraph: {
       title,
@@ -42,6 +51,11 @@ export function getSeoMetadata({
       handle: twitterHandle,
       site: twitterHandle,
       cardType: 'summary_large_image'
+    },
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: statusBarStyle,
+      title: title
     }
   };
 }
