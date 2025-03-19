@@ -101,7 +101,6 @@ export default function ContentCreateReply({ setShowModalReply, post, className 
         post={post}
         replyView
         repostView
-        repostView
         postType="replies"
         className="lg:mt-2 max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-webkit"
       />
