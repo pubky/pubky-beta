@@ -59,5 +59,5 @@ export default function ParentPost({ parentURI }: { parentURI: string }) {
     );
   }
 
-  return <Post post={parentPost.post} size="full" />;
+  return <Post post={parentPost.post} size="full" postType="timeline" />;
 }

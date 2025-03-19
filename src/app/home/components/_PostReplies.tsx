@@ -56,6 +56,7 @@ export const PostReplies = ({ post, layout, homeView = false, isMobile }: PostRe
               largeView={!isMobile && layout === 'wide'}
               line={Boolean(reply?.relationships?.replied)}
               homeView={homeView}
+              postType="replies"
             />
           ))}
           {repliesLeft > 0 && (

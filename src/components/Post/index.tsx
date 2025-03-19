@@ -5,7 +5,7 @@ import { Post as PostUI, Icon } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
 
 import { TLayouts, TSize } from '@/types';
-import { PostView } from '@/types/Post';
+import { PostType, PostView } from '@/types/Post';
 import { Utils } from '@social/utils-shared';
 import { usePubkyClientContext } from '@/contexts';
 import { getPost } from '@/services/postService';
@@ -27,6 +27,7 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   fullContent?: boolean;
   line?: boolean;
   lineStyle?: string;
+  postType: PostType;
 }
 
 export default function Post({
@@ -40,6 +41,7 @@ export default function Post({
   fullContent = false,
   line,
   lineStyle,
+  postType,
   ...rest
 }: PostProps) {
   const router = useRouter();
@@ -89,6 +91,7 @@ export default function Post({
             {post?.relationships?.reposted && !repostView ? (
               post?.details?.content || post?.details?.attachments ? (
                 <Repost.Blank
+                  postType={postType}
                   post={post}
                   repostedPost={repostedPost}
                   loadingRepostedPost={loadingRepostedPost}
@@ -133,6 +136,7 @@ export default function Post({
                 lineStyle={lineStyle}
                 repostView={repostView}
                 replyView={replyView}
+                postType={postType}
                 restClassName={rest.className}
               />
             )}

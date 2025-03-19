@@ -15,9 +15,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
-        <DynamicMeta />
+        <meta name="viewport" content="initial-scale=1" />
       </head>
-      <body className="overflow-x-hidden max-w-full">
+      <body className="overflow-x-hidden max-w-full min-w-[420px]">
         <PubkyClientWrapper>
           <FilterWrapper>
             <AlertWrapper>

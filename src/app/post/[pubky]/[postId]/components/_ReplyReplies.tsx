@@ -39,7 +39,13 @@ export const ReplyReplies = ({ reply }: { reply: PostView }) => {
     <>
       {displayedReplies.map((nestedReply) => (
         <div className="flex flex-col gap-3" key={nestedReply?.details?.id}>
-          <Post post={nestedReply} size="full" line={Boolean(reply?.relationships?.replied)} homeView />
+          <Post
+            post={nestedReply}
+            size="full"
+            line={Boolean(reply?.relationships?.replied)}
+            homeView
+            postType="replies"
+          />
         </div>
       ))}
       {repliesLeft > 0 && (

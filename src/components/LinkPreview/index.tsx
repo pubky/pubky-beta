@@ -115,7 +115,7 @@ export default function LinkPreviewer({ content, setQuote }: LinkPreviewerProps)
     <>
       {postPreview && (
         <div className="w-full mb-4">
-          <Post post={postPreview} repostView />
+          <Post post={postPreview} repostView postType="single" />
         </div>
       )}
       {videoId && (

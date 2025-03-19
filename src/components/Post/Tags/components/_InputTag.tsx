@@ -1,4 +1,4 @@
-import { PostView } from '@/types/Post';
+import { PostType, PostView } from '@/types/Post';
 import { useTagsLogic } from './TagsUtils';
 import { usePubkyClientContext } from '@/contexts';
 import EmojiPicker from '@/components/EmojiPicker';
@@ -6,9 +6,10 @@ import { Icon, Input } from '@social/ui-shared';
 
 interface InputTagProps {
   post: PostView;
+  postType: PostType;
 }
 
-export default function InputTag({ post }: InputTagProps) {
+export default function InputTag({ post, postType }: InputTagProps) {
   const {
     tagInput,
     setTagInput,
@@ -20,7 +21,7 @@ export default function InputTag({ post }: InputTagProps) {
     openModal,
     addTagInput,
     setAddTagInput
-  } = useTagsLogic(post);
+  } = useTagsLogic(post, postType);
   const { pubky } = usePubkyClientContext();
 
   return (

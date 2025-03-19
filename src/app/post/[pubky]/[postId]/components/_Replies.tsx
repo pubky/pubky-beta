@@ -36,8 +36,8 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
     undefined,
     replies.length > 0 ? replies[0]?.details?.indexed_at + 1 : undefined,
     {
-      enabled: true
-      // refetchInterval: 3000,
+      enabled: true,
+      refetchInterval: 20000
     }
   );
 
@@ -121,58 +121,54 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
     return () => observer.disconnect();
   }, [loaderRef.current, hasMore, isLoading, isInitialLoad, start, fetchReplies]);
 
-  useEffect(() => {
-    return () => setReplies([]);
-  }, []);
+  const fetchingPost = async (reply: PostView) => {
+    const nexusData = await getPost(reply.details.author, reply.details.id, pubky ?? '', undefined, undefined);
 
-  useEffect(() => {
-    const fetchNexusData = async () => {
-      if (!replies.length) return;
-
-      const homeserverReplies = replies.filter((reply) => reply.cached === 'homeserver' || reply.cached === undefined);
-      if (!homeserverReplies.length) return;
-
-      try {
-        const nexusData = await getPost(
-          homeserverReplies[0].details.author,
-          homeserverReplies[0].details.id,
-          pubky ?? '',
-          undefined,
-          undefined
-        );
-
-        if (!nexusData) return;
-
-        // Update replies with nexus data
-        setReplies((prev) => {
-          const existingReply = prev.find((p) => p.details.id === nexusData.details.id);
-
-          if (existingReply) {
-            return prev.map((p) => (p.details.id === nexusData.details.id ? nexusData : p));
-          }
-
-          return prev;
-        });
-
-        // Update local replies as well
-        setRepliesLocal((prev) => {
-          const existingReply = prev.find((p) => p.details.id === nexusData.details.id);
-
-          if (existingReply) {
-            return prev.map((p) => (p.details.id === nexusData.details.id ? nexusData : p));
-          }
-
-          return prev;
-        });
-      } catch (error) {
-        console.log('Error fetching Nexus data:', error);
+    if (!nexusData) return;
+    // Update replies with nexus data
+    setReplies((prev) => {
+      const existingReply = prev.find((p) => p.details.id === nexusData.details.id);
+      if (existingReply) {
+        return prev.map((p) => (p.details.id === nexusData.details.id ? nexusData : p));
       }
-    };
+      return prev;
+    });
+    // Update local replies as well
+    setRepliesLocal((prev) => {
+      const existingReply = prev.find((p) => p.details.id === nexusData.details.id);
+      if (existingReply) {
+        return prev.map((p) => (p.details.id === nexusData.details.id ? nexusData : p));
+      }
+      return prev;
+    });
+  };
 
-    const interval = setInterval(fetchNexusData, 2000); // Poll every 2 seconds
+  const fetchNexusData = async () => {
+    if (!replies.length) return;
 
-    return () => clearInterval(interval);
-  }, [replies, pubky]);
+    const homeserverReplies = replies.filter((reply) => reply?.cached === 'homeserver');
+
+    if (!homeserverReplies.length) return;
+
+    const promises = homeserverReplies.map(async (reply) => {
+      return fetchingPost(reply);
+    });
+
+    try {
+      await Promise.all(promises);
+    } catch (error) {
+      // try again after 2 seconds
+      console.log('Error fetching Nexus data:', error);
+      setTimeout(() => {
+        fetchNexusData();
+        console.log('try again');
+      }, 2000);
+    }
+  };
+
+  useEffect(() => {
+    fetchNexusData();
+  }, [replies]);
 
   return (
     <>
@@ -187,7 +183,7 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
         <div className="flex-col gap-3 inline-flex w-full mt-3">
           {replies.map((reply) => (
             <div key={`reply-${reply.details.id}`} className="flex flex-col gap-3">
-              <Post post={reply} />
+              <Post post={reply} postType="replies" />
               {reply.counts?.replies > 0 && <ReplyReplies reply={reply} />}
             </div>
           ))}

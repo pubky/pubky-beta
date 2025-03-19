@@ -35,10 +35,17 @@ export default function Participants({ author }: { author: string }) {
 
   const fetchParticipants = async () => {
     if (!Array.isArray(replies) || replies.length === 0) return;
-    setInitLoadingFollowers(true);
 
     try {
       const uniqueAuthors = [...new Set(replies.map((reply) => reply.details.author))];
+
+      // Check if we have any new authors that aren't in our current participants list
+      const currentParticipantIds = new Set(participants.map((p) => p.details.id));
+      const hasNewParticipants = uniqueAuthors.some((authorId) => !currentParticipantIds.has(authorId));
+
+      if (!hasNewParticipants) return;
+
+      setInitLoadingFollowers(true);
 
       const profiles = await Promise.all(uniqueAuthors.map((authorId) => getUserProfile(authorId, pubky ?? '')));
 
@@ -55,7 +62,6 @@ export default function Participants({ author }: { author: string }) {
       );
 
       setParticipants(filteredProfiles);
-
       setFollowedUser((prevState) => ({ ...prevState, ...followedMap }));
     } catch (error) {
       console.error('Error fetching participants:', error);

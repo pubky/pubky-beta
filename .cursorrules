@@ -1,0 +1,32 @@
+# Cursor Rules
+
+# Language rules
+
+- All code and comments must be written in English
+- Variable names, function names, and class names must be in English
+- Documentation must be in English
+
+# Code style rules
+
+- Use camelCase for variable and function names
+- Use PascalCase for class and component names
+- Use descriptive names for variables, functions, and classes
+- Avoid abbreviations unless they are widely understood
+- Add appropriate comments to explain complex logic
+
+# TypeScript rules
+
+- Use TypeScript types for all variables, function parameters, and return values
+- Avoid using 'any' type unless absolutely necessary
+- Use interfaces for object types
+- Use enums for fixed sets of values
+
+# React rules
+
+- Use functional components with hooks instead of class components
+- Use React.FC for component types
+- Use proper prop types for components
+- Use destructuring for props
+- Use useState and useEffect hooks appropriately
+- Use custom hooks for reusable logic
+- Use return early pattern for functions

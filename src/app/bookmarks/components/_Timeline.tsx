@@ -13,9 +13,8 @@ import Image from 'next/image';
 
 export const Timeline = () => {
   const limit = 10;
-  const { pubky, addBookmark, deleteBookmark } = usePubkyClientContext();
+  const { pubky, addBookmark, deleteBookmark, setTimeline, timeline } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
-  const [timeline, setTimeline] = useState<PostView[]>([]);
   const [start, setStart] = useState<number | undefined>(undefined);
   const [skip, setSkip] = useState<number>(0);
   const [fetching, setFetching] = useState<boolean>(false);
@@ -69,14 +68,6 @@ export const Timeline = () => {
 
   const loader = useInfiniteScroll(fetchPosts, isLoading);
 
-  useEffect(() => {
-    setStart(undefined);
-    setSkip(0);
-    setTimeline([]);
-    setFetching(false);
-    fetchPosts();
-  }, [sort, content]);
-
   const handleAddBookmark = async (postId: string, authorId: string) => {
     try {
       setLoadingBookmarks(true);
@@ -112,6 +103,18 @@ export const Timeline = () => {
   };
 
   useEffect(() => {
+    setTimeline(data as PostView[]);
+  }, [data]);
+
+  useEffect(() => {
+    setStart(undefined);
+    setSkip(0);
+    setTimeline([]);
+    setFetching(false);
+    fetchPosts();
+  }, [sort, content]);
+
+  useEffect(() => {
     if (timeline.length > 0) {
       const bookmarkedPost = timeline.find((post) => post?.bookmark?.id);
       setIsBookmarked(bookmarkedPost?.bookmark?.id ?? '');
@@ -123,7 +126,12 @@ export const Timeline = () => {
       {timeline.map((post) => (
         <div key={post.details.id} className="flex flex-col">
           <div className="flex gap-2 items-center">
-            <Post largeView={!isMobile && layout === 'wide'} key={`post-${post.details.id}`} post={post} />
+            <Post
+              largeView={!isMobile && layout === 'wide'}
+              key={`post-${post.details.id}`}
+              post={post}
+              postType="timeline"
+            />
             {post?.details?.content === '[DELETED]' && (
               <>
                 {loadingBookmarks ? (

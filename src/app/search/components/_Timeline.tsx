@@ -12,8 +12,7 @@ import Image from 'next/image';
 
 export const Timeline = () => {
   const limit = 10;
-  const { pubky, searchTags, mutedUsers } = usePubkyClientContext();
-  const [timeline, setTimeline] = useState<PostView[]>([]);
+  const { pubky, searchTags, mutedUsers, setTimeline, timeline } = usePubkyClientContext();
   const [start, setStart] = useState<number | undefined>(undefined);
   const [skip, setSkip] = useState<number>(0);
   const [fetching, setFetching] = useState<boolean>(false);
@@ -73,6 +72,12 @@ export const Timeline = () => {
   const loader = useInfiniteScroll(fetchPosts, isLoading);
 
   useEffect(() => {
+    if (data) {
+      setTimeline(data as PostView[]);
+    }
+  }, [data]);
+
+  useEffect(() => {
     setStart(undefined);
     setSkip(0);
     setTimeline([]);
@@ -84,7 +89,12 @@ export const Timeline = () => {
     <div className="flex flex-col gap-3">
       {timeline.map((post) => (
         <div key={post.details.id} className="flex gap-2 items-center">
-          <Post largeView={!isMobile && layout === 'wide'} key={`post-${post.details.id}`} post={post} />
+          <Post
+            largeView={!isMobile && layout === 'wide'}
+            key={`post-${post.details.id}`}
+            post={post}
+            postType="timeline"
+          />
         </div>
       ))}
       {(isLoading || fetching) && (

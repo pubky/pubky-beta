@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Icon, Button, Post as PostUI } from '@social/ui-shared';
 import { useAlertContext, useModal, usePubkyClientContext, useToastContext } from '@/contexts';
-import { PostView } from '@/types/Post';
+import { PostType, PostView } from '@/types/Post';
 import { useUserProfile } from '@/hooks/useUser';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import Tooltip from '../Tooltip';
@@ -12,6 +12,7 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
   repost?: PostView;
   deleteRepost?: boolean;
+  postType: PostType;
 }
 
 const BookmarkButton = ({
@@ -82,7 +83,7 @@ const MenuButton = ({ post, repost }: { post: PostView; repost?: PostView }) => 
   );
 };
 
-export default function Actions({ post, repost, deleteRepost = false }: PostProps) {
+export default function Actions({ post, repost, deleteRepost = false, postType }: PostProps) {
   const { pubky } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const { openModal, isOpen } = useModal();
@@ -159,15 +160,15 @@ export default function Actions({ post, repost, deleteRepost = false }: PostProp
   };
 
   const handleOpenModal = () => {
-    openModal('tags', { post });
+    openModal('tags', { post, postType });
   };
 
-  // Update post in Modal when post.tags changes
-  useEffect(() => {
-    if (isOpen('tags')) {
-      handleOpenModal();
-    }
-  }, [post?.tags]);
+  // // Update post in Modal when post.tags changes
+  // useEffect(() => {
+  //   if (isOpen('tags')) {
+  //     handleOpenModal();
+  //   }
+  // }, [post?.tags]);
 
   return (
     <div className="mt-3">

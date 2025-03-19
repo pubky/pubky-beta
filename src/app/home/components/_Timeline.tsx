@@ -213,7 +213,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
         (post) =>
           post?.details?.content !== '[DELETED]' && (
             <div key={post.details.id} className="flex flex-col">
-              <Post largeView={!isMobile && layout === 'wide'} post={post} />
+              <Post largeView={!isMobile && layout === 'wide'} post={post} postType="timeline" />
               {post?.counts?.replies > 0 && <PostReplies isMobile={isMobile} homeView post={post} layout={layout} />}
             </div>
           )

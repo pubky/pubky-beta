@@ -3,7 +3,7 @@ import { Icon, Post as PostUI } from '@social/ui-shared';
 import Header from './_Header';
 import Content from './_Content';
 import Actions from './_Actions';
-import { PostView } from '@/types/Post';
+import { PostType, PostView } from '@/types/Post';
 import Tags from './Tags';
 
 interface MainPostContentProps {
@@ -15,6 +15,7 @@ interface MainPostContentProps {
   repostView: boolean;
   replyView?: boolean;
   restClassName?: string;
+  postType: PostType;
 }
 
 export default function MainPostContent({
@@ -25,7 +26,8 @@ export default function MainPostContent({
   lineStyle,
   repostView,
   replyView,
-  restClassName
+  restClassName,
+  postType
 }: MainPostContentProps) {
   const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-full border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[0.8px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[0.5px]`;
 
@@ -49,12 +51,12 @@ export default function MainPostContent({
           </div>
           <div>
             <div className={`flex flex-col md:flex-row ${largeView ? '' : 'justify-between'}`}>
-              {!repostView && <Tags.Standard largeView={largeView} post={post} />}
-              {!repostView && <Actions post={post} />}
+              {!repostView && <Tags.Standard largeView={largeView} post={post} postType={postType} />}
+              {!repostView && <Actions post={post} postType={postType} />}
             </div>
           </div>
         </div>
-        {largeView && <Tags.LargeView post={post} />}
+        {largeView && <Tags.LargeView post={post} postType={postType} />}
       </PostUI.MainCard>
     </div>
   );
