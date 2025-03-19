@@ -82,7 +82,7 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
         <ContentNotFound
           icon={<Icon.Note size="48" color="#C8FF00" />}
           title="No posts yet"
-          description={isMyProfile ? 'Start writing your first post.' : 'There are no posts to show'}
+          description={isMyProfile ? 'Start writing your first post.' : 'There are no posts to show.'}
         >
           {isMyProfile && (
             <Button.Medium
