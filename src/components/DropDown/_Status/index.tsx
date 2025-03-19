@@ -25,7 +25,8 @@ export default function Status({ status, subtitle }: StatusProps) {
   });
 
   useEffect(() => {
-    const emojiRegex = /(\p{Emoji_Presentation}|\p{Emoji}\uFE0F|\p{Emoji_Modifier_Base})(\p{Emoji_Modifier})?/gu;
+    const emojiRegex = /\p{RI}\p{RI}|\p{Extended_Pictographic}(?:\u200D\p{Extended_Pictographic})*/gu;
+
     if (status && emojiRegex.test(status)) {
       const emojiMatch = status.match(emojiRegex);
       if (emojiMatch) {
