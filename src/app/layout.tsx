@@ -1,5 +1,5 @@
 import './global.css';
-import DynamicMeta from '@/components/DynamicMeta';
+import { getViewport, getSeoMetadata, getPWAConfig, getPWATags } from '@/components/HeaderSEO';
 
 import {
   AlertWrapper,
@@ -11,12 +11,20 @@ import {
 } from '@/contexts';
 import { ProtectedRoutes } from '@/components';
 
+export const viewport = getViewport();
+
+export const metadata = {
+  ...getSeoMetadata({
+    title: 'Pubky.app | Unlock the web',
+    description: 'Unlock the web. Your keys, your content, your rules.'
+  }),
+  ...getPWAConfig()
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <head>
-        <meta name="viewport" content="initial-scale=1" />
-      </head>
+      <head>{getPWATags()}</head>
       <body className="overflow-x-hidden max-w-full min-w-[420px]">
         <PubkyClientWrapper>
           <FilterWrapper>

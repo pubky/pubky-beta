@@ -38,17 +38,16 @@ const MetaTags = ({ username, description, url, image, video }: MetaTagsProps) =
       )}
       {!video && <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />}
 
-      {/* iOS Meta Tags */}
+      {/* iOS and PWA Meta Tags */}
       <meta name="apple-mobile-web-app-capable" content="yes" />
       <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       <meta name="apple-mobile-web-app-title" content="Pubky.app" />
-      <link rel="apple-touch-icon" href="/web-app-manifest-192x192.png" />
       <link rel="apple-touch-icon" sizes="180x180" href="/web-app-manifest-192x192.png" />
-      <link rel="apple-touch-icon" sizes="152x152" href="/web-app-manifest-192x192.png" />
-      <link rel="apple-touch-icon" sizes="120x120" href="/web-app-manifest-192x192.png" />
-      <link rel="apple-touch-icon-precomposed" href="/web-app-manifest-192x192.png" />
-      <link rel="mask-icon" href="/images/pubky-logo.svg" color="#000000" />
-      <meta name="mobile-web-app-capable" content="yes" />
+      <link rel="icon" type="image/png" sizes="32x32" href="/web-app-manifest-192x192.png" />
+      <link rel="icon" type="image/png" sizes="16x16" href="/web-app-manifest-192x192.png" />
+      <link rel="manifest" href="/manifest.json" />
+      <link rel="shortcut icon" href="/web-app-manifest-192x192.png" />
+      <meta name="msapplication-TileColor" content="#000000" />
       <meta name="theme-color" content="#000000" />
       <meta
         name="viewport"
