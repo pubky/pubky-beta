@@ -10,8 +10,7 @@ import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 
 const RenderPosts = () => {
   const limit = 10;
-  const { pubky, mutedUsers } = usePubkyClientContext();
-  const [timeline, setTimeline] = useState<PostView[]>([]);
+  const { pubky, mutedUsers, timeline, setTimeline } = usePubkyClientContext();
   const [skip, setSkip] = useState<number>(0);
   const [fetching, setFetching] = useState<boolean>(false);
 
@@ -59,6 +58,12 @@ const RenderPosts = () => {
   };
 
   const loader = useInfiniteScroll(fetchPosts, isLoading);
+
+  useEffect(() => {
+    if (data) {
+      setTimeline(data as PostView[]);
+    }
+  }, [data]);
 
   useEffect(() => {
     setTimeline([]);
