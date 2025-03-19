@@ -380,7 +380,6 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
     const blobResult = specs!.createBlob(blobData);
 
     await homeserver.put(blobResult.meta.url, blobResult.blob.data);
-
     // 2. Create File Record
     const fileResult = specs!.createFile(file.name, blobResult.meta.url, file.type, file.size);
 
