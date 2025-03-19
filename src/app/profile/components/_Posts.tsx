@@ -12,6 +12,7 @@ import Image from 'next/image';
 export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   const limit = 10;
   const { pubky } = usePubkyClientContext();
+  const isMyProfile = !!(pubky === creatorPubky || !creatorPubky);
   const { openModal } = useModal();
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [start, setStart] = useState<number | undefined>(undefined);
@@ -81,15 +82,17 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
         <ContentNotFound
           icon={<Icon.Note size="48" color="#C8FF00" />}
           title="No posts yet"
-          description="Start writing your first post."
+          description={isMyProfile ? 'Start writing your first post.' : 'There are no posts to show.'}
         >
-          <Button.Medium
-            onClick={() => (pubky ? openModal('createPost') : openModal('join'))}
-            className="z-10 w-auto"
-            icon={<Icon.Plus size="24" />}
-          >
-            Create a Post
-          </Button.Medium>
+          {isMyProfile && (
+            <Button.Medium
+              onClick={() => (pubky ? openModal('createPost') : openModal('join'))}
+              className="z-10 w-auto"
+              icon={<Icon.Plus size="24" />}
+            >
+              Create a Post
+            </Button.Medium>
+          )}
           <div className="absolute top-12 z-0">
             <Image alt="not-found-posts" width={656} height={438} src="/images/webp/not-found/posts.webp" />
           </div>

@@ -203,7 +203,7 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
     const interval = setInterval(fetchNexusData, 2000); // Poll every 2 seconds
 
     return () => clearInterval(interval);
-  }, [newPosts, pubky, reach, sort, tagsFeed, start]);
+  }, [newPosts, pubky, reach, tagsFeed, sort, start]);
 
   return (
     <div id="timeline" className="flex flex-col gap-3">
@@ -237,9 +237,9 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
           }
         >
           <div className="flex gap-3 z-10 justify-center flex-wrap">
-            <Link href="/hot#popular">
+            <Link href="/hot#active">
               <Button.Medium icon={<Icon.UserPlus size="16" />} className="whitespace-nowrap">
-                Follow Popular Users
+                Follow Active Users
               </Button.Medium>
             </Link>
             <Link href="hot">

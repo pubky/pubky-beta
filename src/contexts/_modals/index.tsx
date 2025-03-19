@@ -74,13 +74,12 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
   };
 
   const renderModal = (modalType: string, modalId: string, props?: Record<string, any>) => {
-    const Component = isMobile ? BottomSheet[modalType] : Modal[modalType];
-    const componentProps = isMobile
-      ? { show: openModals[modalId], setShow: () => closeModal(modalId) }
-      : {
-          showModal: openModals[modalId],
-          setShowModal: () => closeModal(modalId)
-        };
+    const shouldUseModal = !isMobile || modalId === 'filesCarousel';
+    const Component = shouldUseModal ? Modal[modalType] : BottomSheet[modalType];
+
+    const componentProps = shouldUseModal
+      ? { showModal: openModals[modalId], setShowModal: () => closeModal(modalId) }
+      : { show: openModals[modalId], setShow: () => closeModal(modalId) };
 
     return Component ? <Component {...componentProps} {...props} /> : null;
   };

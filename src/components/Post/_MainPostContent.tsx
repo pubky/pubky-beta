@@ -13,6 +13,7 @@ interface MainPostContentProps {
   line?: boolean;
   lineStyle?: string;
   repostView: boolean;
+  replyView?: boolean;
   restClassName?: string;
 }
 
@@ -23,9 +24,10 @@ export default function MainPostContent({
   line,
   lineStyle,
   repostView,
+  replyView,
   restClassName
 }: MainPostContentProps) {
-  const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-full border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[0.5px]`;
+  const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-full border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[0.8px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[0.5px]`;
 
   return (
     <div className="flex items-center relative">
@@ -43,7 +45,7 @@ export default function MainPostContent({
         <div className="w-full flex-col justify-between inline-flex">
           <div>
             <Header post={post} largeView={largeView} repostView={repostView} />
-            <Content largeView={largeView} post={post} fullContent={fullContent} />
+            <Content replyView={replyView} largeView={largeView} post={post} fullContent={fullContent} />
           </div>
           <div>
             <div className={`flex flex-col md:flex-row ${largeView ? '' : 'justify-between'}`}>

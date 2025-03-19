@@ -13,7 +13,7 @@ export function Header() {
       <Components.HeaderMobile
         leftIcon={
           <div className="cursor-pointer" onClick={() => router.push('/profile')}>
-            <Icon.ArrowLeft size="20" />
+            <Icon.ArrowLeft size="24" />
           </div>
         }
       />

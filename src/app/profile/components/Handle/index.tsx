@@ -67,19 +67,21 @@ export default function Handle({ pubkey, profileUser, creatorPubky, ...rest }: H
               </Typography.Body>
             )}
           </div>
-          <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
-            <Buttons
-              creatorPubky={creatorPubky}
-              pubkey={pubkey}
-              initLoadingFollowed={initLoadingFollowed}
-              followed={followed}
-              loadingFollowed={loadingFollowed}
-              disposableAccount={disposableAccount}
-              setLoadingFollowed={setLoadingFollowed}
-              setFollowed={setFollowed}
-              profile={profileUser}
-            />
-            <Status creatorPubky={creatorPubky} status={(status || 'noStatus') as TStatus} />
+          <div className="flex flex-col lg:flex-row gap-3 justify-center lg:justify-start">
+            <div className="order-2 lg:order-none flex flex-wrap gap-3 justify-center lg:justify-start">
+              <Buttons
+                creatorPubky={creatorPubky}
+                pubkey={pubkey}
+                initLoadingFollowed={initLoadingFollowed}
+                followed={followed}
+                loadingFollowed={loadingFollowed}
+                disposableAccount={disposableAccount}
+                setLoadingFollowed={setLoadingFollowed}
+                setFollowed={setFollowed}
+                profile={profileUser}
+              />
+            </div>
+            <Status className="order-1" creatorPubky={creatorPubky} status={(status || 'noStatus') as TStatus} />
           </div>
         </div>
       ) : (

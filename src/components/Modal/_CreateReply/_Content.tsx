@@ -97,7 +97,12 @@ export default function ContentCreateReply({ setShowModalReply, post, className 
 
   return (
     <>
-      <Post post={post} repostView className="lg:mt-2 max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-webkit" />
+      <Post
+        post={post}
+        replyView
+        repostView
+        className="lg:mt-2 max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-webkit"
+      />
       <div className="flex items-center relative">
         <div className={`ml-[9px] hidden lg:flex absolute border-l-[1px] h-[49%] top-0 border-[#444447]`} />
         {lineHorizontalCSS}

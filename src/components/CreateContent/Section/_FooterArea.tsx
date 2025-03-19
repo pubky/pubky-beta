@@ -111,16 +111,22 @@ export default function FooterArea({
         return true;
       });
 
-      if (selectedFiles && selectedFiles.length + validFiles.length > 4) {
+      const totalFiles = (selectedFiles?.length || 0) + validFiles.length;
+      if (totalFiles > 4) {
         addAlert('Max 4 files only.', 'warning');
         return;
       }
 
       const newFiles = validFiles.slice(0, 4 - (selectedFiles?.length || 0));
-      filePreviews.forEach((preview) => URL.revokeObjectURL(preview));
+      const newPreviews = newFiles.map((file) => URL.createObjectURL(file));
+      const updatedPreviews = [...filePreviews, ...newPreviews].slice(0, 4);
 
       setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles].slice(0, 4));
-      setFilePreviews(newFiles.map((file) => URL.createObjectURL(file)));
+      setFilePreviews(updatedPreviews);
+
+      if (updatedPreviews.length < filePreviews.length) {
+        filePreviews.slice(updatedPreviews.length).forEach((preview) => URL.revokeObjectURL(preview));
+      }
     }
     event.target.value = '';
   };

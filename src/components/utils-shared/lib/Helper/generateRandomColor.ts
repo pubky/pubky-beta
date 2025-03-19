@@ -1,4 +1,4 @@
-export const generateRandomColor = (str: string) => {
+const generateRandomColor = (str: string) => {
   if (str.toLowerCase() === 'bitcoin') {
     return '#FF9900';
   }

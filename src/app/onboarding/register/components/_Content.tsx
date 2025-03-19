@@ -11,6 +11,7 @@ import { Links } from '@/types/Post';
 import { Utils } from '@social/utils-shared';
 import Link from 'next/link';
 import { processUserLinks } from './processUserLinks';
+import { getFile } from '@/services/fileService';
 
 interface FormErrors {
   [fieldName: string]: string[];
@@ -88,7 +89,8 @@ export default function Index() {
         }
 
         const response = await saveProfile(name, bio, image, linksObject);
-        if (response) router.push('/home');
+        const imageResponse = response && (await getFile(response.image));
+        if (response || (image && imageResponse)) router.push('/home');
       } catch (error) {
         console.log(error);
       } finally {

@@ -1,5 +1,5 @@
 import Content from './_Content';
-import Feeds from './_Feeds';
+import Feeds from './_Feed';
 import HotTagsReach from './_HotTagsReach';
 import Layout from './_Layout';
 import Reach from './_Reach';

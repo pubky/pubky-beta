@@ -10,7 +10,7 @@ import { UserTags } from '@/types/User';
 
 export default function Sidebar({ creatorPubky }: { creatorPubky?: string | null }) {
   const { pubky, profile } = usePubkyClientContext();
-  const userPubky = creatorPubky ?? pubky;
+  const userPubky = creatorPubky || pubky;
   const { data: profileUser, isLoading } = useUserProfile(userPubky ?? '', pubky ?? '');
   const name = creatorPubky ? profileUser?.details?.name || '' : profile?.name || '';
   const bio = creatorPubky ? profileUser?.details?.bio || 'No bio.' : profile?.bio || 'No bio.';

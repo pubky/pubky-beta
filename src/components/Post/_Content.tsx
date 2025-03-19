@@ -22,9 +22,17 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   largeView?: boolean;
   children?: React.ReactNode;
   repostView?: boolean;
+  replyView?: boolean;
 }
 
-export default function Content({ post, fullContent = false, largeView = false, children, repostView }: PostProps) {
+export default function Content({
+  post,
+  fullContent = false,
+  largeView = false,
+  children,
+  repostView,
+  replyView
+}: PostProps) {
   const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
   const BASE_URL = `${NEXT_PUBLIC_NEXUS}/static/files`;
   const isMobile = useIsMobile();
@@ -220,145 +228,173 @@ export default function Content({ post, fullContent = false, largeView = false, 
           </Link>
         )}
         <div>
-          {videoId && (
-            <div
-              onClick={(event) => event.stopPropagation()}
-              className="w-full max-w-[560px] relative border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden"
-            >
-              <iframe
-                width="100%"
-                height="315"
-                src={`https://www.youtube.com/embed/${videoId}`}
-                title="YouTube video player"
-                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              ></iframe>
-            </div>
-          )}
-          {preview && !videoId && !tweetId && !githubUrl && !spotifyUrl && (
-            <div onClick={(event) => event.stopPropagation()}>
-              <LinkPreview url={preview} />
-            </div>
-          )}
-          {tweetId && (
-            <div
-              onClick={(event) => event.stopPropagation()}
-              className="no-scrollbar w-full max-w-[300px] sm:max-w-[384px] overflow-y-auto"
-            >
-              <Tweet id={tweetId} />
-            </div>
-          )}
-          {githubUrl && (
-            <div onClick={(event) => event.stopPropagation()}>
-              <GitHub url={githubUrl} />
-            </div>
-          )}
-          {spotifyUrl && (
-            <div onClick={(event) => event.stopPropagation()} className="mt-4">
-              <Spotify link={spotifyUrl} />
-            </div>
-          )}
-          {fileContents.length > 0 && String(post?.details?.kind) !== PubkyAppPostKind[1].toLocaleLowerCase() && (
-            <div className="mt-4 flex flex-col gap-4">
-              {fileContents.some((file) => file?.content_type.startsWith('image')) && (
-                <div className="grid gap-1 overflow-hidden max-h-[544px]">
-                  {(() => {
-                    const imageFiles = fileContents.filter((file) => file?.content_type.startsWith('image'));
-
-                    let layoutClass = '';
-                    const widthImg = imageFiles.length === 1 ? 'w-auto md:min-w-[400px]' : 'w-full';
-                    if (imageFiles.length === 1) {
-                      layoutClass = 'grid-cols-1';
-                    } else if (imageFiles.length === 2) {
-                      layoutClass = 'grid-cols-2';
-                    } else if (imageFiles.length === 3) {
-                      layoutClass = 'grid-cols-2 grid-rows-2';
-                    } else {
-                      layoutClass = 'grid-cols-2 grid-rows-2';
-                    }
-
-                    return (
-                      <div className={`grid ${layoutClass} gap-1 max-h-[544px]`}>
-                        {imageFiles.map((file, index) => (
-                          <div
-                            key={index}
-                            className={`relative cursor-pointer ${
-                              imageFiles.length === 3 && index === 0 ? 'row-span-2 col-span-2 pb-1' : ''
-                            }`}
-                            style={{ height: imageFiles.length === 1 ? 'auto' : 'calc(544px / 2)' }}
-                          >
-                            <img
-                              src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                handleOpenModal(index);
-                              }}
-                              alt={`Fetched file ${index}`}
-                              className={`${widthImg} h-full max-h-[744px] object-cover rounded-[10px] overflow-hidden`}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    );
-                  })()}
-                </div>
-              )}
-
-              <div className="flex flex-col gap-4">
-                {fileContents
-                  .filter((file) => !file?.content_type.startsWith('image'))
-                  .map((file, index) => {
-                    const isVideo = file?.content_type.startsWith('video');
-                    const isPDF = file?.content_type === 'application/pdf';
-                    const isAudio = file?.content_type.startsWith('audio');
-                    const isSkeleton = file?.content_type === 'skeleton';
-
-                    return (
-                      <div key={index}>
-                        {isSkeleton ? (
-                          renderSkeleton()
-                        ) : isVideo ? (
-                          <video
-                            src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
-                            controls
-                            onClick={(event) => event.stopPropagation()}
-                            className="w-full md:min-w-[400px] h-auto max-w-full max-h-[744px] object-cover rounded-[10px] overflow-hidden"
-                          />
-                        ) : isPDF ? (
-                          <div
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              window.open(`${BASE_URL}/${JSON.parse(file?.urls).main}`, '_blank');
-                            }}
-                            className="flex gap-2 w-full justify-between items-center rounded-[10px] border p-4 border-white border-opacity-10 hover:border-opacity-30"
-                          >
-                            <div className="flex gap-2 items-center">
-                              <Icon.FileText size="20" />
-                              <Typography.Body className="text-opacity-80" variant="small-bold">
-                                {Utils.minifyText(
-                                  file?.name ?? `${BASE_URL}/${JSON.parse(file?.urls).main}`,
-                                  isMobile ? 20 : 60
-                                )}
-                              </Typography.Body>
-                            </div>
-                            <Button.Medium className="w-auto h-8 px-3 py-2" icon={<Icon.DownloadSimple size="16" />}>
-                              Download
-                            </Button.Medium>
-                          </div>
-                        ) : isAudio ? (
-                          <audio onClick={(event) => event.stopPropagation()} controls>
-                            <source src={`${BASE_URL}/${JSON.parse(file?.urls).main}`} type="audio/mpeg" />
-                            Browser does not support audio.
-                          </audio>
-                        ) : (
-                          <p className="text-gray-500">Unsupported file type</p>
-                        )}
-                      </div>
-                    );
-                  })}
+          <div>
+            {!replyView && (
+              <div>
+                {videoId && (
+                  <div
+                    onClick={(event) => event.stopPropagation()}
+                    className="w-full max-w-[560px] relative border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden"
+                  >
+                    <iframe
+                      width="100%"
+                      height="315"
+                      src={`https://www.youtube.com/embed/${videoId}`}
+                      title="YouTube video player"
+                      allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                )}
+                {preview && !videoId && !tweetId && !githubUrl && !spotifyUrl && (
+                  <div onClick={(event) => event.stopPropagation()}>
+                    <LinkPreview url={preview} />
+                  </div>
+                )}
+                {tweetId && (
+                  <div
+                    onClick={(event) => event.stopPropagation()}
+                    className="no-scrollbar w-full max-w-[300px] sm:max-w-[384px] overflow-y-auto"
+                  >
+                    <Tweet id={tweetId} />
+                  </div>
+                )}
+                {githubUrl && (
+                  <div onClick={(event) => event.stopPropagation()}>
+                    <GitHub url={githubUrl} />
+                  </div>
+                )}
+                {spotifyUrl && (
+                  <div onClick={(event) => event.stopPropagation()} className="mt-4">
+                    <Spotify link={spotifyUrl} />
+                  </div>
+                )}
               </div>
-            </div>
-          )}
+            )}
+
+            {fileContents.length > 0 && String(post?.details?.kind) !== PubkyAppPostKind[1].toLocaleLowerCase() && (
+              <div onClick={(event) => event.stopPropagation()} className="flex flex-col gap-4 mt-2">
+                {replyView ? (
+                  <div className="flex flex-col gap-2">
+                    {fileContents.map((file, index) => (
+                      <Link
+                        key={index}
+                        className="text-[#C8FF00] break-all"
+                        href={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {`${(BASE_URL + '/' + JSON.parse(file?.urls).main).slice(0, 12)}...${(BASE_URL + '/' + JSON.parse(file?.urls).main).slice(-12)}`}
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  <>
+                    {fileContents.some((file) => file?.content_type.startsWith('image')) && (
+                      <div className="grid gap-1 overflow-hidden max-h-[544px]">
+                        {(() => {
+                          const imageFiles = fileContents.filter((file) => file?.content_type.startsWith('image'));
+
+                          let layoutClass = '';
+                          const widthImg = imageFiles.length === 1 ? 'w-auto md:min-w-[400px]' : 'w-full';
+                          if (imageFiles.length === 1) {
+                            layoutClass = 'grid-cols-1';
+                          } else if (imageFiles.length === 2) {
+                            layoutClass = 'grid-cols-2';
+                          } else if (imageFiles.length === 3) {
+                            layoutClass = 'grid-cols-2 grid-rows-2';
+                          } else {
+                            layoutClass = 'grid-cols-2 grid-rows-2';
+                          }
+
+                          return (
+                            <div className={`grid ${layoutClass} gap-1 max-h-[544px]`}>
+                              {imageFiles.map((file, index) => (
+                                <div
+                                  key={index}
+                                  className={`relative cursor-pointer ${
+                                    imageFiles.length === 3 && index === 0 ? 'row-span-2 col-span-2 pb-1' : ''
+                                  }`}
+                                  style={{ height: imageFiles.length === 1 ? 'auto' : 'calc(544px / 2)' }}
+                                >
+                                  <img
+                                    src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
+                                    onClick={(event) => {
+                                      event.stopPropagation();
+                                      handleOpenModal(index);
+                                    }}
+                                    alt={`Fetched file ${index}`}
+                                    className={`${widthImg} h-full max-h-[544px] object-cover rounded-[10px] overflow-hidden`}
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          );
+                        })()}
+                      </div>
+                    )}
+
+                    <div className="flex flex-col gap-4">
+                      {fileContents
+                        .filter((file) => !file?.content_type.startsWith('image'))
+                        .map((file, index) => {
+                          const isVideo = file?.content_type.startsWith('video');
+                          const isPDF = file?.content_type === 'application/pdf';
+                          const isAudio = file?.content_type.startsWith('audio');
+                          const isSkeleton = file?.content_type === 'skeleton';
+
+                          return (
+                            <div key={index}>
+                              {isSkeleton ? (
+                                renderSkeleton()
+                              ) : isVideo ? (
+                                <video
+                                  src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
+                                  controls
+                                  onClick={(event) => event.stopPropagation()}
+                                  className="w-auto md:min-w-[400px] h-auto max-w-full max-h-[544px] object-cover rounded-[10px] overflow-hidden"
+                                />
+                              ) : isPDF ? (
+                                <div
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    window.open(`${BASE_URL}/${JSON.parse(file?.urls).main}`, '_blank');
+                                  }}
+                                  className="flex gap-2 w-full justify-between items-center rounded-[10px] border p-4 border-white border-opacity-10 hover:border-opacity-30"
+                                >
+                                  <div className="flex gap-2 items-center">
+                                    <Icon.FileText size="20" />
+                                    <Typography.Body className="text-opacity-80" variant="small-bold">
+                                      {Utils.minifyText(
+                                        file?.name ?? `${BASE_URL}/${JSON.parse(file?.urls).main}`,
+                                        isMobile ? 20 : 60
+                                      )}
+                                    </Typography.Body>
+                                  </div>
+                                  <Button.Medium
+                                    className="w-auto h-8 px-3 py-2"
+                                    icon={<Icon.DownloadSimple size="16" />}
+                                  >
+                                    Download
+                                  </Button.Medium>
+                                </div>
+                              ) : isAudio ? (
+                                <audio onClick={(event) => event.stopPropagation()} controls>
+                                  <source src={`${BASE_URL}/${JSON.parse(file?.urls).main}`} type="audio/mpeg" />
+                                  Browser does not support audio.
+                                </audio>
+                              ) : (
+                                <p className="text-gray-500">Unsupported file type</p>
+                              )}
+                            </div>
+                          );
+                        })}
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
 
           <div onClick={(event) => event.stopPropagation()}>{children}</div>
         </div>

@@ -143,10 +143,8 @@ export default function FilterTabs({
                 </Typography.Body>
               </div>
               {tab.key && (
-                <Typography.Body className="tracking-normal" variant="small-bold">
-                  <span id="counter" className="text-[13px] ml-2 text-white/30">
-                    {getTabNumber(tab.key)}
-                  </span>
+                <Typography.Body id="counter" className="text-[13px] ml-2 tracking-normal" variant="small-bold">
+                  {getTabNumber(tab.key)}
                 </Typography.Body>
               )}
             </div>

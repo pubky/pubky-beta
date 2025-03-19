@@ -331,6 +331,8 @@ export const useUtilsTag = ({ profileTags, setProfileTags, pubkyUser, user }: Ut
   };
 
   const addProfileTag = (tag: string) => {
+    if (!tag.trim()) return;
+
     try {
       setLoadingTags(tag);
       setLoading(true);

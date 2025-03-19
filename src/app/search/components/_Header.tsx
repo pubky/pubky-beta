@@ -14,7 +14,7 @@ export function Header() {
       <Components.HeaderMobile
         leftIcon={
           <div className="cursor-pointer" onClick={() => setDrawerFilterOpen(true)}>
-            <Icon.SlidersHorizontal size="20" />
+            <Icon.SlidersHorizontal size="24" />
           </div>
         }
       >

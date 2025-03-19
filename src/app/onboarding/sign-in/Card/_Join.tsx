@@ -17,13 +17,17 @@ export default function Join() {
   const router = useRouter();
   const { addToast } = useToastContext();
   const { addAlert } = useAlertContext();
-  const appLink = 'pubkyring://';
   const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
   const fallbackUrl = isIOS ? 'https://apps.apple.com/app' : 'https://play.google.com/store/apps';
   const [loginError, setLoginError] = useState('');
   const [authUrl, setAuthUrl] = useState('');
+  const [appLink, setAppLink] = useState('');
   const [qrSize, setQrSize] = useState(210);
   const canvasRef = useRef(null);
+
+  useEffect(() => {
+    setAppLink(`pubkyring://${authUrl}`);
+  }, [authUrl]);
 
   const openApp = () => {
     const newTab = window.open(appLink, '_blank');

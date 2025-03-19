@@ -77,7 +77,7 @@ export default function ContentEditArticle({
           content={contentEditArticle}
           setContent={setContentEditArticle}
           isValidContent={isValidContent}
-          maxLength={50000}
+          maxLength={40000}
           className={className}
           setIsValidContent={setIsValidContent}
           loading={sendingEditArticle}

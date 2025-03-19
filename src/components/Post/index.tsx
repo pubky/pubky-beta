@@ -17,6 +17,7 @@ import Repost from './Repost';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   repostView?: boolean;
+  replyView?: boolean;
   largeView?: boolean;
   homeView?: boolean;
   bookmark?: boolean;
@@ -30,6 +31,7 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export default function Post({
   repostView = false,
+  replyView = false,
   largeView = false,
   homeView = false,
   size = 'full',
@@ -130,6 +132,7 @@ export default function Post({
                 line={line}
                 lineStyle={lineStyle}
                 repostView={repostView}
+                replyView={replyView}
                 restClassName={rest.className}
               />
             )}

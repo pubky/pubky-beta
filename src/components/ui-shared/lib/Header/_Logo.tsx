@@ -7,7 +7,7 @@ interface HeaderLogoProps extends React.HTMLAttributes<HTMLAnchorElement> {
 
 export const Logo = ({ link = '/home', ...rest }: HeaderLogoProps) => {
   return (
-    <Link id="header-logo" {...rest} className="xl:-ml-1.5 outline-none" href={link}>
+    <Link id="header-logo" {...rest} className="outline-none" href={link}>
       <Icon.Pubky />
     </Link>
   );

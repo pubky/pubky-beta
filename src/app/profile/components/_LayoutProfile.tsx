@@ -49,7 +49,7 @@ export default function LayoutProfile({ children }: { children: React.ReactNode 
               uriImage={profile?.image}
               onClick={() => setIsAvatarOpen(true)}
             />
-            <Profile.Handle profileUser={userData} pubkey={pubky ?? ''} />
+            <Profile.Handle className="md:pt-5" profileUser={userData} pubkey={pubky ?? ''} />
           </div>
         </Content.Grid>
       </div>

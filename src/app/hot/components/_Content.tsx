@@ -25,7 +25,7 @@ export default function Index() {
     isError: isErrorInfluencers
   } = useStreamUsers(pubky ?? '', pubky ?? '', 'influencers', undefined, 5);
   const hotTags = data || [];
-  if (isError || isErrorInfluencers) console.error(isError && isErrorInfluencers);
+  if (isError || isErrorInfluencers) console.warn(isError && isErrorInfluencers);
   const [activeTab, setActiveTab] = useState(0);
 
   useEffect(() => {

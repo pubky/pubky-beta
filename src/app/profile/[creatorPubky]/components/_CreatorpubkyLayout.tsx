@@ -87,7 +87,12 @@ export default function CreatorpubkyLayout({
                   onClick={() => setIsAvatarOpen(true)}
                 />
               )}
-              <Profile.Handle profileUser={profile} pubkey={creatorPubky ?? ''} creatorPubky={creatorPubky} />
+              <Profile.Handle
+                className="md:pt-5"
+                profileUser={profile}
+                pubkey={creatorPubky ?? ''}
+                creatorPubky={creatorPubky}
+              />
             </div>
           </Content.Grid>
         </div>

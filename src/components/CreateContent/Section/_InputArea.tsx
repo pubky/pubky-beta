@@ -9,6 +9,7 @@ import { UserView } from '@/types/User';
 import { twMerge } from 'tailwind-merge';
 
 interface InputAreaProps extends React.HTMLAttributes<HTMLDivElement> {
+  textAreaRef?: React.RefObject<HTMLTextAreaElement>;
   selectedFiles?: File[];
   setSelectedFiles?: React.Dispatch<React.SetStateAction<File[]>>;
   content: string;
@@ -34,6 +35,7 @@ interface InputAreaProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export default function InputArea({
   id,
+  textAreaRef,
   selectedFiles,
   setSelectedFiles,
   content,
@@ -134,7 +136,7 @@ export default function InputArea({
   };
 
   const handleUserClick = (userId: string) => {
-    const regex = /@\w+/;
+    const regex = /@\S+/;
     const newContent = content.replace(regex, `pk:${userId}`);
 
     setContent(newContent);
@@ -190,6 +192,7 @@ export default function InputArea({
           onSelect={(e: React.SyntheticEvent<HTMLTextAreaElement>) => {
             setCursorPosition(e.currentTarget.selectionStart);
           }}
+          ref={textAreaRef}
           autoFocus={autoFocus}
           value={content}
           maxLength={maxLength}

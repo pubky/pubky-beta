@@ -76,6 +76,7 @@ export default function CreateContent({
   const { profile, pubky } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [showEmojis, setShowEmojis] = useState(false);
+  const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
@@ -179,25 +180,48 @@ export default function CreateContent({
   };
 
   useEffect(() => {
-    document.addEventListener('paste', handlePaste);
-
-    return () => {
-      document.removeEventListener('paste', handlePaste);
+    const handlePasteEvent = (event: ClipboardEvent) => {
+      if (textAreaRef.current && document.activeElement === textAreaRef.current) {
+        handlePaste(event);
+      }
     };
-  }, [selectedFiles, addAlert, textArea, setSelectedFiles, setFilePreviews]);
+
+    textAreaRef.current?.addEventListener('paste', handlePasteEvent);
+    return () => {
+      textAreaRef.current?.removeEventListener('paste', handlePasteEvent);
+    };
+  }, [selectedFiles, addAlert, setSelectedFiles, setFilePreviews]);
 
   const handlePaste = (event: ClipboardEvent) => {
     const items = event.clipboardData?.items;
+    const maxSizeInMB = 20;
+    const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+
     if (items) {
       for (let i = 0; i < items.length; i++) {
         const item = items[i];
         if (item.kind === 'file') {
           const file = item.getAsFile();
-          if (file && (file.type.startsWith('image/') || file.type.startsWith('video/'))) {
-            if (selectedFiles && selectedFiles.length < 4) {
-              const filePreview = URL.createObjectURL(file);
+          if (file) {
+            const isImage = file.type.startsWith('image/');
+            const isVideo = file.type.startsWith('video/');
+            const isValidType =
+              (isImage && Utils.supportedImageTypes.includes(file.type)) ||
+              (isVideo && Utils.supportedVideoTypes.includes(file.type));
 
-              setSelectedFiles && setSelectedFiles((prevFiles) => [...prevFiles, file]);
+            if (!isValidType) {
+              addAlert('File not supported', 'warning');
+              continue;
+            }
+
+            if (file.size > maxSizeInBytes) {
+              addAlert('The maximum allowed size is 20 MB', 'warning');
+              continue;
+            }
+
+            if (selectedFiles.length < 4) {
+              const filePreview = URL.createObjectURL(file);
+              setSelectedFiles((prevFiles) => [...prevFiles, file]);
               setFilePreviews((prevPreviews) => [...prevPreviews, filePreview]);
             } else {
               addAlert('Maximum of 4 files can be uploaded', 'warning');
@@ -221,7 +245,7 @@ export default function CreateContent({
       )}
     >
       <div ref={wrapperRef} className="w-full flex justify-between gap-3 items-start flex-col">
-        <div className={variant ? 'flex w-full gap-4' : 'w-full'}>
+        <div className={variant ? 'flex w-full gap-4 items-center' : 'w-full'}>
           <Section.UserArea
             uriPic={profile?.image ?? '/images/webp/Userpic.webp'}
             name={profile?.name ?? Utils.minifyPubky(pubky ?? '')}
@@ -229,6 +253,7 @@ export default function CreateContent({
             variant={variant}
           />
           <Section.InputArea
+            textAreaRef={textAreaRef}
             selectedFiles={selectedFiles}
             setSelectedFiles={setSelectedFiles}
             content={content}

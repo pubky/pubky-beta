@@ -115,7 +115,7 @@ export default function Header({ title }: HeaderProps) {
   return (
     <HeaderUI.Root className="justify-between hidden lg:flex">
       <div className="flex gap-4 justify-between items-center">
-        <div className="flex gap-4 xl:min-w-[175px]">
+        <div className="flex">
           <HeaderUI.Logo link={logoLink} />
           <HeaderUI.Title titleHeader={title} />
         </div>
