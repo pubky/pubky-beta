@@ -140,7 +140,7 @@ export default function FooterArea({
     }
 
     setArrayTags((prevTags) => {
-      if (prevTags.length >= 5) {
+      if (prevTags.length > 5) {
         setErrorTag(true);
         return prevTags;
       } else {
@@ -166,7 +166,7 @@ export default function FooterArea({
                       className="flex items-center"
                       onClick={() => {
                         !loading && setArrayTags && setArrayTags((prev) => prev.filter((item) => item !== tag));
-                        if (arrayTags.length <= 4) {
+                        if (arrayTags.length < 5) {
                           setErrorTag(false);
                         }
                       }}
@@ -222,7 +222,7 @@ export default function FooterArea({
 
                   {errorTag && addTagInput && (
                     <Typography.Body className="whitespace-nowrap text-[#e95164]" variant="small">
-                      Max 4 tags
+                      Max 6 tags
                     </Typography.Body>
                   )}
                 </>

@@ -27,7 +27,7 @@ export default function ContentTagCreatePost({ arrayTags, setArrayTags }: TagPro
     const trimmedTag = tag.trim();
     if (!trimmedTag || localTags.includes(trimmedTag)) return;
 
-    if (localTags.length >= 4) {
+    if (localTags.length > 5) {
       setTagsError(true);
       return;
     }
@@ -42,7 +42,7 @@ export default function ContentTagCreatePost({ arrayTags, setArrayTags }: TagPro
     const updatedTags = localTags.filter((_, index) => index !== indexToRemove);
     setLocalTags(updatedTags);
     setArrayTags(updatedTags);
-    if (updatedTags.length <= 4) setTagsError(false);
+    if (updatedTags.length < 5) setTagsError(false);
   };
 
   return (
@@ -106,7 +106,7 @@ export default function ContentTagCreatePost({ arrayTags, setArrayTags }: TagPro
       </div>
       {tagsError && (
         <Typography.Body variant="small" className="text-[#e95164]">
-          Max 4 tags
+          Max 6 tags
         </Typography.Body>
       )}
     </div>
