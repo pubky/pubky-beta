@@ -237,9 +237,9 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
           }
         >
           <div className="flex gap-3 z-10 justify-center flex-wrap">
-            <Link href="/hot#popular">
+            <Link href="/hot#active">
               <Button.Medium icon={<Icon.UserPlus size="16" />} className="whitespace-nowrap">
-                Follow Popular Users
+                Follow Active Users
               </Button.Medium>
             </Link>
             <Link href="hot">

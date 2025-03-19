@@ -65,9 +65,9 @@ const getCaseNotFoundMessages = (
             Who to Follow
           </Button.Medium>
         </Link>
-        <Link href="/hot#popular">
+        <Link href="/hot#active">
           <Button.Medium icon={<Icon.UserPlus size="16" />} className="whitespace-nowrap">
-            Popular Users
+            Active Users
           </Button.Medium>
         </Link>
       </div>
@@ -91,7 +91,7 @@ const getCaseNotFoundMessages = (
             Who to Follow
           </Button.Medium>
         </Link>
-        <Link href="/hot#popular">
+        <Link href="/hot#active">
           <Button.Medium icon={<Icon.UserPlus size="16" />} className="whitespace-nowrap">
             Popular Users
           </Button.Medium>

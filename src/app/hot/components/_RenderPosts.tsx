@@ -72,7 +72,7 @@ const RenderPosts = () => {
 
   return (
     <div className="flex flex-col gap-3" id="hot-posts">
-      <Typography.H2 className="hidden lg:block text-opacity-50 font-light">Hot Posts</Typography.H2>
+      <Typography.H2 className="hidden lg:block text-opacity-50 font-light">Trending Posts</Typography.H2>
       {timeline.map(
         (post) =>
           post?.details?.content !== '[DELETED]' && (
