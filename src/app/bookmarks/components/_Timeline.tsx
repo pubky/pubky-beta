@@ -13,9 +13,8 @@ import Image from 'next/image';
 
 export const Timeline = () => {
   const limit = 10;
-  const { pubky, addBookmark, deleteBookmark } = usePubkyClientContext();
+  const { pubky, addBookmark, deleteBookmark, setTimeline, timeline } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
-  const [timeline, setTimeline] = useState<PostView[]>([]);
   const [start, setStart] = useState<number | undefined>(undefined);
   const [skip, setSkip] = useState<number>(0);
   const [fetching, setFetching] = useState<boolean>(false);
@@ -69,14 +68,6 @@ export const Timeline = () => {
 
   const loader = useInfiniteScroll(fetchPosts, isLoading);
 
-  useEffect(() => {
-    setStart(undefined);
-    setSkip(0);
-    setTimeline([]);
-    setFetching(false);
-    fetchPosts();
-  }, [sort, content]);
-
   const handleAddBookmark = async (postId: string, authorId: string) => {
     try {
       setLoadingBookmarks(true);
@@ -110,6 +101,18 @@ export const Timeline = () => {
       setLoadingBookmarks(false);
     }
   };
+
+  useEffect(() => {
+    setTimeline(data as PostView[]);
+  }, [data]);
+
+  useEffect(() => {
+    setStart(undefined);
+    setSkip(0);
+    setTimeline([]);
+    setFetching(false);
+    fetchPosts();
+  }, [sort, content]);
 
   useEffect(() => {
     if (timeline.length > 0) {
