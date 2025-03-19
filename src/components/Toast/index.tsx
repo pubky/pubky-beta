@@ -18,7 +18,7 @@ export const Toast = ({ icon, title, children, variant = 'link', ...rest }: Mess
 
   useEffect(() => {
     setTimeout(() => setAnimateIn(true), 10);
-    const timeoutId = setTimeout(() => setAnimateIn(false), 1700);
+    const timeoutId = setTimeout(() => setAnimateIn(false), 3700);
 
     return () => clearTimeout(timeoutId);
   }, []);

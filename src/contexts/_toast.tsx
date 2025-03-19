@@ -34,7 +34,7 @@ export function ToastWrapper({ children }: { children: React.ReactNode }) {
       setTimeout(() => {
         setToasts((prev) => prev.filter((toast) => toast.id !== id));
       }, 300);
-    }, 2000);
+    }, 4000);
   };
 
   const iconToShow = (variant: ToastVariant) => {

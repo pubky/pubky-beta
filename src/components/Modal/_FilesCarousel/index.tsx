@@ -14,9 +14,8 @@ export default function FilesCarousel({ showModal, setShowModal, fileContents, c
     <Modal.Root
       show={showModal}
       closeModal={() => setShowModal(false)}
-      className="max-h-[90vh] overflow-y-auto overflow-x-hidden cursor-default scrollbar-thin scrollbar-webkit"
+      className="bg-transparent shadow-none p-0 border-none max-h-full overflow-y-auto overflow-x-hidden cursor-default scrollbar-thin scrollbar-webkit"
     >
-      <Modal.CloseAction onClick={() => setShowModal(false)} />
       <ContentFilesCarousel fileContents={fileContents} currentFileIndex={currentFileIndex} />
     </Modal.Root>
   );

@@ -273,7 +273,7 @@ export default function Content({
             )}
 
             {fileContents.length > 0 && String(post?.details?.kind) !== PubkyAppPostKind[1].toLocaleLowerCase() && (
-              <div onClick={(event) => event.stopPropagation()} className="flex flex-col gap-4">
+              <div onClick={(event) => event.stopPropagation()} className="flex flex-col gap-4 mt-2">
                 {replyView ? (
                   <div className="flex flex-col gap-2">
                     {fileContents.map((file, index) => (
@@ -324,7 +324,7 @@ export default function Content({
                                       handleOpenModal(index);
                                     }}
                                     alt={`Fetched file ${index}`}
-                                    className={`${widthImg} h-full max-h-[744px] object-cover rounded-[10px] overflow-hidden`}
+                                    className={`${widthImg} h-full max-h-[544px] object-cover rounded-[10px] overflow-hidden`}
                                   />
                                 </div>
                               ))}
@@ -352,7 +352,7 @@ export default function Content({
                                   src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
                                   controls
                                   onClick={(event) => event.stopPropagation()}
-                                  className="w-full md:min-w-[400px] h-auto max-w-full max-h-[744px] object-cover rounded-[10px] overflow-hidden"
+                                  className="w-auto md:min-w-[400px] h-auto max-w-full max-h-[544px] object-cover rounded-[10px] overflow-hidden"
                                 />
                               ) : isPDF ? (
                                 <div
