@@ -37,6 +37,13 @@ const MetaTags = ({ username, description, url, image, video }: MetaTagsProps) =
         image && <meta name="twitter:image" content={image} />
       )}
       {!video && <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />}
+
+      {/* iOS Meta Tags */}
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+      <meta name="apple-mobile-web-app-title" content="Pubky.app" />
+      <link rel="apple-touch-icon" href="/web-app-manifest-192x192.png" />
+      <link rel="apple-touch-startup-image" href="/web-app-manifest-512x512.png" />
     </Head>
   );
 };

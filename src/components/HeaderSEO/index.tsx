@@ -22,7 +22,14 @@ export function getSeoMetadata({
     description,
     keywords,
     icons: {
-      icon
+      icon,
+      apple: [
+        {
+          url: '/web-app-manifest-192x192.png',
+          sizes: '192x192',
+          type: 'image/png'
+        }
+      ]
     },
     openGraph: {
       title,
@@ -42,6 +49,11 @@ export function getSeoMetadata({
       handle: twitterHandle,
       site: twitterHandle,
       cardType: 'summary_large_image'
+    },
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: 'default',
+      title: 'Pubky.app'
     }
   };
 }
