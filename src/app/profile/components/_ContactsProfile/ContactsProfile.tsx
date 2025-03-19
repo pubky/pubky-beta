@@ -34,7 +34,7 @@ const getCaseNotFoundMessages = (
         Start posting and engaging with others to grow your followers.
       </>
     ) : (
-      'There are no followers to show'
+      'There are no followers to show.'
     ),
     content: isMyProfile && (
       <Button.Medium
