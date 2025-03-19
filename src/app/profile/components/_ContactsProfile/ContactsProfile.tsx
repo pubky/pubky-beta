@@ -82,7 +82,7 @@ const getCaseNotFoundMessages = (
         Start following Pubky users, you never know who might follow you back!
       </>
     ) : (
-      'There are no friends to show'
+      'There are no friends to show.'
     ),
     content: isMyProfile && (
       <div className="flex gap-3 z-10 justify-center flex-wrap">
