@@ -360,7 +360,7 @@ export default function ContentCreateArticle({ setShowModalArticle, setShowModal
                 searchedUsers={searchedUsers}
                 setSearchedUsers={setSearchedUsers}
                 setCursorPosition={setCursorPosition}
-                maxLength={30000}
+                maxLength={40000}
                 setIsError={setIsError}
                 largeView={!isMobile}
                 setIsValidContent={setIsValidContent}
