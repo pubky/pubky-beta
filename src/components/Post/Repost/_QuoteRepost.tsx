@@ -100,6 +100,7 @@ export default function Quote({
           <PostUI.Time>{Utils.timeAgo(post?.details?.indexed_at, isMobile)}</PostUI.Time>
         </PostUI.RepostCard>
         <Post
+          postType="single"
           repostedPost={repostedPost}
           loadingRepostedPost={loadingRepostedPost}
           largeView={largeView}

@@ -5,7 +5,7 @@ import Content from '../_Content';
 import Actions from '../_Actions';
 import Tags from '../Tags';
 
-import { PostView } from '@/types/Post';
+import { PostView, PostType } from '@/types/Post';
 import Post from './_RepostedPost';
 
 interface BlankProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -17,6 +17,7 @@ interface BlankProps extends React.HTMLAttributes<HTMLDivElement> {
   lineStyle?: string;
   largeView?: boolean;
   fullContent?: boolean;
+  postType: PostType;
 }
 
 export default function Blank({
@@ -28,6 +29,7 @@ export default function Blank({
   lineStyle,
   largeView,
   fullContent,
+  postType,
   ...rest
 }: BlankProps) {
   const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-full border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[0.5px]`;
@@ -61,14 +63,15 @@ export default function Blank({
             fullContent={fullContent}
             lineStyle={lineStyle}
             repostView
+            postType={postType}
             restClassName="mt-4"
           />
           <div className={`flex flex-col md:flex-row ${largeView ? 'gap-2' : 'justify-between'}`}>
-            {!repostView && <Tags.Standard largeView={largeView} post={post} />}
-            {!repostView && <Actions post={post} />}
+            {!repostView && <Tags.Standard largeView={largeView} post={post} postType={postType} />}
+            {!repostView && <Actions post={post} postType={postType} />}
           </div>
         </div>
-        {largeView && <Tags.LargeView post={post} />}
+        {largeView && <Tags.LargeView post={post} postType={postType} />}
       </PostUI.MainCard>
     </div>
   );

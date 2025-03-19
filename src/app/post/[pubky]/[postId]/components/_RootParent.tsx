@@ -138,7 +138,7 @@ export default function RootParent({
 
     return (
       <div key={parentURI}>
-        <Post homeView post={post.post} size="full" largeView={!isMobile} line={isLine} />
+        <Post homeView post={post.post} size="full" largeView={!isMobile} line={isLine} postType="timeline" />
       </div>
     );
   });

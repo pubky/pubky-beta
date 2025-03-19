@@ -155,6 +155,7 @@ export default function ContentCreateRepost({ setShowModalRepost, post, classNam
           <Post
             post={post}
             repostView
+            postType="timeline"
             className="mt-2 max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-webkit"
             //rounded-bl-none
           />

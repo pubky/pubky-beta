@@ -70,7 +70,7 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   return (
     <div className="flex flex-col gap-3">
       {timeline.map((post) => (
-        <Post key={`post-${post.details.id}`} post={post} />
+        <Post key={`post-${post.details.id}`} post={post} postType="timeline" />
       ))}
       {(isLoading || fetching) && (
         <div className="flex flex-col gap-3">

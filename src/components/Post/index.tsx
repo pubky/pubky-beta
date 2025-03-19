@@ -91,6 +91,7 @@ export default function Post({
             {post?.relationships?.reposted && !repostView ? (
               post?.details?.content || post?.details?.attachments ? (
                 <Repost.Blank
+                  postType={postType}
                   post={post}
                   repostedPost={repostedPost}
                   loadingRepostedPost={loadingRepostedPost}

@@ -77,7 +77,7 @@ const RenderPosts = () => {
         (post) =>
           post?.details?.content !== '[DELETED]' && (
             <div key={post.details.id} className="flex gap-2 items-center">
-              <Post key={`post-${post.details.id}`} post={post} />
+              <Post key={`post-${post.details.id}`} post={post} postType="timeline" />
             </div>
           )
       )}

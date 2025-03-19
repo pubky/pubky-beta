@@ -82,7 +82,7 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
             <div className={`ml-[9px] absolute border-l-[1px] h-[51%] -top-3 border-[#444447]`} />
             {lineHorizontalCSS}
             <div className="ml-[23px] w-full">
-              <Post post={post} />
+              <Post post={post} postType="replies" />
             </div>
           </div>
         </div>
