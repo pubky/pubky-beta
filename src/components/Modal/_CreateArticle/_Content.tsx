@@ -383,7 +383,7 @@ export default function ContentCreateArticle({ setShowModalArticle, setShowModal
               //setSelectedFiles={setSelectedFiles}
               //selectedFiles={selectedFiles}
               setArrayTags={setArrayTags}
-              maxLength={30000}
+              maxLength={40000}
               arrayTags={arrayTags}
               //setFilePreviews={setFilePreviews}
               showEmojis={showEmojis}
