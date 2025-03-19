@@ -43,8 +43,11 @@ const MetaTags = ({ username, description, url, image, video }: MetaTagsProps) =
       <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       <meta name="apple-mobile-web-app-title" content="Pubky.app" />
       <link rel="apple-touch-icon" href="/web-app-manifest-192x192.png" />
+      <link rel="apple-touch-icon" sizes="180x180" href="/web-app-manifest-192x192.png" />
+      <link rel="apple-touch-icon" sizes="152x152" href="/web-app-manifest-192x192.png" />
+      <link rel="apple-touch-icon" sizes="120x120" href="/web-app-manifest-192x192.png" />
       <link rel="apple-touch-icon-precomposed" href="/web-app-manifest-192x192.png" />
-      <link rel="mask-icon" href="/web-app-manifest-192x192.png" color="#000000" />
+      <link rel="mask-icon" href="/images/pubky-logo.svg" color="#000000" />
       <meta name="mobile-web-app-capable" content="yes" />
       <meta name="theme-color" content="#000000" />
       <meta
