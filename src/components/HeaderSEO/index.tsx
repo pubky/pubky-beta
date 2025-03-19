@@ -25,10 +25,31 @@ export function getSeoMetadata({
     keywords,
     icons: {
       icon,
+      shortcut: [{ url: icon }],
       apple: [
         {
           url: '/web-app-manifest-192x192.png',
           sizes: '192x192',
+          type: 'image/png'
+        },
+        {
+          url: '/web-app-manifest-512x512.png',
+          sizes: '512x512',
+          type: 'image/png'
+        },
+        {
+          url: '/web-app-manifest-192x192.png',
+          sizes: '180x180',
+          type: 'image/png'
+        },
+        {
+          url: '/web-app-manifest-192x192.png',
+          sizes: '152x152',
+          type: 'image/png'
+        },
+        {
+          url: '/web-app-manifest-192x192.png',
+          sizes: '120x120',
           type: 'image/png'
         }
       ]
@@ -55,7 +76,20 @@ export function getSeoMetadata({
     appleWebApp: {
       capable: true,
       statusBarStyle: statusBarStyle,
-      title: title
+      title: title,
+      startupImage: [
+        {
+          url: '/web-app-manifest-512x512.png',
+          media: '(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)'
+        }
+      ]
+    },
+    viewport: {
+      width: 'device-width',
+      initialScale: 1,
+      maximumScale: 1,
+      userScalable: false,
+      viewportFit: 'cover' as 'auto' | 'cover' | 'contain'
     }
   };
 }
