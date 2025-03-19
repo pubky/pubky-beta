@@ -1,4 +1,4 @@
-import { PostView } from '@/types/Post';
+import { PostType, PostView } from '@/types/Post';
 import { Button, Icon, PostUtil, SideCard, Typography } from '@social/ui-shared';
 import { useUtilsTag } from './_Utils';
 import { Utils } from '@social/utils-shared';
@@ -7,9 +7,10 @@ import { ImageByUri } from '@/components/ImageByUri';
 
 interface TagsProps {
   post: PostView;
+  postType: PostType;
 }
 
-export default function Tags({ post }: TagsProps) {
+export default function Tags({ post, postType }: TagsProps) {
   const {
     selectedTag,
     addTag,
@@ -30,7 +31,7 @@ export default function Tags({ post }: TagsProps) {
     loaderTaggers,
     loadingFollowers,
     hasMoreTaggers
-  } = useUtilsTag(post);
+  } = useUtilsTag(post, postType);
 
   return (
     <>

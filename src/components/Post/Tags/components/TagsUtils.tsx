@@ -1,22 +1,22 @@
 // TagsUtils.tsx
 import { useState, useEffect, useRef } from 'react';
 
-import { PostTag, PostView } from '@/types/Post';
+import { PostTag, PostType, PostView } from '@/types/Post';
 import { useAlertContext, useModal, usePubkyClientContext } from '@/contexts';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { getUserProfile } from '@/services/userService';
 
-export const useTagsLogic = (post: PostView) => {
+export const useTagsLogic = (post: PostView, postType: PostType) => {
   const [tags, setTags] = useState<PostTag[]>([]);
   const [tagInput, setTagInput] = useState('');
   const [showEmojis, setShowEmojis] = useState(false);
   const [loadingTags, setLoadingTags] = useState('');
   const [profileImages, setProfileImages] = useState({});
   const [addTagInput, setAddTagInput] = useState<boolean>(false);
-  const { pubky, setTimeline, createTag, deleteTag } = usePubkyClientContext();
+  const { pubky, setTimeline, createTag, deleteTag, setSinglePost, setReplies, replies } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
-  const { openModal } = useModal();
+  const { openModal, closeModal } = useModal();
   const isMobile = useIsMobile();
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
 
@@ -71,6 +71,30 @@ export const useTagsLogic = (post: PostView) => {
     }
 
     setTags(newTags);
+
+    if (postType === 'single') {
+      setSinglePost((prev) => ({
+        ...prev,
+        tags: newTags,
+        counts: { ...prev.counts, unique_tags: Math.max(0, prev.counts.unique_tags + uniqueTagsChange) }
+      }));
+    }
+
+    // if (postType === 'replies') {
+    setReplies((prev) =>
+      prev.map((p) =>
+        p.details.id === post.details.id
+          ? {
+              ...p,
+              tags: newTags,
+              counts: { ...p.counts, unique_tags: Math.max(0, p.counts.unique_tags + uniqueTagsChange) }
+            }
+          : p
+      )
+    );
+    // }
+
+    // if (postType === 'timeline') {
     setTimeline((prev) =>
       prev.map((p) =>
         p.details.id === post.details.id
@@ -85,6 +109,8 @@ export const useTagsLogic = (post: PostView) => {
           : p
       )
     );
+    // }
+    closeModal('tags');
   };
 
   const handleAddTag = async (tag: string) => {

@@ -84,7 +84,12 @@ export const Timeline = () => {
     <div className="flex flex-col gap-3">
       {timeline.map((post) => (
         <div key={post.details.id} className="flex gap-2 items-center">
-          <Post largeView={!isMobile && layout === 'wide'} key={`post-${post.details.id}`} post={post} />
+          <Post
+            largeView={!isMobile && layout === 'wide'}
+            key={`post-${post.details.id}`}
+            post={post}
+            postType="timeline"
+          />
         </div>
       ))}
       {(isLoading || fetching) && (

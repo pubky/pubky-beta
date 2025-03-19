@@ -121,10 +121,6 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
     return () => observer.disconnect();
   }, [loaderRef.current, hasMore, isLoading, isInitialLoad, start, fetchReplies]);
 
-  useEffect(() => {
-    return () => setReplies([]);
-  }, []);
-
   const fetchingPost = async (reply: PostView) => {
     const nexusData = await getPost(reply.details.author, reply.details.id, pubky ?? '', undefined, undefined);
 
@@ -187,7 +183,7 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
         <div className="flex-col gap-3 inline-flex w-full mt-3">
           {replies.map((reply) => (
             <div key={`reply-${reply.details.id}`} className="flex flex-col gap-3">
-              <Post post={reply} />
+              <Post post={reply} postType="replies" />
               {reply.counts?.replies > 0 && <ReplyReplies reply={reply} />}
             </div>
           ))}

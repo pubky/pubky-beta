@@ -2,7 +2,7 @@
 
 import Tooltip from '@/components/Tooltip';
 import { usePubkyClientContext } from '@/contexts';
-import { PostView } from '@/types/Post';
+import { PostType, PostView } from '@/types/Post';
 import { Icon, Post, PostUtil, Tooltip as TooltipUI, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { useState } from 'react';
@@ -11,11 +11,12 @@ import { useTagsLogic } from './TagsUtils';
 interface TagsProps {
   post: PostView;
   largeView: boolean;
+  postType: PostType;
 }
 
-export default function TagsStandard({ post, largeView }: TagsProps) {
+export default function TagsStandard({ post, largeView, postType }: TagsProps) {
   const [showTooltipTag, setShowTooltipTag] = useState<string | null>(null);
-  const { tags, loadingTags, handleAddTag, handleDeleteTag, openModal } = useTagsLogic(post);
+  const { tags, loadingTags, handleAddTag, handleDeleteTag, openModal } = useTagsLogic(post, postType);
 
   const { pubky } = usePubkyClientContext();
 

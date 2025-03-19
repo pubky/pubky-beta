@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { Typography, Post as PostUI, Icon } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { Post as PostComponent } from '@/components';
@@ -17,15 +18,33 @@ export function ValidPostContent({ postRef, data }) {
   const { pubky } = usePubkyClientContext();
   const user = useUserProfile(data?.details?.author, pubky ?? '');
 
+  const { setSinglePost, singlePost } = usePubkyClientContext();
+
+  useEffect(() => {
+    setSinglePost(data);
+
+    return () => {
+      setSinglePost(undefined);
+    };
+  }, [data]);
+
+  if (!singlePost) return null;
+
   return (
     <>
-      {data?.relationships?.replied && <Post.RootParent postRef={postRef} parentURI={data?.relationships?.replied} />}
+      {singlePost?.relationships?.replied && (
+        <Post.RootParent postRef={postRef} parentURI={singlePost?.relationships?.replied} />
+      )}
 
-      <div ref={postRef} key={data?.details?.uri}>
-        {data?.details?.kind === 'long' ? <LongPost data={data} user={user} /> : <NormalPost data={data} />}
+      <div ref={postRef} key={singlePost?.details?.uri}>
+        {singlePost?.details?.kind === 1 ? (
+          <LongPost data={singlePost} user={user} />
+        ) : (
+          <NormalPost data={singlePost} />
+        )}
       </div>
       <div className="mt-3">
-        <Post.PostRoot uri={data?.details.id} post={data} />
+        <Post.PostRoot uri={singlePost?.details.id} post={singlePost} />
       </div>
     </>
   );
@@ -52,6 +71,7 @@ const NormalPost = ({ data }) => {
         fullContent
         largeView={!isMobile}
         className={data?.relationships?.replied ? 'ml-6' : ''}
+        postType={'single'}
       />
     </div>
   );
@@ -108,7 +128,7 @@ const LongPost = ({ data, user }) => {
           }}
         ></div>
       </div>
-      <Tags.LargeView post={data} />
+      <Tags.LargeView post={data} postType="single" />
     </div>
   );
 };

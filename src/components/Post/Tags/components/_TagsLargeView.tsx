@@ -2,7 +2,7 @@
 
 import Tooltip from '@/components/Tooltip';
 import { usePubkyClientContext } from '@/contexts';
-import { PostView } from '@/types/Post';
+import { PostType, PostView } from '@/types/Post';
 import { Button, Icon, Post as PostUI, PostUtil, Tooltip as TooltipUI, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import React, { useRef, useState } from 'react';
@@ -13,13 +13,17 @@ import { ImageByUri } from '@/components/ImageByUri';
 
 interface TagsProps {
   post: PostView;
+  postType: PostType;
 }
 
-export default function TagsLargeView({ post }: TagsProps) {
+export default function TagsLargeView({ post, postType }: TagsProps) {
   const [showTooltipPostChecked, setShowTooltipPostChecked] = useState('');
   const [showTooltipProfile, setShowTooltipProfile] = useState<{ tagIndex: number; imageIndex: number } | null>(null);
   const isArticle = String(post?.details?.kind) === PubkyAppPostKind[1].toLocaleLowerCase();
-  const { tags, profileImages, loadingTags, handleAddTag, handleDeleteTag, openModal, isMobile } = useTagsLogic(post);
+  const { tags, profileImages, loadingTags, handleAddTag, handleDeleteTag, openModal, isMobile } = useTagsLogic(
+    post,
+    postType
+  );
   const { pubky } = usePubkyClientContext();
   const tooltipRef = useRef(null);
   const [tooltipPosition, setTooltipPosition] = useState<{ top: number; left: number } | null>(null);

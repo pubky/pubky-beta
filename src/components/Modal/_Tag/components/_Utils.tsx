@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
-import { PostTag, PostView } from '@/types/Post';
+import { PostTag, PostType, PostView } from '@/types/Post';
 import { getUserProfile } from '@/services/userService';
 import { UserView } from '@/types/User';
 import { useTagsPost } from '@/hooks/useTag';
@@ -9,10 +9,10 @@ import { usePostTagTaggers } from '@/hooks/useUser';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 import { useTagsLogic } from '@/components/Post/Tags/components/TagsUtils';
 
-export const useUtilsTag = (post: PostView) => {
+export const useUtilsTag = (post: PostView, postType: PostType) => {
   const { addAlert } = useAlertContext();
   const { pubky, follow, unfollow } = usePubkyClientContext();
-  const { handleAddTag, handleDeleteTag } = useTagsLogic(post);
+  const { handleAddTag, handleDeleteTag } = useTagsLogic(post, postType);
   const [tag, setTag] = useState('');
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));

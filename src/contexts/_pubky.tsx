@@ -135,6 +135,8 @@ type PubkyClientContextType = {
   newPosts: PostView[];
   setNewPosts: React.Dispatch<React.SetStateAction<PostView[]>>;
   deletedPosts: string[];
+  singlePost: PostView | undefined;
+  setSinglePost: React.Dispatch<React.SetStateAction<PostView | undefined>>;
 };
 
 const PubkyClientContext = createContext({} as PubkyClientContextType);
@@ -164,6 +166,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
   const [newPosts, setNewPosts] = useState<PostView[]>([]);
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [deletedPosts, setDeletedPosts] = useState<string[]>([]);
+  const [singlePost, setSinglePost] = useState<PostView | undefined>(undefined);
 
   useEffect(() => {
     init()
@@ -1300,7 +1303,9 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
         timestamp,
         setTimestamp,
         notificationPreferences,
-        setNotificationPreferences
+        setNotificationPreferences,
+        singlePost,
+        setSinglePost
       }}
     >
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>

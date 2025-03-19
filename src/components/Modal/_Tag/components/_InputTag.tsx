@@ -1,16 +1,20 @@
 import EmojiPicker from '@/components/EmojiPicker';
 import Post from '@/components/Post';
-import { PostView } from '@/types/Post';
+import { PostType, PostView } from '@/types/Post';
 import { Input, Typography } from '@social/ui-shared';
 import { useUtilsTag } from './_Utils';
 
 interface InputTagProps {
   post: PostView;
   tagsError: boolean | undefined;
+  postType: PostType;
 }
 
-export default function InputTag({ post, tagsError }: InputTagProps) {
-  const { tag, setTag, addTag, showEmojis, setShowEmojis, wrapperRefEmojis, loading, inputRef } = useUtilsTag(post);
+export default function InputTag({ post, tagsError, postType }: InputTagProps) {
+  const { tag, setTag, addTag, showEmojis, setShowEmojis, wrapperRefEmojis, loading, inputRef } = useUtilsTag(
+    post,
+    postType
+  );
 
   return (
     <div>
@@ -48,7 +52,7 @@ export default function InputTag({ post, tagsError }: InputTagProps) {
         />
       </div>
       <div className="mt-4 w-full md:w-[500px] hidden md:flex">
-        <Post post={post} repostView />
+        <Post post={post} repostView postType={postType} />
       </div>
       {tagsError && (
         <Typography.Body variant="small" className="text-[#e95164] mt-4">

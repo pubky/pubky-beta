@@ -81,3 +81,5 @@ export interface Links {
   url: string;
   placeHolder?: string;
 }
+
+export type PostType = 'timeline' | 'replies' | 'single' | 'repost' | 'parent';
