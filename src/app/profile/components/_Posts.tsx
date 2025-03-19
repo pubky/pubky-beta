@@ -11,10 +11,9 @@ import Image from 'next/image';
 
 export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   const limit = 10;
-  const { pubky } = usePubkyClientContext();
+  const { pubky, setTimeline, timeline } = usePubkyClientContext();
   const isMyProfile = !!(pubky === creatorPubky || !creatorPubky);
   const { openModal } = useModal();
-  const [timeline, setTimeline] = useState<PostView[]>([]);
   const [start, setStart] = useState<number | undefined>(undefined);
   const [fetching, setFetching] = useState<boolean>(false);
   const currentPubky = creatorPubky ?? pubky ?? '';
@@ -59,11 +58,23 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   };
 
   useEffect(() => {
+    if (data) {
+      setTimeline(data as PostView[]);
+    }
+  }, [data]);
+
+  useEffect(() => {
     setStart(undefined);
     setTimeline([]);
     setFetching(false);
     fetchPosts();
   }, [currentPubky]);
+
+  useEffect(() => {
+    return () => {
+      setTimeline([]);
+    };
+  }, []);
 
   const loader = useInfiniteScroll(fetchPosts, isLoading);
 
