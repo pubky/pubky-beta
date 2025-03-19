@@ -196,7 +196,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                       Stay connected to what others are sharing about you.
                     </>
                   ) : (
-                    'There are no tags to show'
+                    'There are no tags to show.'
                   )
                 }
               >
