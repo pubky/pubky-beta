@@ -56,7 +56,7 @@ const getCaseNotFoundMessages = (
         Stay updated on the topics and people that interest you.
       </>
     ) : (
-      'There are no following to show'
+      'There are no following to show.'
     ),
     content: isMyProfile && (
       <div className="flex gap-3 z-10 justify-center flex-wrap">
