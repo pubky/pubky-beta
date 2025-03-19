@@ -26,7 +26,6 @@ export default function MainPostContent({
   lineStyle,
   repostView,
   replyView,
-  restClassName
   restClassName,
   postType
 }: MainPostContentProps) {
