@@ -1,3 +1,6 @@
+'use client';
+
+import { useEffect } from 'react';
 import { Card } from '../Card';
 import { twMerge } from 'tailwind-merge';
 
@@ -7,7 +10,35 @@ interface RootModalProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
 }
 
+const modalStack: (() => void)[] = [];
+
+const handleGlobalKeyDown = (event: KeyboardEvent) => {
+  if (event.key === 'Escape' && modalStack.length > 0) {
+    const lastCloseModal = modalStack.pop();
+    lastCloseModal?.();
+  }
+};
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('keydown', handleGlobalKeyDown);
+}
+
 export const Root = ({ show = false, closeModal, children, ...rest }: RootModalProps) => {
+  useEffect(() => {
+    if (show) {
+      modalStack.push(closeModal);
+    }
+
+    return () => {
+      const index = modalStack.indexOf(closeModal);
+      if (index !== -1) {
+        modalStack.splice(index, 1);
+      }
+    };
+  }, [show, closeModal]);
+
+  if (!show) return null;
+
   return (
     <div className="flex justify-center items-center">
       <div
