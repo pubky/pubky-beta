@@ -6,6 +6,7 @@ interface SeoMetadataParams {
   image?: string;
   url?: string;
   twitterHandle?: string;
+  statusBarStyle?: 'default' | 'black-translucent';
 }
 
 export function getSeoMetadata({
@@ -15,7 +16,8 @@ export function getSeoMetadata({
   icon = '/images/pubky-logo.svg',
   image = '/images/webp/pubky-seo.webp',
   url = 'https://pubky.app',
-  twitterHandle = '@getpubky'
+  twitterHandle = '@getpubky',
+  statusBarStyle = 'default'
 }: SeoMetadataParams) {
   return {
     title,
@@ -52,8 +54,8 @@ export function getSeoMetadata({
     },
     appleWebApp: {
       capable: true,
-      statusBarStyle: 'default',
-      title: 'Pubky.app'
+      statusBarStyle: statusBarStyle,
+      title: title
     }
   };
 }
