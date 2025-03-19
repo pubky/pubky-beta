@@ -97,7 +97,7 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
         <ContentNotFound
           icon={<Icon.NoteBlank size="48" color="#C8FF00" />}
           title="No replies yet"
-          description={isMyProfile ? 'Start writing your first reply.' : 'There are no replies to show'}
+          description={isMyProfile ? 'Start writing your first reply.' : 'There are no replies to show.'}
         >
           <div className="absolute top-12 z-0">
             <Image alt="not-found-replies" width={656} height={438} src="/images/webp/not-found/posts.webp" />
