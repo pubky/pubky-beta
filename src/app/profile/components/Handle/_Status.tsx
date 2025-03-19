@@ -16,7 +16,7 @@ export default function Status({ creatorPubky, status }: StatusProps) {
   const isMobile = useIsMobile(1024);
 
   const extractEmojiAndText = (status: string) => {
-    const emojiRegex = /(\p{Emoji_Presentation}|\p{Emoji}\uFE0F|\p{Emoji_Modifier_Base})(\p{Emoji_Modifier})?/gu;
+    const emojiRegex = /\p{RI}\p{RI}|\p{Extended_Pictographic}(?:\u200D\p{Extended_Pictographic})*/gu;
     const emojiMatch = status.match(emojiRegex);
     if (emojiMatch) {
       const emoji = emojiMatch[0];
