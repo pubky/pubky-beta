@@ -56,7 +56,7 @@ export default function InputTag({ post, tagsError, postType }: InputTagProps) {
       </div>
       {tagsError && (
         <Typography.Body variant="small" className="text-[#e95164] mt-4">
-          Max 4 tags
+          Max 6 tags
         </Typography.Body>
       )}
     </div>

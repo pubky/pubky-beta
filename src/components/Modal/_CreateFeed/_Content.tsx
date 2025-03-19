@@ -60,7 +60,7 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
       return;
     }
 
-    if (tagsFeed.length >= 4) {
+    if (tagsFeed.length > 5) {
       setTagsError(true);
     } else {
       const trimmedTag = tag.trim();
@@ -73,7 +73,7 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
 
   const handleRemoveTag = (indexToRemove: number) => {
     tagsFeed && setTagsFeed(tagsFeed.filter((_, index) => index !== indexToRemove));
-    if (tagsFeed && tagsFeed.length <= 4) {
+    if (tagsFeed && tagsFeed.length < 5) {
       setTagsError(false);
     }
   };
@@ -150,7 +150,7 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
           </div>
           {tagsError && (
             <Typography.Body variant="small" className="text-[#e95164]">
-              Max 4 tags
+              Max 6 tags
             </Typography.Body>
           )}
         </div>
