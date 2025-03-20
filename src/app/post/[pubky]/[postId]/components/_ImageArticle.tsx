@@ -3,6 +3,7 @@
 
 import Skeletons from '@/components/Skeletons';
 import { getFile } from '@/services/fileService';
+import { FileView } from '@/types/Post';
 import { useEffect, useState } from 'react';
 
 interface ImageByUriProps {
@@ -19,12 +20,13 @@ const ImageArticle = ({ uri, alt, width, height, className, style, onClick }: Im
   const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
   const BASE_URL = `${NEXT_PUBLIC_NEXUS}/static/files`;
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const generateFileUrl = (file: FileView, type = 'main') => `${BASE_URL}/${file.owner_id}/${file.id}/${type}`;
 
   useEffect(() => {
     const fetchImageUrl = async () => {
       try {
         const fetchedFile = await getFile(uri);
-        setImageUrl(`${BASE_URL}/${JSON.parse(fetchedFile?.urls).main}`);
+        setImageUrl(generateFileUrl(fetchedFile, fetchedFile.content_type !== 'image/gif' ? 'feed' : 'main'));
       } catch (error) {
         console.warn('Error Image Article:', error);
       }
