@@ -10,24 +10,16 @@ interface HeaderRootProps extends React.HTMLAttributes<HTMLElement> {
 
 export const Root = ({ children, ...rest }: HeaderRootProps) => {
   const [scrolled, setScrolled] = useState(false);
-  const [scrollbarWidth, setScrollbarWidth] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 0);
     };
 
-    const updateScrollbarWidth = () => {
-      setScrollbarWidth(window.innerWidth - document.documentElement.clientWidth);
-    };
-
     window.addEventListener('scroll', handleScroll);
-    window.addEventListener('resize', updateScrollbarWidth);
-    updateScrollbarWidth();
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', updateScrollbarWidth);
     };
   }, []);
 
@@ -37,7 +29,6 @@ export const Root = ({ children, ...rest }: HeaderRootProps) => {
 
   return (
     <div
-      style={{ paddingRight: `${scrollbarWidth}px` }}
       className={twMerge(
         'fixed w-full top-0 z-50 bg-gradient-to-b from-[#05050a] via-[#05050a] via-60% to-transparent',
         rest.className

@@ -1,5 +1,5 @@
 import './global.css';
-import { getViewport, getSeoMetadata, getPWAConfig, getPWATags } from '@/components/HeaderSEO';
+import { getSeoMetadata, getPWAConfig, getPWATags } from '@/components/HeaderSEO';
 
 import {
   AlertWrapper,
@@ -10,8 +10,6 @@ import {
   ModalProvider
 } from '@/contexts';
 import { ProtectedRoutes } from '@/components';
-
-export const viewport = getViewport();
 
 export const metadata = {
   ...getSeoMetadata({
