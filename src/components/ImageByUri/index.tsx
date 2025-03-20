@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react';
 import Skeletons from '../Skeletons';
 import genJdenticon from '../utils-shared/lib/Helper/genJdenticon';
+import { avatarCache } from '../utils-shared/lib/Helper/avatarCache';
 
 interface ImageByUriProps {
   id: string;
@@ -26,14 +27,24 @@ const ImageByUri = ({ id, uri, alt, width, height, className, style, loading, on
   const generatedImage = async (key: string) => {
     const generatedImage = await genJdenticon(key);
     objectUrl = URL.createObjectURL(generatedImage);
+    avatarCache.addObjectUrl(objectUrl);
+    avatarCache.set(key, objectUrl);
     setImageUrl(objectUrl);
   };
 
   const fetchAvatar = async (key: string) => {
+    // Check cache first
+    const cachedUrl = avatarCache.get(key);
+    if (cachedUrl) {
+      setImageUrl(cachedUrl);
+      return;
+    }
+
     const urlAvatar = `${BASE_URL}/${key}`;
     try {
       const response = await fetch(urlAvatar);
       if (response.ok) {
+        avatarCache.set(key, urlAvatar);
         setImageUrl(urlAvatar);
       } else {
         await generatedImage(key);
@@ -55,6 +66,7 @@ const ImageByUri = ({ id, uri, alt, width, height, className, style, loading, on
         }
       } else if (uri instanceof File) {
         objectUrl = URL.createObjectURL(uri);
+        avatarCache.addObjectUrl(objectUrl);
         setImageUrl(objectUrl);
       }
     } else if (id) {
@@ -62,7 +74,10 @@ const ImageByUri = ({ id, uri, alt, width, height, className, style, loading, on
     }
 
     return () => {
-      if (objectUrl) URL.revokeObjectURL(objectUrl);
+      if (objectUrl) {
+        avatarCache.removeObjectUrl(objectUrl);
+        URL.revokeObjectURL(objectUrl);
+      }
     };
   }, [id, uri]);
 
