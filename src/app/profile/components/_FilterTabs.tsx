@@ -132,7 +132,7 @@ export default function FilterTabs({
               id={`profile-tab-${tab.key}`}
               key={tab.id}
               onClick={() => (pubky ? handleTabClick(tab.id, tab.key) : openModal('join'))}
-              className={`w-full py-2 px-3 items-center flex justify-between cursor-pointer ${
+              className={`w-full py-2 pr-3 items-center flex justify-between cursor-pointer ${
                 isActive && !loading ? 'opacity-100' : 'opacity-50 hover:opacity-80'
               }`}
             >
