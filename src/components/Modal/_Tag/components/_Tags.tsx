@@ -90,7 +90,6 @@ export default function Tags({ post, postType }: TagsProps) {
                             imageIndex > 0 && '-ml-2'
                           }`}
                           alt={`tag-${imageIndex + 1}`}
-                          uri={image}
                         />
                       ))}
                       {extraImagesCount > 0 && (

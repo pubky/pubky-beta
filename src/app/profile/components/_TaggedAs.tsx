@@ -168,7 +168,6 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                               imageIndex > 0 && '-ml-2'
                             }`}
                             alt={`tag-${imageIndex + 1}`}
-                            uri={image}
                           />
                         ))}
                         {extraImagesCount > 0 && (

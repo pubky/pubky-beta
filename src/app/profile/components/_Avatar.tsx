@@ -17,7 +17,6 @@ export default function Avatar({ id, username = 'user-pic', uriImage, status, ..
         width={136}
         height={136}
         className={'rounded-full w-16 h-full md:w-[136px]'}
-        uri={uriImage}
       />
       <div className="absolute right-0 top-36 text-[110px]">{status}</div>
     </div>

@@ -30,7 +30,6 @@ export const Header = ({
         width={width}
         height={height}
         alt={alt}
-        uri={uriImage}
         className="rounded-full w-[96px] h-[96px]"
       />
       <div className="flex-col flex">

@@ -58,7 +58,6 @@ const FooterMobile = ({ title }: FooterMobileProps) => {
             height={48}
             className={`rounded-full w-[48px] h-[48px]`}
             alt="user-pic"
-            uri={profile?.image}
           />
         </Link>
       </div>

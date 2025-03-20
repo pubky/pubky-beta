@@ -93,7 +93,6 @@ const LongPost = ({ data, user }) => {
               height={48}
               className="w-[32px] h-[32px] md:w-[48px] md:h-[48px] rounded-full"
               alt="user-image"
-              uri={user?.data?.details?.image}
             />
             <Link
               className="cursor-pointer flex flex-col md:flex-row md:gap-4 md:items-center"
@@ -113,6 +112,7 @@ const LongPost = ({ data, user }) => {
         </div>
         {data?.details?.attachments && data?.details?.attachments[0] && (
           <ImageByUri
+            id="article-image"
             width={1200}
             height={650}
             className="w-[1200px] h-auto rounded-lg mb-4"

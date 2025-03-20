@@ -60,7 +60,6 @@ export default function Tag({ tags, setShowModalTags, setSelectedTag }: TagProps
                     imageIndex > 0 && '-ml-2'
                   }`}
                   alt={`tag-${imageIndex + 1}`}
-                  uri={image}
                 />
               ))}
               {extraImagesCount > 0 && <PostUtil.Counter className="-ml-2">+{extraImagesCount}</PostUtil.Counter>}

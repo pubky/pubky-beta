@@ -127,7 +127,6 @@ export default function MutedUsers() {
                             id={mutedUser?.details?.id}
                             width={48}
                             height={48}
-                            uri={mutedUser?.details?.image || '/images/webp/Userpic.webp'}
                             alt={`profile-pic-${mutedUser?.details?.id}`}
                             className="rounded-full w-[48px] h-[48px] max-w-none"
                           />

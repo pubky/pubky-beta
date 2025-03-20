@@ -41,7 +41,6 @@ export const User = ({
           className="rounded-full max-w-none h-none"
           style={{ width: `${width}px`, height: `${height}px` }}
           alt={alt}
-          uri={uriImage}
         />
         <div className="flex-col justify-start items-start inline-flex">
           <Typography.Body variant="medium-bold">{username}</Typography.Body>

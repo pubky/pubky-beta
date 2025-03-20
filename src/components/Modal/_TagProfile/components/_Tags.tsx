@@ -91,7 +91,6 @@ export default function Tags({ profileTags, setProfileTags, pubkyUser, user }: T
                             imageIndex > 0 && '-ml-2'
                           }`}
                           alt={`tag-${imageIndex + 1}`}
-                          uri={image}
                         />
                       ))}
                       {extraImagesCount > 0 && (

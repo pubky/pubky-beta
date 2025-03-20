@@ -126,7 +126,6 @@ export default function CreatorpubkyLayout({
                 width={362}
                 height={362}
                 className="rounded-full shadow-[0px_20px_40px_0px_rgba(5,5,10,0.50)]"
-                uri={profile?.details?.image}
               />
             </div>
           </div>

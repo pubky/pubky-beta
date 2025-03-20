@@ -22,7 +22,6 @@ export default function Feedback() {
               <ImageByUri
                 id={pubky}
                 alt="user"
-                uri={profile?.image ?? '/images/webp/Userpic.webp'}
                 width={32}
                 height={32}
                 className="rounded-full w-8 h-8"

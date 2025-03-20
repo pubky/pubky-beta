@@ -57,7 +57,6 @@ export default function Tag2({ tags }: TagProps) {
                     imageIndex > 0 && '-ml-2'
                   }`}
                   alt={`tag-${imageIndex + 1}`}
-                  uri={image ? image : '/images/webp/Userpic.webp'}
                 />
 
                 {showTooltipProfile === imageIndex && <Tooltip.Profile profileId={tags?.taggers[imageIndex]} />}

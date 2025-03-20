@@ -137,7 +137,6 @@ export default function TagsLargeView({ post, postType }: TagsProps) {
                             imageIndex > 0 && '-ml-2'
                           }`}
                           alt={`tag-${imageIndex + 1}`}
-                          uri={image}
                         />
                         {showTooltipProfile?.tagIndex === index &&
                           showTooltipProfile?.imageIndex === imageIndex &&

@@ -105,7 +105,6 @@ export default function SearchedUsersCard({ searchedUsers, handleUserClick, clas
               className="rounded-full max-w-none h-none"
               style={{ width: `${40}px`, height: `${40}px` }}
               alt={'user'}
-              uri={data?.details?.image}
             />
             <div className="flex-col justify-start items-start inline-flex">
               <Typography.Body variant="medium-bold">

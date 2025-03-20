@@ -91,7 +91,6 @@ export default function UserInfo({
               width={32}
               height={32}
               className="w-[32px] h-[32px] rounded-full"
-              uri={uriImage}
               alt="user-pic"
             />
             <div>
