@@ -9,17 +9,6 @@ interface SeoMetadataParams {
   statusBarStyle?: 'default' | 'black-translucent';
 }
 
-export function getViewport() {
-  return {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-    viewportFit: 'cover' as 'auto' | 'cover' | 'contain',
-    themeColor: '#000000'
-  };
-}
-
 export function getPWAConfig() {
   return {
     manifest: '/manifest.json',
@@ -59,7 +48,7 @@ export function getPWATags() {
       <link rel="mask-icon" href="/images/pubky-logo.svg" color="#000000" />
       <meta name="msapplication-TileColor" content="#000000" />
       <meta name="theme-color" content="#000000" />
-      <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta name="mobile-web-app-capable" content="yes" />
       <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       <meta name="apple-mobile-web-app-title" content="Pubky.app" />
     </>
