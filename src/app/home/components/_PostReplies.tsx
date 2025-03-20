@@ -17,7 +17,7 @@ interface PostRepliesProps {
 }
 
 export const PostReplies = ({ post, layout, homeView = false, isMobile }: PostRepliesProps) => {
-  const { pubky, mutedUsers } = usePubkyClientContext();
+  const { pubky, mutedUsers, deletedPosts } = usePubkyClientContext();
   const { data: replies } = usePostReplies(post.details.author, post.details.id, pubky);
 
   const lineBaseCSS = `ml-[12px] absolute border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[2px]`;
@@ -35,7 +35,9 @@ export const PostReplies = ({ post, layout, homeView = false, isMobile }: PostRe
 
   if (!replies || replies.length === 0) return null;
 
-  const filteredReplies = replies.filter((reply) => !mutedUsers?.includes(reply?.details?.author));
+  const filteredReplies = replies.filter(
+    (reply) => !mutedUsers?.includes(reply?.details?.author) && !deletedPosts?.includes(reply?.details?.id)
+  );
 
   const displayedReplies = filteredReplies.slice(0, 2);
 
