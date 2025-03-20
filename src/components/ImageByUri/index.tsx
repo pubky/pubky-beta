@@ -10,73 +10,75 @@ interface ImageByUriProps {
   alt: string;
   width: number;
   height: number;
-  uri?: string | File | undefined;
+  uri?: string | File;
   className?: string;
   style?: React.CSSProperties;
-  onClick?: any;
+  onClick?: () => void;
   loading?: boolean;
 }
 
 const ImageByUri = ({ id, uri, alt, width, height, className, style, loading, onClick }: ImageByUriProps) => {
   const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
   const BASE_URL = `${NEXT_PUBLIC_NEXUS}/static/avatar`;
+  let objectUrl: string | null = null;
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
-  useEffect(() => {
-    let objectUrl: string | null = null;
+  const generatedImage = async (key: string) => {
+    const generatedImage = await genJdenticon(key);
+    objectUrl = URL.createObjectURL(generatedImage);
+    setImageUrl(objectUrl);
+  };
 
-    const fetchImageUrl = async () => {
-      try {
-        if (uri) {
-          if (typeof uri === 'string' && (uri.startsWith('http') || uri.startsWith('data:'))) {
-            setImageUrl(uri);
-          } else if (uri instanceof File) {
-            objectUrl = URL.createObjectURL(uri);
-            setImageUrl(objectUrl);
-          }
-        } else if (id) {
-          const urlAvatar = `${BASE_URL}/${id}`;
-          const avatarResponse = await fetch(urlAvatar);
-
-          if (avatarResponse.ok) {
-            setImageUrl(urlAvatar);
-          } else {
-            const generatedImage = await genJdenticon(id);
-            objectUrl = URL.createObjectURL(generatedImage);
-            setImageUrl(objectUrl);
-          }
-        }
-      } catch (error) {
-        console.warn('Error Image:', error);
+  const fetchAvatar = async (key: string) => {
+    const urlAvatar = `${BASE_URL}/${key}`;
+    try {
+      const response = await fetch(urlAvatar);
+      if (response.ok) {
+        setImageUrl(urlAvatar);
+      } else {
+        await generatedImage(key);
       }
-    };
+    } catch (error) {
+      await generatedImage(key);
+    }
+  };
 
-    fetchImageUrl();
+  useEffect(() => {
+    if (uri) {
+      if (typeof uri === 'string') {
+        if (uri.startsWith('http') || uri.startsWith('data:')) {
+          setImageUrl(uri);
+        } else if (uri.startsWith('pubky://')) {
+          fetchAvatar(id);
+        } else if (uri.length === 52) {
+          generatedImage(uri);
+        }
+      } else if (uri instanceof File) {
+        objectUrl = URL.createObjectURL(uri);
+        setImageUrl(objectUrl);
+      }
+    } else if (id) {
+      fetchAvatar(id);
+    }
 
     return () => {
-      if (objectUrl) {
-        URL.revokeObjectURL(objectUrl);
-      }
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
   }, [id, uri]);
 
+  if (loading && !imageUrl) return <Skeletons.Simple />;
+
   return (
-    <>
-      {!imageUrl && loading ? (
-        <Skeletons.Simple />
-      ) : (
-        <img
-          id={id}
-          src={imageUrl || '/images/webp/Userpic.webp'}
-          alt={alt}
-          width={width}
-          height={height}
-          className={className}
-          style={style}
-          onClick={onClick}
-        />
-      )}
-    </>
+    <img
+      id={id}
+      src={imageUrl || '/images/webp/Userpic.webp'}
+      alt={alt}
+      width={width}
+      height={height}
+      className={className}
+      style={style}
+      onClick={onClick}
+    />
   );
 };
 

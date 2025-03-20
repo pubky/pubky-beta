@@ -74,7 +74,7 @@ export default function Pic({ image, setImage, loading }: PicProps) {
           height={100}
           className="w-72 h-72 lg:w-36 lg:h-36 xl:w-52 xl:h-52 mt-[20px] lg:mt-[50px] rounded-full"
           alt="user"
-          uri={image}
+          uri={image || pubky}
         />
         <Button.Transparent
           icon={getButtonIconImage()}
