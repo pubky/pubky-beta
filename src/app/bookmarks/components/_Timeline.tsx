@@ -103,7 +103,9 @@ export const Timeline = () => {
   };
 
   useEffect(() => {
-    setTimeline(data as PostView[]);
+    if (data) {
+      setTimeline(data as PostView[]);
+    }
   }, [data]);
 
   useEffect(() => {
