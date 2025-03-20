@@ -120,7 +120,7 @@ export default function FilterTabs({
   };
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-4">
       <div className="w-[280px] mt-1 self-start sticky top-[120px] hidden lg:block">
         {tabs.map((tab) => {
           if (creatorPubky && creatorPubky !== pubky && (tab.key === 'notifications' || tab.key === 'bookmarks')) {
