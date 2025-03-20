@@ -57,7 +57,6 @@ export default function InputTag({ profileTags, setProfileTags, pubkyUser, user 
         <SideCard.User
           uri={pubkyUser}
           className="mt-6"
-          uriImage={user?.details?.image || '/images/webp/Userpic.webp'}
           username={Utils.minifyText(user?.details?.name, 16)}
           label={Utils.minifyPubky(pubkyUser)}
         />

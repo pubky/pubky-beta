@@ -19,14 +19,7 @@ export default function Feedback() {
         <div className="p-5 w-full rounded-lg border-dashed border border-white border-opacity-30 flex-col justify-start items-start inline-flex">
           <div className="flex flex-col gap-3">
             <Link href="/profile" className="flex gap-1 items-center">
-              <ImageByUri
-                id={pubky}
-                alt="user"
-                uri={profile?.image ?? '/images/webp/Userpic.webp'}
-                width={32}
-                height={32}
-                className="rounded-full w-8 h-8"
-              />
+              <ImageByUri id={pubky} alt="user" width={32} height={32} className="rounded-full w-8 h-8" />
               <Typography.Body variant="medium-bold" className="hover:underline hover:decoration-solid">
                 {Utils.minifyText(profile?.name ?? Utils.minifyPubky(pubky ?? ''), 10)}
               </Typography.Body>

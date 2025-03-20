@@ -6,11 +6,10 @@ type ImageProps = {
   width?: number;
   height?: number;
   alt: string;
-  uriImage: string;
   className?: string;
 };
 
-export const ImageUser = ({ id, width = 32, height = 32, alt = 'userpic', uriImage, ...rest }: ImageProps) => {
+export const ImageUser = ({ id, width = 32, height = 32, alt = 'userpic', ...rest }: ImageProps) => {
   return (
     <ImageByUri
       {...rest}
@@ -20,7 +19,6 @@ export const ImageUser = ({ id, width = 32, height = 32, alt = 'userpic', uriIma
       style={{ width: `${width}px`, height: `${height}px` }}
       className={twMerge(`rounded-full`, rest.className)}
       alt={alt}
-      uri={uriImage}
     />
   );
 };

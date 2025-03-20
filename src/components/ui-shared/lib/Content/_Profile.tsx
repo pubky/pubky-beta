@@ -33,7 +33,6 @@ export const Profile = ({ profile }: ProfileProps) => {
           width={64}
           height={64}
           className="w-[64px] h-[64px] rounded-full overflow-hidden"
-          uri={image}
           alt="Profile Image"
         />
       </div>

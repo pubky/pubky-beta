@@ -27,7 +27,6 @@ export const useUtilsTag = (post: PostView, postType: PostType) => {
     [pubky: string]: boolean;
   }>({});
   const [showEmojis, setShowEmojis] = useState(false);
-  const [tagImages, setTagImages] = useState<{ [label: string]: string[] }>({});
   const [userProfiles, setUserProfiles] = useState<{ [key: string]: UserView }>({});
   const [loading, setLoading] = useState(false);
   const limit = 5;
@@ -131,34 +130,12 @@ export const useUtilsTag = (post: PostView, postType: PostType) => {
 
   const fetchProfileImages = async (tag: PostTag) => {
     const images = await Promise.all(
-      tag.taggers.map(async (fromItem) => {
-        try {
-          const profile = await getUserProfile(fromItem, pubky ?? '');
-          return profile?.details?.image || '/images/webp/Userpic.webp';
-        } catch (error) {
-          return '/images/webp/Userpic.webp';
-        }
+      tag.taggers.map((fromItem) => {
+        return fromItem;
       })
     );
     return images;
   };
-
-  // Fetch images for all tags
-  useEffect(() => {
-    const fetchAllImages = async () => {
-      const imagesMap: { [label: string]: string[] } = {};
-      await Promise.all(
-        allTags.map(async (tag) => {
-          const images = await fetchProfileImages(tag);
-          imagesMap[tag.label] = images.slice(0, 4);
-        })
-      );
-      setTagImages(imagesMap);
-    };
-    if (allTags.length > 0) {
-      fetchAllImages();
-    }
-  }, [allTags]);
 
   const followUser = async (pubkyFollow: string) => {
     try {
@@ -283,7 +260,6 @@ export const useUtilsTag = (post: PostView, postType: PostType) => {
     loadingFollowers,
     wrapperRefEmojis,
     initLoadingFollowers,
-    tagImages,
     loading,
     inputRef,
     hasMore,

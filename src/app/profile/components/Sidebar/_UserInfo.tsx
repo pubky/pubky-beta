@@ -8,7 +8,6 @@ import { UserView } from '@/types/User';
 
 interface UserInfoProps {
   scrolled: boolean;
-  uriImage: string;
   name: string;
   creatorPubky: string | null | undefined;
   pubkyUser: string;
@@ -25,7 +24,6 @@ interface UserInfoProps {
 
 export default function UserInfo({
   scrolled,
-  uriImage,
   name,
   creatorPubky,
   pubkyUser,
@@ -91,7 +89,6 @@ export default function UserInfo({
               width={32}
               height={32}
               className="w-[32px] h-[32px] rounded-full"
-              uri={uriImage}
               alt="user-pic"
             />
             <div>

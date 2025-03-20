@@ -9,13 +9,6 @@ export const UserProfileForTag = ({ userId }: { userId: string }) => {
   if (!profile) return null;
 
   return (
-    <ImageByUri
-      id={pubky}
-      width={32}
-      height={32}
-      alt={`pic-${userId}`}
-      className={`w-[32px] h-[32px] rounded-full`}
-      uri={profile?.details?.image || '/images/webp/Userpic.webp'}
-    />
+    <ImageByUri id={userId} width={32} height={32} alt={`pic-${userId}`} className={`w-[32px] h-[32px] rounded-full`} />
   );
 };

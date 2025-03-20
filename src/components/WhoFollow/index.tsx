@@ -109,7 +109,6 @@ export default function WhoFollow() {
                 <div key={index}>
                   <SideCard.UserSmall
                     uri={recommendedProfile?.details?.id}
-                    uriImage={recommendedProfile?.details?.image || '/images/webp/Userpic.webp'}
                     username={Utils.minifyText(recommendedProfile?.details?.name, 11)}
                     label={Utils.minifyPubky(recommendedProfile?.details?.id)}
                   >

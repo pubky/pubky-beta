@@ -16,10 +16,7 @@ interface TagProps {
 export default function Tag({ tags, setShowModalTags, setSelectedTag }: TagProps) {
   const [loadingFollowers, setLoadingFollowers] = useState(true);
   const images = tags.from.map((fromItem) => {
-    if (fromItem.author?.profile?.image) {
-      return fromItem.author?.profile?.image;
-    }
-    return '/images/webp/Userpic.webp';
+    return fromItem.id;
   });
   const displayedImages = images.slice(0, 4);
   const extraImagesCount = images.length - displayedImages.length;
@@ -52,7 +49,7 @@ export default function Tag({ tags, setShowModalTags, setSelectedTag }: TagProps
             >
               {displayedImages.map((image, imageIndex) => (
                 <ImageByUri
-                  id={tags.from[imageIndex]?.author.id}
+                  id={image}
                   width={32}
                   height={32}
                   key={imageIndex}
@@ -60,7 +57,6 @@ export default function Tag({ tags, setShowModalTags, setSelectedTag }: TagProps
                     imageIndex > 0 && '-ml-2'
                   }`}
                   alt={`tag-${imageIndex + 1}`}
-                  uri={image}
                 />
               ))}
               {extraImagesCount > 0 && <PostUtil.Counter className="-ml-2">+{extraImagesCount}</PostUtil.Counter>}

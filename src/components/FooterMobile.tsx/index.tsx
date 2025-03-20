@@ -52,14 +52,7 @@ const FooterMobile = ({ title }: FooterMobileProps) => {
               {unReadNotification > 21 ? '+21' : unReadNotification}
             </PostUtil.Counter>
           )}
-          <ImageByUri
-            id={pubky}
-            width={48}
-            height={48}
-            className={`rounded-full w-[48px] h-[48px]`}
-            alt="user-pic"
-            uri={profile?.image}
-          />
+          <ImageByUri id={pubky} width={48} height={48} className={`rounded-full w-[48px] h-[48px]`} alt="user-pic" />
         </Link>
       </div>
     </div>

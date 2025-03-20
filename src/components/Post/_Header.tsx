@@ -47,7 +47,6 @@ export default function Header({ post, largeView = false, repostView = false }: 
             {userDetails.id && (
               <PostUI.ImageUser
                 id={userDetails?.id}
-                uriImage={userDetails?.image || '/images/webp/Userpic.webp'}
                 alt={`user-${userDetails?.id}`}
                 width={largeView ? 48 : 32}
                 height={largeView ? 48 : 32}

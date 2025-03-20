@@ -247,7 +247,6 @@ export default function CreateContent({
       <div ref={wrapperRef} className="w-full flex justify-between gap-3 items-start flex-col">
         <div className={variant ? 'flex w-full gap-4 items-center' : 'w-full'}>
           <Section.UserArea
-            uriPic={profile?.image ?? '/images/webp/Userpic.webp'}
             name={profile?.name ?? Utils.minifyPubky(pubky ?? '')}
             largeView={largeView}
             variant={variant}

@@ -25,14 +25,7 @@ export const Header = ({
 }: HeaderProps) => {
   return (
     <Link href={href || ''} {...rest} className={twMerge('flex-col gap-4 flex', rest.className)}>
-      <ImageByUri
-        id={handler}
-        width={width}
-        height={height}
-        alt={alt}
-        uri={uriImage}
-        className="rounded-full w-[96px] h-[96px]"
-      />
+      <ImageByUri id={handler} width={width} height={height} alt={alt} className="rounded-full w-[96px] h-[96px]" />
       <div className="flex-col flex">
         <Typography.PageTitle className="font-bold leading-[30px]">{username}</Typography.PageTitle>
         <div className="items-center gap-1 inline-flex">

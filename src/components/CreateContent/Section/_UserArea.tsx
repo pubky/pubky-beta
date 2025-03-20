@@ -8,12 +8,11 @@ import Link from 'next/link';
 
 interface UserAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   largeView?: boolean;
-  uriPic: string;
   name: string;
   variant?: 'small';
 }
 
-export default function UserArea({ largeView, uriPic, name, variant }: UserAreaProps) {
+export default function UserArea({ largeView, name, variant }: UserAreaProps) {
   const { pubky } = usePubkyClientContext();
 
   return (
@@ -24,7 +23,6 @@ export default function UserArea({ largeView, uriPic, name, variant }: UserAreaP
         height={largeView ? 48 : 32}
         className={`${largeView ? 'w-[48px] h-[48px]' : 'w-[32px] h-[32px]'} rounded-full`}
         alt="user-image"
-        uri={uriPic}
       />
       {!variant && (
         <>

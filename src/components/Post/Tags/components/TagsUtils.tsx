@@ -149,13 +149,7 @@ export const useTagsLogic = (post: PostView, postType: PostType) => {
       tagObj?.taggers
         ?.map((fromItem) => {
           if (fromItem && !images[fromItem]) {
-            return getUserProfile(fromItem, pubky ?? '')
-              .then((profile) => {
-                images[fromItem] = profile?.details?.image || '/images/webp/Userpic.webp';
-              })
-              .catch(() => {
-                images[fromItem] = '/images/webp/Userpic.webp';
-              });
+            return fromItem;
           }
           return null;
         })

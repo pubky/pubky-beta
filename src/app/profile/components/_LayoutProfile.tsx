@@ -46,7 +46,6 @@ export default function LayoutProfile({ children }: { children: React.ReactNode 
               id={pubky}
               className="lg:pl-12 cursor-pointer"
               username={profile?.name || Utils.minifyPubky(pubky ?? '')}
-              uriImage={profile?.image}
               onClick={() => setIsAvatarOpen(true)}
             />
             <Profile.Handle className="md:pt-5" profileUser={userData} pubkey={pubky ?? ''} />
@@ -83,7 +82,6 @@ export default function LayoutProfile({ children }: { children: React.ReactNode 
               width={362}
               height={362}
               className="rounded-full shadow-[0px_20px_40px_0px_rgba(5,5,10,0.50)]"
-              uri={profile?.image}
             />
           </div>
         </div>
