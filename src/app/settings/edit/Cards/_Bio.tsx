@@ -26,7 +26,6 @@ export default function Bio({ bio, setBio, errors, loading }: BioProps) {
   const handleUserClick = (userId: string) => {
     const regex = /@\w+/;
     const newContent = bio.replace(regex, `pk:${userId}`);
-    console.log('newContent', newContent);
 
     setBio(newContent);
     setSearchedUsers([]);
@@ -87,7 +86,10 @@ export default function Bio({ bio, setBio, errors, loading }: BioProps) {
     <Card.Primary className="justify-start gap-4 w-full col-span-3" title="Profile">
       <div>
         <Input.Label value="Short bio" />
-        <Card.Primary background="bg-transparent" className="border border-white border-opacity-30 border-dashed mt-2">
+        <Card.Primary
+          background="bg-transparent"
+          className="relative border border-white border-opacity-30 border-dashed mt-2"
+        >
           <Input.TextArea
             id="edit-profile-bio-input"
             placeholder="Short bio. Tell a bit about yourself."
@@ -107,7 +109,11 @@ export default function Bio({ bio, setBio, errors, loading }: BioProps) {
             }}
           />
           {searchedUsers.length > 0 && (
-            <Modal.SearchedUsersCard handleUserClick={handleUserClick} searchedUsers={searchedUsers} />
+            <Modal.SearchedUsersCard
+              className="top-56"
+              handleUserClick={handleUserClick}
+              searchedUsers={searchedUsers}
+            />
           )}
         </Card.Primary>
       </div>
