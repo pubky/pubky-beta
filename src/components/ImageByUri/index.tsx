@@ -13,7 +13,7 @@ interface ImageByUriProps {
   uri?: string | File;
   className?: string;
   style?: React.CSSProperties;
-  onClick?: () => void;
+  onClick?: any;
   loading?: boolean;
 }
 
