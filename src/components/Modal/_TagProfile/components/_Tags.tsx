@@ -18,7 +18,6 @@ export default function Tags({ profileTags, setProfileTags, pubkyUser, user }: T
     selectedTag,
     setSelectedTag,
     allTags,
-    tagImages,
     deleteProfileTag,
     loadingTags,
     hasMore,
@@ -44,7 +43,7 @@ export default function Tags({ profileTags, setProfileTags, pubkyUser, user }: T
               {allTags.map((tag, index) => {
                 const isTagFound = tag?.relationship || false;
 
-                const displayedImages = tagImages[tag.label] || [];
+                const displayedImages = tag.taggers || [];
                 const extraImagesCount = tag?.taggers_count - displayedImages.length;
 
                 return (
@@ -83,7 +82,7 @@ export default function Tags({ profileTags, setProfileTags, pubkyUser, user }: T
                     >
                       {displayedImages.map((image, imageIndex) => (
                         <ImageByUri
-                          id={userProfiles?.[tag?.label]?.details?.id}
+                          id={image}
                           width={32}
                           height={32}
                           key={imageIndex}
@@ -91,7 +90,6 @@ export default function Tags({ profileTags, setProfileTags, pubkyUser, user }: T
                             imageIndex > 0 && '-ml-2'
                           }`}
                           alt={`tag-${imageIndex + 1}`}
-                          uri={image}
                         />
                       ))}
                       {extraImagesCount > 0 && (
@@ -163,7 +161,6 @@ export default function Tags({ profileTags, setProfileTags, pubkyUser, user }: T
                   <div key={userIndex} className="w-full flex justify-between gap-10">
                     <SideCard.User
                       uri={profile?.details?.id.replace('pubky:', '')}
-                      uriImage={profile?.details?.image || '/images/webp/Userpic.webp'}
                       username={profile?.details?.name && Utils.minifyText(profile?.details?.name)}
                       label={Utils.minifyPubky(profile?.details?.id.replace('pubky:', ''))}
                     />

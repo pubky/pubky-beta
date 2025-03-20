@@ -13,6 +13,8 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 import { usePubkyClientContext } from '@/contexts';
 import Link from 'next/link';
 import Tags from '@/components/Post/Tags';
+import { PubkyAppPostKind } from 'pubky-app-specs';
+import { ImageArticle } from './_ImageArticle';
 
 export function ValidPostContent({ postRef, data }) {
   const { pubky } = usePubkyClientContext();
@@ -37,7 +39,7 @@ export function ValidPostContent({ postRef, data }) {
       )}
 
       <div ref={postRef} key={singlePost?.details?.uri}>
-        {singlePost?.details?.kind === 1 ? (
+        {String(singlePost?.details?.kind) === PubkyAppPostKind[1].toLocaleLowerCase() ? (
           <LongPost data={singlePost} user={user} />
         ) : (
           <NormalPost data={singlePost} />
@@ -93,7 +95,6 @@ const LongPost = ({ data, user }) => {
               height={48}
               className="w-[32px] h-[32px] md:w-[48px] md:h-[48px] rounded-full"
               alt="user-image"
-              uri={user?.data?.details?.image}
             />
             <Link
               className="cursor-pointer flex flex-col md:flex-row md:gap-4 md:items-center"
@@ -112,13 +113,12 @@ const LongPost = ({ data, user }) => {
           <PostUI.Time className="mr-2">{Utils.timeAgo(data?.details?.indexed_at, isMobile)}</PostUI.Time>
         </div>
         {data?.details?.attachments && data?.details?.attachments[0] && (
-          <ImageByUri
+          <ImageArticle
+            uri={data?.details?.attachments[0]}
             width={1200}
             height={650}
             className="w-[1200px] h-auto rounded-lg mb-4"
             alt="article-image"
-            uri={data?.details?.attachments[0] ?? ''}
-            loading
           />
         )}
         <div

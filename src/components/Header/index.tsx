@@ -16,7 +16,7 @@ interface HeaderProps {
 export default function Header({ title }: HeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { pubky, isLoggedIn, setSearchTags, searchTags, profile } = usePubkyClientContext();
+  const { pubky, isLoggedIn, setSearchTags, searchTags } = usePubkyClientContext();
   const { unReadNotification } = useFilterContext();
   const { openModal } = useModal();
 
@@ -223,7 +223,6 @@ export default function Header({ title }: HeaderProps) {
                 height={48}
                 className={`rounded-full w-[48px] h-[48px]`}
                 alt="user-pic"
-                uri={profile?.image}
               />
             </Link>
           </div>

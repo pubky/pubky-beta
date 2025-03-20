@@ -50,7 +50,6 @@ export default function InputReport({
                 height={32}
                 className="w-[32px] h-[32px] rounded-full"
                 alt="user-image"
-                uri={profile?.image ?? '/images/webp/Userpic.webp'}
               />
               {pubky ? (
                 <Link className="cursor-pointer flex gap-4 items-center" href="/profile">

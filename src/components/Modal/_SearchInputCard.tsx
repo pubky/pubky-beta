@@ -170,7 +170,6 @@ export default function SearchInputCard({ refCard, inputValue, ...rest }: Search
               key={user.details.id}
               id={`user-${index}`}
               uri={user.details.id}
-              uriImage={user.details.image || '/images/webp/Userpic.webp'}
               username={Utils.minifyText(user.details.name, 20)}
               label={Utils.minifyPubky(user.details.id)}
               className={`p-2 rounded-2xl ${selectedIndex === index ? 'bg-white/10' : 'hover:bg-white/10'}`}
@@ -200,7 +199,6 @@ export default function SearchInputCard({ refCard, inputValue, ...rest }: Search
                           <SideCard.UserSmall
                             id={`user-${index}`}
                             uri={item.value}
-                            uriImage={profileUser?.details?.image || '/images/webp/Userpic.webp'}
                             username={Utils.minifyText(profileUser?.details?.name, 20)}
                             label={Utils.minifyPubky(profileUser?.details?.id)}
                             onClick={() => handleUserClick(profileUser)}

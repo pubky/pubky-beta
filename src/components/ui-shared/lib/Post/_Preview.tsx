@@ -29,7 +29,11 @@ function LinkPreview({ url }: { url: string }) {
         const data = await response.text();
         const parser = new DOMParser();
         const doc = parser.parseFromString(data, 'text/html');
-        const title = doc.querySelector('title')?.textContent || '';
+
+        const title =
+          doc.querySelector('meta[name="title"]')?.getAttribute('content') ||
+          doc.querySelector('title')?.textContent ||
+          '';
         const description = doc.querySelector('meta[name="description"]')?.getAttribute('content') || '';
         const image = doc.querySelector('meta[property="og:image"]')?.getAttribute('content') || '';
 

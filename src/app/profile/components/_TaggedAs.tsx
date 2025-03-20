@@ -8,11 +8,8 @@ import { Button, Icon, PostUtil, SideCard, Typography } from '@social/ui-shared'
 import { Utils } from '@social/utils-shared';
 import { ImageByUri } from '@/components/ImageByUri';
 import { useEffect, useState } from 'react';
-import { getUserProfile } from '@/services/userService';
 import Link from 'next/link';
 import LinksSection from './Sidebar/_LinksSection';
-import { useTagsUser } from '@/hooks/useTag';
-import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import Image from 'next/image';
 import { useUtilsTag } from '@/components/Modal/_TagProfile/components/_Utils';
 
@@ -25,15 +22,12 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
   const { openModal, isOpen } = useModal();
   const { pubky } = usePubkyClientContext();
   const isMyProfile = !!(pubky === creatorPubky || !creatorPubky);
-  const usePubky = creatorPubky || pubky || '';
-  const { data: user } = useUserProfile(usePubky, pubky ?? '');
+  const usePubky = creatorPubky || pubky;
+  const { data: user } = useUserProfile(usePubky ?? '', pubky ?? '');
   const name = user?.details?.name;
-  const [profileTags, setProfileTags] = useState<UserTags[]>(user?.tags ?? []);
+  const [profileTags, setProfileTags] = useState<UserTags[]>();
   const links = user?.details?.links ?? [];
-  const [taggedImages, setTaggedImages] = useState<(string | undefined)[][]>([]);
-  const limit = 20;
-  const [skip, setSkip] = useState(limit);
-  const [hasMore, setHasMore] = useState(user && user?.counts?.tags > limit);
+
   const { addProfileTag, deleteProfileTag, loadingTags } = useUtilsTag({
     profileTags,
     setProfileTags,
@@ -41,7 +35,13 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
     user
   });
 
-  const { data: moreTags, isLoading } = useTagsUser(user?.details.id ?? '', pubky, skip, limit);
+  useEffect(() => {
+    setProfileTags(user?.tags);
+  }, [user?.tags]);
+
+  {
+    /**
+  const { data: moreTags, isLoading } = useTagsUser(usePubky, pubky, skip, limit);
 
   useEffect(() => {
     if (!isLoading && moreTags && moreTags.length) {
@@ -58,31 +58,12 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
       setSkip((prev) => prev + limit);
     }
   }, isLoading);
+  */
+  }
 
   useEffect(() => {
     setProfileTags(user?.tags ?? []);
   }, [user?.tags]);
-
-  useEffect(() => {
-    const fetchTaggedImages = async () => {
-      if (profileTags && profileTags.length > 0) {
-        const allImages = await Promise.all(
-          profileTags.map(async (tag) => {
-            const images = await Promise.all(
-              tag?.taggers?.map(async (fromItem) => {
-                const profile = await getUserProfile(fromItem, pubky ?? '');
-                return profile?.details?.image;
-              }) ?? []
-            );
-            return images;
-          })
-        );
-        setTaggedImages(allImages);
-      }
-    };
-
-    fetchTaggedImages();
-  }, [profileTags, pubky]);
 
   const handleOpenModal = () => {
     openModal('profileTags', {
@@ -120,8 +101,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                 {profileTags.map((tag, index) => {
                   const isTagFound = tag?.relationship || false;
 
-                  const images = taggedImages[index] || [];
-                  const displayedImages = images?.slice(0, 5);
+                  const displayedImages = tag.taggers?.slice(0, 5);
                   const extraImagesCount = tag.taggers_count - displayedImages?.length;
 
                   return (
@@ -160,7 +140,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                       <div onClick={handleOpenModal} className="cursor-pointer flex items-center">
                         {displayedImages?.map((image, imageIndex) => (
                           <ImageByUri
-                            id={user?.details?.id}
+                            id={image}
                             width={32}
                             height={32}
                             key={`${tag?.label}-${imageIndex}`}
@@ -168,7 +148,6 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                               imageIndex > 0 && '-ml-2'
                             }`}
                             alt={`tag-${imageIndex + 1}`}
-                            uri={image}
                           />
                         ))}
                         {extraImagesCount > 0 && (
@@ -178,11 +157,11 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                     </div>
                   );
                 })}
-                {hasMore && (
+                {/**hasMore && (
                   <div ref={loader}>
                     <Icon.LoadingSpin />
                   </div>
-                )}
+                )*/}
               </>
             ) : (
               <ContentNotFound
@@ -206,7 +185,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
               </ContentNotFound>
             )}
             <Button.Medium
-              className={`mt-2 w-auto h-8 inline-flex lg:hidden items-center ${profileTags.length === 0 && 'self-center'}`}
+              className={`mt-2 w-auto h-8 inline-flex lg:hidden items-center ${profileTags?.length === 0 && 'self-center'}`}
               onClick={handleOpenModal}
               icon={<Icon.Tag size="16" />}
             >

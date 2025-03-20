@@ -2,7 +2,7 @@ import { ImageByUri } from '@components/ImageByUri/index';
 import { twMerge } from 'tailwind-merge';
 
 interface UserPicProps extends React.HTMLAttributes<HTMLDivElement> {
-  images: { id: string; alt: string; src: string }[];
+  images: { id: string; alt: string }[];
   className?: string;
 }
 
@@ -19,7 +19,6 @@ export const UserPic = ({ images, ...rest }: UserPicProps) => {
             key={index}
             className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${index > 0 && '-ml-2'}`}
             alt={image.alt ? image.alt : `image-${index + 1}`}
-            uri={image.src}
           />
         ))}
     </div>

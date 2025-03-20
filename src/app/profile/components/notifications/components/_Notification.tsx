@@ -189,7 +189,6 @@ export default function Notification({ notification, unread }: { notification: N
               height={32}
               className="w-[32px] h-[32px] rounded-full sm:hidden"
               alt="user-pic"
-              uri={user?.details?.image || '/images/webp/Userpic.webp'}
             />
           )}
           {userId && (
@@ -201,7 +200,6 @@ export default function Notification({ notification, unread }: { notification: N
                   height={32}
                   className="w-[32px] h-[32px] rounded-full hidden sm:flex"
                   alt="user-pic"
-                  uri={user?.details?.image || '/images/webp/Userpic.webp'}
                 />
               )}
               <Typography.Body className="hover:underline hover:decoration-solid" variant="medium-bold">

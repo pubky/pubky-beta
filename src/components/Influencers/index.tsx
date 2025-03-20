@@ -31,9 +31,7 @@ export default function Influencers({ style }: InfluencersProps) {
                 <div key={index}>
                   <SideCard.UserSmall
                     uri={influencer.details.id.replace('pubky:', '')}
-                    uriImage={influencer?.details?.image || '/images/webp/Userpic.webp'}
                     username={influencer?.details?.name && Utils.minifyText(influencer?.details?.name, 15)}
-                    // label={Utils.minifyPubky(friend.uri.replace('pubky:', ''))}
                     postsCount={influencer?.counts?.posts}
                     tagsCount={influencer?.counts?.tags}
                   />

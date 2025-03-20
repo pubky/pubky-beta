@@ -70,7 +70,7 @@ export default function TagsLargeView({ post, postType }: TagsProps) {
 
           const displayedImages = tagObj?.taggers
             .slice(0, 4)
-            .map((fromItem) => profileImages[fromItem])
+            .map((fromItem) => fromItem)
             .filter(Boolean);
 
           const extraImagesCount = tagObj?.taggers_count - displayedImages.length;
@@ -122,7 +122,7 @@ export default function TagsLargeView({ post, postType }: TagsProps) {
                         tagId={image}
                       >
                         <ImageByUri
-                          id={taggers[imageIndex]}
+                          id={image}
                           width={32}
                           height={32}
                           onClick={(e) => {
@@ -137,7 +137,6 @@ export default function TagsLargeView({ post, postType }: TagsProps) {
                             imageIndex > 0 && '-ml-2'
                           }`}
                           alt={`tag-${imageIndex + 1}`}
-                          uri={image}
                         />
                         {showTooltipProfile?.tagIndex === index &&
                           showTooltipProfile?.imageIndex === imageIndex &&

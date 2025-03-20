@@ -15,7 +15,6 @@ export default function Sidebar({ creatorPubky }: { creatorPubky?: string | null
   const name = creatorPubky ? profileUser?.details?.name || '' : profile?.name || '';
   const bio = creatorPubky ? profileUser?.details?.bio || 'No bio.' : profile?.bio || 'No bio.';
   const links = creatorPubky ? profileUser?.details?.links : profile?.links;
-  const image = profileUser?.details?.image ?? '/images/webp/Userpic.webp';
   const [profileTags, setProfileTags] = useState<UserTags[]>(profileUser?.tags ?? []);
   const [followed, setFollowed] = useState(false);
   const [loadingFollowed, setLoadingFollowed] = useState(false);
@@ -60,7 +59,6 @@ export default function Sidebar({ creatorPubky }: { creatorPubky?: string | null
     <div className="w-[180px] hidden flex-col justify-start items-start gap-8 xl:inline-flex">
       <UserInfo
         scrolled={scrolled}
-        uriImage={image}
         name={name}
         profile={profileUser}
         creatorPubky={creatorPubky}

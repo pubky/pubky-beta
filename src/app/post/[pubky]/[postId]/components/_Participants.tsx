@@ -221,7 +221,6 @@ export default function Participants({ author }: { author: string }) {
         <SideCard.Content>
           <SideCard.User
             uri={authorData ? authorData.details.id : ''}
-            uriImage={authorData?.details?.image || '/images/webp/Userpic.webp'}
             username={Utils.minifyText(authorData?.details?.name ?? '')}
             label={Utils.minifyPubky(authorData?.details?.id ?? '')}
             className="mb-2"
@@ -234,7 +233,6 @@ export default function Participants({ author }: { author: string }) {
                 <React.Fragment key={participant.details.id}>
                   <SideCard.User
                     uri={participant.details.id}
-                    uriImage={participant?.details?.image || '/images/webp/Userpic.webp'}
                     username={Utils.minifyText(participant?.details?.name)}
                     label={Utils.minifyPubky(participant.details.id)}
                     className="mb-2"

@@ -5,7 +5,6 @@ import { Icon } from '../Icon';
 import { ImageByUri } from '@components/ImageByUri/index';
 
 interface UserProps extends React.HTMLAttributes<HTMLDivElement> {
-  uriImage: string;
   label?: string;
   tagsCount?: number;
   postsCount?: number;
@@ -22,7 +21,6 @@ export const User = ({
   height = 40,
   image,
   alt = 'user',
-  uriImage,
   username,
   children,
   label,
@@ -41,7 +39,6 @@ export const User = ({
           className="rounded-full max-w-none h-none"
           style={{ width: `${width}px`, height: `${height}px` }}
           alt={alt}
-          uri={uriImage}
         />
         <div className="flex-col justify-start items-start inline-flex">
           <Typography.Body variant="medium-bold">{username}</Typography.Body>

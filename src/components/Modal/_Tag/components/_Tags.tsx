@@ -19,7 +19,6 @@ export default function Tags({ post, postType }: TagsProps) {
     setSelectedTag,
     loader,
     loadingTags,
-    tagImages,
     hasMore,
     pubky,
     taggers,
@@ -42,7 +41,7 @@ export default function Tags({ post, postType }: TagsProps) {
               {allTags.map((tag, index) => {
                 const isTagFound = tag.relationship || false;
 
-                const displayedImages = tagImages[tag.label] || [];
+                const displayedImages = tag.taggers || [];
                 const extraImagesCount = displayedImages.length > 4 ? displayedImages.length - 4 : 0;
 
                 return (
@@ -82,7 +81,7 @@ export default function Tags({ post, postType }: TagsProps) {
                     >
                       {displayedImages.map((image, imageIndex) => (
                         <ImageByUri
-                          id={userProfiles?.[tag?.label]?.details?.id}
+                          id={image}
                           width={32}
                           height={32}
                           key={imageIndex}
@@ -90,7 +89,6 @@ export default function Tags({ post, postType }: TagsProps) {
                             imageIndex > 0 && '-ml-2'
                           }`}
                           alt={`tag-${imageIndex + 1}`}
-                          uri={image}
                         />
                       ))}
                       {extraImagesCount > 0 && (
@@ -160,7 +158,6 @@ export default function Tags({ post, postType }: TagsProps) {
                   <div key={userIndex} className="w-full flex justify-between gap-10">
                     <SideCard.User
                       uri={profile?.details?.id.replace('pubky:', '')}
-                      uriImage={profile?.details?.image || '/images/webp/Userpic.webp'}
                       username={profile?.details?.name && Utils.minifyText(profile?.details?.name)}
                       label={Utils.minifyPubky(profile?.details?.id.replace('pubky:', ''))}
                     />

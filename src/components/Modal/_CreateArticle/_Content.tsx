@@ -297,14 +297,9 @@ export default function ContentCreateArticle({ setShowModalArticle, setShowModal
                 disabled={sendingArticle}
                 maxLength={50}
                 autoCorrect="off"
-                //error={errors.name}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setContentTitle(e.target.value)}
               />
-              <Section.UserArea
-                uriPic={profile?.image ?? '/images/webp/Userpic.webp'}
-                name={profile?.name ?? Utils.minifyPubky(pubky ?? '')}
-                largeView={!isMobile}
-              />
+              <Section.UserArea name={profile?.name ?? Utils.minifyPubky(pubky ?? '')} largeView={!isMobile} />
               <div className="relative my-4">
                 {selectedFile.length > 0 ? (
                   <div className="relative">

@@ -92,7 +92,7 @@ export default function Buttons({
 
       await saveProfile(name, bio, image, linksObject, status);
 
-      if (prevImage && prevImage !== '/images/webp/Userpic.webp' && prevImage !== image) {
+      if (prevImage && prevImage !== image) {
         const { src } = await getFile(String(prevImage));
         await deleteFile(src);
         await deleteFile(String(prevImage));

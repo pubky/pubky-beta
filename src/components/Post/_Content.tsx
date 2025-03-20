@@ -47,6 +47,7 @@ export default function Content({
   const text = post?.details?.content;
   const files = post?.details?.attachments;
   const uri = post?.details?.uri;
+  const generateFileUrl = (file: FileView, type = 'main') => `${BASE_URL}/${file.owner_id}/${file.id}/${type}`;
 
   async function checkForLink(text: string) {
     const urlRegex = /(https?:\/\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+)/g;
@@ -196,7 +197,7 @@ export default function Content({
                                     renderSkeleton()
                                   ) : (
                                     <img
-                                      src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
+                                      src={generateFileUrl(file, file.content_type !== 'image/gif' ? 'feed' : 'main')}
                                       alt={`Fetched file ${index}`}
                                       width={360}
                                       height={200}
@@ -280,11 +281,11 @@ export default function Content({
                       <Link
                         key={index}
                         className="text-[#C8FF00] break-all"
-                        href={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
+                        href={generateFileUrl(file)}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        {`${(BASE_URL + '/' + JSON.parse(file?.urls).main).slice(0, 12)}...${(BASE_URL + '/' + JSON.parse(file?.urls).main).slice(-12)}`}
+                        {`${generateFileUrl(file).slice(0, 12)}...${generateFileUrl(file).slice(-12)}`}
                       </Link>
                     ))}
                   </div>
@@ -318,7 +319,7 @@ export default function Content({
                                   style={{ height: imageFiles.length === 1 ? 'auto' : 'calc(544px / 2)' }}
                                 >
                                   <img
-                                    src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
+                                    src={generateFileUrl(file, file.content_type !== 'image/gif' ? 'feed' : 'main')}
                                     onClick={(event) => {
                                       event.stopPropagation();
                                       handleOpenModal(index);
@@ -349,7 +350,7 @@ export default function Content({
                                 renderSkeleton()
                               ) : isVideo ? (
                                 <video
-                                  src={`${BASE_URL}/${JSON.parse(file?.urls).main}`}
+                                  src={generateFileUrl(file)}
                                   controls
                                   onClick={(event) => event.stopPropagation()}
                                   className="w-auto md:min-w-[400px] h-auto max-w-full max-h-[544px] object-cover rounded-[10px] overflow-hidden"
@@ -358,17 +359,14 @@ export default function Content({
                                 <div
                                   onClick={(event) => {
                                     event.stopPropagation();
-                                    window.open(`${BASE_URL}/${JSON.parse(file?.urls).main}`, '_blank');
+                                    window.open(generateFileUrl(file), '_blank');
                                   }}
                                   className="flex gap-2 w-full justify-between items-center rounded-[10px] border p-4 border-white border-opacity-10 hover:border-opacity-30"
                                 >
                                   <div className="flex gap-2 items-center">
                                     <Icon.FileText size="20" />
                                     <Typography.Body className="text-opacity-80" variant="small-bold">
-                                      {Utils.minifyText(
-                                        file?.name ?? `${BASE_URL}/${JSON.parse(file?.urls).main}`,
-                                        isMobile ? 20 : 60
-                                      )}
+                                      {Utils.minifyText(file?.name ?? generateFileUrl(file), isMobile ? 20 : 60)}
                                     </Typography.Body>
                                   </div>
                                   <Button.Medium
@@ -380,7 +378,7 @@ export default function Content({
                                 </div>
                               ) : isAudio ? (
                                 <audio onClick={(event) => event.stopPropagation()} controls>
-                                  <source src={`${BASE_URL}/${JSON.parse(file?.urls).main}`} type="audio/mpeg" />
+                                  <source src={generateFileUrl(file)} type="audio/mpeg" />
                                   Browser does not support audio.
                                 </audio>
                               ) : (

@@ -26,7 +26,6 @@ export const useUtilsTag = ({ profileTags, setProfileTags, pubkyUser, user }: Ut
   const [showEmojis, setShowEmojis] = useState(false);
   const [selectedTag, setSelectedTag] = useState<UserTags | null>(null);
   const [initLoadingFollowers, setInitLoadingFollowers] = useState(true);
-  const [tagImages, setTagImages] = useState<{ [label: string]: string[] }>({});
   const [loadingFollowers, setLoadingFollowers] = useState<{
     [pubky: string]: boolean;
   }>({});
@@ -37,7 +36,7 @@ export const useUtilsTag = ({ profileTags, setProfileTags, pubkyUser, user }: Ut
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
   const limit = 5;
-  const [allTags, setAllTags] = useState<PostTag[]>(profileTags.slice(0, limit));
+  const [allTags, setAllTags] = useState<PostTag[]>(profileTags?.slice(0, limit));
   const [loadingTags, setLoadingTags] = useState('');
   const [loading, setLoading] = useState(false);
   const [skip, setSkip] = useState(limit);
@@ -58,7 +57,9 @@ export const useUtilsTag = ({ profileTags, setProfileTags, pubkyUser, user }: Ut
   );
 
   useEffect(() => {
-    const uniqueTags = profileTags.filter((tag, index, self) => index === self.findIndex((t) => t.label === tag.label));
+    const uniqueTags = profileTags?.filter(
+      (tag, index, self) => index === self.findIndex((t) => t.label === tag.label)
+    );
     if (JSON.stringify(uniqueTags) !== JSON.stringify(allTags)) {
       setAllTags(uniqueTags);
     }
@@ -239,33 +240,11 @@ export const useUtilsTag = ({ profileTags, setProfileTags, pubkyUser, user }: Ut
   const fetchProfileImages = async (tag: PostTag) => {
     const images = await Promise.all(
       tag.taggers.map(async (fromItem) => {
-        try {
-          const profile = await getUserProfile(fromItem, pubky ?? '');
-          return profile?.details?.image || '/images/webp/Userpic.webp';
-        } catch (error) {
-          return '/images/webp/Userpic.webp';
-        }
+        return fromItem;
       })
     );
     return images;
   };
-
-  // Fetch images for all tags
-  useEffect(() => {
-    const fetchAllImages = async () => {
-      const imagesMap: { [label: string]: string[] } = {};
-      await Promise.all(
-        allTags.map(async (tag) => {
-          const images = await fetchProfileImages(tag);
-          imagesMap[tag.label] = images.slice(0, 4);
-        })
-      );
-      setTagImages(imagesMap);
-    };
-    if (allTags.length > 0) {
-      fetchAllImages();
-    }
-  }, [allTags]);
 
   const followUser = async (pubkyFollow: string) => {
     try {
@@ -374,7 +353,6 @@ export const useUtilsTag = ({ profileTags, setProfileTags, pubkyUser, user }: Ut
     selectedTag,
     setSelectedTag,
     allTags,
-    tagImages,
     deleteProfileTag,
     loadingTags,
     hasMore,
