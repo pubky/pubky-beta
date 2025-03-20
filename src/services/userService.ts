@@ -1,48 +1,15 @@
 import { UserView, UserCounts, UserDetails, Relationship, UserTag, Taggers } from '../types/User';
+import { userProfileCache } from '@/components/utils-shared/lib/Helper/userProfileCache';
 
 const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
 const BASE_URL = `${NEXT_PUBLIC_NEXUS}/v0`;
-
-// Singleton cache implementation
-class UserProfileCache {
-  private static instance: UserProfileCache;
-  private cache: Map<string, UserView>;
-
-  private constructor() {
-    this.cache = new Map();
-  }
-
-  public static getInstance(): UserProfileCache {
-    if (!UserProfileCache.instance) {
-      UserProfileCache.instance = new UserProfileCache();
-    }
-    return UserProfileCache.instance;
-  }
-
-  public get(key: string): UserView | undefined {
-    return this.cache.get(key);
-  }
-
-  public set(key: string, value: UserView): void {
-    this.cache.set(key, value);
-  }
-
-  public clear(): void {
-    this.cache.clear();
-  }
-  public count(): number {
-    return this.cache.size;
-  }
-}
 
 // User profile
 export async function getUserProfile(userId: string, viewerId: string): Promise<UserView> {
   if (!userId) throw new Error('User ID is required');
 
-  const cache = UserProfileCache.getInstance();
-
   // Check cache first
-  const cachedUser = cache.get(userId);
+  const cachedUser = userProfileCache.get(userId);
   if (cachedUser) {
     return cachedUser;
   }
@@ -57,14 +24,14 @@ export async function getUserProfile(userId: string, viewerId: string): Promise<
   const userData = await response.json();
 
   // Store in cache
-  cache.set(userId, userData);
+  userProfileCache.set(userId, userData);
 
   return userData;
 }
 
 // Function to clear the cache if needed
 export function clearUserProfileCache(): void {
-  UserProfileCache.getInstance().clear();
+  userProfileCache.clear();
 }
 
 // User counts
