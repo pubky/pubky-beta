@@ -39,7 +39,7 @@ type PubkyClientContextType = {
   setNewUser: React.Dispatch<React.SetStateAction<boolean>>;
   generateAuthUrl: (caps?: string) => Promise<{ url: string; promise: any } | null>;
   loginWithFile: (password: string, recoveryFile: Buffer) => Promise<string>;
-  loginWithAuthUrl: (publicKey: string) => Promise<string>;
+  loginWithAuthUrl: (publicKey: PublicKey) => Promise<string>;
   loginWithMnemonic: (mnemonic: string) => Promise<string>;
   isLoggedIn: () => Promise<boolean>;
   isSessionActive: () => Promise<boolean>;
@@ -291,10 +291,21 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
     }
   };
 
-  const loginWithAuthUrl = async (publickey: string) => {
+  async function checkHomeserver(publicKey: PublicKey): Promise<string> {
+    const homeserver = await client.getHomeserver(publicKey);
+    if (homeserver.z32() !== NEXT_PUBLIC_HOMESERVER.z32()) {
+      throw new Error('Authentication failed: Wrong homeserver');
+    }
+    return publicKey.z32();
+  }
+
+  const loginWithAuthUrl = async (publickey: PublicKey) => {
     try {
+      // check homeserver
+      const homeserver = await checkHomeserver(publickey);
+      if (!homeserver) logout();
       // Save pubky state
-      const pk = publickey;
+      const pk = publickey.z32();
 
       setPubkyAndStorage(pk);
       return pk;
@@ -309,14 +320,10 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
   async function authenticateKeypair(keypair: Keypair): Promise<string> {
     try {
       // check homeserver
-      const homeserver = await client.getHomeserver(keypair.publicKey());
+      await checkHomeserver(keypair.publicKey());
 
       // 1) Sign in with the Keypair
-      if (homeserver.z32() === NEXT_PUBLIC_HOMESERVER.z32()) {
-        await client.signin(keypair);
-      } else {
-        throw new Error('Authentication failed: Wrong homeserver');
-      }
+      await client.signin(keypair);
     } catch (error) {
       console.warn('Sign in failed:', error);
       try {
