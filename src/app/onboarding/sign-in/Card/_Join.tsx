@@ -19,6 +19,7 @@ export default function Join() {
   const { addAlert } = useAlertContext();
   const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
   const fallbackUrl = isIOS ? 'https://apps.apple.com/app' : 'https://play.google.com/store/apps';
+  const isiOSPWA = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
   const [loginError, setLoginError] = useState('');
   const [authUrl, setAuthUrl] = useState('');
   const [appLink, setAppLink] = useState('');
@@ -117,7 +118,7 @@ export default function Join() {
     >
       {!isMobile && (
         <div className="relative cursor-pointer" onClick={copyToClipboard}>
-          {authUrl && !loginError ? (
+          {authUrl && !loginError && !isiOSPWA ? (
             <div className="relative w-fit mt-6">
               <QRCodeSVG
                 value={authUrl}
@@ -170,14 +171,21 @@ export default function Join() {
       <Content.LinksStoreApp />
       {isMobile && (
         <Button.Medium
-          onClick={() => {
-            copyToClipboard();
-            openApp();
-          }}
-          icon={<Icon.Key size="16" />}
+          onClick={
+            authUrl && !isiOSPWA
+              ? () => {
+                  copyToClipboard();
+                  openApp();
+                }
+              : undefined
+          }
+          disabled={!authUrl || isiOSPWA}
+          icon={<Icon.Key size="16" color={authUrl && !isiOSPWA ? 'white' : 'gray'} />}
           className="mt-2"
         >
           Authorize with Pubky Ring
+          <br />
+          <span className={!authUrl || isiOSPWA ? 'block' : 'hidden'}>(Not Available)</span>
         </Button.Medium>
       )}
     </Card.Primary>
