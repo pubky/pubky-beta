@@ -38,7 +38,7 @@ export default function Tag2({ tags }: TagProps) {
   const extraImagesCount = tags && tags?.taggers_count - displayedImages?.length;
 
   return (
-    <TooltipUI.Main className="z-40 w-auto left-auto shadow-none px-0 pt-5 pb-0 bg-transparent border-0 cursor-default -translate-x-0 translate-y-[70px]">
+    <TooltipUI.Main className="z-40 w-auto left-auto shadow-none px-0 pt-[5px] pb-0 bg-transparent border-0 cursor-default -translate-x-0 translate-y-[70px]">
       <div className="flex gap-6 justify-start w-full">
         {loadingFollowers ? (
           <></>
