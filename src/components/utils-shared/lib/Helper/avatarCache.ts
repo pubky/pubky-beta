@@ -16,6 +16,7 @@ class AvatarCache {
   }
 
   public set(key: string, url: string): void {
+    if (url.startsWith('blob:')) return; // Do not save blob URLs
     this.cache.set(key, url);
   }
 
