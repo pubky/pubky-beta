@@ -83,7 +83,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
 
   return (
     <div className="w-full mx-2 lg:mx-0">
-      {name && profileTags.length > 0 && (
+      {name && profileTags?.length > 0 && (
         <>
           <SideCard.Header className="hidden lg:flex" title={`${name} was tagged as:`} />
           <Typography.Body variant="large-bold" className="flex lg:hidden">
