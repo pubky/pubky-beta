@@ -273,7 +273,7 @@ export default function FooterArea({
                   />
                 </div>
                 {article && (
-                  <div className="hidden lg:flex">
+                  <div className="flex">
                     <Button.Action
                       id="article-btn"
                       variant="custom"
