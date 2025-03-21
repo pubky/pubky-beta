@@ -26,7 +26,7 @@ export const CursorArea = ({
   const textareaRef = ref && useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    if (textareaRef.current) {
+    if (textareaRef?.current) {
       textareaRef.current.style.height = '25px';
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
