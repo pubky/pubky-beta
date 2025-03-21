@@ -270,7 +270,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
     // TODO: Temporary fix — this should eventually be replaced with middleware
     // More info in https://github.com/pubky/pubky-app/pull/1235
     if (!pubky && !Utils.storage.get('pubky_public_key')) {
-      console.log('Removing pubky context and localStorage...')
+      console.log('Removing pubky context and localStorage...');
       Utils.storage.remove('pubky_public_key');
       setPubky(undefined);
       return false;
