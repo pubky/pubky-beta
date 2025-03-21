@@ -57,7 +57,7 @@ export default function SignIn() {
       try {
         const pubkey = await result.promise;
         if (pubkey) {
-          const handleLoginResult = await loginWithAuthUrl(String(pubkey.z32()));
+          const handleLoginResult = await loginWithAuthUrl(pubkey);
           if (handleLoginResult) {
             addAlert('Login successful!');
             router.push('/home');
