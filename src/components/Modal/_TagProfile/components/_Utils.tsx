@@ -90,7 +90,7 @@ export const useUtilsTag = ({ profileTags, setProfileTags, pubkyUser, user }: Ut
 
   useEffect(() => {
     if (!isLoading && moreTags && moreTags.length) {
-      setAllTags((prev) => {
+      setAllTags((prev = []) => {
         const updatedTags = [...prev, ...moreTags];
         const uniqueTags = updatedTags.filter(
           (tag, index, self) => index === self.findIndex((t) => t.label === tag.label)
