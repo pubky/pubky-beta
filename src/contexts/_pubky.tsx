@@ -308,8 +308,15 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
   // Helper used on the different login methods
   async function authenticateKeypair(keypair: Keypair): Promise<string> {
     try {
+      // check homeserver
+      const homeserver = await client.getHomeserver(keypair.publicKey());
+
       // 1) Sign in with the Keypair
-      await client.signin(keypair);
+      if (homeserver.z32() === NEXT_PUBLIC_HOMESERVER.z32()) {
+        await client.signin(keypair);
+      } else {
+        throw new Error('Authentication failed: Wrong homeserver');
+      }
     } catch (error) {
       console.warn('Sign in failed:', error);
       try {
