@@ -46,7 +46,7 @@ export default function Influencers({ style }: InfluencersProps) {
           </>
         ) : (
           <Typography.Body className="text-opacity-50" variant="small">
-            No popular users to show
+            No active users to show.
           </Typography.Body>
         )}
       </SideCard.Content>

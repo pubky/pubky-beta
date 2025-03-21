@@ -1016,6 +1016,25 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
     // delete the post from the replies
     setReplies((prevReplies) => prevReplies.filter((p) => p.details.id !== post.details.id));
 
+    // If this is a reply, update the parent post's reply count
+    if (post.relationships?.replied) {
+      const parentUri = post.relationships.replied;
+      setTimeline((prevTimeline) =>
+        prevTimeline.map((p) => {
+          if (p.details.uri === parentUri) {
+            return {
+              ...p,
+              counts: {
+                ...p.counts,
+                replies: (p.counts?.replies || 0) - 1
+              }
+            };
+          }
+          return p;
+        })
+      );
+    }
+
     // delete the files
     if (post?.details?.attachments) {
       const fileDeletions = Object.values(post?.details?.attachments).map(async (file) => {
