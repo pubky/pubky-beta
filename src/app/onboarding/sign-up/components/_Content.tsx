@@ -3,13 +3,12 @@
 import { z } from 'zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button, Input, Icon, Typography } from '@social/ui-shared';
 import { usePubkyClientContext } from '@/contexts';
 import { Onboarding } from '../../components';
 import { Card } from '../Card';
 import { Links } from '@/types/Post';
-import genJdenticon from '@/components/utils-shared/lib/Helper/genJdenticon';
 import { processUserLinks } from '../../register/components/processUserLinks';
 
 interface FormErrors {
