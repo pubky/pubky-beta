@@ -17,6 +17,7 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex }:
   const touchStartX = useRef(0);
   const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
   const BASE_URL = `${NEXT_PUBLIC_NEXUS}/static/files`;
+  const generateFileUrl = (file: FileView, type = 'main') => `${BASE_URL}/${file.owner_id}/${file.id}/${type}`;
   const mediaFiles = fileContents.filter(
     (file) => file?.content_type.startsWith('image') || file?.content_type.startsWith('video')
   );
@@ -104,13 +105,13 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex }:
       )}
       {isVideo ? (
         <video
-          src={`${BASE_URL}/${JSON.parse(currentFile?.urls).main}`}
+          src={generateFileUrl(currentFile)}
           controls
           className="rounded-2xl p-6 max-w-full w-auto h-auto max-h-[80vh] object-contain"
         />
       ) : (
         <img
-          src={`${BASE_URL}/${JSON.parse(currentFile?.urls).main}`}
+          src={generateFileUrl(currentFile, currentFile.content_type !== 'image/gif' ? 'feed' : 'main')}
           alt={`Modal view ${localFileIndex}`}
           width={800}
           height={418}
