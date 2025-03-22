@@ -295,7 +295,9 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
 
   async function checkHomeserver(publicKey: PublicKey): Promise<string> {
     const homeserver = await client.getHomeserver(publicKey);
+
     if (homeserver.z32() !== NEXT_PUBLIC_HOMESERVER.z32()) {
+      console.error('Authentication failed: Wrong homeserver');
       throw new Error('Authentication failed: Wrong homeserver');
     }
     return publicKey.z32();
