@@ -120,7 +120,6 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
               onEmojiPickerClick={() => setShowEmojis(true)}
               variant="default"
               className="w-full"
-              autoFocus
             />
           </div>
           <div className="mt-2 justify-start items-start">
