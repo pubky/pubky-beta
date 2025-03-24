@@ -144,6 +144,8 @@ export default function InputArea({
   };
 
   const handleEditorChange = (text: string) => {
+    if (!text) return;
+
     if (text.length > maxLength) {
       setIsError && setIsError(true);
     } else {
