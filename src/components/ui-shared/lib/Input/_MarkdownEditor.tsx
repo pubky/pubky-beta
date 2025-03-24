@@ -29,7 +29,25 @@ const formats = [
   'image'
 ];
 
-const MarkdownEditorComponent = ({ id, placeHolder, autoFocus, onChange, setCharCount, value, maxLength }) => {
+interface MarkdownEditorComponentProps {
+  id: string;
+  placeHolder: string;
+  autoFocus: boolean;
+  onChange: (text: string) => void;
+  setCharCount: (count: number) => void;
+  value: string;
+  maxLength: number;
+}
+
+const MarkdownEditorComponent = ({
+  id,
+  placeHolder,
+  autoFocus,
+  onChange,
+  setCharCount,
+  value,
+  maxLength
+}: MarkdownEditorComponentProps) => {
   const { quill, quillRef } = useQuill({
     modules,
     formats,
@@ -39,12 +57,19 @@ const MarkdownEditorComponent = ({ id, placeHolder, autoFocus, onChange, setChar
   useEffect(() => {
     if (quill) {
       quill.on('text-change', () => {
-        const text = quill.getText().trim();
+        let text = quill.getText();
+
+        if (text === '\n') {
+          text = '';
+        }
+
+        if (text.endsWith('\n')) {
+          text = text.slice(0, -1);
+        }
+
         if (text.length <= maxLength) {
-          if (setCharCount && typeof setCharCount === 'function') {
-            setCharCount(text.length);
-          }
-          onChange(quill.root.innerText);
+          setCharCount(text.length);
+          onChange(text);
         } else {
           quill.deleteText(maxLength, quill.getLength());
         }
