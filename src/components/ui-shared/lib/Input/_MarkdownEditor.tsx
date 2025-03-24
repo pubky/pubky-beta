@@ -68,7 +68,7 @@ const MarkdownEditorComponent = ({
         }
 
         if (text.length <= maxLength) {
-          setCharCount && setCharCount(text.length);
+          setCharCount(text.length);
           onChange(text);
         } else {
           quill.deleteText(maxLength, quill.getLength());
