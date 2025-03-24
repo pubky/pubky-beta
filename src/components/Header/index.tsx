@@ -20,7 +20,7 @@ export default function Header({ title }: HeaderProps) {
   const { unReadNotification } = useFilterContext();
   const { openModal } = useModal();
 
-  const [searchInputCard, setSearchInputCard] = useState(false);
+  const [isOpenCard, setisOpenCard] = useState(false);
   const [logoLink, setLogoLink] = useState('/onboarding');
   const [inputValue, setInputValue] = useState('');
 
@@ -43,7 +43,7 @@ export default function Header({ title }: HeaderProps) {
   useEffect(() => {
     const handleClickOutsideDrawer = (event: MouseEvent) => {
       if (refSearchInputCard.current && !refSearchInputCard.current.contains(event.target as Node)) {
-        setSearchInputCard(false);
+        setisOpenCard(false);
       }
     };
 
@@ -148,17 +148,17 @@ export default function Header({ title }: HeaderProps) {
               maxLength={55}
               placeholder={!searchTags.length ? 'Search' : ''}
               className={`${
-                searchInputCard && 'rounded-2xl rounded-b-none border-b-0 bg-gradient-to-b from-[#05050A] to-[#05050A]'
+                isOpenCard && 'rounded-2xl rounded-b-none border-b-0 bg-gradient-to-b from-[#05050A] to-[#05050A]'
               }`}
-              onClick={() => setSearchInputCard(true)}
+              onClick={() => setisOpenCard(true)}
               readOnly={!!searchTags.length}
               autoComplete="off"
             />
             <Modal.SearchInputCard
-              className={searchInputCard ? 'block' : 'hidden'}
+              className={isOpenCard ? 'block' : 'hidden'}
               refCard={refSearchInputCard}
               inputValue={inputValue}
-              searchInputCard={searchInputCard}
+              isOpenCard={isOpenCard}
             />
             <Input.SearchActions className="hidden lg:flex">
               <div className={inputValue && 'cursor-pointer'} onClick={inputValue ? handleSearchTag : undefined}>

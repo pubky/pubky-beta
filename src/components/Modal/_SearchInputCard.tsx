@@ -4,7 +4,6 @@ import { Card, Icon, PostUtil, SideCard, Typography } from '@social/ui-shared';
 import { twMerge } from 'tailwind-merge';
 import { usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
-import { useHotTags } from '@/hooks/useTag';
 import Link from 'next/link';
 import { UserView } from '@/types/User';
 import { searchUsersByUsername } from '@/services/streamService';
@@ -14,10 +13,10 @@ import { getHotTags } from '@/services/tagService';
 interface SearchInputCardProps extends React.HTMLAttributes<HTMLDivElement> {
   refCard?: React.RefObject<HTMLDivElement>;
   inputValue?: string;
-  searchInputCard?: boolean;
+  isOpenCard?: boolean;
 }
 
-export default function SearchInputCard({ refCard, inputValue, searchInputCard, ...rest }: SearchInputCardProps) {
+export default function SearchInputCard({ refCard, inputValue, isOpenCard, ...rest }: SearchInputCardProps) {
   const router = useRouter();
   const { pubky, searchTags, setSearchTags } = usePubkyClientContext();
   const [hotTags, setHotTags] = useState([]);
@@ -35,14 +34,14 @@ export default function SearchInputCard({ refCard, inputValue, searchInputCard, 
   const requestIdRef = useRef(0);
 
   useEffect(() => {
-    if (!searchInputCard) return;
+    if (!isOpenCard) return;
 
     setIsLoading(true);
     getHotTags(pubky, undefined, 0, 10)
       .then((data) => setHotTags(data || []))
       .catch((error) => console.error('Error fetching hot tags:', error))
       .finally(() => setIsLoading(false));
-  }, [searchInputCard]);
+  }, [isOpenCard]);
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
