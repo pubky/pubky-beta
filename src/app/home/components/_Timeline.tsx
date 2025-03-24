@@ -56,26 +56,17 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
   const [isSwitchingFilters, setIsSwitchingFilters] = useState(false);
 
   const { data, isLoading } = useStreamPost(
-    pubky ?? '',
-    reach,
-    'all',
-    10,
-    sort === 'recent' ? start : undefined,
-    undefined,
-    sort === 'popularity' ? skip : undefined,
-    sort,
-    tagsFeed,
-    content
+    pubky ?? '', // viewerId
+    reach, // source
+    undefined, // authorId
+    10, // limit
+    sort === 'recent' ? start : undefined, // start
+    undefined, // end
+    sort === 'popularity' ? skip : undefined, // skip
+    sort, // sort
+    tagsFeed, // tags
+    content // kind
   );
-
-  const clearTimeline = useCallback(() => {
-    setTimeline([]);
-    setNewPosts([]);
-    setStart(undefined);
-    setSkip(0);
-    setFetching(false);
-    setIsInitialLoad(true);
-  }, [setNewPosts]);
 
   const fetchPosts = async () => {
     if (fetching || !data) return [];
@@ -143,34 +134,26 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
 
   const loader = useInfiniteScroll(fetchPosts, isLoading);
 
-  useEffect(() => {
-    const initializeTimeline = async () => {
-      setIsSwitchingFilters(true);
-      clearTimeline();
-      await new Promise((resolve) => setTimeout(resolve, 300)); // Increased delay for better UX when switching filters
-      const posts = await fetchPosts();
+  const initializeTimeline = async () => {
+    setIsSwitchingFilters(true);
+    clearTimeline();
+    const posts = await fetchPosts();
 
-      // Set a timeout to ensure we don't show the placeholder too early
-      setTimeout(() => {
-        setIsSwitchingFilters(false);
-        // If there are no posts after switching filters and fetching,
-        // we should set isInitialLoad to false to allow the placeholder to show
-        if (!posts || posts.length === 0) {
-          setIsInitialLoad(false);
-        }
-      }, 500);
-    };
+    if (!posts || posts.length === 0) {
+      setIsInitialLoad(false);
+    }
+  };
 
-    initializeTimeline();
-  }, [reach, sort, tagsFeed, content, mutedUsers, clearTimeline]);
+  const fetchNexusData = async () => {
+    if (!newPosts.length) return;
 
-  useEffect(() => {
-    const fetchNexusData = async () => {
-      if (!newPosts.length) return;
+    const homeserverPosts = newPosts.filter((post) => post.cached === 'homeserver' || post.cached === undefined);
+    if (!homeserverPosts.length) return;
 
-      const homeserverPosts = newPosts.filter((post) => post.cached === 'homeserver' || post.cached === undefined);
-      if (!homeserverPosts.length) return;
+    let retryCount = 0;
+    const maxRetries = 5;
 
+    const attemptFetch = async (): Promise<void> => {
       try {
         const nexusData = await getPost(
           homeserverPosts[0].details.author,
@@ -180,7 +163,14 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
           undefined
         );
 
-        if (!nexusData) return;
+        if (!nexusData) {
+          if (retryCount < maxRetries) {
+            retryCount++;
+            await new Promise((resolve) => setTimeout(resolve, 1000 * retryCount)); // Exponential backoff
+            return attemptFetch();
+          }
+          return;
+        }
 
         // Remove post from newPosts
         setNewPosts((prev) => prev.filter((post) => post.details.id !== nexusData.details.id));
@@ -197,17 +187,38 @@ export const Timeline = ({ selectedFeed }: TimelineProps) => {
         });
       } catch (error) {
         console.log('Error fetching Nexus data:', error);
+        if (retryCount < maxRetries) {
+          retryCount++;
+          await new Promise((resolve) => setTimeout(resolve, 1000 * retryCount)); // Exponential backoff
+          return attemptFetch();
+        }
       }
     };
 
-    const interval = setInterval(fetchNexusData, 2000); // Poll every 2 seconds
+    await attemptFetch();
+  };
 
-    return () => clearInterval(interval);
+  const clearTimeline = () => {
+    console.log('clearing timeline');
+    setTimeline([]);
+    setNewPosts([]);
+    setStart(undefined);
+    setSkip(0);
+    setFetching(false);
+    setIsInitialLoad(true);
+  };
+
+  useEffect(() => {
+    initializeTimeline();
+  }, [reach, sort, tagsFeed, content, mutedUsers]);
+
+  useEffect(() => {
+    fetchNexusData();
   }, [newPosts, pubky, reach, tagsFeed, sort, start]);
 
   return (
     <div id="timeline" className="flex flex-col gap-3">
-      {!isLoading && <NewPostsNotifier />}
+      {!isLoading && <NewPostsNotifier selectedFeed={selectedFeed} />}
 
       {timeline.map(
         (post) =>
