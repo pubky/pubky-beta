@@ -20,7 +20,10 @@ export default function Feedback() {
           <div className="flex flex-col gap-3">
             <Link href="/profile" className="flex gap-1 items-center">
               <ImageByUri id={pubky} alt="user" width={32} height={32} className="rounded-full w-8 h-8" />
-              <Typography.Body variant="medium-bold" className="hover:underline hover:decoration-solid">
+              <Typography.Body
+                variant="medium-bold"
+                className="whitespace-nowrap hover:underline hover:decoration-solid"
+              >
                 {Utils.minifyText(profile?.name ?? Utils.minifyPubky(pubky ?? ''), 10)}
               </Typography.Body>
             </Link>
