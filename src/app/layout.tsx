@@ -1,5 +1,5 @@
 import './global.css';
-import { getSeoMetadata, getPWAConfig, getPWATags } from '@/components/HeaderSEO';
+import { getSeoMetadata, getPWAConfig, getHeaderMetaTags } from '@/components/HeaderSEO';
 
 import {
   AlertWrapper,
@@ -22,7 +22,7 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <head>{getPWATags()}</head>
+      <head>{getHeaderMetaTags()}</head>
       <body className="overflow-x-hidden max-w-full min-w-[420px]">
         <PubkyClientWrapper>
           <FilterWrapper>

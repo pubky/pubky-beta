@@ -31,9 +31,10 @@ export function getPWAConfig() {
   };
 }
 
-export function getPWATags() {
+export function getHeaderMetaTags() {
   return (
     <>
+      {/* Viewport for mobile devices */}
       <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 
       {/* PWA icons for iOS */}
