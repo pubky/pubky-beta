@@ -158,6 +158,7 @@ export default function Header({ title }: HeaderProps) {
               className={searchInputCard ? 'block' : 'hidden'}
               refCard={refSearchInputCard}
               inputValue={inputValue}
+              searchInputCard={searchInputCard}
             />
             <Input.SearchActions className="hidden lg:flex">
               <div className={inputValue && 'cursor-pointer'} onClick={inputValue ? handleSearchTag : undefined}>
