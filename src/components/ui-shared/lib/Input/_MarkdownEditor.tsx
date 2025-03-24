@@ -29,7 +29,25 @@ const formats = [
   'image'
 ];
 
-const MarkdownEditorComponent = ({ id, placeHolder, autoFocus, onChange, setCharCount, value, maxLength }) => {
+interface MarkdownEditorComponentProps {
+  id: string;
+  placeHolder: string;
+  autoFocus: boolean;
+  onChange: (text: string) => void;
+  setCharCount: (count: number) => void;
+  value: string;
+  maxLength: number;
+}
+
+const MarkdownEditorComponent = ({
+  id,
+  placeHolder,
+  autoFocus,
+  onChange,
+  setCharCount,
+  value,
+  maxLength
+}: MarkdownEditorComponentProps) => {
   const { quill, quillRef } = useQuill({
     modules,
     formats,
