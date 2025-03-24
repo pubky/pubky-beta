@@ -31,9 +31,12 @@ export function getPWAConfig() {
   };
 }
 
-export function getPWATags() {
+export function getHeaderMetaTags() {
   return (
     <>
+      {/* Viewport for mobile devices */}
+      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+
       {/* PWA icons for iOS */}
       <link rel="apple-touch-icon" sizes="180x180" href="/web-app-manifest-192x192.png" />
       <link rel="apple-touch-startup-image" href="/web-app-manifest-512x512.png" />

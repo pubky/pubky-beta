@@ -12,9 +12,9 @@ const tabs = [
   },
   {
     id: 1,
-    key: 'popular',
+    key: 'users',
     icon: <Icon.UsersLeft size="24" color="white" />,
-    label: 'Popular'
+    label: 'Users'
   },
   {
     id: 2,
