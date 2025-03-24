@@ -109,7 +109,9 @@ export default function Account() {
           <Typography.H2>Back up your account</Typography.H2>
         </div>
         <Typography.Body variant="medium" className="text-opacity-80">
-          Without a backup you lose your account if you close your browser!
+          {disposableAccount
+            ? 'Without a backup you lose your account if you close your browser!'
+            : 'You have already completed the backup, or closed your browser before doing so. Your recovery file and seed phrase have been deleted.'}
         </Typography.Body>
         <Tooltip.RootSmall setShowTooltip={setShowTooltip}>
           <Button.Large
