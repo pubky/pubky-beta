@@ -4,21 +4,23 @@ import { Card, Icon, PostUtil, SideCard, Typography } from '@social/ui-shared';
 import { twMerge } from 'tailwind-merge';
 import { usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
-import { useHotTags } from '@/hooks/useTag';
 import Link from 'next/link';
 import { UserView } from '@/types/User';
 import { searchUsersByUsername } from '@/services/streamService';
 import { getUserProfile } from '@/services/userService';
+import { getHotTags } from '@/services/tagService';
 
 interface SearchInputCardProps extends React.HTMLAttributes<HTMLDivElement> {
   refCard?: React.RefObject<HTMLDivElement>;
   inputValue?: string;
+  isOpenCard?: boolean;
 }
 
-export default function SearchInputCard({ refCard, inputValue, ...rest }: SearchInputCardProps) {
+export default function SearchInputCard({ refCard, inputValue, isOpenCard, ...rest }: SearchInputCardProps) {
   const router = useRouter();
   const { pubky, searchTags, setSearchTags } = usePubkyClientContext();
-  const { data: hotTags, isLoading } = useHotTags(pubky, undefined, 0, 10);
+  const [hotTags, setHotTags] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [searchHistory, setSearchHistory] = useState<any[]>(() => {
     const storedHistory = Utils.storage.get('searchHistory') as any;
     return storedHistory ? storedHistory : [];
@@ -30,6 +32,24 @@ export default function SearchInputCard({ refCard, inputValue, ...rest }: Search
 
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
   const requestIdRef = useRef(0);
+
+  async function fetchHotTags() {
+    try {
+      setIsLoading(true);
+      const data = await getHotTags(pubky, undefined, 0, 10);
+      setHotTags(data || []);
+    } catch (error) {
+      console.error('Error fetching hot tags:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (!isOpenCard) return;
+
+    fetchHotTags();
+  }, [isOpenCard]);
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -105,10 +125,10 @@ export default function SearchInputCard({ refCard, inputValue, ...rest }: Search
       value: user.details.id
     };
 
-    const updatedHistory = [
-      userEntry,
-      ...searchHistory.filter((item: any) => item.value !== user.details.id) // Corretto il filtro
-    ].slice(0, 5);
+    const updatedHistory = [userEntry, ...searchHistory.filter((item: any) => item.value !== user.details.id)].slice(
+      0,
+      5
+    );
 
     Utils.storage.set('searchHistory', JSON.stringify(updatedHistory));
     setSearchHistory(updatedHistory);
@@ -124,7 +144,7 @@ export default function SearchInputCard({ refCard, inputValue, ...rest }: Search
         const profilesData: Record<string, UserView> = {};
         for (const userId of userIds) {
           try {
-            const profileUser = await getUserProfile(userId, pubky ?? ''); // Chiamata asincrona per ottenere il profilo
+            const profileUser = await getUserProfile(userId, pubky ?? '');
             profilesData[userId] = profileUser;
           } catch (error) {
             console.error(`Failed to fetch profile for ${userId}`, error);
