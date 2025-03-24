@@ -33,14 +33,22 @@ export default function SearchInputCard({ refCard, inputValue, isOpenCard, ...re
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
   const requestIdRef = useRef(0);
 
+  async function fetchHotTags() {
+    try {
+      setIsLoading(true);
+      const data = await getHotTags(pubky, undefined, 0, 10);
+      setHotTags(data || []);
+    } catch (error) {
+      console.error('Error fetching hot tags:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   useEffect(() => {
     if (!isOpenCard) return;
 
-    setIsLoading(true);
-    getHotTags(pubky, undefined, 0, 10)
-      .then((data) => setHotTags(data || []))
-      .catch((error) => console.error('Error fetching hot tags:', error))
-      .finally(() => setIsLoading(false));
+    fetchHotTags();
   }, [isOpenCard]);
 
   useEffect(() => {

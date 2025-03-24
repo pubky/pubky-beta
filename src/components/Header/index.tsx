@@ -20,7 +20,7 @@ export default function Header({ title }: HeaderProps) {
   const { unReadNotification } = useFilterContext();
   const { openModal } = useModal();
 
-  const [isOpenCard, setisOpenCard] = useState(false);
+  const [isOpenCard, setIsOpenCard] = useState(false);
   const [logoLink, setLogoLink] = useState('/onboarding');
   const [inputValue, setInputValue] = useState('');
 
@@ -43,7 +43,7 @@ export default function Header({ title }: HeaderProps) {
   useEffect(() => {
     const handleClickOutsideDrawer = (event: MouseEvent) => {
       if (refSearchInputCard.current && !refSearchInputCard.current.contains(event.target as Node)) {
-        setisOpenCard(false);
+        setIsOpenCard(false);
       }
     };
 
@@ -150,7 +150,7 @@ export default function Header({ title }: HeaderProps) {
               className={`${
                 isOpenCard && 'rounded-2xl rounded-b-none border-b-0 bg-gradient-to-b from-[#05050A] to-[#05050A]'
               }`}
-              onClick={() => setisOpenCard(true)}
+              onClick={() => setIsOpenCard(true)}
               readOnly={!!searchTags.length}
               autoComplete="off"
             />
