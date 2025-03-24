@@ -12,7 +12,7 @@ const profile1 = { username: 'Notif #1', pubkyAlias: 'pubky_1' };
 const profile2 = { username: 'Notif #2', pubkyAlias: 'pubky_2' };
 
 // TODO: reenable tests once bug fixed, https://github.com/pubky/pubky-app/issues/1177
-describe.skip('notifications', () => {
+describe('notifications', () => {
   before(() => {
     slowCypressDown();
     cy.deleteDownloadsFolder();

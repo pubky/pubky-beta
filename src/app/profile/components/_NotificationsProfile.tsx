@@ -45,7 +45,7 @@ export default function NotificationsProfile() {
           </div>
         </ContentNotFound>
       ) : (
-        <div className="px-6 py-[18px] bg-white/10 rounded-lg">
+        <div className="px-6 py-[18px] bg-white/10 rounded-lg" id="notifications-list">
           {tempUnReadNotification > 0 && (
             <div>
               {notifications.slice(0, tempUnReadNotification).map((notification, index) => (
