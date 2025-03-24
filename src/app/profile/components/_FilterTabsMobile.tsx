@@ -117,8 +117,8 @@ export default function FilterTabsMobile({
   };
 
   return (
-    <div className="lg:hidden">
-      <div className="overflow-x-auto max-w-[380px] sm:max-w-[600px] md:max-w-[720px] flex w-full gap-4 justify-between">
+    <div className="w-full lg:hidden">
+      <div className="overflow-x-auto max-w-[380px] sm:max-w-[600px] md:max-w-[720px] flex w-full gap-3 justify-between">
         {tabs.map((tab) => {
           if (creatorPubky && creatorPubky !== pubky && (tab.key === 'notifications' || tab.key === 'bookmarks')) {
             return null;
@@ -129,7 +129,7 @@ export default function FilterTabsMobile({
               id={`mobile-profile-tab-${tab.key}`}
               key={tab.id}
               onClick={() => (pubky ? handleTabClick(tab.id, tab.key) : openModal('join'))}
-              className={`w-full pb-3 items-center gap-1 flex justify-between cursor-pointer border-b border-white ${
+              className={`w-full pb-3 justify-center items-center gap-1 flex cursor-pointer border-b border-white ${
                 isActive && !loading ? 'opacity-100' : 'opacity-50 hover:opacity-100'
               }`}
             >

@@ -85,8 +85,7 @@ export default function Index() {
       <div className="w-full">
         <div
           style={{
-            backgroundImage: isMobile ? "url('/images/webp/home-mobile.webp')" : "url('/images/webp/home.webp')",
-            marginTop: isMobile ? '150px' : ''
+            backgroundImage: isMobile ? "url('/images/webp/home-mobile.webp')" : "url('/images/webp/home.webp')"
           }}
           className="fixed inset-0 bg-cover bg-center pointer-events-none"
         />
