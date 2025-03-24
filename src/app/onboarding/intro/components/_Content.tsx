@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { usePubkyClientContext } from '@/contexts';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { SocialLinks } from '@/components';
 
 export default function Intro() {
   const { pubky, isLoggedIn } = usePubkyClientContext();
@@ -253,12 +254,18 @@ export default function Intro() {
   return (
     <Content.Main className="pb-0 pt-[100px] md:pt-[125px]" shadowBottom>
       <Header.Root className="backdrop-blur-[0px]">
-        <div className="flex gap-3 lg:gap-6 w-full justify-between sm:justify-start items-start">
+        <div className="flex gap-3 lg:gap-6 w-full justify-between sm:justify-start items-center sm:items-start">
           <Header.Logo link={logoLink} />
           <Header.Title
             titleHeader="Intro"
-            className="flex justify-end sm:justify-start self-center sm:self-end mt-1 sm:mt-0"
+            className="hidden sm:flex justify-end sm:justify-start self-center sm:self-end mt-1 sm:mt-0"
           />
+          <div className="flex gap-6 items-center">
+            <SocialLinks className="hidden sm:inline-flex" />
+            <Header.Action icon={<Icon.SignIn size="16" />} link="/sign-in" id="onboarding-sign-in-btn">
+              Sign in
+            </Header.Action>
+          </div>
         </div>
       </Header.Root>
 

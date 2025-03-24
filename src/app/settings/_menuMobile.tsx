@@ -49,7 +49,7 @@ export default function MenuMobile({
   const router = useRouter();
 
   return (
-    <div className="flex gap-6 w-full justify-between mb-4">
+    <div className="flex gap-3 w-full justify-between">
       {Object.keys(menuItems).map((key) => {
         const item = menuItems[key];
         const isSelected = pathname === item.path;

@@ -35,7 +35,7 @@ export function Header() {
             className="cursor-pointer"
             onClick={disposableAccount ? () => openModal('logout') : () => router.push('/logout')}
           >
-            <Icon.SignOut size="20" />
+            <Icon.SignOut size="24" />
           </div>
         }
       />

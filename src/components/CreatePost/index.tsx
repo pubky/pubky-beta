@@ -13,7 +13,7 @@ export default function CreatePost() {
 
   return (
     <div
-      className={`flex fixed bottom-[85px] right-6 lg:bottom-10 lg:right-10 z-40 backdrop-blur-md  rounded-[96px] ${
+      className={`flex fixed bottom-[85px] right-5 lg:bottom-10 lg:right-10 z-40 backdrop-blur-md  rounded-[96px] ${
         isMobile && (isVisible ? 'opacity-100' : 'opacity-20')
       }`}
     >

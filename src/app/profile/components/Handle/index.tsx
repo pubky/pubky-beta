@@ -53,7 +53,7 @@ export default function Handle({ pubkey, profileUser, creatorPubky, ...rest }: H
   return (
     <div {...rest} className={twMerge(rest.className)}>
       {pubkey ? (
-        <div className={`flex flex-col ${bio ? 'gap-3' : 'gap-4 xl:gap-8'}`}>
+        <div className="flex flex-col gap-1 md:gap-3">
           <div className="text-center lg:text-left flex flex-col gap-3 xl:gap-6">
             <Typography.Display
               id="profile-username-header"

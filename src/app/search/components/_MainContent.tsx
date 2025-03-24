@@ -21,7 +21,7 @@ export function MainContent() {
   const [inputValue, setInputValue] = useState('');
   const [searchInputCard, setSearchInputCard] = useState(false);
   const refSearchInputCard = useRef<HTMLDivElement>(null);
-  const [isSearchBarVisible, setIsSearchBarVisible] = useState(true); // Stato per la visibilità della barra
+  const [isSearchBarVisible, setIsSearchBarVisible] = useState(true);
   const lastScrollY = useRef(0);
 
   const handleRemoveTag = (indexToRemove: number) => {
@@ -96,6 +96,14 @@ export function MainContent() {
   }, [searchTags]);
 
   useEffect(() => {
+    if (searchTags.length === 0) {
+      setSearchInputCard(true);
+    } else {
+      setSearchInputCard(false);
+    }
+  }, [searchTags]);
+
+  useEffect(() => {
     const handleClickOutsideDrawer = (event: MouseEvent) => {
       if (refSearchInputCard.current && !refSearchInputCard.current.contains(event.target as Node)) {
         setSearchInputCard(false);
@@ -164,6 +172,7 @@ export function MainContent() {
             onClick={() => setSearchInputCard(true)}
             readOnly={!!searchTags.length}
             autoComplete="off"
+            autoFocus={searchTags.length === 0}
           />
           <Modal.SearchInputCard
             className={searchInputCard ? 'block lg:hidden' : 'hidden'}
