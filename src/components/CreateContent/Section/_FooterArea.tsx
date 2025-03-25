@@ -151,7 +151,10 @@ export default function FooterArea({
   };
 
   useEffect(() => {
-    if (!textArea && !tagInput) setAddTagInput(false);
+    if (!textArea) {
+      setTagInput('');
+      setAddTagInput(false);
+    }
   }, [textArea]);
 
   return (
