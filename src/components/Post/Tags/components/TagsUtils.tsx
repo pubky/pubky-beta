@@ -135,7 +135,7 @@ export const useTagsLogic = (post: PostView, postType: PostType) => {
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const sanitized = e.target.value.toLowerCase().replace(/\s/g, '').replace(/!/g, '');
+    const sanitized = e.target.value.toLowerCase().replace(/\s/g, '');
     setTagInput(sanitized);
   };
 
