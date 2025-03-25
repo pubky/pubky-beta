@@ -158,7 +158,6 @@ describe('contacts', () => {
     cy.signIn(backupDownloadFilePath('pubky1'));
     cy.get('#header-profile-pic').click();
 
-    cy.waitReload();
     // Check account 1 (own) profile for follower
     cy.get('#profile-tab-followers').find('#counter').should('have.text', 1);
     cy.get('#profile-tab-followers').click();
