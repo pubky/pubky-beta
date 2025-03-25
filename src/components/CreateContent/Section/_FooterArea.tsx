@@ -3,7 +3,7 @@
 import { Button, Icon, Input, Post, PostUtil, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { useAlertContext, useModal } from '@/contexts';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import EmojiPicker from '@/components/EmojiPicker';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 
@@ -149,6 +149,10 @@ export default function FooterArea({
       }
     });
   };
+
+  useEffect(() => {
+    if (!textArea && !tagInput) setAddTagInput(false);
+  }, [textArea]);
 
   return (
     <>
