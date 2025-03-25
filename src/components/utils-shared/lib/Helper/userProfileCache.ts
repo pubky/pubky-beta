@@ -4,7 +4,7 @@ class UserProfileCache {
   private static instance: UserProfileCache;
   private cache: Map<string, UserView>;
   private lastFetch: Map<string, number>;
-  private readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutos em milissegundos
+  private readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in miliseconds
 
   private constructor() {
     this.cache = new Map();

@@ -123,9 +123,13 @@ export function usePostTagTaggers(
 }
 
 export function useUserTagTaggers(userId: string, tagName: string, viewerId?: string, skip?: number, limit?: number) {
+  const isEnabled = Boolean(userId?.trim() && tagName?.trim());
+
   return useQuery({
     queryKey: ['userTagTaggers', userId, tagName, viewerId, skip, limit],
-    queryFn: () => getUserTagTaggers(userId, tagName, viewerId, skip, limit),
-    retry: false
+    queryFn: () => getUserTagTaggers(userId!, tagName!, viewerId, skip, limit),
+    // control the execution of the query. userId and tagName has to have value
+    enabled: isEnabled,
+    retry: false,
   });
 }
