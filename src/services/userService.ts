@@ -76,9 +76,9 @@ export async function getUserDetails(userId: string): Promise<UserDetails> {
 
 /**
  * Fetches a user's relationship list (followers, following, or friends)
- * 
- * This function first checks the in-memory cache. If the relationship data is cached 
- * and not expired, it returns it immediately. Otherwise, it makes an HTTP request to 
+ *
+ * This function first checks the in-memory cache. If the relationship data is cached
+ * and not expired, it returns it immediately. Otherwise, it makes an HTTP request to
  * fetch the relationship data from the server, caches the result, and then returns it
  *
  * @param userId - The ID of the user whose relationship data is being fetched.
@@ -88,10 +88,15 @@ export async function getUserDetails(userId: string): Promise<UserDetails> {
  * @returns A Promise resolving to an array of user IDs representing the relationship
  * @throws An error if the network request fails or the response is not OK
  */
-async function fetchRelationship(userId: string, relationshipType: string, skip?: number, limit?: number): Promise<string[]> {
+async function fetchRelationship(
+  userId: string,
+  relationshipType: string,
+  skip?: number,
+  limit?: number
+): Promise<string[]> {
   const cached = userRelationshipCache.get(userId, relationshipType);
   if (cached) return cached;
-  
+
   const queryParams = new URLSearchParams();
 
   if (skip !== undefined) {
@@ -104,27 +109,27 @@ async function fetchRelationship(userId: string, relationshipType: string, skip?
   const response = await fetch(`${BASE_URL}/user/${userId}/${relationshipType}?${queryParams}`);
   if (!response.ok) throw new Error('Failed to fetch user followers');
 
-  let user_relationship = await response.json()
+  let user_relationship = await response.json();
 
-   // Store in cache
-   userRelationshipCache.set(userId, relationshipType, user_relationship);
+  // Store in cache
+  userRelationshipCache.set(userId, relationshipType, user_relationship);
 
-   return user_relationship;
+  return user_relationship;
 }
 
 // User followers
 export async function getUserFollowers(userId: string, skip?: number, limit?: number): Promise<string[]> {
-  return await fetchRelationship(userId, "followers", skip, limit);
+  return await fetchRelationship(userId, 'followers', skip, limit);
 }
 
 // User following
 export async function getUserFollowing(userId: string, skip?: number, limit?: number): Promise<string[]> {
-  return await fetchRelationship(userId, "following", skip, limit);
+  return await fetchRelationship(userId, 'following', skip, limit);
 }
 
 // User friends
 export async function getUserFriends(userId: string, skip?: number, limit?: number): Promise<string[]> {
-  return await fetchRelationship(userId, "friends", skip, limit);
+  return await fetchRelationship(userId, 'friends', skip, limit);
 }
 
 // User muted

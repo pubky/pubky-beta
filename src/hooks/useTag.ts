@@ -57,6 +57,6 @@ export function useTagsUser(userId: string, viewerId?: string, skip?: number, li
     queryFn: () => getTagsUser(userId!, viewerId, skip, limit, maxTaggers),
     // control the execution of the query. userId has to have value
     enabled: isEnabled,
-    retry: false,
+    retry: false
   });
 }

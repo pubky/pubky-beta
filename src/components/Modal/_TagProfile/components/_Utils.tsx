@@ -47,12 +47,8 @@ export const useUtilsTag = ({ profileTags, setProfileTags, pubkyUser, user }: Ut
   const [hasMoreTaggers, setHasMoreTaggers] = useState(false);
 
   const { data: moreTags, isLoading } = useTagsUser(user?.details.id ?? '', pubky, skip, limit);
-  
 
-  const {
-    data: moreTaggers,
-    isLoading: isLoadingTaggers,
-  } = useUserTagTaggers(
+  const { data: moreTaggers, isLoading: isLoadingTaggers } = useUserTagTaggers(
     user?.details.id,
     selectedTag?.label,
     pubky,

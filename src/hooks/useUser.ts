@@ -130,6 +130,6 @@ export function useUserTagTaggers(userId: string, tagName: string, viewerId?: st
     queryFn: () => getUserTagTaggers(userId!, tagName!, viewerId, skip, limit),
     // control the execution of the query. userId and tagName has to have value
     enabled: isEnabled,
-    retry: false,
+    retry: false
   });
 }
