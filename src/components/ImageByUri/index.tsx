@@ -36,13 +36,13 @@ const ImageByUri = ({ id, uri, alt, width, height, className, style, loading, on
     const cachedUrl = avatarCache.get(key);
     if (cachedUrl) {
       // The user has not avatar, already proved
-      if (cachedUrl === "no_avatar") {
-        await generatedImage(key)
+      if (cachedUrl === 'no_avatar') {
+        await generatedImage(key);
       } else {
         setImageUrl(cachedUrl);
       }
       return;
-    } 
+    }
     try {
       const urlAvatar = `${BASE_URL}/${key}`;
       const response = await fetch(urlAvatar);
@@ -53,7 +53,7 @@ const ImageByUri = ({ id, uri, alt, width, height, className, style, loading, on
         await generatedImage(key);
         if (response.status === 404) {
           // We can avoid the calls once it is proved, the user does not have avatar
-          avatarCache.set(key, "no_avatar");
+          avatarCache.set(key, 'no_avatar');
         }
       }
     } catch (error) {

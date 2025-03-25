@@ -29,7 +29,7 @@ class UserProfileCache {
   }
 
   public set(key: string, value: UserView): void {
-    console.log(value)
+    console.log(value);
     this.cache.set(key, value);
     this.lastFetch.set(key, Date.now());
   }
