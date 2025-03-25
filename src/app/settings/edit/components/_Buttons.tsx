@@ -8,6 +8,7 @@ import { getFile } from '@/services/fileService';
 import { Links } from '@/types/Post';
 import { usePubkyClientContext } from '@/contexts';
 import { processUserLinks } from '@/app/onboarding/register/components/processUserLinks';
+import { avatarCache } from '@/components/utils-shared/lib/Helper/avatarCache';
 
 interface FormErrors {
   [fieldName: string]: string[];
@@ -46,7 +47,7 @@ export default function Buttons({
   prevImage,
   status
 }: ButtonsProps) {
-  const { saveProfile, deleteFile } = usePubkyClientContext();
+  const { saveProfile, deleteFile, pubky } = usePubkyClientContext();
   const router = useRouter();
 
   const handleSubmit = async () => {
@@ -91,6 +92,9 @@ export default function Buttons({
       }
 
       await saveProfile(name, bio, image, linksObject, status);
+
+      // clean prevImage in avatarCache
+      avatarCache.delete(pubky!);
 
       if (prevImage && prevImage !== image) {
         const { src } = await getFile(String(prevImage));
