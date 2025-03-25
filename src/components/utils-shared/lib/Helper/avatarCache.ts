@@ -32,6 +32,10 @@ class AvatarCache {
     this.objectUrls.delete(url);
   }
 
+  public delete(key: string): void {
+    this.cache.delete(key);
+  }
+
   public clear(): void {
     // Revoke all object URLs
     this.objectUrls.forEach((url) => {
