@@ -50,9 +50,13 @@ export function useTagsPost(
 }
 
 export function useTagsUser(userId: string, viewerId?: string, skip?: number, limit?: number, maxTaggers?: number) {
+  const isEnabled = Boolean(userId?.trim());
+
   return useQuery({
     queryKey: ['tagsUser', userId, viewerId, skip, limit, maxTaggers],
-    queryFn: () => getTagsUser(userId, viewerId, skip, limit, maxTaggers),
+    queryFn: () => getTagsUser(userId!, viewerId, skip, limit, maxTaggers),
+    // control the execution of the query. userId has to have value
+    enabled: isEnabled,
     retry: false
   });
 }

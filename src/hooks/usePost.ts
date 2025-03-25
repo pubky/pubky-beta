@@ -12,9 +12,11 @@ import {
 } from '../services/postService';
 
 export function usePost(authorId: string, postId: string, viewerId?: string, maxTags?: number, maxTaggers?: number) {
+  const isEnabled = Boolean(authorId?.trim() && postId?.trim());
   return useQuery({
     queryKey: ['post', authorId, postId, viewerId, maxTags, maxTaggers],
     queryFn: () => getPost(authorId, postId, viewerId, maxTags, maxTaggers),
+    enabled: isEnabled,
     retry: false
   });
 }
