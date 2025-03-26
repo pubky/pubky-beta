@@ -132,16 +132,21 @@ function validateSourceParams(source: TSource | undefined, params: { [key: strin
 
 // Get stream users
 export async function getUserStream(
-  userId: string,
-  viewerId: string,
-  source: TSourceUser,
+  userId?: string,
+  viewerId?: string,
+  source?: TSourceUser,
   skip?: number,
   limit?: number
 ): Promise<UserView[]> {
   const queryParams = new URLSearchParams();
 
-  queryParams.append('user_id', String(userId));
-  queryParams.append('viewer_id', String(viewerId));
+  if (userId !== undefined) {
+    queryParams.append('user_id', String(userId));
+  }
+
+  if (viewerId !== undefined) {
+    queryParams.append('viewer_id', String(viewerId));
+  }
 
   if (skip !== undefined) {
     queryParams.append('skip', String(skip));
@@ -149,17 +154,13 @@ export async function getUserStream(
   if (limit !== undefined) {
     queryParams.append('limit', String(limit));
   }
-  queryParams.append('source', String(source));
-
-  let response = await fetch(`${BASE_URL}/stream/users?${queryParams}`);
-
-  if (source === 'influencers' && (!response.ok || response.status === 204)) {
-    // Do without user_id
-    queryParams.delete('user_id');
-    response = await fetch(`${BASE_URL}/stream/users?${queryParams}`);
-
-    if (!response.ok) throw new Error(`Failed to fetch user ${source}`);
+  if (source !== undefined) {
+    queryParams.append('source', String(source));
   }
+
+  const response = await fetch(`${BASE_URL}/stream/users?${queryParams}`);
+
+  if (!response.ok) throw new Error(`Failed to fetch user ${source}`);
 
   return response.json();
 }

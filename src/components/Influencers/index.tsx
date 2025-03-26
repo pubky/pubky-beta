@@ -7,6 +7,7 @@ import { usePubkyClientContext } from '@/contexts';
 import Link from 'next/link';
 import { useStreamUsers } from '@/hooks/useStream';
 import { twMerge } from 'tailwind-merge';
+import { userProfileCache } from '../utils-shared/lib/Helper/userProfileCache';
 
 interface InfluencersProps {
   style?: string;
@@ -14,7 +15,9 @@ interface InfluencersProps {
 
 export default function Influencers({ style }: InfluencersProps) {
   const { pubky } = usePubkyClientContext();
-  const { data: influencers, isLoading, isError } = useStreamUsers(pubky ?? '', undefined, 'influencers', 0, 3);
+  const userDetails = userProfileCache.get(pubky ?? '');
+  const userId = userDetails?.counts?.following ? pubky : undefined;
+  const { data: influencers, isLoading, isError } = useStreamUsers(userId, undefined, 'influencers', 0, 3);
 
   if (isError) console.warn(isError);
 

@@ -52,7 +52,13 @@ export function useStreamPost(
   });
 }
 
-export function useStreamUsers(userId: string, viewerId: string, source: TSourceUser, skip?: number, limit?: number) {
+export function useStreamUsers(
+  userId?: string,
+  viewerId?: string,
+  source?: TSourceUser,
+  skip?: number,
+  limit?: number
+) {
   return useQuery({
     queryKey: [source ? `${source}-streamUser` : 'streamUser', userId, viewerId, source, skip, limit],
     queryFn: () => getUserStream(userId, viewerId, source, skip, limit),
