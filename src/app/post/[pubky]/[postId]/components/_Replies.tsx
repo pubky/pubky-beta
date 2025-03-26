@@ -25,7 +25,16 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
   const [hasMore, setHasMore] = useState(true);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  const { data: repliesData, isLoading } = usePostReplies(pubkyAuthor, postId, pubky, undefined, limit, start);
+  const { data: repliesData, isLoading } = usePostReplies(
+    pubkyAuthor,
+    postId,
+    pubky,
+    undefined,
+    limit,
+    start,
+    undefined,
+    'ascending'
+  );
 
   const { data: newRepliesData } = usePostReplies(
     pubkyAuthor,
@@ -35,6 +44,7 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
     10,
     undefined,
     replies.length > 0 ? replies[0]?.details?.indexed_at + 1 : undefined,
+    'ascending',
     {
       enabled: true,
       refetchInterval: 20000

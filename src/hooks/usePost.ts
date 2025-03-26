@@ -53,14 +53,15 @@ export function usePostReplies(
   limit?: number,
   start?: number,
   end?: number,
+  order?: 'ascending' | 'descending',
   options?: {
     enabled?: boolean;
     refetchInterval?: number;
   }
 ) {
   return useQuery({
-    queryKey: ['postReplies', authorId, postId, viewerId, limit, start, end, skip],
-    queryFn: () => getPostReplies(authorId, postId, viewerId, limit, start, end, skip),
+    queryKey: ['postReplies', authorId, postId, viewerId, limit, start, end, skip, order],
+    queryFn: () => getPostReplies(authorId, postId, viewerId, limit, start, end, skip, order),
     retry: false,
     ...options
   });

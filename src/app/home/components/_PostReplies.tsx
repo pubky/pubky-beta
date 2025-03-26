@@ -18,7 +18,16 @@ interface PostRepliesProps {
 
 export const PostReplies = ({ post, layout, homeView = false, isMobile }: PostRepliesProps) => {
   const { pubky, mutedUsers, deletedPosts } = usePubkyClientContext();
-  const { data: replies } = usePostReplies(post.details.author, post.details.id, pubky);
+  const { data: replies } = usePostReplies(
+    post.details.author,
+    post.details.id,
+    pubky,
+    0,
+    2,
+    undefined,
+    undefined,
+    'ascending'
+  );
 
   const lineBaseCSS = `ml-[12px] absolute border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[2px]`;
   const lineHorizontalCSS = (
