@@ -40,7 +40,7 @@ export const Timeline = () => {
         pubky ?? '', // viewerId
         reach, // source
         undefined, // authorId
-        10, // limit
+        limit, // limit
         start, // start
         undefined, // end
         skipValue, // skip
