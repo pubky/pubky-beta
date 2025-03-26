@@ -21,6 +21,7 @@ import init, {
   PubkyAppUserLink
 } from 'pubky-app-specs';
 import { defaultPreferences } from './_filters';
+import { userProfileCache } from '@/components/utils-shared/lib/Helper/userProfileCache';
 
 const TESTNET = process.env.NEXT_PUBLIC_TESTNET?.toLowerCase() === 'true';
 const NEXT_PUBLIC_DEFAULT_HTTP_RELAY = process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY || 'https://demo.httprelay.io/link/';
@@ -1146,6 +1147,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
 
   const follow = withAuth(async (user_id: string): Promise<boolean> => {
     const result = specsBuilder!.createFollow(user_id);
+    userProfileCache.delete(user_id);
 
     const response = await homeserver.put(result.meta.url, JSON.stringify(result.follow.toJson()));
 
@@ -1159,6 +1161,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
 
   const unfollow = withAuth(async (user_id: string): Promise<boolean> => {
     const result = specsBuilder!.createFollow(user_id);
+    userProfileCache.delete(user_id);
 
     const response = await homeserver.del(result.meta.url);
 
