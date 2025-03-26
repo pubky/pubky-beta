@@ -25,8 +25,8 @@ export default function ContentCreateRepost({ setShowModalRepost, post, setHasCo
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   useEffect(() => {
-    setHasContent(contentRepost.trim().length > 0);
-  }, [contentRepost]);
+    setHasContent(contentRepost.trim().length > 0 || selectedFiles.length > 0 || arrayTags.length > 0);
+  }, [contentRepost, selectedFiles, arrayTags]);
 
   const handleSubmitRepost = async (content: string) => {
     if (sendingRepost) {

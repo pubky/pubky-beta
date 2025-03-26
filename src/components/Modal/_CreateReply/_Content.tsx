@@ -33,8 +33,8 @@ export default function ContentCreateReply({ setShowModalReply, post, setHasCont
   );
 
   useEffect(() => {
-    setHasContent(contentReply.trim().length > 0);
-  }, [contentReply]);
+    setHasContent(contentReply.trim().length > 0 || selectedFiles.length > 0 || arrayTags.length > 0);
+  }, [contentReply, selectedFiles, arrayTags]);
 
   useEffect(() => {
     setPlaceholder(Utils.promptPlaceholder('reply'));

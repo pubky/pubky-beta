@@ -24,8 +24,8 @@ export default function ContentCreatePost({ setShowModalPost, setHasContent, cla
   const [placeholder, setPlaceholder] = useState('');
 
   useEffect(() => {
-    setHasContent(contentPost.trim().length > 0);
-  }, [contentPost]);
+    setHasContent(contentPost.trim().length > 0 || selectedFiles.length > 0 || arrayTags.length > 0);
+  }, [contentPost, selectedFiles, arrayTags]);
 
   useEffect(() => {
     setPlaceholder(Utils.promptPlaceholder('post'));
