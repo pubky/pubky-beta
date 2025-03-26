@@ -10,10 +10,15 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 
 interface CreateArticleProps {
   setShowModalArticle: React.Dispatch<React.SetStateAction<boolean>>;
+  setHasContent: React.Dispatch<React.SetStateAction<boolean>>;
   setShowModalPost?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function ContentCreateArticle({ setShowModalArticle, setShowModalPost }: CreateArticleProps) {
+export default function ContentCreateArticle({
+  setShowModalArticle,
+  setHasContent,
+  setShowModalPost
+}: CreateArticleProps) {
   const { pubky, createArticle, profile } = usePubkyClientContext();
   const [isDragging, setIsDragging] = useState(false);
   const isMobile = useIsMobile();
@@ -36,6 +41,10 @@ export default function ContentCreateArticle({ setShowModalArticle, setShowModal
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File[]>([]);
+
+  useEffect(() => {
+    setHasContent(charCountArticle > 0 || contentTitle.length > 0 || selectedFile.length > 0 || arrayTags.length > 0);
+  }, [charCountArticle, contentTitle, selectedFile, arrayTags]);
 
   useEffect(() => {
     setPlaceholder(Utils.promptPlaceholder('article'));

@@ -1,5 +1,5 @@
 import { Button, Icon } from '@social/ui-shared';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 
@@ -11,10 +11,11 @@ import { parse_uri, PubkyAppPostKind } from 'pubky-app-specs';
 interface CreateRepostProps {
   setShowModalRepost: React.Dispatch<React.SetStateAction<boolean>>;
   post: PostView;
+  setHasContent: React.Dispatch<React.SetStateAction<boolean>>;
   className?: string;
 }
 
-export default function ContentCreateRepost({ setShowModalRepost, post, className }: CreateRepostProps) {
+export default function ContentCreateRepost({ setShowModalRepost, post, setHasContent, className }: CreateRepostProps) {
   const { pubky, createRepost, createTag } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [contentRepost, setContentRepost] = useState('');
@@ -22,6 +23,10 @@ export default function ContentCreateRepost({ setShowModalRepost, post, classNam
   const [sendingRepost, setSendingRepost] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+
+  useEffect(() => {
+    setHasContent(contentRepost.trim().length > 0 || selectedFiles.length > 0 || arrayTags.length > 0);
+  }, [contentRepost, selectedFiles, arrayTags]);
 
   const handleSubmitRepost = async (content: string) => {
     if (sendingRepost) {

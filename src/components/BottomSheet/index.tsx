@@ -1,4 +1,5 @@
 import Backup from './_Backup';
+import CheckContent from './_CheckContent';
 import CheckLink from './_CheckLink';
 import Content from './_Content';
 import CreateArticle from './_CreateArticle';
@@ -31,6 +32,7 @@ import TagCreatePost from './_TagCreatePost';
 
 export const BottomSheet = {
   Backup,
+  CheckContent,
   CheckLink,
   Content,
   CreateArticle,

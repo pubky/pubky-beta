@@ -47,6 +47,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
 
   const modalComponents: Record<string, string> = {
     backup: 'Backup',
+    checkContent: 'CheckContent',
     checkLink: 'CheckLink',
     createArticle: 'CreateArticle',
     createFeed: 'CreateFeed',
@@ -78,9 +79,8 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     const Component = shouldUseModal ? Modal[modalType] : BottomSheet[modalType];
 
     const componentProps = shouldUseModal
-      ? { showModal: openModals[modalId], setShowModal: () => closeModal(modalId) }
-      : { show: openModals[modalId], setShow: () => closeModal(modalId) };
-
+      ? { showModal: openModals[modalId], setShowModal: () => closeModal(modalId), ...props }
+      : { show: openModals[modalId], setShow: () => closeModal(modalId), ...props };
     return Component ? <Component {...componentProps} {...props} /> : null;
   };
 

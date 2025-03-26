@@ -11,10 +11,11 @@ import { parse_uri, PubkyAppPostKind } from 'pubky-app-specs';
 interface CreateReplyProps {
   setShowModalReply: React.Dispatch<React.SetStateAction<boolean>>;
   post: PostView;
+  setHasContent: React.Dispatch<React.SetStateAction<boolean>>;
   className?: string;
 }
 
-export default function ContentCreateReply({ setShowModalReply, post, className }: CreateReplyProps) {
+export default function ContentCreateReply({ setShowModalReply, post, setHasContent, className }: CreateReplyProps) {
   const { pubky, createReply, createTag } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [contentReply, setContentReply] = useState('');
@@ -30,6 +31,10 @@ export default function ContentCreateReply({ setShowModalReply, post, className 
       <Icon.LineHorizontal size="14" color="#444447" />
     </div>
   );
+
+  useEffect(() => {
+    setHasContent(contentReply.trim().length > 0 || selectedFiles.length > 0 || arrayTags.length > 0);
+  }, [contentReply, selectedFiles, arrayTags]);
 
   useEffect(() => {
     setPlaceholder(Utils.promptPlaceholder('reply'));
