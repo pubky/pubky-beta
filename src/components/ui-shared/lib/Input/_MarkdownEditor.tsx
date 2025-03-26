@@ -33,7 +33,7 @@ interface MarkdownEditorComponentProps {
   id: string;
   placeHolder: string;
   autoFocus: boolean;
-  onChange: (text: string) => void;
+  onChange: (html: string) => void;
   setCharCount: (count: number) => void;
   value: string;
   maxLength: number;
@@ -57,19 +57,12 @@ const MarkdownEditorComponent = ({
   useEffect(() => {
     if (quill) {
       quill.on('text-change', () => {
+        let html = quill.root.innerHTML;
         let text = quill.getText();
-
-        if (text === '\n') {
-          text = '';
-        }
-
-        if (text.endsWith('\n')) {
-          text = text.slice(0, -1);
-        }
 
         if (text.length <= maxLength) {
           setCharCount(text.length);
-          onChange(text);
+          onChange(html);
         } else {
           quill.deleteText(maxLength, quill.getLength());
         }
@@ -82,9 +75,9 @@ const MarkdownEditorComponent = ({
   }, [quill, autoFocus]);
 
   useEffect(() => {
-    if (quill && value !== quill.getText().trim()) {
+    if (quill && value !== quill.root.innerHTML) {
       const currentSelection = quill.getSelection();
-      quill.setText(value);
+      quill.root.innerHTML = value;
       if (currentSelection) {
         quill.setSelection(currentSelection.index);
       }
