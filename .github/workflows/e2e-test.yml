@@ -11,7 +11,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      PUBKY_DOCKER_REF: 039dc5cc7c43afd7fbb1c516bbfd5d6e72ad43cb
+      # https://github.com/pubky/pubky-stack
+      PUBKY_STACK_REF: 84e995038e71446b73e4b48901fd0be432112190
     strategy:
       matrix:
         browser: [chrome] # [chrome, firefox]
@@ -22,43 +23,29 @@ jobs:
         with:
           path: pubky-app
 
-      - name: Checkout pubky-docker
+      - name: Checkout pubky-stack
         uses: actions/checkout@v4
         with:
-          repository: pubky/pubky-docker
-          ref: ${{ env.PUBKY_DOCKER_REF }}
-          path: pubky-docker
+          repository: pubky/pubky-stack
+          ref: ${{ env.PUBKY_STACK_REF }}
+          path: pubky-stack
           submodules: true
           token: ${{ secrets.READ_REPOS }}
           # cannot use ssh-key (deploy key) for private submodules due to the
           # limitation where only a single key can be used per repo checkout
           # see https://github.com/actions/checkout/issues/183
 
-      - name: Modify pubky-docker docker-compose.yml
-        working-directory: pubky-docker/development
-        run: |
-          YQ_BINARY=yq_linux_amd64
-          YQ_VERSION=v4.44.3
-          wget https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/${YQ_BINARY}.tar.gz -O - | tar xz && sudo mv ${YQ_BINARY} /usr/bin/yq
-          yq -i 'del(.services.homeserver.depends_on)' docker-compose.yml
-
       # reduce neo4j memory to prevent
       # ERROR Invalid memory configuration - exceeds physical memory. Check the configured values for server.memory.pagecache.size and server.memory.heap.max_size
       - name: Modify neo4j.env
-        working-directory: pubky-docker/development
+        working-directory: pubky-stack/docker
         run: |
           sed -i 's/NEO4J_server_memory_pagecache_size=2G/NEO4J_server_memory_pagecache_size=1G/' neo4j.env
           sed -i 's/NEO4J_server_memory_heap_initial__size=4G/NEO4J_server_memory_heap_initial__size=1G/' neo4j.env
           sed -i 's/NEO4J_server_memory_heap_max__size=8G/NEO4J_server_memory_heap_max__size=2G/' neo4j.env
 
-      # reduce watcher sleep time to speed up new notification detection
-      - name: Modify nexus.testnet.env
-        working-directory: pubky-docker/development
-        run: |
-          sed -i 's/WATCHER_SLEEP=500/WATCHER_SLEEP=100/' nexus.testnet.env
-
-      - name: Prepare pubky-docker .env
-        working-directory: pubky-docker/development
+      - name: Prepare pubky-stack .env
+        working-directory: pubky-stack/docker
         run: |
           cp .env-sample .env
 
@@ -71,23 +58,22 @@ jobs:
           path: |
             /tmp/.buildx-cache-nexus
             /tmp/.buildx-cache-homeserver
-          key: ${{ runner.os }}-pubky-docker-${{ env.PUBKY_DOCKER_REF }}
+          key: ${{ runner.os }}-pubky-stack-${{ env.PUBKY_STACK_REF }}
 
       - name: Build pubky-nexus
         uses: docker/build-push-action@v5
         with:
-          context: pubky-docker/development/pubky-nexus
+          context: pubky-stack/pubky-nexus
           load: true
           tags: |
-            nexus-service:latest
-            nexus-watcher:latest
+            nexusd:latest
           cache-from: type=local,src=/tmp/.buildx-cache-nexus
           cache-to: type=local,dest=/tmp/.buildx-cache-nexus-new,mode=max
 
       - name: Build homeserver
         uses: docker/build-push-action@v5
         with:
-          context: pubky-docker/development/pubky-core
+          context: pubky-stack/pubky-core
           load: true
           tags: homeserver:latest
           cache-from: type=local,src=/tmp/.buildx-cache-homeserver
@@ -101,11 +87,11 @@ jobs:
           rm -rf /tmp/.buildx-cache-homeserver
           mv /tmp/.buildx-cache-homeserver-new /tmp/.buildx-cache-homeserver
 
-      - name: Run pubky-docker
-        working-directory: pubky-docker/development
-        run: docker compose up -d nexus-watcher nexus-service nexus-redis nexus-neo4j homeserver
+      - name: Run pubky-stack
+        working-directory: pubky-stack/docker
+        run: docker compose up -d nexusd nexus-redis nexus-neo4j homeserver
 
-      - name: Wait for pubky-docker to start
+      - name: Wait for dockerised pubky-stack to start
         run: |
           PORT=8080
           MAX_WAIT=300     # Maximum wait time in seconds (5 minutes)

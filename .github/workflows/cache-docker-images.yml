@@ -1,0 +1,56 @@
+name: Cache pubky-stack Docker Images
+
+on:
+  workflow_dispatch:
+
+jobs:
+  cache-docker:
+    runs-on: ubuntu-latest
+    env:
+      PUBKY_STACK_REF: 84e995038e71446b73e4b48901fd0be432112190
+
+    steps:
+      - name: Checkout pubky-stack
+        uses: actions/checkout@v4
+        with:
+          repository: pubky/pubky-stack
+          ref: ${{ env.PUBKY_STACK_REF }}
+          path: pubky-stack
+          submodules: true
+          token: ${{ secrets.READ_REPOS }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker layer caching
+        uses: actions/cache@v4
+        with:
+          path: |
+            /tmp/.buildx-cache-nexus
+            /tmp/.buildx-cache-homeserver
+          key: ${{ runner.os }}-pubky-stack-${{ env.PUBKY_STACK_REF }}
+
+      - name: Build pubky-nexus
+        uses: docker/build-push-action@v5
+        with:
+          context: pubky-stack/pubky-nexus
+          load: true
+          tags: nexusd:latest
+          cache-from: type=local,src=/tmp/.buildx-cache-nexus
+          cache-to: type=local,dest=/tmp/.buildx-cache-nexus-new,mode=max
+
+      - name: Build homeserver
+        uses: docker/build-push-action@v5
+        with:
+          context: pubky-stack/pubky-core
+          load: true
+          tags: homeserver:latest
+          cache-from: type=local,src=/tmp/.buildx-cache-homeserver
+          cache-to: type=local,dest=/tmp/.buildx-cache-homeserver-new,mode=max
+
+      - name: Overwrite old cache
+        run: |
+          rm -rf /tmp/.buildx-cache-nexus
+          mv /tmp/.buildx-cache-nexus-new /tmp/.buildx-cache-nexus
+          rm -rf /tmp/.buildx-cache-homeserver
+          mv /tmp/.buildx-cache-homeserver-new /tmp/.buildx-cache-homeserver 
