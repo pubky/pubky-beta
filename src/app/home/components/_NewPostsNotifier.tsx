@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { Button } from '@social/ui-shared';
 import { PostView } from '@/types/Post';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
-import { useStreamPost } from '@/hooks/useStream';
 import { getStreamPosts } from '@/services/streamService';
 
 export function NewPostsNotifier() {
