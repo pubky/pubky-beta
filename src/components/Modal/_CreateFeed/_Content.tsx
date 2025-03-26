@@ -83,13 +83,14 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
       <div className="my-4 flex flex-col sm:flex-row gap-8">
         <div className="w-full order-2 sm:order-1">
           <div>
+            <Input.Label className="text-uppercase text-white/30" value="Feed Name" />
             <Input.Text
               id="create-feed-name-input"
               value={nameFeed}
               maxLength={20}
               autoFocus
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNameFeed(e.target.value)}
-              placeholder="Add Feed name"
+              placeholder="name"
             />
           </div>
           <div className="flex flex-row w-full mt-4">
@@ -112,15 +113,18 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
                 </div>
               </>
             )}
-            <Input.Tag
-              idPrefix="create-feed"
-              value={tag}
-              onChange={(value) => setTag(value)}
-              onAddTag={handleAddTag}
-              onEmojiPickerClick={() => setShowEmojis(true)}
-              variant="default"
-              className="w-full"
-            />
+            <div className="w-full">
+              <Input.Label className="text-uppercase text-white/30" value="Filter on content tags" />
+              <Input.Tag
+                idPrefix="create-feed"
+                value={tag}
+                onChange={(value) => setTag(value)}
+                onAddTag={handleAddTag}
+                onEmojiPickerClick={() => setShowEmojis(true)}
+                variant="default"
+                className="w-full"
+              />
+            </div>
           </div>
           <div className="mt-2 justify-start items-start">
             {tagsFeed && tagsFeed.length > 0 ? (
