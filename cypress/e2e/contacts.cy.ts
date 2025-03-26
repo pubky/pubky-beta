@@ -99,13 +99,13 @@ describe('contacts', () => {
     cy.get('#profile-tab-following').find('#counter').should('have.text', 0);
     cy.get('#profile-tab-following').click();
     // check message is displayed indicating no following
-    cy.get('#profile-tab-content').should('contain.text', 'Looking for following?');
+    cy.get('#profile-tab-content').should('contain.text', 'No following yet');
 
     // check number of listed friends is 0
     cy.get('#profile-tab-friends').find('#counter').should('have.text', 0);
     cy.get('#profile-tab-friends').click();
     // check message is displayed indicating no friends
-    cy.get('#profile-tab-content').should('contain.text', 'Looking for friends?');
+    cy.get('#profile-tab-content').should('contain.text', 'No friends yet');
 
     ///
     /// check own profile shows new following
@@ -145,7 +145,7 @@ describe('contacts', () => {
     cy.get('#profile-tab-friends').find('#counter').should('have.text', 0);
     cy.get('#profile-tab-friends').click();
     // check message is displayed indicating no friends
-    cy.get('#profile-tab-content').should('contain.text', 'Looking for friends?');
+    cy.get('#profile-tab-content').should('contain.text', 'No friends yet');
 
     // Sign out
     cy.signOut(HasBackedUp.Yes);
@@ -168,7 +168,7 @@ describe('contacts', () => {
       .within(() => {
         // check that account 2 is listed as a follower
         // name is truncated in UI https://github.com/pubky/pubky-app/issues/452
-        cy.get('#list-profile-name').should('contain.text', '#2 Frien');
+        cy.get('#list-profile-name').should('contain.text', '#2 Friend');
         // check 0 tags
         cy.get('#list-tags-counter').should('have.text', 0);
         // check 0 posts

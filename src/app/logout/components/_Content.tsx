@@ -5,6 +5,7 @@ import { Button, Content, Header, Icon, Typography } from '@social/ui-shared';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import Link from 'next/link';
 import Image from 'next/image';
+import { userProfileCache } from '@/components/utils-shared/lib/Helper/userProfileCache';
 
 export default function Index() {
   const { logout } = usePubkyClientContext();
@@ -12,6 +13,7 @@ export default function Index() {
 
   useEffect(() => {
     resetDefault();
+    userProfileCache.clear();
     logout();
   }, []);
 
