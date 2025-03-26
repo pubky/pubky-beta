@@ -28,7 +28,7 @@ const RenderPosts = () => {
     try {
       const data = await getStreamPosts(
         pubky ?? '', // viewerId
-        hotTagsReach, // source
+        'all', // source
         undefined, // authorId
         limit, // limit
         undefined, // start
@@ -70,7 +70,7 @@ const RenderPosts = () => {
     return () => {
       setTimeline([]);
     };
-  }, [hotTagsReach, timeframe]);
+  }, []);
 
   return (
     <div className="flex flex-col gap-3" id="hot-posts">
