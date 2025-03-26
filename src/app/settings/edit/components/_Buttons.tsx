@@ -94,7 +94,7 @@ export default function Buttons({
       await saveProfile(name, bio, image, linksObject, status);
 
       // clean prevImage in avatarCache
-      avatarCache.delete(pubky!);
+      avatarCache.delete(pubky);
 
       if (prevImage && prevImage !== image) {
         const { src } = await getFile(String(prevImage));

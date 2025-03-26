@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { getStreamPosts, getUserStream, searchUsersByUsername } from '@/services/streamService';
-import { TContent, TSort, TSource, TSourceUser } from '@/types';
+import { TContent, TReach, TSort, TSource, TSourceUser, TTimeframe } from '@/types';
 
 export function useStreamPost(
   viewerId: string,
@@ -52,10 +52,18 @@ export function useStreamPost(
   });
 }
 
-export function useStreamUsers(userId: string, viewerId: string, source: TSourceUser, skip?: number, limit?: number) {
+export function useStreamUsers(
+  userId?: string,
+  viewerId?: string,
+  source?: TSourceUser,
+  skip?: number,
+  limit?: number,
+  reach?: TReach,
+  timeframe?: TTimeframe
+) {
   return useQuery({
-    queryKey: [source ? `${source}-streamUser` : 'streamUser', userId, viewerId, source, skip, limit],
-    queryFn: () => getUserStream(userId, viewerId, source, skip, limit),
+    queryKey: [source ? `${source}-streamUser` : 'streamUser', userId, viewerId, source, reach, timeframe, skip, limit],
+    queryFn: () => getUserStream(userId, viewerId, source, reach, timeframe, skip, limit),
     retry: false
   });
 }

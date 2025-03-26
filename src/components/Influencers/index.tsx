@@ -7,6 +7,7 @@ import { usePubkyClientContext } from '@/contexts';
 import Link from 'next/link';
 import { useStreamUsers } from '@/hooks/useStream';
 import { twMerge } from 'tailwind-merge';
+import { useUserProfile } from '@/hooks/useUser';
 
 interface InfluencersProps {
   style?: string;
@@ -14,7 +15,9 @@ interface InfluencersProps {
 
 export default function Influencers({ style }: InfluencersProps) {
   const { pubky } = usePubkyClientContext();
-  const { data: influencers, isLoading, isError } = useStreamUsers(pubky ?? '', pubky ?? '', 'influencers', 0, 3);
+  const { data: userDetails } = useUserProfile(pubky ?? '', pubky ?? '');
+  const userId = userDetails?.counts?.following ? pubky : undefined;
+  const { data: influencers, isLoading, isError } = useStreamUsers(userId, undefined, 'influencers', 0, 3);
 
   if (isError) console.warn(isError);
 
@@ -33,7 +36,7 @@ export default function Influencers({ style }: InfluencersProps) {
                     uri={influencer.details.id.replace('pubky:', '')}
                     username={influencer?.details?.name && Utils.minifyText(influencer?.details?.name, 15)}
                     postsCount={influencer?.counts?.posts}
-                    tagsCount={influencer?.counts?.tags}
+                    tagsCount={influencer?.counts?.tagged}
                   />
                 </div>
               );

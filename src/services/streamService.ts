@@ -1,4 +1,4 @@
-import { TContent, TSort, TSource, TSourceUser } from '@/types';
+import { TContent, TReach, TSort, TSource, TSourceUser, TTimeframe } from '@/types';
 import { PostView } from '@/types/Post';
 import { UserView } from '@/types/User';
 
@@ -132,16 +132,35 @@ function validateSourceParams(source: TSource | undefined, params: { [key: strin
 
 // Get stream users
 export async function getUserStream(
-  userId: string,
-  viewerId: string,
-  source: TSourceUser,
+  userId?: string,
+  viewerId?: string,
+  source?: TSourceUser,
+  reach?: TReach,
+  timeframe?: TTimeframe,
   skip?: number,
   limit?: number
 ): Promise<UserView[]> {
   const queryParams = new URLSearchParams();
 
-  queryParams.append('user_id', String(userId));
-  queryParams.append('viewer_id', String(viewerId));
+  if (userId !== undefined) {
+    queryParams.append('user_id', String(userId));
+  }
+
+  if (viewerId !== undefined) {
+    queryParams.append('viewer_id', String(viewerId));
+  }
+
+  if (source !== undefined) {
+    queryParams.append('source', String(source));
+  }
+
+  if (userId?.trim() && reach?.trim() && reach !== 'all') {
+    queryParams.append('reach', String(reach));
+  }
+
+  if (timeframe !== undefined && timeframe !== 'all_time') {
+    queryParams.append('timeframe', String(timeframe));
+  }
 
   if (skip !== undefined) {
     queryParams.append('skip', String(skip));
@@ -149,7 +168,11 @@ export async function getUserStream(
   if (limit !== undefined) {
     queryParams.append('limit', String(limit));
   }
-  queryParams.append('source', String(source));
+
+  // We cannot add user_id to the query if not we request user WoT active users
+  if (reach?.trim() == 'all' && source?.trim() == 'influencers') {
+    queryParams.delete('user_id');
+  }
 
   const response = await fetch(`${BASE_URL}/stream/users?${queryParams}`);
 

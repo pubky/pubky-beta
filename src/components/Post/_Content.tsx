@@ -285,7 +285,7 @@ export default function Content({
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        {`${generateFileUrl(file).slice(0, 12)}...${generateFileUrl(file).slice(-12)}`}
+                        {`${file.uri.slice(0, 12)}...${file.uri.slice(-12)}`}
                       </Link>
                     ))}
                   </div>
