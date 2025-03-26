@@ -3,77 +3,74 @@
 import { Typography } from '@social/ui-shared';
 import { PostView } from '@/types/Post';
 import { Post, Skeleton } from '@/components';
-import { useStreamPost } from '@/hooks/useStream';
 import { useEffect, useState } from 'react';
-import { usePubkyClientContext } from '@/contexts';
+import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
+import { getStreamPosts } from '@/services/streamService';
 
 const RenderPosts = () => {
   const limit = 10;
   const { pubky, mutedUsers, timeline, setTimeline } = usePubkyClientContext();
+  const { hotTagsReach, timeframe } = useFilterContext();
   const [skip, setSkip] = useState<number>(0);
-  const [fetching, setFetching] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [finishedLoading, setFinishedLoading] = useState(false);
 
-  const { data, isLoading } = useStreamPost(
-    pubky ?? '',
-    undefined,
-    undefined,
-    limit,
-    undefined,
-    undefined,
-    skip,
-    'popularity',
-    undefined,
-    undefined
-  );
-
-  const fetchPosts = async () => {
-    if (fetching || !data) return;
-    setFetching(true);
+  const fetchPosts = async ({
+    skipValue = skip,
+    timelineValue = timeline
+  }: {
+    skipValue?: number;
+    timelineValue?: PostView[];
+  }) => {
+    setIsLoading(true);
 
     try {
-      if (!Array.isArray(data) || data.length === 0) {
-        setFetching(false);
+      const data = await getStreamPosts(
+        pubky ?? '', // viewerId
+        hotTagsReach, // source
+        undefined, // authorId
+        limit, // limit
+        undefined, // start
+        undefined, // end
+        skipValue, // skip
+        'popularity', // sort
+        undefined, // tags
+        undefined // kind
+      );
 
-        return;
-      }
+      setSkip(skipValue + limit);
 
-      if (data.length > 0) {
-        setSkip((prev) => prev + limit);
-      }
-
-      setTimeline((prev) => {
-        const newPosts = data.filter((post) => {
-          const isMuted = mutedUsers?.includes(post?.details?.author);
-          const isAlreadyInTimeline = prev.some((p) => p.details.id === post.details.id);
-          return !isMuted && !isAlreadyInTimeline;
-        });
-        return [...prev, ...newPosts];
-      });
+      // filter out muted users
+      const filteredData = data.filter((post) => !mutedUsers?.includes(post.details.author));
+      setTimeline([...timelineValue, ...filteredData]);
     } catch (error) {
-      console.error(error);
+      setFinishedLoading(true);
     } finally {
-      setFetching(false);
+      setIsLoading(false);
     }
   };
 
-  const loader = useInfiniteScroll(fetchPosts, isLoading);
+  const loader = useInfiniteScroll(() => fetchPosts({ skipValue: skip, timelineValue: timeline }), isLoading);
 
-  useEffect(() => {
-    if (data) {
-      setTimeline(data as PostView[]);
-    }
-  }, [data]);
-
-  useEffect(() => {
-    setTimeline([]);
+  const initializeTimeline = async () => {
     setSkip(0);
-    setFetching(false);
+    setFinishedLoading(false);
+    setTimeline([]);
+
+    await fetchPosts({
+      skipValue: 0,
+      timelineValue: []
+    });
+  };
+
+  useEffect(() => {
+    initializeTimeline();
 
     return () => {
       setTimeline([]);
     };
-  }, []);
+  }, [hotTagsReach, timeframe]);
 
   return (
     <div className="flex flex-col gap-3" id="hot-posts">
@@ -86,12 +83,12 @@ const RenderPosts = () => {
             </div>
           )
       )}
-      {(isLoading || fetching) && (
+      {isLoading && !finishedLoading && (
         <div className="flex flex-col gap-3">
           <Skeleton.Simple />
         </div>
       )}
-      <div ref={loader} />
+      {!isLoading && !finishedLoading && <div ref={loader} />}
     </div>
   );
 };
