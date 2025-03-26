@@ -8,10 +8,11 @@ import { PubkyAppPostKind } from 'pubky-app-specs';
 
 interface CreatePostProps {
   setShowModalPost: React.Dispatch<React.SetStateAction<boolean>>;
+  setHasContent: React.Dispatch<React.SetStateAction<boolean>>;
   className?: string;
 }
 
-export default function ContentCreatePost({ setShowModalPost, className }: CreatePostProps) {
+export default function ContentCreatePost({ setShowModalPost, setHasContent, className }: CreatePostProps) {
   const { createPost } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [contentPost, setContentPost] = useState('');
@@ -21,6 +22,10 @@ export default function ContentCreatePost({ setShowModalPost, className }: Creat
   const [quote, setQuote] = useState<string>();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [placeholder, setPlaceholder] = useState('');
+
+  useEffect(() => {
+    setHasContent(contentPost.trim().length > 0);
+  }, [contentPost]);
 
   useEffect(() => {
     setPlaceholder(Utils.promptPlaceholder('post'));
