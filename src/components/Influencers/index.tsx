@@ -33,7 +33,7 @@ export default function Influencers({ style }: InfluencersProps) {
                     uri={influencer.details.id.replace('pubky:', '')}
                     username={influencer?.details?.name && Utils.minifyText(influencer?.details?.name, 15)}
                     postsCount={influencer?.counts?.posts}
-                    tagsCount={influencer?.counts?.tags}
+                    tagsCount={influencer?.counts?.tagged}
                   />
                 </div>
               );

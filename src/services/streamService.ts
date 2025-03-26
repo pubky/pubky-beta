@@ -151,9 +151,15 @@ export async function getUserStream(
   }
   queryParams.append('source', String(source));
 
-  const response = await fetch(`${BASE_URL}/stream/users?${queryParams}`);
+  let response = await fetch(`${BASE_URL}/stream/users?${queryParams}`);
 
-  if (!response.ok) throw new Error(`Failed to fetch user ${source}`);
+  if (source === 'influencers' && (!response.ok || response.status === 204)) {
+    // Do without user_id
+    queryParams.delete('user_id');
+    response = await fetch(`${BASE_URL}/stream/users?${queryParams}`);
+
+    if (!response.ok) throw new Error(`Failed to fetch user ${source}`);
+  }
 
   return response.json();
 }
