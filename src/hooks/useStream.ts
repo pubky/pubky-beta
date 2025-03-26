@@ -1,6 +1,6 @@
 'use client';
 
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { getStreamPosts, getUserStream, searchUsersByUsername } from '@/services/streamService';
 import { TContent, TSort, TSource, TSourceUser } from '@/types';
 
@@ -15,7 +15,10 @@ export function useStreamPost(
   sort?: TSort,
   tags?: string[],
   kind?: TContent,
-  options?: UseQueryOptions<unknown, Error>
+  options?: {
+    enabled?: boolean;
+    refetchInterval?: number;
+  }
 ) {
   return useQuery({
     queryKey: [
@@ -44,11 +47,8 @@ export function useStreamPost(
         tags,
         kind
       ),
-    ...options,
-    staleTime: 0,
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-    retry: false
+    retry: false,
+    ...options
   });
 }
 

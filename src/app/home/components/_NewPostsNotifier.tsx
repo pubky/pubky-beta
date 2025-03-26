@@ -1,31 +1,24 @@
 'use client';
 
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@social/ui-shared';
 import { PostView } from '@/types/Post';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
-import { useStreamPost } from '@/hooks/useStream';
-import { UseQueryOptions } from '@tanstack/react-query';
+import { getStreamPosts } from '@/services/streamService';
 
 export function NewPostsNotifier() {
-  const { reach, sort, content } = useFilterContext();
-  const { timeline, setTimeline, pubky, deletedPosts } = usePubkyClientContext();
+  const { timeline, setTimeline, pubky, deletedPosts, mutedUsers } = usePubkyClientContext();
+  const { reach, sort, content, selectedFeed } = useFilterContext();
 
   const [newPosts, setNewPosts] = useState<PostView[]>([]);
   const [newPostsCount, setNewPostsCount] = useState(0);
-  const [shouldFetch, setShouldFetch] = useState(false);
-  const [latestTimestamp, setLatestTimestamp] = useState<number | null>(null);
-
-  // Scroll-related refs
-  const lastScrollY = useRef(0);
-  const throttleTimeout = useRef<NodeJS.Timeout | null>(null);
+  const [latestTimestamp, setLatestTimestamp] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     setNewPosts([]);
     setNewPostsCount(0);
-    setLatestTimestamp(null);
-    setShouldFetch(false);
-  }, [sort, reach, content]);
+    setLatestTimestamp(undefined);
+  }, [sort, reach, content, selectedFeed?.tags]);
 
   // Update latestTimestamp whenever the timeline changes
   useEffect(() => {
@@ -37,85 +30,52 @@ export function NewPostsNotifier() {
     }
   }, [timeline]);
 
-  // Scroll handler to check if user scrolled up near the top
-  const handleScroll = useCallback(() => {
-    if (throttleTimeout.current) return;
-
-    throttleTimeout.current = setTimeout(() => {
-      const currentScrollY = window.scrollY;
-      const isScrollingUp = currentScrollY < lastScrollY.current;
-      const isNearTop = currentScrollY < 300;
-
-      // If user scrolls up and we're near the top, trigger fetch
-      if (isScrollingUp && isNearTop) {
-        setShouldFetch(true);
-      }
-
-      lastScrollY.current = currentScrollY;
-      throttleTimeout.current = null;
-    }, 500);
-  }, []);
-
-  // Add/remove the scroll event listener
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (throttleTimeout.current) clearTimeout(throttleTimeout.current);
-    };
-  }, [handleScroll]);
-
-  // Query: fetch posts newer than the latestTimestamp
-  const { data: newPostsData } = useStreamPost(
-    pubky ?? '',
-    reach,
-    'all',
-    10,
-    undefined,
-    latestTimestamp ? latestTimestamp + 1 : undefined,
-    undefined,
-    sort,
-    undefined,
-    content,
-    {
-      enabled: shouldFetch && latestTimestamp !== null,
-      queryKey: ['new-posts', latestTimestamp]
-    } as UseQueryOptions<unknown, Error>
-  );
-
-  // Process new data
-  useEffect(() => {
-    if (!newPostsData || !Array.isArray(newPostsData)) return;
-
-    if (newPostsData.length > 0) {
-      const filtered = newPostsData.filter(
-        (post: PostView) =>
-          !timeline.some((p) => p.details.id === post.details.id) &&
-          !newPosts.some((p) => p.details.id === post.details.id) &&
-          !deletedPosts.includes(post.details.id)
+  const fetchNewPosts = async () => {
+    try {
+      const newPostsValue = await getStreamPosts(
+        pubky ?? '', // viewerId
+        reach, // source
+        undefined, // authorId
+        10, // limit
+        undefined, // end
+        latestTimestamp ? latestTimestamp + 1 : undefined, // start
+        0, // skip
+        sort, // sort
+        selectedFeed?.tags, // tags
+        content // kind
+      );
+      // filter out deleted posts and muted users
+      const filteredNewPosts = newPostsValue.filter(
+        (post) => !deletedPosts.includes(post.details.id) && !mutedUsers.includes(post.details.author)
       );
 
-      if (filtered.length > 0) {
-        setNewPosts((prev) => [...prev, ...filtered]);
-        setNewPostsCount((prev) => prev + filtered.length);
+      // sort by indexed_at
+      const sortedNewPosts = filteredNewPosts.sort((a, b) => a.details.indexed_at - b.details.indexed_at);
 
-        const newMaxTimestamp = Math.max(...filtered.map((p) => p.details.indexed_at));
-        setLatestTimestamp((prev) => {
-          if (prev === null) return newMaxTimestamp;
-          return Math.max(prev, newMaxTimestamp);
-        });
-      }
+      setNewPosts([...newPosts, ...sortedNewPosts]);
+      setNewPostsCount(sortedNewPosts.length + newPostsCount);
+
+      // set latest timestamp to the latest post timestamp
+      setLatestTimestamp(Math.max(...sortedNewPosts.map((p) => p.details.indexed_at)));
+    } catch (error) {
+      console.log('No new posts');
     }
+  };
 
-    setShouldFetch(false);
-  }, [newPostsData, newPosts, timeline]);
+  useEffect(() => {
+    const interval = setInterval(fetchNewPosts, 10000);
+    return () => clearInterval(interval);
+  }, [latestTimestamp]);
 
   // Handler to merge new posts into the main timeline
   const handleShowNewPosts = () => {
-    setTimeline((prev) => [...newPosts, ...prev]);
+    // merge new posts into the main timeline sorted by indexed_at and filter out deleted posts and muted users
+    const orderedNewPosts = [...newPosts]
+      .sort((a, b) => a.details.indexed_at - b.details.indexed_at)
+      .filter((p) => !deletedPosts.includes(p.details.id) && !mutedUsers.includes(p.details.author));
+    setTimeline((prev) => [...orderedNewPosts, ...prev]);
     setNewPosts([]);
     setNewPostsCount(0);
-    setShouldFetch(false);
   };
 
   return (

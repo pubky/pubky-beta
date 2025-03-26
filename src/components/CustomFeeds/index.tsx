@@ -8,24 +8,19 @@ import { twMerge } from 'tailwind-merge';
 import { Utils } from '@social/utils-shared';
 
 interface CustomFeedsProps extends React.HTMLAttributes<HTMLDivElement> {
-  selectedFeed: ICustomFeed | undefined;
-  setSelectedFeed: React.Dispatch<React.SetStateAction<ICustomFeed | undefined>>;
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function CustomFeeds({ selectedFeed, setSelectedFeed, loading, setLoading, ...rest }: CustomFeedsProps) {
+export default function CustomFeeds({ loading, setLoading, ...rest }: CustomFeedsProps) {
   const baseCSS =
     'cursor-pointer hover:bg-opacity-10 py-3 px-5 justify-center items-center gap-2 hidden lg:inline-flex bg-white bg-opacity-5 rounded-tl-lg rounded-tr-lg';
   const activeCSS = 'bg-white bg-opacity-10 rounded-tr-lg';
-  const { openModal } = useModal();
-  const { reach } = useFilterContext();
-  const [feeds, setFeeds] = useState<{ feed: ICustomFeed; name: string }[]>();
-  const { loadFeeds, deleteFeed } = usePubkyClientContext();
 
-  useEffect(() => {
-    handleLoadFeeds();
-  }, []);
+  const { loadFeeds, deleteFeed } = usePubkyClientContext();
+  const { selectedFeed, setSelectedFeed, reach } = useFilterContext();
+  const { openModal } = useModal();
+  const [feeds, setFeeds] = useState<{ feed: ICustomFeed; name: string }[]>();
 
   const handleLoadFeeds = async () => {
     setLoading(true);
@@ -51,12 +46,6 @@ export default function CustomFeeds({ selectedFeed, setSelectedFeed, loading, se
     }
   };
 
-  useEffect(() => {
-    if (selectedFeed) {
-      Utils.storage.set('feed', selectedFeed);
-    }
-  }, [selectedFeed]);
-
   const handleFeedSelect = (feed: ICustomFeed) => {
     setSelectedFeed(feed);
   };
@@ -73,6 +62,16 @@ export default function CustomFeeds({ selectedFeed, setSelectedFeed, loading, se
     setSelectedFeed(undefined);
     Utils.storage.remove('feed');
   };
+
+  useEffect(() => {
+    handleLoadFeeds();
+  }, []);
+
+  useEffect(() => {
+    if (selectedFeed) {
+      Utils.storage.set('feed', selectedFeed);
+    }
+  }, [selectedFeed]);
 
   return (
     <>

@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react';
 import { Button, Icon } from '@social/ui-shared';
 import { useAlertContext, useFilterContext, usePubkyClientContext } from '@/contexts';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
-import { useStreamPost } from '@/hooks/useStream';
 import { PostView } from '@/types/Post';
 import { ContentNotFound, Post, Skeleton } from '@/components';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import Link from 'next/link';
 import Image from 'next/image';
+import { getStreamPosts } from '@/services/streamService';
 
 export const Timeline = () => {
   const limit = 10;
@@ -17,56 +17,60 @@ export const Timeline = () => {
   const { addAlert } = useAlertContext();
   const [start, setStart] = useState<number | undefined>(undefined);
   const [skip, setSkip] = useState<number>(0);
-  const [fetching, setFetching] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [finishedLoading, setFinishedLoading] = useState(false);
   const isMobile = useIsMobile(1280);
   const { sort, layout, content } = useFilterContext();
-  const { data, isLoading } = useStreamPost(
-    pubky ?? '',
-    'bookmarks',
-    undefined,
-    limit,
-    sort === 'recent' ? start : undefined,
-    undefined,
-    sort === 'popularity' ? skip : undefined,
-    sort,
-    undefined,
-    content
-  );
   const [loadingBookmarks, setLoadingBookmarks] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState('');
 
-  const fetchPosts = async () => {
-    if (fetching || !data) return;
-    setFetching(true);
+  const fetchPosts = async ({
+    skipValue = skip,
+    timelineValue = timeline
+  }: {
+    skipValue?: number;
+    timelineValue?: PostView[];
+  }) => {
+    setIsLoading(true);
 
     try {
+      const data = await getStreamPosts(
+        pubky ?? '',
+        'bookmarks',
+        undefined,
+        limit,
+        sort === 'recent' ? start : undefined,
+        undefined,
+        sort === 'popularity' ? skipValue : undefined,
+        sort,
+        undefined,
+        content
+      );
+
       if (!Array.isArray(data) || data.length === 0) {
-        setFetching(false);
+        setFinishedLoading(true);
+        setIsLoading(false);
         return;
       }
 
-      const lastPost = data[data.length - 1] as PostView;
+      setSkip(skipValue + limit);
 
       if (sort === 'recent') {
+        const lastPost = data[data.length - 1] as PostView;
         if (lastPost.bookmark?.indexed_at) {
           setStart(lastPost.bookmark.indexed_at - 1);
         }
-      } else if (sort === 'popularity') {
-        setSkip((prev) => prev + limit);
       }
 
-      setTimeline((prev) => {
-        const newPosts = data.filter((post: PostView) => !prev.some((p) => p.bookmark?.id === post.bookmark?.id));
-        return [...prev, ...newPosts];
-      });
+      setTimeline([...timelineValue, ...data]);
     } catch (error) {
-      console.error(error);
+      setFinishedLoading(true);
     } finally {
-      setFetching(false);
+      setIsLoading(false);
     }
   };
 
-  const loader = useInfiniteScroll(fetchPosts, isLoading);
+  const loader = useInfiniteScroll(() => fetchPosts({ skipValue: skip, timelineValue: timeline }), isLoading);
 
   const handleAddBookmark = async (postId: string, authorId: string) => {
     try {
@@ -80,7 +84,6 @@ export const Timeline = () => {
       if (result) setIsBookmarked(String(result));
       setLoadingBookmarks(false);
     } catch (error) {
-      console.log(error);
       setLoadingBookmarks(false);
     }
   };
@@ -102,19 +105,17 @@ export const Timeline = () => {
     }
   };
 
-  useEffect(() => {
-    if (data) {
-      setTimeline(data as PostView[]);
-    }
-  }, [data]);
-
-  useEffect(() => {
-    setStart(undefined);
+  const initializeTimeline = async () => {
     setSkip(0);
+    setFinishedLoading(false);
     setTimeline([]);
-    setFetching(false);
-    fetchPosts();
-  }, [sort, content]);
+    setStart(undefined);
+
+    await fetchPosts({
+      skipValue: 0,
+      timelineValue: []
+    });
+  };
 
   useEffect(() => {
     if (timeline.length > 0) {
@@ -122,6 +123,10 @@ export const Timeline = () => {
       setIsBookmarked(bookmarkedPost?.bookmark?.id ?? '');
     }
   }, [timeline]);
+
+  useEffect(() => {
+    initializeTimeline();
+  }, [sort, content]);
 
   return (
     <div className="flex flex-col gap-3">
@@ -155,13 +160,13 @@ export const Timeline = () => {
           </div>
         </div>
       ))}
-      {(isLoading || fetching) && (
+      {isLoading && !finishedLoading && (
         <div className="flex flex-col gap-3">
           <Skeleton.Simple />
         </div>
       )}
-      <div ref={loader} />
-      {!isLoading && !fetching && timeline.length === 0 && (
+      {!isLoading && !finishedLoading && <div ref={loader} />}
+      {finishedLoading && timeline.length === 0 && (
         <ContentNotFound
           icon={<Icon.Bookmarks size="48" color="#C8FF00" />}
           title="Save posts for later"

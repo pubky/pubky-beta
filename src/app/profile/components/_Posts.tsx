@@ -1,95 +1,103 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Button, Icon } from '@social/ui-shared';
 import { ContentNotFound, Post, Skeleton } from '@/components';
 import { useModal, usePubkyClientContext } from '@/contexts';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { PostView } from '@/types/Post';
-import { useStreamPost } from '@/hooks/useStream';
 import Image from 'next/image';
+import { getStreamPosts } from '@/services/streamService';
 
 export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   const limit = 10;
-  const { pubky, setTimeline, timeline } = usePubkyClientContext();
+  const { pubky, setTimeline, timeline, deletedPosts } = usePubkyClientContext();
   const isMyProfile = !!(pubky === creatorPubky || !creatorPubky);
   const { openModal } = useModal();
-  const [start, setStart] = useState<number | undefined>(undefined);
-  const [fetching, setFetching] = useState<boolean>(false);
+  const [skip, setSkip] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [finishedLoading, setFinishedLoading] = useState(false);
   const currentPubky = creatorPubky ?? pubky ?? '';
 
-  const { data, isLoading } = useStreamPost(
-    currentPubky,
-    'author',
-    currentPubky,
-    limit,
-    start,
-    undefined,
-    undefined,
-    'recent'
-  );
-
-  const fetchPosts = async () => {
-    if (fetching || !data) return;
-    setFetching(true);
+  const fetchPosts = async ({
+    skipValue = skip,
+    timelineValue = timeline
+  }: {
+    skipValue?: number;
+    timelineValue?: PostView[];
+  }) => {
+    setIsLoading(true);
 
     try {
-      if (!Array.isArray(data) || data.length === 0) {
-        setTimeline([]);
+      const data = await getStreamPosts(
+        currentPubky, // viewerId
+        'author', // source
+        currentPubky, // authorId
+        limit, // limit
+        undefined, // start
+        undefined, // end
+        skipValue, // skip
+        'recent', // sort
+        undefined, // tags
+        undefined // kind
+      );
 
-        return;
-      }
+      setSkip(skipValue + limit);
 
-      const lastPost = data[data.length - 1] as PostView;
-
-      setTimeline((prev) => {
-        const newPosts = data.filter((post) => !prev.some((p) => p.details.id === post.details.id));
-        return [...prev, ...newPosts];
-      });
-
-      if (lastPost?.details?.indexed_at) {
-        setStart(lastPost.details.indexed_at - 1);
-      }
+      // filter out deleted posts
+      const filteredData = data.filter((post) => !deletedPosts.includes(post.details.id));
+      setTimeline([...timelineValue, ...filteredData]);
     } catch (error) {
-      console.error(error);
+      setFinishedLoading(true);
     } finally {
-      setFetching(false);
+      setIsLoading(false);
     }
   };
 
-  useEffect(() => {
-    if (data) {
-      setTimeline(data as PostView[]);
-    }
-  }, [data]);
+  const initializeTimeline = async () => {
+    setSkip(0);
+    setFinishedLoading(false);
+    setTimeline([]);
+
+    await fetchPosts({
+      skipValue: 0,
+      timelineValue: []
+    });
+  };
 
   useEffect(() => {
-    setStart(undefined);
     setTimeline([]);
-    setFetching(false);
-    fetchPosts();
+    setSkip(0);
+    setFinishedLoading(false);
+
+    fetchPosts({
+      skipValue: 0,
+      timelineValue: []
+    });
   }, [currentPubky]);
 
-  useEffect(() => {
-    return () => {
-      setTimeline([]);
-    };
-  }, []);
+  const initializeTimelineCallback = useCallback(() => {
+    initializeTimeline();
+  }, [creatorPubky]);
 
-  const loader = useInfiniteScroll(fetchPosts, isLoading);
+  useEffect(() => {
+    initializeTimelineCallback();
+  }, [creatorPubky]);
+
+  const loader = useInfiniteScroll(() => fetchPosts({ skipValue: skip, timelineValue: timeline }), isLoading);
 
   return (
     <div className="flex flex-col gap-3">
       {timeline.map((post) => (
         <Post key={`post-${post.details.id}`} post={post} postType="timeline" />
       ))}
-      {(isLoading || fetching) && (
+      {isLoading && !finishedLoading && (
         <div className="flex flex-col gap-3">
           <Skeleton.Simple />
         </div>
       )}
-      <div ref={loader} />
-      {!isLoading && !fetching && timeline.length === 0 && (
+      {!isLoading && !finishedLoading && <div ref={loader} />}
+      {!isLoading && timeline.length === 0 && (
         <ContentNotFound
           icon={<Icon.Note size="48" color="#C8FF00" />}
           title="No posts yet"
