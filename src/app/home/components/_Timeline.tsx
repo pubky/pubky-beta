@@ -17,7 +17,7 @@ import { PostView } from '@/types/Post';
 export const Timeline = () => {
   const { pubky, mutedUsers, newPosts, setNewPosts, timeline, setTimeline, deletedPosts } = usePubkyClientContext();
   const { reach, layout, sort, content, selectedFeed } = useFilterContext();
-  const [start, setStart] = useState<number | undefined>(undefined);
+
   const isMobile = useIsMobile(1024);
 
   const [skip, setSkip] = useState<number>(0);
@@ -41,7 +41,7 @@ export const Timeline = () => {
         reach, // source
         undefined, // authorId
         limit, // limit
-        start, // start
+        undefined, // start
         undefined, // end
         skipValue, // skip
         sort, // sort
@@ -70,7 +70,6 @@ export const Timeline = () => {
     setFinishedLoading(false);
     setTimeline([]);
     setNewPosts([]);
-    setStart(undefined);
 
     await fetchPosts({
       skipValue: 0,
