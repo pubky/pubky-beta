@@ -22,6 +22,7 @@ import init, {
 } from 'pubky-app-specs';
 import { defaultPreferences } from './_filters';
 import { userProfileCache } from '@/components/utils-shared/lib/Helper/userProfileCache';
+import { clearUserProfileCache, clearUserRelationshipCache } from '@/services/userService';
 
 const TESTNET = process.env.NEXT_PUBLIC_TESTNET?.toLowerCase() === 'true';
 const NEXT_PUBLIC_DEFAULT_HTTP_RELAY = process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY || 'https://demo.httprelay.io/link/';
@@ -245,6 +246,8 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
         setSearchTags([]);
         setPubky(undefined);
         setSpecsBuilder(undefined);
+        clearUserProfileCache();
+        clearUserRelationshipCache();
       });
       return true;
     } catch (error) {
