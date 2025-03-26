@@ -1,4 +1,4 @@
-import { TContent, TSort, TSource, TSourceUser } from '@/types';
+import { TContent, TReach, TSort, TSource, TSourceUser, TTimeframe } from '@/types';
 import { PostView } from '@/types/Post';
 import { UserView } from '@/types/User';
 
@@ -135,6 +135,8 @@ export async function getUserStream(
   userId?: string,
   viewerId?: string,
   source?: TSourceUser,
+  reach?: TReach,
+  timeframe?: TTimeframe,
   skip?: number,
   limit?: number
 ): Promise<UserView[]> {
@@ -148,14 +150,23 @@ export async function getUserStream(
     queryParams.append('viewer_id', String(viewerId));
   }
 
+  if (source !== undefined) {
+    queryParams.append('source', String(source));
+  }
+
+  if (reach !== undefined && reach !== 'all') {
+    queryParams.append('reach', String(reach));
+  }
+
+  if (timeframe !== undefined && timeframe !== 'all_time') {
+    queryParams.append('timeframe', String(timeframe));
+  }
+
   if (skip !== undefined) {
     queryParams.append('skip', String(skip));
   }
   if (limit !== undefined) {
     queryParams.append('limit', String(limit));
-  }
-  if (source !== undefined) {
-    queryParams.append('source', String(source));
   }
 
   const response = await fetch(`${BASE_URL}/stream/users?${queryParams}`);
