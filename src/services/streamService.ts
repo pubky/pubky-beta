@@ -170,8 +170,8 @@ export async function getUserStream(
   }
 
   // We cannot add user_id to the query if not we request user WoT active users
-  if (reach?.trim() == "all" && source?.trim() == "influencers") {
-    queryParams.delete('user_id')
+  if (reach?.trim() == 'all' && source?.trim() == 'influencers') {
+    queryParams.delete('user_id');
   }
 
   const response = await fetch(`${BASE_URL}/stream/users?${queryParams}`);
