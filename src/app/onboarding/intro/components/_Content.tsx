@@ -228,7 +228,7 @@ export default function Intro() {
     {
       content: (
         <>
-          <Typography.Display>Posts, Articles, Photos, Links...</Typography.Display>
+          <Typography.Display className="max-w-min sm:max-w-full">Posts, Articles, Photos, Links...</Typography.Display>
           <div className="flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-3">
             <div className="flex flex-col gap-4">
               <Typography.Body variant="medium" className="text-opacity-80 leading-snug">
