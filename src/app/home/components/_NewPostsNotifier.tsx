@@ -5,24 +5,21 @@ import { Button } from '@social/ui-shared';
 import { PostView } from '@/types/Post';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { useStreamPost } from '@/hooks/useStream';
-import { ICustomFeed } from '@/types';
+import { getStreamPosts } from '@/services/streamService';
 
-export function NewPostsNotifier({ selectedFeed }: { selectedFeed: ICustomFeed | undefined }) {
-  const { timeline, setTimeline, pubky, deletedPosts } = usePubkyClientContext();
-
-  const { reach, sort, content } = useFilterContext();
-  const tagsFeed = selectedFeed?.tags;
+export function NewPostsNotifier() {
+  const { timeline, setTimeline, pubky, deletedPosts, mutedUsers } = usePubkyClientContext();
+  const { reach, sort, content, selectedFeed } = useFilterContext();
 
   const [newPosts, setNewPosts] = useState<PostView[]>([]);
   const [newPostsCount, setNewPostsCount] = useState(0);
-  const [latestTimestamp, setLatestTimestamp] = useState<number | null>(null);
+  const [latestTimestamp, setLatestTimestamp] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     setNewPosts([]);
     setNewPostsCount(0);
-    setLatestTimestamp(null);
-    // setShouldFetch(false);
-  }, [sort, reach, content]);
+    setLatestTimestamp(undefined);
+  }, [sort, reach, content, selectedFeed?.tags]);
 
   // Update latestTimestamp whenever the timeline changes
   useEffect(() => {
@@ -34,51 +31,50 @@ export function NewPostsNotifier({ selectedFeed }: { selectedFeed: ICustomFeed |
     }
   }, [timeline]);
 
-  // Query: fetch posts newer than the latestTimestamp
-  const { data: newPostsData } = useStreamPost(
-    pubky ?? '', // viewerId
-    reach, // source
-    undefined, // authorId
-    10, // limit
-    undefined, // start
-    latestTimestamp ? latestTimestamp + 1 : undefined, // end
-    sort === 'popularity' ? 0 : undefined, // skip
-    sort, // sort
-    tagsFeed, // tags
-    content, // kind
-    {
-      refetchInterval: 10000
-    }
-  );
-
-  // Process new data
-  useEffect(() => {
-    if (!newPostsData || !Array.isArray(newPostsData)) return;
-
-    if (newPostsData.length > 0) {
-      const filtered = newPostsData.filter(
-        (post: PostView) =>
-          !timeline.some((p) => p.details.id === post.details.id) &&
-          !newPosts.some((p) => p.details.id === post.details.id) &&
-          !deletedPosts.includes(post.details.id)
+  const fetchNewPosts = async () => {
+    try {
+      const newPostsValue = await getStreamPosts(
+        pubky ?? '', // viewerId
+        reach, // source
+        undefined, // authorId
+        10, // limit
+        undefined, // end
+        latestTimestamp ? latestTimestamp + 1 : undefined, // start
+        0, // skip
+        sort, // sort
+        selectedFeed?.tags, // tags
+        content // kind
+      );
+      // filter out deleted posts and muted users
+      const filteredNewPosts = newPostsValue.filter(
+        (post) => !deletedPosts.includes(post.details.id) && !mutedUsers.includes(post.details.author)
       );
 
-      if (filtered.length > 0) {
-        setNewPosts((prev) => [...prev, ...filtered]);
-        setNewPostsCount((prev) => prev + filtered.length);
+      // sort by indexed_at
+      const sortedNewPosts = filteredNewPosts.sort((a, b) => a.details.indexed_at - b.details.indexed_at);
 
-        const newMaxTimestamp = Math.max(...filtered.map((p) => p.details.indexed_at));
-        setLatestTimestamp((prev) => {
-          if (prev === null) return newMaxTimestamp;
-          return Math.max(prev, newMaxTimestamp);
-        });
-      }
+      setNewPosts([...newPosts, ...sortedNewPosts]);
+      setNewPostsCount(sortedNewPosts.length + newPostsCount);
+
+      // set latest timestamp to the latest post timestamp
+      setLatestTimestamp(Math.max(...sortedNewPosts.map((p) => p.details.indexed_at)));
+    } catch (error) {
+      console.log('No new posts');
     }
-  }, [newPostsData, newPosts, timeline]);
+  };
+
+  useEffect(() => {
+    const interval = setInterval(fetchNewPosts, 10000);
+    return () => clearInterval(interval);
+  }, [latestTimestamp]);
 
   // Handler to merge new posts into the main timeline
   const handleShowNewPosts = () => {
-    setTimeline((prev) => [...newPosts, ...prev]);
+    // merge new posts into the main timeline sorted by indexed_at and filter out deleted posts and muted users
+    const orderedNewPosts = [...newPosts]
+      .sort((a, b) => a.details.indexed_at - b.details.indexed_at)
+      .filter((p) => !deletedPosts.includes(p.details.id) && !mutedUsers.includes(p.details.author));
+    setTimeline((prev) => [...orderedNewPosts, ...prev]);
     setNewPosts([]);
     setNewPostsCount(0);
   };

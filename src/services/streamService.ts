@@ -52,6 +52,9 @@ export async function getStreamPosts(
       if (limit !== undefined) {
         queryParams.append('limit', String(limit));
       }
+      if (skip !== undefined) {
+        queryParams.append('skip', String(skip));
+      }
     } else if (sort === 'popularity') {
       queryParams.append('sorting', 'total_engagement');
       if (skip !== undefined) {

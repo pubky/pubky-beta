@@ -78,37 +78,52 @@ const FilterContext = createContext<FilterContextType>({
 });
 
 export function FilterWrapper({ children }: { children: React.ReactNode }) {
-  const [isInitialized, setIsInitialized] = useState(false);
+  // general filters
   const [layout, setLayout] = useState<TLayouts>((Utils.storage.get('layout') as TLayouts) || 'columns');
+
+  // home timeline filters
   const [sort, setSort] = useState<TSort>((Utils.storage.get('sort') as TSort) || 'recent');
   const [reach, setReach] = useState<TSource>((Utils.storage.get('reach') as TSource) || 'all');
   const [hotTagsReach, setHotTagsReach] = useState<THotTagsReach>(
     (Utils.storage.get('hotTagsReach') as THotTagsReach) || 'all'
   );
+  const [selectedFeed, setSelectedFeed] = useState<ICustomFeed>();
+
+  // contacts filters
   const [contacts, setContacts] = useState<TContacts>((Utils.storage.get('contacts') as TContacts) || 'following');
   const [contactsLayout, setContactsLayout] = useState<TContactsLayout>(
     (Utils.storage.get('contactsLayout') as TContactsLayout) || 'list'
   );
+
+  // content filters
   const [content, setContent] = useState<TContent>((Utils.storage.get('content') as TContent) || 'all');
   const [timeframe, setTimeframe] = useState<TTimeframe>((Utils.storage.get('timeframe') as TTimeframe) || 'all_time');
+
+  // notifications filters
   const [unReadNotification, setUnReadNotification] = useState<number>((Utils.storage.get('unread') as number) || 0);
-  const [selectedFeed, setSelectedFeed] = useState<ICustomFeed>();
 
   const resetDefault = () => {
-    setTimeout(() => {
-      setLayout('columns');
-      setSort('recent');
-      setReach('all');
-      setHotTagsReach('all');
-      setContacts('following');
-      setContactsLayout('list');
-      setContent('all');
-      setTimeframe('all_time');
-      setUnReadNotification(0);
-    });
+    setLayout('columns');
+    setSort('recent');
+    setReach('all');
+    setHotTagsReach('all');
+    setContacts('following');
+    setContactsLayout('list');
+    setContent('all');
+    setTimeframe('all_time');
+    setUnReadNotification(0);
+
+    Utils.storage.set('layout', 'columns');
+    Utils.storage.set('sort', 'recent');
+    Utils.storage.set('reach', 'all');
+    Utils.storage.set('hotTagsReach', 'all');
+    Utils.storage.set('contacts', 'following');
+    Utils.storage.set('contactsLayout', 'list');
+    Utils.storage.set('content', 'all');
+    Utils.storage.set('timeframe', 'all_time');
+    Utils.storage.set('unread', 0);
   };
 
-  // save filters to local storage
   useEffect(() => {
     Utils.storage.set('layout', layout);
     Utils.storage.set('sort', sort);
@@ -119,10 +134,21 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
     Utils.storage.set('content', content);
     Utils.storage.set('timeframe', timeframe);
     Utils.storage.set('unread', unReadNotification);
-    setIsInitialized(true);
-  }, [layout, sort, reach, hotTagsReach, contacts, contactsLayout, content, timeframe]);
+  }, [layout, sort, reach, hotTagsReach, contacts, contactsLayout, content, timeframe, unReadNotification]);
 
-  if (!isInitialized) return null;
+  useEffect(() => {
+    resetDefault();
+  }, []);
+
+  useEffect(() => {
+    console.log('selectedFeed', selectedFeed);
+    if (selectedFeed) {
+      setReach(selectedFeed.reach);
+      setContent(selectedFeed.content);
+      setLayout(selectedFeed.layout);
+      setSort(selectedFeed.sort);
+    }
+  }, [selectedFeed]);
 
   return (
     <FilterContext.Provider
