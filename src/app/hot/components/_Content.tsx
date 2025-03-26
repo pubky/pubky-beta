@@ -19,11 +19,12 @@ export default function Index() {
   const isMobile = useIsMobile(1024);
   const pathname = usePathname();
   const { data, isLoading, isError } = useHotTags(pubky, hotTagsReach, undefined, undefined, undefined, timeframe);
+  const [showMoreUsers, setShowMoreUsers] = useState(false);
   const {
     data: influencers,
     isLoading: isLoadingInfluencers,
     isError: isErrorInfluencers
-  } = useStreamUsers(pubky ?? '', pubky ?? '', 'influencers', undefined, 5);
+  } = useStreamUsers(pubky ?? '', pubky ?? '', 'influencers', undefined, showMoreUsers ? 20 : 5);
   const hotTags = data || [];
   if (isError || isErrorInfluencers) console.warn(isError && isErrorInfluencers);
   const [activeTab, setActiveTab] = useState(0);
@@ -69,7 +70,12 @@ export default function Index() {
                   (isLoadingInfluencers ? (
                     <Skeletons.Simple />
                   ) : (
-                    <Hot.RenderInfluencers influencers={influencers} initLoadingInfluencers={isLoadingInfluencers} />
+                    <Hot.RenderInfluencers
+                      influencers={influencers}
+                      initLoadingInfluencers={isLoadingInfluencers}
+                      showMoreUsers={showMoreUsers}
+                      setShowMoreUsers={setShowMoreUsers}
+                    />
                   ))}
                 {activeTab === 2 && <Hot.RenderPosts />}
               </>
@@ -79,7 +85,12 @@ export default function Index() {
                 {isLoadingInfluencers ? (
                   <Skeletons.Simple />
                 ) : (
-                  <Hot.RenderInfluencers influencers={influencers} initLoadingInfluencers={isLoadingInfluencers} />
+                  <Hot.RenderInfluencers
+                    influencers={influencers}
+                    initLoadingInfluencers={isLoadingInfluencers}
+                    showMoreUsers={showMoreUsers}
+                    setShowMoreUsers={setShowMoreUsers}
+                  />
                 )}
                 <Hot.RenderPosts />
               </>

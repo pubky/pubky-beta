@@ -1,7 +1,7 @@
 'use client';
 
 import Skeletons from '@/components/Skeletons';
-import { Typography } from '@social/ui-shared';
+import { Button, Typography } from '@social/ui-shared';
 import { UserView } from '@/types/User';
 import { useEffect, useState } from 'react';
 import { LoadingInfluencers } from './influencers/_MainContent';
@@ -11,9 +11,16 @@ import { Influencers } from './influencers';
 interface RenderInfluencersProps {
   influencers: UserView[] | undefined;
   initLoadingInfluencers: boolean;
+  showMoreUsers: boolean;
+  setShowMoreUsers: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const RenderInfluencers = ({ influencers, initLoadingInfluencers }: RenderInfluencersProps) => {
+const RenderInfluencers = ({
+  influencers,
+  initLoadingInfluencers,
+  showMoreUsers,
+  setShowMoreUsers
+}: RenderInfluencersProps) => {
   const { pubky } = usePubkyClientContext();
   const [loadingInfluencers, setLoadingInfluencers] = useState<LoadingInfluencers>({});
   const [followed, setFollowed] = useState<{ [pubky: string]: boolean }>({});
@@ -37,7 +44,12 @@ const RenderInfluencers = ({ influencers, initLoadingInfluencers }: RenderInflue
 
   return (
     <div id="active" className="flex flex-col gap-3">
-      <Typography.H2 className="hidden lg:block text-opacity-50 font-light">Active Users</Typography.H2>
+      <div className="flex gap-2 items-center">
+        <Typography.H2 className="hidden lg:block text-opacity-50 font-light">Active Users</Typography.H2>
+        <Button.Medium onClick={() => setShowMoreUsers(!showMoreUsers)} className="w-auto h-8 px-3 py-1.5">
+          {showMoreUsers ? 'See Less' : 'See All'}
+        </Button.Medium>
+      </div>
       {(!influencers || influencers?.length === 0) && (
         <Typography.Body variant="small" className="text-opacity-50">
           No users to show
