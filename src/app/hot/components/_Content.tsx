@@ -12,14 +12,14 @@ import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { Hot } from '.';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { usePathname } from 'next/navigation';
-import { userProfileCache } from '@/components/utils-shared/lib/Helper/userProfileCache';
+import { useUserProfile } from '@/hooks/useUser';
 
 export default function Index() {
   const { pubky } = usePubkyClientContext();
   const { hotTagsReach, timeframe } = useFilterContext();
   const isMobile = useIsMobile(1024);
   const pathname = usePathname();
-  const userDetails = userProfileCache.get(pubky ?? '');
+  const { data: userDetails } = useUserProfile(pubky ?? '', pubky ?? '');
   const userId = userDetails?.counts?.following ? pubky : undefined;
   const { data, isLoading, isError } = useHotTags(pubky, hotTagsReach, undefined, undefined, undefined, timeframe);
   const [showMoreUsers, setShowMoreUsers] = useState(false);

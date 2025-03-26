@@ -154,7 +154,7 @@ export async function getUserStream(
     queryParams.append('source', String(source));
   }
 
-  if (reach !== undefined && reach !== 'all') {
+  if (userId?.trim() && reach?.trim() && reach !== 'all') {
     queryParams.append('reach', String(reach));
   }
 
@@ -167,6 +167,11 @@ export async function getUserStream(
   }
   if (limit !== undefined) {
     queryParams.append('limit', String(limit));
+  }
+
+  // We cannot add user_id to the query if not we request user WoT active users
+  if (reach?.trim() == "all" && source?.trim() == "influencers") {
+    queryParams.delete('user_id')
   }
 
   const response = await fetch(`${BASE_URL}/stream/users?${queryParams}`);
