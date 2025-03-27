@@ -396,14 +396,19 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
   const uploadFile = async (file: File, specsB?: PubkySpecsBuilder): Promise<string> => {
     let specs = specsB ? specsB : specsBuilder;
 
+    let fileToUpload = file;
+    if (file.type.startsWith('video/') && file.type !== 'video/mp4') {
+      fileToUpload = await Utils.convertVideoToMp4(file);
+    }
+
     // 1. Upload Blob
-    const fileContent = await file.arrayBuffer();
+    const fileContent = await fileToUpload.arrayBuffer();
     const blobData = new Uint8Array(fileContent);
     const blobResult = specs!.createBlob(blobData);
 
     await homeserver.put(blobResult.meta.url, blobResult.blob.data);
     // 2. Create File Record
-    const fileResult = specs!.createFile(file.name, blobResult.meta.url, file.type, file.size);
+    const fileResult = specs!.createFile(fileToUpload.name, blobResult.meta.url, fileToUpload.type, fileToUpload.size);
 
     await homeserver.put(fileResult.meta.url, JSON.stringify(fileResult.file.toJson()));
 
