@@ -3,11 +3,10 @@
 import { Utils } from '@social/utils-shared';
 import getYouTubeID from 'get-youtube-id';
 import LinkPreview from '@/components/ui-shared/lib/Post/_Preview';
-import { GitHub } from '@/components/ui-shared/lib/Preview/Github';
 import { useEffect, useState } from 'react';
 import { Tweet } from 'react-tweet';
 import Parsing from '../Content/_Parsing';
-import { Button, Icon, Typography } from '@social/ui-shared';
+import { Button, Icon, Preview, Typography } from '@social/ui-shared';
 import { FileView, PostView } from '@/types/Post';
 import { getFile } from '@/services/fileService';
 import { Spotify } from 'react-spotify-embed';
@@ -42,6 +41,7 @@ export default function Content({
   const [tweetId, setTweetId] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
   const [spotifyUrl, setSpotifyUrl] = useState('');
+  const [blueskyUrl, setBlueskyUrl] = useState('');
   const [fileContents, setFileContents] = useState<FileView[]>([]);
   const [loading, setLoading] = useState(true);
   const text = post?.details?.content;
@@ -73,6 +73,9 @@ export default function Content({
 
       const spotifyRegex = /https:\/\/open\.spotify\.com\/track\/\w+/;
       if (spotifyRegex.test(url)) setSpotifyUrl(url);
+
+      const blueskyRegex = /https:\/\/bsky\.app\/profile\/[\w.-]+\/post\/\w+/;
+      if (blueskyRegex.test(url)) setBlueskyUrl(url);
     }
   }
 
@@ -247,7 +250,7 @@ export default function Content({
                     ></iframe>
                   </div>
                 )}
-                {preview && !videoId && !tweetId && !githubUrl && !spotifyUrl && (
+                {preview && !videoId && !tweetId && !githubUrl && !spotifyUrl && !blueskyUrl && (
                   <div onClick={(event) => event.stopPropagation()}>
                     <LinkPreview url={preview} />
                   </div>
@@ -262,12 +265,17 @@ export default function Content({
                 )}
                 {githubUrl && (
                   <div onClick={(event) => event.stopPropagation()}>
-                    <GitHub url={githubUrl} />
+                    <Preview.GitHub url={githubUrl} />
                   </div>
                 )}
                 {spotifyUrl && (
                   <div onClick={(event) => event.stopPropagation()} className="mt-4">
                     <Spotify link={spotifyUrl} />
+                  </div>
+                )}
+                {blueskyUrl && (
+                  <div onClick={(event) => event.stopPropagation()}>
+                    <Preview.Bluesky url={blueskyUrl} />
                   </div>
                 )}
               </div>
