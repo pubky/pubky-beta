@@ -25,4 +25,4 @@ export async function convertVideoToMp4(file: File): Promise<File> {
   await ffmpeg.deleteFile('output.mp4');
 
   return convertedFile;
-} 
+}
