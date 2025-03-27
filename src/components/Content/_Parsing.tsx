@@ -32,10 +32,12 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
     return parts.map((part, index) =>
       part.startsWith('`') && part.endsWith('`') && part.length > 2 ? (
         <span key={index} className="border border-white/10 px-1.5 py-0.5 rounded bg-[#2A2D30] text-[#E8902C]">
-          {part.slice(1, -1)}
+          <LinkParser watchers={watchers as []}>{part.slice(1, -1)}</LinkParser>
         </span>
       ) : (
-        <span key={index}>{part}</span>
+        <span key={index}>
+          <LinkParser watchers={watchers as []}>{part}</LinkParser>
+        </span>
       )
     );
   };
@@ -45,10 +47,12 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
     return parts.map((part, index) =>
       part.startsWith('**') && part.endsWith('**') && part.length > 4 ? (
         <strong key={index} className="font-bold">
-          {part.slice(2, -2)}
+          <LinkParser watchers={watchers as []}>{part.slice(2, -2)}</LinkParser>
         </strong>
       ) : (
-        <span key={index}>{part}</span>
+        <span key={index}>
+          <LinkParser watchers={watchers as []}>{part}</LinkParser>
+        </span>
       )
     );
   };
