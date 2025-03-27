@@ -31,7 +31,7 @@ export const UserSmall = ({
 }: UserSmallProps) => {
   return (
     <div {...rest} className={twMerge(`justify-between items-center inline-flex w-full`, rest.className)}>
-      <Link href={`/profile/${uri}`} className="gap-1 inline-flex ">
+      <Link href={`/profile/${uri}`} className="gap-2 inline-flex ">
         <ImageByUri
           id={uri}
           width={width}

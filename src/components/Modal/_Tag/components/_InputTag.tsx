@@ -52,7 +52,7 @@ export default function InputTag({ post, tagsError, postType }: InputTagProps) {
         />
       </div>
       <div className="mt-4 w-full md:w-[500px] hidden md:flex">
-        <Post post={post} repostView postType={postType} />
+        <Post post={post} repostView replyView postType={postType} />
       </div>
       {tagsError && (
         <Typography.Body variant="small" className="text-[#e95164] mt-4">
