@@ -206,6 +206,8 @@ export async function getUserNotifications(
   skip?: number,
   limit?: number
 ): Promise<any> {
+  if (!userId || userId === '') return [];
+
   const queryParams = new URLSearchParams();
 
   if (start !== undefined) {

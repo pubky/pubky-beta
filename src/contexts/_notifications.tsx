@@ -19,7 +19,8 @@ const NotificationsContext = createContext<NotificationsContextType>({
 });
 
 export function NotificationsWrapper({ children }: { children: ReactNode }) {
-  const { pubky, timestamp, notificationPreferences, mutedUsers } = usePubkyClientContext();
+  const { pubky, timestamp, notificationPreferences, mutedUsers, getTimestampNotification, setTimestamp } =
+    usePubkyClientContext();
   const { setUnReadNotification } = useFilterContext();
 
   const limit = 30;
@@ -29,22 +30,61 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
   const [hasMore, setHasMore] = useState(true);
   const [prevPubky, setPrevPubky] = useState<string | null>(null);
   const { data: initNotifications, isLoading } = useUserNotifications(pubky ?? '', undefined, undefined, skip, limit);
+
   useEffect(() => {
     setLoading(isLoading);
   }, [isLoading]);
+
   useEffect(() => {
-    // Don't process if we don't have notifications or timestamp is invalid (0)
-    // or if specs builder isn't ready yet
-    if (!initNotifications || timestamp <= 0) return;
+    const fetchTimestamp = async () => {
+      if (pubky && timestamp <= 0) {
+        try {
+          const lastTimestamp = await getTimestampNotification();
+          setTimestamp(lastTimestamp);
+        } catch (error) {
+          console.warn('Error loading timestamp:', error);
+        }
+      }
+    };
+
+    fetchTimestamp();
+  }, [pubky, timestamp, getTimestampNotification, setTimestamp]);
+
+  useEffect(() => {
+    if (!pubky || !notificationPreferences) return;
+
+    // First check
+    fetchNotifications();
+
+    // Each 30 seconds
+    const intervalId = setInterval(() => {
+      fetchNotifications();
+    }, 30000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [pubky, notificationPreferences]);
+
+  useEffect(() => {
+    // Don't process if we don't have notifications or if specs builder isn't ready yet
+    if (!initNotifications || !pubky) return;
+
     const filtered = filterNotifications(initNotifications);
     updateNotifications(filtered);
-    // Calculate unread count only after we have a valid timestamp
-    const unreadCount = filtered.reduce(
-      (count, notification) => (timestamp && notification.timestamp > timestamp ? count + 1 : count),
-      0
-    );
-    setUnReadNotification(unreadCount);
-  }, [initNotifications, timestamp]);
+
+    // Calculate unread count with proper timestamp comparison
+    if (timestamp > 0) {
+      const unreadCount = filtered.reduce(
+        (count, notification) => (notification.timestamp > timestamp ? count + 1 : count),
+        0
+      );
+      if (unreadCount > 0) {
+        setUnReadNotification(unreadCount);
+      }
+    }
+  }, [initNotifications, timestamp, pubky, setUnReadNotification]);
+
   const updateNotifications = (newNotifications: NotificationView[]) => {
     setNotifications((prev) => {
       const merged = [...prev, ...newNotifications].filter(
@@ -83,12 +123,21 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
 
         updateNotifications(filteredNotifications);
 
-        const unreadCount = filteredNotifications.reduce(
-          (count, notification) => (timestamp && notification.timestamp > timestamp ? count + 1 : count),
-          0
-        );
+        // Ensure timestamp is valid before calculating unread count
+        if (timestamp > 0) {
+          const unreadCount = filteredNotifications.reduce(
+            (count, notification) => (notification.timestamp > timestamp ? count + 1 : count),
+            0
+          );
 
-        setUnReadNotification(unreadCount);
+          if (unreadCount > 0) {
+            setUnReadNotification(unreadCount);
+          }
+        } else {
+          // If timestamp is invalid, try to fetch it
+          const lastTimestamp = await getTimestampNotification();
+          setTimestamp(lastTimestamp);
+        }
       }
     } catch (err) {
       console.error(err);
@@ -120,11 +169,13 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
       setUnReadNotification(0);
       setSkip(0);
       setHasMore(true);
+
+      // Fetch notifications only when pubky changes
+      if (notificationPreferences && pubky) {
+        fetchNotifications();
+      }
     }
-    if (notificationPreferences && pubky) {
-      fetchNotifications();
-    }
-  }, [pubky, notificationPreferences, timestamp]);
+  }, [pubky, notificationPreferences]);
 
   return (
     <NotificationsContext.Provider

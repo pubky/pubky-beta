@@ -230,9 +230,19 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
       pubky && client.signout(PublicKey.from(pubky));
 
       // Clear storage and states
-      ['pubky_public_key', 'seed', 'mnemonic', 'profile', 'timerRemind', 'backup', 'feed', 'unread'].forEach(
-        Utils.storage.remove
-      );
+      [
+        'pubky_public_key',
+        'seed',
+        'mnemonic',
+        'profile',
+        'timerRemind',
+        'backup',
+        'feed',
+        'unread',
+        'searchHistory',
+        'emoji-mart.frequently',
+        'emoji-mart.last'
+      ].forEach(Utils.storage.remove);
 
       setTimeout(() => {
         setProfile(undefined);

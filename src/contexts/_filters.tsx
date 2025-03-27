@@ -141,7 +141,6 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    console.log('selectedFeed', selectedFeed);
     if (selectedFeed) {
       setReach(selectedFeed.reach);
       setContent(selectedFeed.content);

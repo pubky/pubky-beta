@@ -19,15 +19,15 @@ export default function NotificationsProfile() {
   const displayedNotifications = notifications.slice(tempUnReadNotification);
 
   useEffect(() => {
-    if (unReadNotification) {
+    if (unReadNotification > 0) {
       setTempUnReadNotification(unReadNotification);
-      setTimeout(() => setTempUnReadNotification(0), 3000);
     }
+
     setUnReadNotification(0);
-    const putTimestamp = async () => {
+    const updateTimestamp = async () => {
       await putTimestampNotification();
     };
-    putTimestamp();
+    updateTimestamp();
   }, []);
 
   return (
