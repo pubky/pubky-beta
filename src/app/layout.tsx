@@ -1,5 +1,4 @@
 import './global.css';
-import { getSeoMetadata, getPWAConfig, getHeaderMetaTags } from '@/components/HeaderSEO';
 
 import {
   AlertWrapper,
@@ -9,20 +8,18 @@ import {
   PubkyClientWrapper,
   ModalProvider
 } from '@/contexts';
-import { ProtectedRoutes } from '@/components';
+
+import { Analytics, ProtectedRoutes, HeaderSEO } from '@/components';
 
 export const metadata = {
-  ...getSeoMetadata({
-    title: 'Pubky.app | Unlock the web',
-    description: 'Unlock the web. Your keys, your content, your rules.'
-  }),
-  ...getPWAConfig()
+  ...HeaderSEO.getSeoMetadata(),
+  ...HeaderSEO.getPWAConfig()
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <head>{getHeaderMetaTags()}</head>
+      <head>{HeaderSEO.getHeaderMetaTags()}</head>
       <body className="overflow-x-hidden max-w-full min-w-[420px]">
         <PubkyClientWrapper>
           <FilterWrapper>
@@ -37,6 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </AlertWrapper>
           </FilterWrapper>
         </PubkyClientWrapper>
+        <Analytics />
       </body>
     </html>
   );
