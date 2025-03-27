@@ -44,19 +44,16 @@ export function NewPostsNotifier() {
         selectedFeed?.tags, // tags
         content // kind
       );
-      // filter out deleted posts and muted users
-      const filteredNewPosts = newPostsValue.filter(
-        (post) => !deletedPosts.includes(post.details.id) && !mutedUsers.includes(post.details.author)
-      );
+      // filter out deleted posts and muted users and order by indexed_at and reverse the order
+      const filteredNewPosts = newPostsValue
+        .filter((post) => !deletedPosts.includes(post.details.id) && !mutedUsers.includes(post.details.author))
+        .sort((a, b) => b.details.indexed_at - a.details.indexed_at);
 
-      // sort by indexed_at
-      const sortedNewPosts = filteredNewPosts.sort((a, b) => a.details.indexed_at - b.details.indexed_at);
-
-      setNewPosts([...newPosts, ...sortedNewPosts]);
-      setNewPostsCount(sortedNewPosts.length + newPostsCount);
+      setNewPosts([...newPosts, ...filteredNewPosts]);
+      setNewPostsCount(filteredNewPosts.length + newPostsCount);
 
       // set latest timestamp to the latest post timestamp
-      setLatestTimestamp(Math.max(...sortedNewPosts.map((p) => p.details.indexed_at)));
+      setLatestTimestamp(Math.max(...filteredNewPosts.map((p) => p.details.indexed_at)));
     } catch (error) {
       console.log('No new posts');
     }
@@ -69,11 +66,7 @@ export function NewPostsNotifier() {
 
   // Handler to merge new posts into the main timeline
   const handleShowNewPosts = () => {
-    // merge new posts into the main timeline sorted by indexed_at and filter out deleted posts and muted users
-    const orderedNewPosts = [...newPosts]
-      .sort((a, b) => a.details.indexed_at - b.details.indexed_at)
-      .filter((p) => !deletedPosts.includes(p.details.id) && !mutedUsers.includes(p.details.author));
-    setTimeline((prev) => [...orderedNewPosts, ...prev]);
+    setTimeline((prev) => [...newPosts, ...prev]);
     setNewPosts([]);
     setNewPostsCount(0);
   };
