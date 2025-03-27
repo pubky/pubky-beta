@@ -103,7 +103,7 @@ export default function TaggedSection({
           )}
           <Button.Medium
             id="profile-tag-btn"
-            className="mt-2 w-auto h-8 inline-flex items-center"
+            className="whitespace-nowrap mt-2 w-auto h-8 inline-flex items-center"
             onClick={() => (pubky ? handleOpenModal() : openModal('join'))}
             icon={<Icon.Tag size="16" />}
           >
