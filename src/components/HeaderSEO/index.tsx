@@ -2,11 +2,8 @@ interface SeoMetadataParams {
   title?: string;
   description?: string;
   keywords?: string[];
-  icon?: string;
   image?: string;
   url?: string;
-  twitterHandle?: string;
-  statusBarStyle?: 'default' | 'black-translucent';
 }
 
 export function getPWAConfig() {
@@ -58,14 +55,15 @@ export function getHeaderMetaTags() {
   );
 }
 
-export function getSeoMetadata({
-  title = 'Pubky.app | Unlock the web',
-  description = 'Unlock the web. Your keys, your content, your rules.',
-  keywords = ['key', 'public key', 'pubkey', 'pubky', 'pkarr', 'pubky core', 'web'],
-  image = '/images/webp/pubky-seo.webp',
-  url = 'https://pubky.app',
-  twitterHandle = '@getpubky'
-}: SeoMetadataParams) {
+export function getSeoMetadata(params: SeoMetadataParams = {}) {
+  const {
+    title = 'Pubky.app | Unlock the web',
+    description = 'Unlock the web. Your keys, your content, your rules.',
+    keywords = ['key', 'public key', 'pubkey', 'pubky', 'pkarr', 'pubky core', 'web'],
+    image = '/images/webp/pubky-seo.webp',
+    url = 'https://pubky.app'
+  } = params;
+
   return {
     metadataBase: new URL('https://pubky.app'),
     title,
@@ -86,9 +84,15 @@ export function getSeoMetadata({
       site_name: 'Pubky.app'
     },
     twitter: {
-      handle: twitterHandle,
-      site: twitterHandle,
+      handle: '@getpubky',
+      site: '@getpubky',
       cardType: 'summary_large_image'
     }
   };
 }
+
+export default {
+  getPWAConfig,
+  getHeaderMetaTags,
+  getSeoMetadata
+};

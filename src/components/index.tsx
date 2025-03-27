@@ -21,8 +21,12 @@ import SocialLinks from './SocialLinks';
 import Toast from './Toast';
 import ProtectedRoutes from './ProtectedRoutes';
 import RemindBackup from './RemindBackup';
+import Analytics from './Analytics';
+import HeaderSEO from './HeaderSEO';
 
 export {
+  Analytics,
+  HeaderSEO,
   Influencers,
   BottomSheet,
   CreatePost,
