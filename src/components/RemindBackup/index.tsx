@@ -74,7 +74,7 @@ export default function RemindBackup() {
               <Button.Large
                 onClick={RemindMe}
                 variant="secondary"
-                className="w-auto shadow-none bg-[#c8ff00] bg-opacity-10 hover:bg-opacity-20 border border-transparent"
+                className="whitespace-nowrap w-auto shadow-none bg-[#c8ff00] bg-opacity-10 hover:bg-opacity-20 border border-transparent"
                 colorText="text-[#c8ff00]"
                 icon={<Icon.Clock size="16" color="#c8ff00" />}
               >
@@ -83,7 +83,7 @@ export default function RemindBackup() {
               </Button.Large>
               <Button.Large
                 id="remind-backup-now-btn"
-                className="w-auto shadow-none bg-[#c8ff00] bg-opacity-10 hover:bg-opacity-20 border border-[#c8ff00]"
+                className="whitespace-nowrap w-auto shadow-none bg-[#c8ff00] bg-opacity-10 hover:bg-opacity-20 border border-[#c8ff00]"
                 colorText="text-[#c8ff00]"
                 onClick={() => openModal('backup', { setShowBackupSuccess })}
                 icon={<Icon.Lock size="16" color="#c8ff00" />}

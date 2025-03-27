@@ -53,7 +53,7 @@ export default function Index() {
       <Edit.Header />
       <Content.Grid>
         <Edit.UserInfo name={name} setName={setName} handler={handler} errors={errors} loading={loading} />
-        <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-8 gap-6 mt-6">
+        <div className="w-full flex-col inline-flex lg:grid lg:grid-cols-8 gap-6 mt-6">
           <CardComponent.Bio bio={bio} setBio={setBio} loading={loading} errors={errors} />
           <CardComponent.Links links={links} setLinks={setLinks} errors={errors} loading={loading} />
           <CardComponent.Pic image={image} setImage={setImage} loading={loading} />
