@@ -396,28 +396,14 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
   const uploadFile = async (file: File, specsB?: PubkySpecsBuilder): Promise<string> => {
     let specs = specsB ? specsB : specsBuilder;
 
-    let fileToUpload = file;
-    // Convert video to MP4 if needed (except if it's already MP4)
-    if (file.type.startsWith('video/') && file.type !== 'video/mp4') {
-      fileToUpload = await Utils.convertVideoToMp4(file);
-    }
-    // Convert audio to MP3 if needed (except if it's already MP3)
-    else if (file.type.startsWith('audio/') && file.type !== 'audio/mpeg') {
-      fileToUpload = await Utils.convertAudioToMp3(file);
-    }
-    // Convert image to PNG if needed (except if it's already PNG)
-    else if (file.type.startsWith('image/') && file.type !== 'image/png') {
-      fileToUpload = await Utils.convertImageToPng(file);
-    }
-
     // 1. Upload Blob
-    const fileContent = await fileToUpload.arrayBuffer();
+    const fileContent = await file.arrayBuffer();
     const blobData = new Uint8Array(fileContent);
     const blobResult = specs!.createBlob(blobData);
 
     await homeserver.put(blobResult.meta.url, blobResult.blob.data);
     // 2. Create File Record
-    const fileResult = specs!.createFile(fileToUpload.name, blobResult.meta.url, fileToUpload.type, fileToUpload.size);
+    const fileResult = specs!.createFile(file.name, blobResult.meta.url, file.type, file.size);
 
     await homeserver.put(fileResult.meta.url, JSON.stringify(fileResult.file.toJson()));
 
