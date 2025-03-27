@@ -405,6 +405,10 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
     else if (file.type.startsWith('audio/') && file.type !== 'audio/mpeg') {
       fileToUpload = await Utils.convertAudioToMp3(file);
     }
+    // Convert image to PNG if needed (except if it's already PNG)
+    else if (file.type.startsWith('image/') && file.type !== 'image/png') {
+      fileToUpload = await Utils.convertImageToPng(file);
+    }
 
     // 1. Upload Blob
     const fileContent = await fileToUpload.arrayBuffer();

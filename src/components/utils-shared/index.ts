@@ -1,6 +1,7 @@
 import base64ToUint8Array from './lib/Conversion/base64ToUint8Array';
 import { convertVideoToMp4 } from './lib/Conversion/convertVideoToMp4';
 import { convertAudioToMp3 } from './lib/Conversion/convertAudioToMp3';
+import { convertImageToPng } from './lib/Conversion/convertImageToPng';
 import svgToPng from './lib/Conversion/svgToPng';
 import cleanText from './lib/Text/cleanText';
 import copyToClipboard from './lib/Helper/copyToClipboard';
@@ -30,6 +31,7 @@ export const Utils = {
   base64ToUint8Array,
   convertVideoToMp4,
   convertAudioToMp3,
+  convertImageToPng,
   svgToPng,
   cleanText,
   decodePostUri,
