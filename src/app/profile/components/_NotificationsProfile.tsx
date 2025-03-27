@@ -21,7 +21,6 @@ export default function NotificationsProfile() {
   useEffect(() => {
     if (unReadNotification > 0) {
       setTempUnReadNotification(unReadNotification);
-      setTimeout(() => setTempUnReadNotification(0), 3000);
     }
 
     setUnReadNotification(0);
