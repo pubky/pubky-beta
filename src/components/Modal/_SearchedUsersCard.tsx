@@ -89,7 +89,7 @@ export default function SearchedUsersCard({ searchedUsers, handleUserClick, clas
     >
       {isLoading ? (
         <div className="flex justify-center items-center">
-          <Icon.LoadingSpin size="24" />
+          <Icon.LoadingSpin size="24" className="animate-spin" />
         </div>
       ) : (
         userProfiles.length > 0 &&
