@@ -40,6 +40,8 @@ interface CreateContentProps extends React.HTMLAttributes<HTMLDivElement> {
   setIsError?: React.Dispatch<React.SetStateAction<boolean>>;
   setQuote?: React.Dispatch<React.SetStateAction<string | undefined>>;
   styleSearchedUsers?: string;
+  charCountArticle?: number;
+  setCharCountArticle?: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export default function CreateContent({
@@ -71,7 +73,9 @@ export default function CreateContent({
   setIsError,
   setShowModalPost,
   setQuote,
-  styleSearchedUsers
+  styleSearchedUsers,
+  charCountArticle,
+  setCharCountArticle
 }: CreateContentProps) {
   const { profile, pubky } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
@@ -273,6 +277,7 @@ export default function CreateContent({
             setIsError={setIsError}
             handlePaste={handlePaste}
             styleSearchedUsers={styleSearchedUsers}
+            setCharCountArticle={setCharCountArticle}
           />
         </div>
         <LinkPreviewer setQuote={setQuote} content={content} />
@@ -315,6 +320,7 @@ export default function CreateContent({
           markdown={markdown}
           maxLength={maxLength}
           setShowModalPost={setShowModalPost}
+          charCountArticle={charCountArticle}
         />
       </div>
     </div>

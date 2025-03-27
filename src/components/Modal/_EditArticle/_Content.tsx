@@ -24,6 +24,7 @@ export default function ContentEditArticle({
   const [isError, setIsError] = useState(false);
   const [initTitle, setInitTitle] = useState('');
   const [contentEditArticle, setContentEditArticle] = useState('');
+  const [charCountArticle, setCharCountArticle] = useState(0);
   const [sendingEditArticle, setSendingEditArticle] = useState(false);
   const [isValidContent, setIsValidContent] = useState(false);
 
@@ -80,6 +81,8 @@ export default function ContentEditArticle({
           maxLength={40000}
           className={className}
           setIsValidContent={setIsValidContent}
+          charCountArticle={charCountArticle}
+          setCharCountArticle={setCharCountArticle}
           loading={sendingEditArticle}
           markdown
           button={
