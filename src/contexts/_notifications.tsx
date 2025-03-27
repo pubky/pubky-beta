@@ -169,7 +169,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
       setUnReadNotification(0);
       setSkip(0);
       setHasMore(true);
-      
+
       // Fetch notifications only when pubky changes
       if (notificationPreferences && pubky) {
         fetchNotifications();
