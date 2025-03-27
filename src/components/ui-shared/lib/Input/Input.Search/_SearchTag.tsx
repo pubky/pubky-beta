@@ -15,7 +15,7 @@ export const SearchTag = ({ value, action, ...rest }: SearchTagProps) => {
       action={action}
       className={twMerge(rest.className)}
       color={value && Utils.generateRandomColor(value)}
-      clicked
+      clicked={false}
     >
       {value}
     </PostUtil.Tag>
