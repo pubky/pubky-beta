@@ -25,4 +25,4 @@ export const convertImageToPng = async (file: File): Promise<File> => {
   await ffmpeg.deleteFile('output.png');
 
   return convertedFile;
-}; 
+};
