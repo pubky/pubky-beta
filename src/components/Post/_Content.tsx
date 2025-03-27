@@ -274,12 +274,13 @@ export default function Content({
             )}
 
             {fileContents.length > 0 && String(post?.details?.kind) !== PubkyAppPostKind[1].toLocaleLowerCase() && (
-              <div onClick={(event) => event.stopPropagation()} className="flex flex-col gap-4 mt-2">
+              <div className="flex flex-col gap-4 mt-2">
                 {replyView ? (
                   <div className="flex flex-col gap-2">
                     {fileContents.map((file, index) => (
                       <Link
                         key={index}
+                        onClick={(event) => event.stopPropagation()}
                         className="text-[#C8FF00] break-all"
                         href={generateFileUrl(file)}
                         target="_blank"
