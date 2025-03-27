@@ -76,7 +76,7 @@ export const useTagsLogic = (post: PostView, postType: PostType) => {
       setSinglePost((prev) => ({
         ...prev,
         tags: newTags,
-        counts: { ...prev.counts, unique_tags: Math.max(0, prev.counts.unique_tags + uniqueTagsChange) }
+        counts: { ...prev?.counts, unique_tags: Math.max(0, prev?.counts.unique_tags + uniqueTagsChange) }
       }));
     }
 
