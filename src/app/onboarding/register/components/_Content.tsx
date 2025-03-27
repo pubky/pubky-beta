@@ -119,7 +119,7 @@ export default function Index() {
       <Typography.H2 variant="light" className="text-[22px] sm:text-2xl leading-tight text-opacity-50 mt-2 sm:mt-0">
         {Utils.minifyPubky(pubky ?? '')}
       </Typography.H2>
-      <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-8 gap-6 mt-6">
+      <div className="w-full flex-col inline-flex lg:grid lg:grid-cols-8 gap-6 mt-6">
         <Card.Bio bio={bio} setBio={setBio} errors={errors} />
         <Card.Links links={links} setLinks={setLinks} errors={errors} loading={loading} />
         <Card.Pic image={image} setImage={setImage} />

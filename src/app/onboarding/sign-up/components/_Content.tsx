@@ -138,7 +138,7 @@ export default function Index() {
           />
         </div>
       </div>
-      <div className="w-full flex-col inline-flex sm:grid sm:grid-cols-2 lg:grid-cols-8 gap-6 mt-6">
+      <div className="w-full flex-col inline-flex lg:grid lg:grid-cols-8 gap-6 mt-6">
         <Card.Bio bio={bio} setBio={setBio} errors={errors} loading={loading} />
         <Card.Links links={links} setLinks={setLinks} errors={errors} loading={loading} />
         <Card.Pic image={image} setImage={setImage} loading={loading} />
