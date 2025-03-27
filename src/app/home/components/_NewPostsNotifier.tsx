@@ -55,7 +55,7 @@ export function NewPostsNotifier() {
       // set latest timestamp to the latest post timestamp
       setLatestTimestamp(Math.max(...filteredNewPosts.map((p) => p.details.indexed_at)));
     } catch (error) {
-      console.log('No new posts');
+      // console.log('No new posts');
     }
   };
 
