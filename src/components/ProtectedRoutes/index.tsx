@@ -27,6 +27,7 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
   } = usePubkyClientContext();
   const { openModal, closeModal } = useModal();
   const [loading, setLoading] = useState(true);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
 
   const publicRoutes = [
     '/onboarding',
@@ -35,6 +36,23 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
     '/onboarding/sign-up',
     '/logout',
     '/sign-in'
+  ];
+
+  const onboardingImages = [
+    '/images/webp/home.webp',
+    '/images/webp/home-mobile.webp',
+    '/images/webp/intro-1.webp',
+    '/images/webp/intro-1-mobile.webp',
+    '/images/webp/intro-2.webp',
+    '/images/webp/intro-2-mobile.webp',
+    '/images/webp/intro-3.webp',
+    '/images/webp/intro-3-mobile.webp',
+    '/images/webp/intro-4.webp',
+    '/images/webp/intro-4-mobile.webp',
+    '/images/webp/intro-5.webp',
+    '/images/webp/intro-5-mobile.webp',
+    '/images/webp/intro-6.webp',
+    '/images/webp/intro-6-mobile.webp'
   ];
 
   const isDynamicPublicRoute = (path: string) => {
@@ -173,12 +191,39 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
     checkAccess();
   }, [pubky, pathname]);
 
+  useEffect(() => {
+    const preloadImages = async () => {
+      if (publicRoutes.some((route) => pathname.startsWith(route))) {
+        const imagePromises = onboardingImages.map((src) => {
+          return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.src = src;
+            img.onload = resolve;
+            img.onerror = reject;
+          });
+        });
+
+        try {
+          await Promise.all(imagePromises);
+          setImagesLoaded(true);
+        } catch (error) {
+          console.warn('Error preloading images:', error);
+          setImagesLoaded(true);
+        }
+      } else {
+        setImagesLoaded(true);
+      }
+    };
+
+    preloadImages();
+  }, [pathname]);
+
   return (
     <>
       <div className="z-index-999">
         <NextTopLoader color="white" />
       </div>
-      {loading ? (
+      {loading || !imagesLoaded ? (
         <div className="flex justify-center items-center h-screen">
           <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white" />
         </div>
