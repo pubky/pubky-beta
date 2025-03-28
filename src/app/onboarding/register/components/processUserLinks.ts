@@ -20,7 +20,7 @@ export function processUserLinks(links: Links[]) {
   links.forEach((link, index) => {
     if (!link.url) return; // Skip empty URLs
 
-    let url = normalizeUrl(link.url);
+    let url = link.url;
     let errorMessage: string | null = null;
     const titleLower = link.title.toLowerCase();
 
@@ -36,9 +36,10 @@ export function processUserLinks(links: Links[]) {
     }
     // Handle other links
     else {
+      const socialLink = socialLinks.find((s) => s.name.toLowerCase() === titleLower);
+      if (!socialLink) url = normalizeUrl(url);
       const urlResult = urlSchema.safeParse(url);
       if (!urlResult.success) {
-        const socialLink = socialLinks.find((s) => s.name.toLowerCase() === titleLower);
         if (socialLink) {
           const completedUrl = `${socialLink.url}${url}`;
           const completedResult = urlSchema.safeParse(completedUrl);

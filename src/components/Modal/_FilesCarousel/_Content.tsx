@@ -107,7 +107,7 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex }:
         <video
           src={generateFileUrl(currentFile)}
           controls
-          className="rounded-2xl p-6 max-w-full w-auto h-auto max-h-[80vh] object-contain"
+          className="rounded-2xl p-6 max-w-full w-full md:w-auto md:min-w-[500px] h-auto max-h-[80vh] object-contain"
         />
       ) : (
         <img
@@ -115,7 +115,7 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex }:
           alt={`Modal view ${localFileIndex}`}
           width={800}
           height={418}
-          className="rounded-2xl max-w-full w-auto h-auto max-h-[80vh] object-contain transition-opacity duration-300"
+          className="rounded-2xl max-w-full w-full md:w-auto h-auto md:min-w-[500px] max-h-[80vh] object-contain transition-opacity duration-300"
         />
       )}
       <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2">
