@@ -11,9 +11,9 @@ export function DynamicTitle() {
   useEffect(() => {
     const updateTitle = () => {
       const originalTitle = document.title;
-      const baseTitle = originalTitle.replace(/^\(🔔\d+\)\s*/, '');
+      const baseTitle = originalTitle.replace(/^\(\d+\)\s*/, '');
 
-      const notificationPrefix = unReadNotification ? `(🔔${unReadNotification}) ` : '';
+      const notificationPrefix = unReadNotification ? `(${unReadNotification}) ` : '';
       document.title = `${notificationPrefix}${baseTitle}`;
     };
 
