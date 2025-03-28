@@ -19,7 +19,7 @@ export default function UserInfo({ name, setName, handler, errors, loading }: Us
       <Input.Cursor
         id="edit-profile-name-input"
         placeholder="Your Name"
-        className="h-auto text-[40px] font-bold sm:text-[64px] placeholder:text-opacity-20"
+        className="h-auto text-[40px] font-bold sm:text-[64px] placeholder:text-opacity-30"
         defaultValue={name}
         disabled={loading}
         maxLength={24}
