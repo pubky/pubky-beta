@@ -109,7 +109,7 @@ export default function Index() {
         <div>
           <Input.Cursor
             placeholder="Your Name"
-            className="h-auto text-[40px] font-bold sm:h-[106px] sm:text-[64px] placeholder:text-opacity-20"
+            className="h-auto text-[40px] font-bold sm:h-[106px] sm:text-[64px] placeholder:text-opacity-30"
             defaultValue={name}
             disabled={loading}
             maxLength={30}
