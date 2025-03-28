@@ -10,17 +10,10 @@ export function processUserLinks(links: Links[]) {
   const emailSchema = z.string().email();
   const urlSchema = z.string().url();
 
-  const normalizeUrl = (url: string) => {
-    if (!/^https?:\/\//i.test(url)) {
-      return `https://${url}`;
-    }
-    return url;
-  };
-
   links.forEach((link, index) => {
     if (!link.url) return; // Skip empty URLs
 
-    let url = normalizeUrl(link.url);
+    let url = link.url;
     let errorMessage: string | null = null;
     const titleLower = link.title.toLowerCase();
 
