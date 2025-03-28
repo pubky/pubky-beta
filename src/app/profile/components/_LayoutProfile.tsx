@@ -31,6 +31,7 @@ export default function LayoutProfile({ children }: { children: React.ReactNode 
 
   return (
     <Content.Main>
+      <Profile.Metadata />
       <Profile.Header />
       <div>
         <Content.Grid className="pb-4 flex flex-col text-center lg:flex-row items-center gap-4 md:gap-8 relative">
