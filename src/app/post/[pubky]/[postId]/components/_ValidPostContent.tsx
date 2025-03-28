@@ -122,11 +122,11 @@ const LongPost = ({ data, user }) => {
           />
         )}
         <div
-          className="text-white break-words"
+          className="text-white break-words [&_a]:text-[#C8FF00] [&_a:hover]:text-[#C8FF00]/90"
           dangerouslySetInnerHTML={{
             __html: JSON.parse(data?.details?.content).body
           }}
-        ></div>
+        />
       </div>
       <Tags.LargeView post={data} postType="single" />
     </div>

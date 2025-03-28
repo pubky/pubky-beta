@@ -42,7 +42,13 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
         const filteredReplies = repliesData.filter(
           (reply) => !mutedUsers.includes(reply.details.author) && !deletedPosts.includes(reply.details.id)
         );
-        setReplies((prev) => [...prev, ...filteredReplies]);
+        // If this is the initial load (skipValue is 0), just set the replies
+        // Otherwise, append them to maintain chronological order
+        if (skipValue === 0) {
+          setReplies(filteredReplies);
+        } else {
+          setReplies((prev) => [...prev, ...filteredReplies]);
+        }
       }
     } catch (error) {
       setInitialLoadComplete(true);

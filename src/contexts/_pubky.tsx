@@ -788,7 +788,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
         cached: 'homeserver'
       } as PostView;
 
-      setReplies((prev) => [...prev, newReplyView]);
+      setReplies((prev) => [newReplyView, ...prev]);
 
       return result ? result.uri : false;
     }

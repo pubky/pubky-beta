@@ -16,7 +16,7 @@ export default function UserArea({ largeView, name, variant }: UserAreaProps) {
   const { pubky } = usePubkyClientContext();
 
   return (
-    <Link href="/profile" className={`${!variant && 'items-center'} justify-start gap-2 flex`}>
+    <Link href="/profile" className="justify-start gap-2 flex">
       <ImageByUri
         id={pubky}
         width={largeView ? 48 : 32}

@@ -184,7 +184,10 @@ export default function Content({
                       <Typography.Body className="mb-2" variant="large-bold">
                         {parsedContent.title}
                       </Typography.Body>
-                      <div className="opacity-70" dangerouslySetInnerHTML={{ __html: truncatedBody }} />
+                      <div
+                        className="opacity-70 text-white break-words [&_a]:text-[#C8FF00] [&_a:hover]:text-[#C8FF00]/90"
+                        dangerouslySetInnerHTML={{ __html: truncatedBody }}
+                      />
                     </div>
                     {fileContents.length > 0 && (
                       <div>
