@@ -61,7 +61,7 @@ export default function Tags({ post, postType }: TagsProps) {
                           <Icon.LoadingSpin size="12" />
                         ) : (
                           <Typography.Caption variant="bold" className="text-opacity-60">
-                            {tag?.taggers_count}
+                            {tag?.taggers_count || 0}
                           </Typography.Caption>
                         )}
                       </div>
@@ -134,7 +134,7 @@ export default function Tags({ post, postType }: TagsProps) {
                         <Icon.LoadingSpin size="12" />
                       ) : (
                         <Typography.Caption variant="bold" className="text-opacity-60">
-                          {selectedTag?.taggers_count}
+                          {selectedTag?.taggers_count || 0}
                         </Typography.Caption>
                       )}
                     </div>

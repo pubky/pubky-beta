@@ -44,8 +44,21 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
 
       setSkip(skipValue + limit);
 
-      // filter out deleted posts
-      const filteredData = data.filter((post) => !deletedPosts.includes(post.details.id));
+      // filter out deleted posts and reset tag relationships if not viewing own profile
+      const filteredData = data
+        .filter((post) => !deletedPosts.includes(post.details.id))
+        .map(post => {
+          if (!isMyProfile && post.tags) {
+            return {
+              ...post,
+              tags: post.tags.map(tag => ({
+                ...tag,
+                relationship: tag.taggers.includes(pubky ?? '')
+              }))
+            };
+          }
+          return post;
+        });
       setTimeline([...timelineValue, ...filteredData]);
     } catch (error) {
       setFinishedLoading(true);
