@@ -9,7 +9,7 @@ import {
   ModalProvider
 } from '@/contexts';
 
-import { Analytics, ProtectedRoutes, HeaderSEO } from '@/components';
+import { Analytics, ProtectedRoutes, HeaderSEO, DynamicTitle } from '@/components';
 
 export const metadata = {
   ...HeaderSEO.getSeoMetadata(),
@@ -27,6 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <NotificationsWrapper>
                 <ToastWrapper>
                   <ModalProvider>
+                    <DynamicTitle />
                     <ProtectedRoutes>{children}</ProtectedRoutes>
                   </ModalProvider>
                 </ToastWrapper>
