@@ -176,15 +176,18 @@ export default function Content({
               const parsedContent = JSON.parse(contentText);
               if (parsedContent.title && parsedContent.body) {
                 const truncatedBody =
-                  parsedContent.body.length > 500 ? parsedContent.body.substring(0, 500) + '...' : parsedContent.body;
+                  parsedContent.body.length > 200 ? parsedContent.body.substring(0, 200) + '...' : parsedContent.body;
 
                 return (
-                  <div className="w-full justify-between flex flex-col md:flex-row gap-8">
+                  <div className="w-full justify-between flex flex-col md:flex-row gap-4">
                     <div>
-                      <Typography.Body className="mb-2" variant="large-bold">
+                      <Typography.Body className="mb-1" variant="large-bold">
                         {parsedContent.title}
                       </Typography.Body>
-                      <div className="opacity-70" dangerouslySetInnerHTML={{ __html: truncatedBody }} />
+                      <div
+                        className="opacity-70 text-white break-words [&_a]:text-[#C8FF00] [&_a:hover]:text-[#C8FF00]/90"
+                        dangerouslySetInnerHTML={{ __html: truncatedBody }}
+                      />
                     </div>
                     {fileContents.length > 0 && (
                       <div>
@@ -201,7 +204,7 @@ export default function Content({
                                       alt={`Fetched file ${index}`}
                                       width={360}
                                       height={200}
-                                      className="w-full h-auto max-w-[360px] max-h-[200px] min-w-[200px] object-cover rounded-[10px] overflow-hidden"
+                                      className="w-full min-w-[200px] max-w-[360px] h-[104px] object-cover rounded-[8px] overflow-hidden"
                                     />
                                   )}
                                 </div>
@@ -230,7 +233,7 @@ export default function Content({
         )}
         <div>
           <div>
-            {!replyView && (
+            {!replyView && String(post?.details?.kind) !== PubkyAppPostKind[1].toLocaleLowerCase() && (
               <div>
                 {videoId && (
                   <div

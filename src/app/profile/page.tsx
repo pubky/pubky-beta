@@ -1,4 +1,4 @@
-import { getSeoMetadata } from '@components/HeaderSEO';
+import { getSeoMetadata } from '@/components/HeaderSEO';
 import { Profile } from './components/index';
 import LayoutProfile from './components/_LayoutProfile';
 

@@ -137,10 +137,6 @@ export function FilterWrapper({ children }: { children: React.ReactNode }) {
   }, [layout, sort, reach, hotTagsReach, contacts, contactsLayout, content, timeframe, unReadNotification]);
 
   useEffect(() => {
-    resetDefault();
-  }, []);
-
-  useEffect(() => {
     if (selectedFeed) {
       setReach(selectedFeed.reach);
       setContent(selectedFeed.content);

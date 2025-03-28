@@ -20,7 +20,6 @@ const FooterMobile = ({ title }: FooterMobileProps) => {
     'cursor-pointer p-3 bg-white/20 rounded-[48px] backdrop-blur-[32px] justify-center items-center inline-flex';
   const activeCSS = 'bg-white/30';
 
-  const { profile } = usePubkyClientContext();
   const { unReadNotification } = useFilterContext();
 
   if (!pubky) return;

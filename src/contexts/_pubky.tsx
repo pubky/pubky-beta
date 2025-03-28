@@ -267,15 +267,14 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
 
   const isSessionActive = async () => {
     try {
-      if (pubky) {
-        const publicKey = PublicKey.from(pubky);
-        const session = await client.session(publicKey);
-        if (session && pubky) return true;
-      }
+      const currentPubky = pubky || Utils.storage.get('pubky_public_key');
+      if (!currentPubky) return false;
 
-      return false;
+      const publicKey = PublicKey.from(currentPubky);
+      const session = await client.session(publicKey);
+      return Boolean(session);
     } catch (error) {
-      console.error(error);
+      console.error('Session Active error:', error);
       return false;
     }
   };
@@ -788,7 +787,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
         cached: 'homeserver'
       } as PostView;
 
-      setReplies((prev) => [...prev, newReplyView]);
+      setReplies((prev) => [newReplyView, ...prev]);
 
       return result ? result.uri : false;
     }

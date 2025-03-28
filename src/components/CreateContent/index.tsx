@@ -249,7 +249,7 @@ export default function CreateContent({
       )}
     >
       <div ref={wrapperRef} className="w-full flex justify-between gap-3 items-start flex-col">
-        <div className={variant ? 'flex w-full gap-4 items-center' : 'w-full'}>
+        <div className={variant ? 'flex w-full gap-4' : 'w-full'}>
           <Section.UserArea
             name={profile?.name ?? Utils.minifyPubky(pubky ?? '')}
             largeView={largeView}
