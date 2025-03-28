@@ -2,9 +2,13 @@ export function timeAgo(timestamp: number, mobile?: boolean) {
   if (!timestamp) return '';
 
   const now = new Date().getTime();
+
+  // If the timestamp is in the future, we consider it as "Now"
   if (timestamp > now) {
-    timestamp = timestamp / 1000;
-  } else if (timestamp < 10000000000) {
+    return 'Now';
+  }
+
+  if (timestamp < 10000000000) {
     timestamp = timestamp * 1000;
   }
 
