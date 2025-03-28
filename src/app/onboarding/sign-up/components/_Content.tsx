@@ -120,7 +120,7 @@ export default function Index() {
             error={errors.name}
           />
           <Typography.Body variant="large" className="text-[22px] sm:text-2xl leading-tight text-opacity-50">
-            Enter your bio, add some links, and upload a user picture.
+            Enter your name, invite code, bio, add links, and upload a user picture.
           </Typography.Body>
         </div>
         <div className="flex flex-col lg:justify-self-end lg:mt-4">
