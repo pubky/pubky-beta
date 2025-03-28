@@ -111,7 +111,7 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex }:
         />
       ) : (
         <img
-          src={generateFileUrl(currentFile, currentFile.content_type !== 'image/gif' ? 'feed' : 'main')}
+          src={generateFileUrl(currentFile)}
           alt={`Modal view ${localFileIndex}`}
           width={800}
           height={418}
