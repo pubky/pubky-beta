@@ -47,11 +47,11 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
       // filter out deleted posts and reset tag relationships if not viewing own profile
       const filteredData = data
         .filter((post) => !deletedPosts.includes(post.details.id))
-        .map(post => {
+        .map((post) => {
           if (!isMyProfile && post.tags) {
             return {
               ...post,
-              tags: post.tags.map(tag => ({
+              tags: post.tags.map((tag) => ({
                 ...tag,
                 relationship: tag.taggers.includes(pubky ?? '')
               }))
