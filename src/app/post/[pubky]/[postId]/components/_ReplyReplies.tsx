@@ -9,7 +9,16 @@ import Link from 'next/link';
 
 export const ReplyReplies = ({ reply }: { reply: PostView }) => {
   const { pubky, mutedUsers } = usePubkyClientContext();
-  const { data: replyReplies } = usePostReplies(reply?.details?.author, reply?.details?.id, pubky);
+  const { data: replyReplies } = usePostReplies(
+    reply?.details?.author,
+    reply?.details?.id,
+    pubky,
+    0,
+    1,
+    undefined,
+    undefined,
+    'ascending'
+  );
   const lineBaseCSS = `ml-[12px] absolute border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[2px]`;
   const lineHorizontalCSS = (
     <div className="absolute ml-[10px]">

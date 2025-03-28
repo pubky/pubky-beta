@@ -1,125 +1,60 @@
 'use client';
 
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 
-import { Typography, Button } from '@social/ui-shared';
-import { Post } from '@/components';
-import Skeletons from '@/components/Skeletons';
+import { Typography } from '@social/ui-shared';
+import { Post, Skeleton } from '@/components';
 
 import { usePubkyClientContext } from '@/contexts';
-import { usePostReplies } from '@/hooks/usePost';
 import { ReplyReplies } from './_ReplyReplies';
 import { PostView } from '@/types/Post';
-import { getPost } from '@/services/postService';
+import { getPost, getPostReplies } from '@/services/postService';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 
 export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; postId: string }) {
   const { pubky, setReplies, mutedUsers, replies, deletedPosts } = usePubkyClientContext();
   const limit = 5;
-  const loaderRef = useRef<HTMLDivElement>(null);
+  const [skip, setSkip] = useState<number>(0);
 
-  const [start, setStart] = useState<number | undefined>(undefined);
-  const [repliesLocal, setRepliesLocal] = useState<PostView[]>([]);
-  const [newReplies, setNewReplies] = useState<PostView[]>([]);
-  const [newRepliesCount, setNewRepliesCount] = useState(0);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const { data: repliesData, isLoading } = usePostReplies(pubkyAuthor, postId, pubky, undefined, limit, start);
+  const loader = useInfiniteScroll(() => fetchReplies({ skipValue: skip }), isLoading);
 
-  const { data: newRepliesData } = usePostReplies(
-    pubkyAuthor,
-    postId,
-    pubky,
-    undefined,
-    10,
-    undefined,
-    replies.length > 0 ? replies[0]?.details?.indexed_at + 1 : undefined,
-    {
-      enabled: true,
-      refetchInterval: 20000
-    }
-  );
-
-  const mergeReplies = (existingReplies: PostView[], newReplies: PostView[]) => {
-    const existingIds = new Set(existingReplies.map((r) => r.details.id));
-    return [...existingReplies, ...newReplies.filter((reply) => !existingIds.has(reply.details.id))];
-  };
-
-  const fetchReplies = useCallback(() => {
-    if (isLoading || !repliesData) return;
-
-    const filteredReplies = repliesData.filter(
-      (reply) => !mutedUsers?.includes(reply.details.author) && !deletedPosts.includes(reply.details.id)
-    );
-
-    if (filteredReplies.length > 0) {
-      setRepliesLocal((prev) => {
-        const updatedReplies = mergeReplies(prev, filteredReplies);
-        return updatedReplies.length !== prev.length ? updatedReplies : prev;
-      });
-      setReplies((prev) => mergeReplies(prev, filteredReplies));
-      setStart(filteredReplies[filteredReplies.length - 1].details.indexed_at - 1);
-    }
-
-    if (filteredReplies.length < limit) {
-      setHasMore(false);
-    }
-
-    if (!initialLoadComplete) {
-      setInitialLoadComplete(true);
-      setNewReplies([]);
-      setNewRepliesCount(0);
-    }
-
-    setIsInitialLoad(false);
-  }, [isLoading, repliesData, mutedUsers, initialLoadComplete, deletedPosts]);
-
-  const handleNewReplies = () => {
-    setRepliesLocal((prev) => mergeReplies(newReplies, prev));
-    setReplies((prev) => mergeReplies(newReplies, prev));
-    setNewReplies([]);
-    setNewRepliesCount(0);
-  };
-
-  useEffect(() => {
-    if (newRepliesData) {
-      const filteredNewReplies = newRepliesData.filter(
-        (reply) =>
-          !repliesLocal.some((r) => r.details.id === reply.details.id) &&
-          !replies.some((r) => r.details.id === reply.details.id) &&
-          !deletedPosts.includes(reply.details.id)
+  const fetchReplies = async ({ skipValue = skip }: { skipValue?: number }) => {
+    setIsLoading(true);
+    try {
+      const repliesData = await getPostReplies(
+        pubkyAuthor, // author
+        postId, // postId
+        pubky, // pubky
+        limit, // limit
+        undefined, // start
+        undefined, // end
+        skipValue, // skip
+        'ascending' // order
       );
 
-      if (filteredNewReplies.length > 0) {
-        setNewReplies((prev) => mergeReplies(prev, filteredNewReplies));
-        setNewRepliesCount((prev) => prev + filteredNewReplies.length);
+      setSkip(skipValue + limit);
+
+      if (repliesData) {
+        // filter muted and deleted replies
+        const filteredReplies = repliesData.filter(
+          (reply) => !mutedUsers.includes(reply.details.author) && !deletedPosts.includes(reply.details.id)
+        );
+        setReplies((prev) => [...prev, ...filteredReplies]);
       }
+    } catch (error) {
+      setInitialLoadComplete(true);
+    } finally {
+      setIsLoading(false);
     }
-  }, [newRepliesData, replies]);
+  };
 
   useEffect(() => {
-    if (!isLoading && repliesData && isInitialLoad) {
-      fetchReplies();
-    }
-  }, [isLoading, repliesData]);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMore && !isLoading && !isInitialLoad) {
-          fetchReplies();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (loaderRef.current) {
-      observer.observe(loaderRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, [loaderRef.current, hasMore, isLoading, isInitialLoad, start, fetchReplies]);
+    fetchReplies({ skipValue: 0 });
+    // setInterval(fetchNewReplies, 5000);
+  }, []);
 
   const fetchingPost = async (reply: PostView) => {
     const nexusData = await getPost(reply.details.author, reply.details.id, pubky ?? '', undefined, undefined);
@@ -127,14 +62,6 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
     if (!nexusData) return;
     // Update replies with nexus data
     setReplies((prev) => {
-      const existingReply = prev.find((p) => p.details.id === nexusData.details.id);
-      if (existingReply) {
-        return prev.map((p) => (p.details.id === nexusData.details.id ? nexusData : p));
-      }
-      return prev;
-    });
-    // Update local replies as well
-    setRepliesLocal((prev) => {
       const existingReply = prev.find((p) => p.details.id === nexusData.details.id);
       if (existingReply) {
         return prev.map((p) => (p.details.id === nexusData.details.id ? nexusData : p));
@@ -172,28 +99,25 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
 
   return (
     <>
-      {newRepliesCount > 0 && (
-        <Button.Medium id="show-new-replies-button" className="new-posts-button mt-3" onClick={handleNewReplies}>
-          Show {newRepliesCount} new {newRepliesCount > 1 ? 'replies' : 'reply'}
-        </Button.Medium>
-      )}
-      {replies.length === 0 && newRepliesCount === 0 && !isLoading ? (
+      {replies.length === 0 && initialLoadComplete ? (
         <Typography.Body className="text-opacity-50 text-center mt-[100px]">No replies yet.</Typography.Body>
       ) : (
-        <div className="flex-col gap-3 inline-flex w-full mt-3">
+        <div className="flex-col gap-3 inline-flex w-full">
           {replies.map((reply) => (
             <div key={`reply-${reply.details.id}`} className="flex flex-col gap-3">
               <Post post={reply} postType="replies" />
               {reply.counts?.replies > 0 && <ReplyReplies reply={reply} />}
             </div>
           ))}
-          {hasMore && (
-            <div ref={loaderRef} className="h-20 flex items-center justify-center">
-              {isLoading && <Skeletons.Simple />}
+
+          {isLoading && !initialLoadComplete && (
+            <div className="h-20 flex items-center justify-center">
+              <Skeleton.Simple />
             </div>
           )}
         </div>
       )}
+      {!isLoading && !initialLoadComplete && <div ref={loader} />}
     </>
   );
 }

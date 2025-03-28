@@ -71,7 +71,8 @@ export async function getPostReplies(
   limit = 10,
   start?: number,
   end?: number,
-  skip?: number
+  skip?: number,
+  order?: 'ascending' | 'descending'
 ): Promise<PostView[]> {
   const queryParams = new URLSearchParams({
     author_id: authorId,
@@ -91,6 +92,9 @@ export async function getPostReplies(
   }
   if (skip !== undefined) {
     queryParams.append('skip', String(skip));
+  }
+  if (order !== undefined) {
+    queryParams.append('order', String(order));
   }
 
   const url = `${BASE_URL}/stream/posts?${queryParams.toString()}`;

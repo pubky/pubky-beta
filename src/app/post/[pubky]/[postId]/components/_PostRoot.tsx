@@ -65,6 +65,7 @@ export default function PostRoot({ post }: { uri: string; post: PostView }) {
   return (
     <div ref={wrapperRef} className="grid gap-6 xl:grid-cols-3">
       <Post.Root className="col-span-2">
+        <Replies postId={post.details.id} pubkyAuthor={post.details.author} />
         <CreateContent
           id="reply-create-content"
           handleSubmit={handleReply}
@@ -98,8 +99,8 @@ export default function PostRoot({ post }: { uri: string; post: PostView }) {
             </Button.Medium>
           }
           textArea={textArea}
+          className="mt-4"
         />
-        <Replies postId={post.details.id} pubkyAuthor={post.details.author} />
       </Post.Root>
       <Participants author={post.details.author} />
     </div>
