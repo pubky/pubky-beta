@@ -19,7 +19,7 @@ export function MainContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [inputValue, setInputValue] = useState('');
-  const [searchInputCard, setSearchInputCard] = useState(false);
+  const [isOpenCard, setIsOpenCard] = useState(false);
   const refSearchInputCard = useRef<HTMLDivElement>(null);
   const [isSearchBarVisible, setIsSearchBarVisible] = useState(true);
   const lastScrollY = useRef(0);
@@ -97,16 +97,16 @@ export function MainContent() {
 
   useEffect(() => {
     if (searchTags.length === 0) {
-      setSearchInputCard(true);
+      setIsOpenCard(true);
     } else {
-      setSearchInputCard(false);
+      setIsOpenCard(false);
     }
   }, [searchTags]);
 
   useEffect(() => {
     const handleClickOutsideDrawer = (event: MouseEvent) => {
       if (refSearchInputCard.current && !refSearchInputCard.current.contains(event.target as Node)) {
-        setSearchInputCard(false);
+        setIsOpenCard(false);
       }
     };
 
@@ -166,18 +166,19 @@ export function MainContent() {
             maxLength={55}
             onKeyDown={inputValue.trim() === '' ? undefined : handleKeyDown}
             className={`${
-              searchInputCard && 'rounded-2xl rounded-b-none border-b-0 bg-gradient-to-b from-[#05050A] to-[#05050A]'
+              isOpenCard && 'rounded-2xl rounded-b-none border-b-0 bg-gradient-to-b from-[#05050A] to-[#05050A]'
             }`}
             placeholder={!searchTags.length ? 'Search' : ''}
-            onClick={() => setSearchInputCard(true)}
+            onClick={() => setIsOpenCard(true)}
             readOnly={!!searchTags.length}
             autoComplete="off"
             autoFocus={searchTags.length === 0}
           />
           <Modal.SearchInputCard
-            className={searchInputCard ? 'block lg:hidden' : 'hidden'}
+            className={isOpenCard ? 'block lg:hidden' : 'hidden'}
             refCard={refSearchInputCard}
             inputValue={inputValue}
+            isOpenCard={isOpenCard}
           />
           <Input.SearchActions className="hidden lg:flex">
             <div className={inputValue && 'cursor-pointer'} onClick={inputValue ? handleSearchTag : undefined}>
