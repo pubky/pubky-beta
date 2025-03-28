@@ -3,7 +3,6 @@ import Handle from './Handle';
 import FilterTabs from './_FilterTabs';
 import FilterTabsMobile from './_FilterTabsMobile';
 import NotificationsProfile from './_NotificationsProfile';
-import { Metadata } from './_Metadata';
 import ParentPost from './_ParentPost';
 import Bookmarks from './_Bookmarks';
 import Posts from './_Posts';
@@ -17,7 +16,6 @@ export const Profile = {
   FilterTabs,
   FilterTabsMobile,
   Header,
-  Metadata,
   NotificationsProfile,
   ParentPost,
   Bookmarks,
