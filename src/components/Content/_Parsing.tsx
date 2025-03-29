@@ -88,10 +88,9 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
       render: (url: string) => {
         // Clean up the URL by removing any whitespace and ensuring proper format
         const cleanUrl = url.trim();
-        const fullUrl = cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://') 
-          ? cleanUrl 
-          : `https://${cleanUrl}`;
-        
+        const fullUrl =
+          cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://') ? cleanUrl : `https://${cleanUrl}`;
+
         const isValidUrl = (value: string) => {
           try {
             const parsedUrl = new URL(value);
