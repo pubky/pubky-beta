@@ -14,7 +14,7 @@ export default function RecoveryPhrase() {
   const [missingWordsError, setMissingWordsError] = useState('');
 
   const handleWordChange = (index, value) => {
-    const sanitizedValue = value.replace(/[^a-zA-Z]/g, '');
+    const sanitizedValue = value.replace(/[^a-zA-Z]/g, '').toLowerCase();
 
     const newWords = [...words];
     newWords[index] = sanitizedValue;
@@ -86,6 +86,7 @@ export default function RecoveryPhrase() {
             onChange={(e) => handleWordChange(index, e.target.value)}
             onKeyDown={handleKeyDown}
             onPaste={handlePaste}
+            className="lowercase"
           />
         ))}
       </div>
