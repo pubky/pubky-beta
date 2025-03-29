@@ -38,7 +38,7 @@ export const Tag = ({
     style = clicked
       ? {
           backgroundColor: hexToRgba(color, 0.3),
-          borderColor: hexToRgba(color, 0.6)
+          borderColor: hexToRgba(color, 1)
         }
       : {
           backgroundColor: hexToRgba(color, 0.3),
@@ -47,9 +47,9 @@ export const Tag = ({
 
     if (!clicked && isHovered) {
       if (boxShadow) {
-        style.boxShadow = `inset 0 0 10px 2px ${hexToRgba(color, 0.6)}`;
+        style.boxShadow = `inset 0 0 10px 2px ${hexToRgba(color, 1)}`;
       } else {
-        style.backgroundColor = hexToRgba(color, 0.6);
+        style.backgroundColor = hexToRgba(color, 1);
       }
     }
 
