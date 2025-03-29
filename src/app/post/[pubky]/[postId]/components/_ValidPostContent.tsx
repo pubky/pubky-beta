@@ -23,7 +23,9 @@ export function ValidPostContent({ postRef, data }) {
   const { setSinglePost, singlePost } = usePubkyClientContext();
 
   useEffect(() => {
-    setSinglePost(data);
+    if (data) {
+      setSinglePost(data);
+    }
 
     return () => {
       setSinglePost(undefined);
@@ -46,7 +48,7 @@ export function ValidPostContent({ postRef, data }) {
         )}
       </div>
       <div className="mt-3">
-        <Post.PostRoot uri={singlePost?.details.id} post={singlePost} />
+        <Post.PostRoot uri={singlePost?.details?.id} post={singlePost} />
       </div>
     </>
   );
@@ -90,7 +92,7 @@ const LongPost = ({ data, user }) => {
         <div className="flex w-full gap-4 justify-between items-center">
           <div className="justify-start gap-3 flex items-center mt-4 mb-2">
             <ImageByUri
-              id={user?.data?.details.id}
+              id={user?.data?.details?.id}
               width={48}
               height={48}
               className="w-[32px] h-[32px] md:w-[48px] md:h-[48px] rounded-full"
