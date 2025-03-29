@@ -114,7 +114,7 @@ import { Asterisk, PaperPlaneRight, ChatCircleText, Broadcast, Envelope } from '
 import { Activity } from './_Health';
 import { Fire } from './_Weather';
 import { Key, Lock, LockKey, LockKeyOpen, Warning, Shield, Question, Flag, WarningOctagon } from './_Security';
-import { Synonym, Slashtags, Blocktank, Bitkit, Bitcoin, Tether, PubkyIcon } from './_Tag';
+import { Synonym, Blocktank, Bitkit, Bitcoin, Tether, PubkyIcon } from './_Tag';
 
 export const Icon = {
   Android,
@@ -214,7 +214,6 @@ export const Icon = {
   SlidersHorizontal,
   Shield,
   Synonym,
-  Slashtags,
   Spain,
   Smiley,
   SmileySad,

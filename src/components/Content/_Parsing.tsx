@@ -16,7 +16,6 @@ interface ParsingProps {
 
 const tagsIcons: { [key: string]: JSX.Element } = {
   '#synonym': <Icon.Synonym size="24" />,
-  '#slashtags': <Icon.Slashtags size="24" />,
   '#blocktank': <Icon.Blocktank size="24" />,
   '#bitkit': <Icon.Bitkit size="24" />,
   '#bitcoin': <Icon.Bitcoin size="24" />,
