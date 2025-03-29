@@ -18,47 +18,52 @@ export function timeAgo(timestamp: number, mobile?: boolean) {
     return 'Now';
   }
 
-  let interval = seconds / 31536000;
-  let number = Math.floor(interval);
-
-  const year = mobile ? 'y' : number === 1 ? 'year ago' : 'years ago';
-  const month = mobile ? 'm' : number === 1 ? 'month ago' : 'months ago';
-  const days = mobile ? 'd' : number === 1 ? 'day ago' : 'days ago';
-  const hours = mobile ? 'h' : number === 1 ? 'hour ago' : 'hours ago';
-  const minutes = mobile ? 'min' : number === 1 ? 'minute ago' : 'minutes ago';
-  const second = mobile ? 's' : number === 1 ? 'second ago' : 'seconds ago';
+  const year = mobile ? 'y' : 'year ago';
+  const years = mobile ? 'y' : 'years ago';
+  const month = mobile ? 'm' : 'month ago';
+  const months = mobile ? 'm' : 'months ago';
+  const day = mobile ? 'd' : 'day ago';
+  const days = mobile ? 'd' : 'days ago';
+  const hour = mobile ? 'h' : 'hour ago';
+  const hours = mobile ? 'h' : 'hours ago';
+  const minute = mobile ? 'min' : 'minute ago';
+  const minutes = mobile ? 'min' : 'minutes ago';
+  const second = mobile ? 's' : 'second ago';
+  const secondsText = mobile ? 's' : 'seconds ago';
   const space = mobile ? '' : ' ';
 
+  let interval = seconds / 31536000;
+  let number = Math.floor(interval);
   if (number >= 1) {
-    return `${number}${space}${year}`;
+    return `${number}${space}${number === 1 ? year : years}`;
   }
 
   interval = seconds / 2592000;
   number = Math.floor(interval);
   if (number >= 1) {
-    return `${number}${space}${month}`;
+    return `${number}${space}${number === 1 ? month : months}`;
   }
 
   interval = seconds / 86400;
   number = Math.floor(interval);
   if (number >= 1) {
-    return `${number}${space}${days}`;
+    return `${number}${space}${number === 1 ? day : days}`;
   }
 
   interval = seconds / 3600;
   number = Math.floor(interval);
   if (number >= 1) {
-    return `${number}${space}${hours}`;
+    return `${number}${space}${number === 1 ? hour : hours}`;
   }
 
   interval = seconds / 60;
   number = Math.floor(interval);
   if (number >= 1) {
-    return `${number}${space}${minutes}`;
+    return `${number}${space}${number === 1 ? minute : minutes}`;
   }
 
   number = Math.floor(seconds);
-  return `${number}${space}${second}`;
+  return `${number}${space}${number === 1 ? second : secondsText}`;
 }
 
 export default timeAgo;
