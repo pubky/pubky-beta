@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Utils } from '@social/utils-shared';
 import { Icon, Typography, PostUtil } from '@social/ui-shared';
 import Link from 'next/link';
@@ -69,20 +69,23 @@ export default function Notification({ notification, unread }: { notification: N
   const { pubky } = usePubkyClientContext();
   const isMobile = useIsMobile();
   const [user, setUser] = useState<UserView | null | undefined>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  async function fetchProfile(userId: string) {
-    try {
-      const userProfile = await getUserProfile(userId, pubky ?? '');
-      if (userProfile) {
-        setUser(userProfile);
-      } else {
-        setUser(undefined);
+  const fetchProfile = useCallback(
+    async (userId: string) => {
+      try {
+        setIsLoading(true);
+        const userProfile = await getUserProfile(userId, pubky ?? '');
+        setUser(userProfile || null);
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+        setUser(null);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.log(error);
-      setUser(undefined);
-    }
-  }
+    },
+    [pubky]
+  );
 
   useEffect(() => {
     let userId: string | undefined;
@@ -112,8 +115,7 @@ export default function Notification({ notification, unread }: { notification: N
     if (userId) {
       fetchProfile(userId);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [notification]);
+  }, [notification, fetchProfile]);
 
   const currentNotificationType = notificationType[notification?.body?.type as NotificationTypeKey];
 
@@ -182,7 +184,7 @@ export default function Notification({ notification, unread }: { notification: N
     <div className="py-2 justify-between items-start flex flex-row border-b md:border-0 border-white border-opacity-10">
       <div className="flex sm:gap-1 md:gap-3 flex-col sm:flex-row">
         <div className="flex gap-2">
-          {user && (
+          {!isLoading && user && (
             <ImageByUri
               id={user?.details?.id}
               width={32}
@@ -193,7 +195,7 @@ export default function Notification({ notification, unread }: { notification: N
           )}
           {userId && (
             <Link href={`/profile/${userId}`} className="flex gap-2 items-center">
-              {user && (
+              {!isLoading && user && (
                 <ImageByUri
                   id={user?.details?.id}
                   width={32}
@@ -203,7 +205,7 @@ export default function Notification({ notification, unread }: { notification: N
                 />
               )}
               <Typography.Body className="hover:underline hover:decoration-solid" variant="medium-bold">
-                {user === null
+                {isLoading || user === null
                   ? Utils.minifyPubky(userId)
                   : user
                     ? Utils.minifyText(user?.details?.name, 20)
