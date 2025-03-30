@@ -16,7 +16,6 @@ interface ParsingProps {
 
 const tagsIcons: { [key: string]: JSX.Element } = {
   '#synonym': <Icon.Synonym size="24" />,
-  '#slashtags': <Icon.Slashtags size="24" />,
   '#blocktank': <Icon.Blocktank size="24" />,
   '#bitkit': <Icon.Bitkit size="24" />,
   '#bitcoin': <Icon.Bitcoin size="24" />,
@@ -59,12 +58,12 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
 
   const watchers = [
     {
-      type: 'startsWith',
+      type: 'startsWith' as const,
       watchFor: 'pk:',
       render: (pk: string) => <ProfileLink pk={pk} />
     },
     {
-      type: 'startsWith',
+      type: 'startsWith' as const,
       watchFor: '#',
       render: (tag: string) => {
         const trimmedTag = tag.trim().toLowerCase();
@@ -83,8 +82,14 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
       }
     },
     {
-      watchFor: 'link',
+      type: 'startsWith' as const,
+      watchFor: 'http',
       render: (url: string) => {
+        // Clean up the URL by removing any whitespace and ensuring proper format
+        const cleanUrl = url.trim();
+        const fullUrl =
+          cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://') ? cleanUrl : `https://${cleanUrl}`;
+
         const isValidUrl = (value: string) => {
           try {
             const parsedUrl = new URL(value);
@@ -94,36 +99,38 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
           }
         };
 
-        if (!isValidUrl(url.trim())) return url;
+        if (!isValidUrl(fullUrl)) return url;
 
         return (
           <Link
             className="text-[#C8FF00] break-all"
-            href={url}
+            href={fullUrl}
             target="_blank"
             rel="noreferrer"
             onClick={(event) => event.stopPropagation()}
           >
-            {url}
+            {cleanUrl}
           </Link>
         );
       }
     },
     {
-      watchFor: 'email',
+      type: 'startsWith' as const,
+      watchFor: 'mailto:',
       render: (url: string) => {
+        const email = url.replace('mailto:', '');
         const isValidEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 
-        if (!isValidEmail(url)) return url;
+        if (!isValidEmail(email)) return url;
         return (
           <Link
             className="text-[#C8FF00] break-all"
-            href={`mailto:${url.trim()}`}
+            href={`mailto:${email.trim()}`}
             target="_blank"
             rel="noreferrer noopener"
             onClick={(event) => event.stopPropagation()}
           >
-            {url}
+            {email}
           </Link>
         );
       }
@@ -208,7 +215,7 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
             ) : line.includes('`') ? (
               highlightInlineCode(line)
             ) : (
-              <LinkParser watchers={watchers as []}>{line}</LinkParser>
+              <LinkParser watchers={watchers}>{line}</LinkParser>
             )}
             {index < lines.length - 1 && <br />}
           </span>

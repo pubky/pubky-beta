@@ -17,36 +17,6 @@ export const Synonym = ({ size = '200' }: IconProps) => (
   </svg>
 );
 
-export const Slashtags = ({ size = '200' }: IconProps) => (
-  <svg width={size} height={size} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path
-      fillRule="evenodd"
-      clipRule="evenodd"
-      d="M70 89.9103L70 71.1764L130 55L130 73.7339L70 89.9103ZM130 101.355L70 117.532L70 117.379L70 98.7977L70 98.6448L130 82.4685L130 82.6213L130 101.202L130 101.355ZM130 128.824L70 145L70 126.266L130 110.09L130 128.824Z"
-      fill="white"
-    />
-    <path
-      fillRule="evenodd"
-      clipRule="evenodd"
-      d="M110.525 0.563843C165.505 6.37341 205.246 55.6284 199.436 110.525C193.627 165.505 144.372 205.246 89.4754 199.436C34.4951 193.627 -5.24572 144.372 0.563843 89.4754C6.37341 34.4951 55.6284 -5.24572 110.525 0.563843ZM108.335 21.4446C65.1426 16.8138 25.9912 48.4717 21.4446 91.6645C16.8138 134.857 48.4717 174.009 91.6645 178.555C134.857 183.186 174.009 151.528 178.555 108.335C183.186 65.1426 151.528 25.9912 108.335 21.4446Z"
-      fill="url(#paint0_linear_8359_543)"
-    />
-    <defs>
-      <linearGradient
-        id="paint0_linear_8359_543"
-        x1="171.25"
-        y1="168.125"
-        x2="33.75"
-        y2="30.625"
-        gradientUnits="userSpaceOnUse"
-      >
-        <stop stopColor="#DB00FF" />
-        <stop offset="1" stopColor="#FE0099" />
-      </linearGradient>
-    </defs>
-  </svg>
-);
-
 export const Blocktank = ({ size = '200' }: IconProps) => (
   <svg width={size} height={size} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
