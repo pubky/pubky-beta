@@ -79,7 +79,10 @@ export default function Header({ title }: HeaderProps) {
       router.push(`/profile/${profileId}`);
     } else {
       const trimmedValue = inputValue.trim();
-      const tags = trimmedValue.split(' ').filter((tag) => tag.length > 0);
+      const tags = trimmedValue
+        .split(' ')
+        .filter((tag) => tag.length > 0)
+        .map((tag) => tag.toLowerCase());
 
       const newTags = tags.filter((tag) => !searchTags.includes(tag));
 
