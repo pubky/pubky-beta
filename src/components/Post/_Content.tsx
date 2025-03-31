@@ -160,6 +160,7 @@ export default function Content({
     });
   };
 
+  const isArticle = String(post?.details?.kind) === PubkyAppPostKind[1].toLocaleLowerCase();
   const cleanedText = cleanText(text.toString());
   const parsedContent = (() => {
     try {
@@ -171,8 +172,7 @@ export default function Content({
   const textToMinified = parsedContent?.body || cleanedText;
   const minifiedContent = Utils.minifyContent(textToMinified, 7, 300);
   const contentText = fullContent ? textToMinified : minifiedContent;
-
-  const showMore = !fullContent && textToMinified !== minifiedContent;
+  const showMore = !fullContent && textToMinified !== minifiedContent && !isArticle;
 
   const renderSkeleton = () => <div className="animate-pulse bg-gray-700 rounded-[10px] w-full h-[350px]" />;
 
@@ -181,11 +181,7 @@ export default function Content({
       <div id="post-content-text" className={`text-white break-words ${largeView && 'text-2xl'}`}>
         {(() => {
           try {
-            if (
-              String(post?.details?.kind) === PubkyAppPostKind[1].toLocaleLowerCase() &&
-              parsedContent?.title &&
-              parsedContent?.body
-            ) {
+            if (isArticle && parsedContent?.title && parsedContent?.body) {
               const truncatedBody =
                 parsedContent.body.length > 200 ? parsedContent.body.substring(0, 200) + '...' : parsedContent.body;
 
@@ -243,7 +239,7 @@ export default function Content({
         )}
         <div>
           <div>
-            {!replyView && String(post?.details?.kind) !== PubkyAppPostKind[1].toLocaleLowerCase() && (
+            {!replyView && !isArticle && (
               <div>
                 {videoId && (
                   <div
@@ -286,7 +282,7 @@ export default function Content({
               </div>
             )}
 
-            {fileContents.length > 0 && String(post?.details?.kind) !== PubkyAppPostKind[1].toLocaleLowerCase() && (
+            {fileContents.length > 0 && !isArticle && (
               <div className="flex flex-col gap-4 mt-2">
                 {replyView ? (
                   <div className="flex flex-col gap-2">
