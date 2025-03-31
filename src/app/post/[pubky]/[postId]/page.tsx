@@ -26,34 +26,33 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const post = await response.json();
     const fetchedFile = post?.details?.attachments && (await getFile(post?.details?.attachments[0]));
     const fileType = fetchedFile?.content_type;
-    const file = fetchedFile && `${BASE_URL}/static/files/${JSON.parse(fetchedFile?.urls).main}`;
-
-    // title with just 20 characters
-    const postTitle =
-      post?.details?.kind === PubkyAppPostKind[1].toLocaleLowerCase()
-        ? Utils.truncateText(JSON.parse(post?.details?.content).title, 50)
-        : Utils.truncateText(post.details.content, 50);
+    const fileUrl = fetchedFile && JSON.parse(fetchedFile?.urls).main;
+    const imageUrl = fileUrl ? `${BASE_URL}/static/files/${fileUrl}` : undefined;
     const profile = await getUserDetails(post?.details.author);
     const profileName = Utils.truncateText(profile?.name, 20);
-    const description = Utils.truncateText(post.details.content, 100);
 
-    let title = `${profileName}`;
+    // DEFAULT SEO
+    let title = `${profileName} on Pubky`;
+    let description = Utils.truncateText(post.details.content, 100);
+    let image = fileType?.startsWith('image/') ? imageUrl : undefined;
 
-    if (postTitle) {
-      title = `${postTitle} | ${profileName}`;
+    // LONG POST
+    if (post?.details?.kind === PubkyAppPostKind[1].toLocaleLowerCase()) {
+      const parsedContent = JSON.parse(post?.details?.content);
+      const postTitle = Utils.truncateText(parsedContent.title, 20);
+      const firstParagraph = parsedContent.body.replace(/<[^>]*>/g, '').split('\n')[0];
+
+      title = `${postTitle} | ${profileName} on Pubky`;
+      description = Utils.truncateText(firstParagraph, 100);
     }
 
-    let image = undefined;
-
-    if (fileType?.startsWith('image/')) {
-      image = file;
-    }
-
-    return getSeoMetadata({
+    const metadata = getSeoMetadata({
       title,
       description,
       image
     });
+
+    return metadata;
   } catch (error) {
     return getSeoMetadata({
       title: '404 | Post',

@@ -73,7 +73,7 @@ export interface FileView {
   indexed_at: number;
   owner_id: string;
   uri: string;
-  urls: string;
+  urls: string; // TODO change type
 }
 
 export interface Links {
