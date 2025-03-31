@@ -160,7 +160,7 @@ export default function Content({
   };
 
   const cleanedText = cleanText(text.toString());
-  const minifiedContent = Utils.minifyContent(cleanedText, 10);
+  const minifiedContent = Utils.minifyContent(cleanedText, 7, 300);
   const contentText = fullContent ? cleanedText : minifiedContent;
 
   const showMore = !fullContent && cleanedText !== minifiedContent;
@@ -227,7 +227,7 @@ export default function Content({
         })()}
 
         {showMore && (
-          <Link href={Utils.encodePostUri(uri)} className="text-white text-opacity-80 hover:text-opacity-100">
+          <Link href={Utils.encodePostUri(uri)} className="text-[#C8FF00] hover:text-opacity-80">
             Show more
           </Link>
         )}

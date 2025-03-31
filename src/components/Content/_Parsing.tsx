@@ -139,7 +139,7 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
 
   const cleanText = (text: string) => text.replace(/\n{3,}/g, '\n\n');
   const cleanedText = cleanText(children.toString());
-  const contentText = fullContent ? cleanedText : Utils.minifyContent(cleanedText, 10);
+  const contentText = fullContent ? cleanedText : Utils.minifyContent(cleanedText, 7, 300);
   const lines = contentText.split('\n');
 
   const renderCodeBlock = (codeContent: string, key: string) => {
