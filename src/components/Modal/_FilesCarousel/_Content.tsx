@@ -14,6 +14,7 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex }:
   const isMobile = useIsMobile();
   const [localFileIndex, setLocalFileIndex] = useState(currentFileIndex);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
   const touchStartX = useRef(0);
   const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
   const BASE_URL = `${NEXT_PUBLIC_NEXUS}/static/files`;
@@ -26,6 +27,7 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex }:
 
   useEffect(() => {
     setLocalFileIndex(currentFileIndex);
+    setIsImageLoaded(false);
   }, [currentFileIndex]);
 
   const changeFile = (direction: 'next' | 'prev') => {
@@ -111,11 +113,15 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex }:
         />
       ) : (
         <img
-          src={generateFileUrl(currentFile)}
+          src={generateFileUrl(
+            currentFile,
+            currentFile.content_type === 'image/gif' ? 'main' : isImageLoaded ? 'main' : 'feed'
+          )}
           alt={`Modal view ${localFileIndex}`}
           width={800}
           height={418}
-          className="rounded-2xl max-w-full w-full md:w-auto h-auto md:min-w-[500px] max-h-[80vh] object-contain transition-opacity duration-300"
+          className={`rounded-2xl max-w-full w-full md:w-auto h-auto md:min-w-[500px] max-h-[80vh] object-contain transition-opacity duration-300 ${isImageLoaded ? 'opacity-100' : 'opacity-80'}`}
+          onLoad={() => setIsImageLoaded(true)}
         />
       )}
       <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2">
