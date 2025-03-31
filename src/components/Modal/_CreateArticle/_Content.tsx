@@ -384,15 +384,13 @@ export default function ContentCreateArticle({
               cursorPosition={cursorPosition}
               setCursorPosition={setCursorPosition}
               setIsValidContent={setIsValidContent}
-              //setSelectedFiles={setSelectedFiles}
-              //selectedFiles={selectedFiles}
               setArrayTags={setArrayTags}
               maxLength={40000}
               arrayTags={arrayTags}
-              //setFilePreviews={setFilePreviews}
               showEmojis={showEmojis}
               setShowEmojis={setShowEmojis}
               largeView={!isMobile}
+              noEmoji
               noFile
               button={
                 <Button.Medium
