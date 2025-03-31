@@ -12,7 +12,8 @@ const generateRandomColor = (str: string) => {
   const positiveHash = Math.abs(hash);
 
   // Convert hash to a 2-character hex value
-  const randomHex = positiveHash.toString(16).slice(0, 2).padStart(2, '0');
+  const randomByte = positiveHash & 0xff; // extract the lowest 8 bits
+  const randomHex = randomByte.toString(16).padStart(2, '0');
 
   // Pick a random pattern
   const patterns = [
