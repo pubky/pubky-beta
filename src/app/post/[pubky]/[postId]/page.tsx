@@ -26,34 +26,38 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const post = await response.json();
     const fetchedFile = post?.details?.attachments && (await getFile(post?.details?.attachments[0]));
     const fileType = fetchedFile?.content_type;
-    const file = fetchedFile && `${BASE_URL}/static/files/${JSON.parse(fetchedFile?.urls).main}`;
+    const fileUrl = fetchedFile && JSON.parse(fetchedFile?.urls).main;
+    const image = fileUrl ? `${BASE_URL}/static/files/${fileUrl}` : undefined;
 
-    // title with just 20 characters
-    const postTitle =
-      post?.details?.kind === PubkyAppPostKind[1].toLocaleLowerCase()
-        ? Utils.truncateText(JSON.parse(post?.details?.content).title, 50)
-        : Utils.truncateText(post.details.content, 50);
+    let postTitle = '';
+    let description = '';
+
+    if (post?.details?.kind === PubkyAppPostKind[1].toLocaleLowerCase()) {
+      const parsedContent = JSON.parse(post?.details?.content);
+      postTitle = Utils.truncateText(parsedContent.title, 20);
+      const firstParagraph = parsedContent.body.replace(/<[^>]*>/g, '').split('\n')[0];
+      description = Utils.truncateText(firstParagraph, 100);
+    } else {
+      postTitle = Utils.truncateText(post.details.content, 50);
+      description = Utils.truncateText(post.details.content, 100);
+    }
+
     const profile = await getUserDetails(post?.details.author);
     const profileName = Utils.truncateText(profile?.name, 20);
-    const description = Utils.truncateText(post.details.content, 100);
 
-    let title = `${profileName}`;
+    let title = `${profileName} on Pubky`;
 
-    if (postTitle) {
-      title = `${postTitle} | ${profileName}`;
+    if (postTitle && post?.details?.kind === PubkyAppPostKind[1].toLocaleLowerCase()) {
+      title = `${postTitle} | ${profileName} on Pubky`;
     }
 
-    let image = undefined;
-
-    if (fileType?.startsWith('image/')) {
-      image = file;
-    }
-
-    return getSeoMetadata({
+    const metadata = getSeoMetadata({
       title,
       description,
-      image
+      image: fileType?.startsWith('image/') ? image : undefined
     });
+
+    return metadata;
   } catch (error) {
     return getSeoMetadata({
       title: '404 | Post',
