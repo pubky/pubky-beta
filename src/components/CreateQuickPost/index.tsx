@@ -58,10 +58,7 @@ export default function CreateQuickPost({ largeView = false, loadingFeed }: Crea
         addAlert(
           <>
             Post created!{' '}
-            <a
-              className="text-[#c8ff00] font-bold text-opacity-90 hover:text-opacity-100"
-              href={Utils.encodePostUri(newPost?.uri)}
-            >
+            <a className="text-[#c8ff00] font-bold hover:text-opacity-90" href={Utils.encodePostUri(newPost?.uri)}>
               View
             </a>
           </>
