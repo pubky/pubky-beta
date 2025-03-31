@@ -28,6 +28,7 @@ interface FooterAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   wrapperRefEmojis: React.RefObject<HTMLDivElement>;
   article?: boolean;
   markdown?: boolean;
+  noEmoji?: boolean;
   noFile?: boolean;
   maxLength?: number;
   setShowModalPost?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -56,6 +57,7 @@ export default function FooterArea({
   button,
   article,
   //markdown,
+  noEmoji,
   noFile,
   maxLength = 1000,
   setShowModalPost,
@@ -267,18 +269,20 @@ export default function FooterArea({
                   }}
                   disabled={!arrayTags || loading}
                 />
-                <div className="hidden lg:flex">
-                  <Button.Action
-                    id="emoji-btn"
-                    variant="custom"
-                    icon={<Icon.Smiley size="32" />}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      !loading && setShowEmojis(true);
-                    }}
-                    disabled={loading}
-                  />
-                </div>
+                {!noEmoji && (
+                  <div className="hidden lg:flex">
+                    <Button.Action
+                      id="emoji-btn"
+                      variant="custom"
+                      icon={<Icon.Smiley size="32" />}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        !loading && setShowEmojis(true);
+                      }}
+                      disabled={loading}
+                    />
+                  </div>
+                )}
                 {article && (
                   <div className="flex">
                     <Button.Action

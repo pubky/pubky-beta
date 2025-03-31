@@ -1,18 +1,48 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useQuill } from 'react-quilljs';
 import 'quill/dist/quill.snow.css';
+import { Icon } from '../Icon';
+import { renderToString } from 'react-dom/server';
+import EmojiPicker from '@/components/EmojiPicker';
+
+// Add custom CSS for the emoji button
+const customStyles = `
+  .ql-emoji:after {
+    content: "";
+    font-size: 18px;
+    line-height: 1;
+  }
+  .ql-emoji svg {
+    width: 24px;
+    height: 24px;
+  }
+  .ql-editor span {
+    display: inline-block;
+  }
+  .ql-editor p {
+    display: inline;
+  }
+`;
 
 const modules = {
-  toolbar: [
-    [{ header: [1, 2, 3, false] }],
-    ['bold', 'italic', 'underline', 'strike'],
-    [{ align: [] }],
-    [{ list: 'ordered' }, { list: 'bullet' }],
-    ['blockquote', 'code-block'],
-    ['link', 'image']
-  ]
+  toolbar: {
+    container: [
+      [{ header: [1, 2, 3, false] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ align: [] }],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      ['blockquote', 'code-block'],
+      ['link', 'image'],
+      ['emoji']
+    ],
+    handlers: {
+      emoji: function () {
+        // This will be handled by the emoji picker
+      }
+    }
+  }
 };
 
 const formats = [
@@ -26,7 +56,8 @@ const formats = [
   'blockquote',
   'code-block',
   'link',
-  'image'
+  'image',
+  'emoji'
 ];
 
 interface MarkdownEditorComponentProps {
@@ -48,6 +79,38 @@ const MarkdownEditorComponent = ({
   value,
   maxLength
 }: MarkdownEditorComponentProps) => {
+  const [showEmojis, setShowEmojis] = useState(false);
+  const wrapperRefEmojis = useRef<HTMLDivElement>(null);
+
+  const handleEmojiClick = (emoji: any) => {
+    if (quill) {
+      const range = quill.getSelection();
+      if (range) {
+        const text = quill.getText();
+        const newText = text.slice(0, range.index) + emoji.native + text.slice(range.index);
+
+        if (newText.length <= maxLength) {
+          quill.deleteText(0, quill.getLength());
+          quill.insertText(0, newText);
+          quill.setSelection(range.index + emoji.native.length);
+          onChange(quill.root.innerHTML);
+          setCharCount(newText.length);
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    // Add custom styles to the document
+    const style = document.createElement('style');
+    style.innerHTML = customStyles;
+    document.head.appendChild(style);
+
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
   const { quill, quillRef } = useQuill({
     modules,
     formats,
@@ -67,6 +130,18 @@ const MarkdownEditorComponent = ({
           quill.deleteText(maxLength, quill.getLength());
         }
       });
+
+      // Add custom emoji button
+      const toolbar = quill.getModule('toolbar') as { addHandler: (name: string, handler: () => void) => void };
+      toolbar.addHandler('emoji', () => {
+        setShowEmojis(true);
+      });
+
+      // Set custom icon for emoji button
+      const emojiButton = document.querySelector('.ql-emoji');
+      if (emojiButton) {
+        emojiButton.innerHTML = renderToString(<Icon.Smiley size="24" />);
+      }
     }
   }, [quill, onChange, maxLength]);
 
@@ -87,6 +162,18 @@ const MarkdownEditorComponent = ({
   return (
     <div className="w-full relative mt-4">
       <div id={id} ref={quillRef} className="min-h-[200px]" />
+      {showEmojis && (
+        <>
+          <div className="fixed inset-0 bg-black bg-opacity-30 z-[9998]" onClick={() => setShowEmojis(false)} />
+          <div
+            id="emoji-picker"
+            className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999] max-h-[90vh] max-w-[90vw] overflow-auto rounded-lg bg-white shadow-lg"
+            ref={wrapperRefEmojis}
+          >
+            <EmojiPicker onEmojiSelect={handleEmojiClick} maxLength={maxLength} currentInput={value} />
+          </div>
+        </>
+      )}
     </div>
   );
 };
