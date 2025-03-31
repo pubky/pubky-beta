@@ -75,7 +75,7 @@ export default function Feeds() {
           return (
             <div className="flex w-full gap-4 justify-between" key={`${index}/${feed.name}`}>
               <SideCard.Item
-                label={Utils.minifyContent(feed.name, 11)}
+                label={String(Utils.minifyText(feed.name, 11))}
                 value={feed.name}
                 selected={JSON.stringify(selectedFeed) === JSON.stringify(feed.feed)}
                 onClick={() => handleFeedSelect(feed.feed)}

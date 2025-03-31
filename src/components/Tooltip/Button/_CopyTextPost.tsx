@@ -19,7 +19,7 @@ export default function CopyTextPost({ post, setShowMenu }: CopyTextPostProps) {
           id="copy-post-text"
           onClick={() => {
             Utils.copyToClipboard(post.details?.content);
-            addToast(Utils.minifyContent(post.details?.content, 1), 'text');
+            addToast(Utils.minifyText(post.details?.content, 100), 'text');
             setShowMenu(false);
           }}
           icon={<Icon.FileText size="24" />}
