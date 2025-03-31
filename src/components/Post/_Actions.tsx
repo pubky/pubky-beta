@@ -206,6 +206,7 @@ export default function Actions({ post, repost, deleteRepost = false, postType }
         <div className="relative">
           <Button.Action
             id="repost-btn"
+            data-testid={`repost-btn-${post.details.id}`}
             size="small"
             variant="custom"
             icon={

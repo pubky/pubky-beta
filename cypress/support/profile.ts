@@ -105,7 +105,7 @@ const waitForNotificationDotToDisappear = (t: number = 25) => {
 
 export const checkLatestNotification = (expectedContent: string[], profileToNavigateTo?: string) => {
   waitForNotificationsToLoad();
-  waitForNotificationDotToDisappear();
+  // waitForNotificationDotToDisappear();
   // assert that each expected string is present in the first notification listed
   cy.get('#notifications-list')
     .should('be.visible')

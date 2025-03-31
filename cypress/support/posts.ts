@@ -134,8 +134,21 @@ export const repostPost = ({
   filterText?: string;
   postIdx?: number;
 }) => {
-  cy.findPostInFeed(postIdx, filterText, waitForIndexed).within(() => {
-    cy.get('#repost-btn').click();
+  cy.findPostInFeed(postIdx, filterText, waitForIndexed).within(($post) => {
+    // Wait for the repost button to exist and get its data-testid
+    cy.get('[data-testid^="repost-btn-"]')
+      .should('exist')
+      .then(($repostBtn) => {
+        const dataTestId = $repostBtn.attr('data-testid');
+        if (!dataTestId) {
+          throw new Error('data-testid not found on repost button');
+        }
+        const postId = dataTestId.split('-')[2];
+        if (!postId) {
+          throw new Error('post ID not found in data-testid');
+        }
+        cy.get(`[data-testid="repost-btn-${postId}"]`).click();
+      });
   });
   cy.get('#modal-root')
     .should('be.visible')
