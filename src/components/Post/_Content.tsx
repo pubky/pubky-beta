@@ -160,10 +160,18 @@ export default function Content({
   };
 
   const cleanedText = cleanText(text.toString());
-  const minifiedContent = Utils.minifyContent(cleanedText, 7, 300);
-  const contentText = fullContent ? cleanedText : minifiedContent;
+  const parsedContent = (() => {
+    try {
+      return JSON.parse(cleanedText);
+    } catch {
+      return { body: cleanedText };
+    }
+  })();
+  const textToMinified = parsedContent?.body || cleanedText;
+  const minifiedContent = Utils.minifyContent(textToMinified, 7, 300);
+  const contentText = fullContent ? textToMinified : minifiedContent;
 
-  const showMore = !fullContent && cleanedText !== minifiedContent;
+  const showMore = !fullContent && textToMinified !== minifiedContent;
 
   const renderSkeleton = () => <div className="animate-pulse bg-gray-700 rounded-[10px] w-full h-[350px]" />;
 
@@ -172,49 +180,50 @@ export default function Content({
       <div id="post-content-text" className={`text-white break-words ${largeView && 'text-2xl'}`}>
         {(() => {
           try {
-            if (String(post?.details?.kind) === PubkyAppPostKind[1].toLocaleLowerCase()) {
-              const parsedContent = JSON.parse(contentText);
-              if (parsedContent.title && parsedContent.body) {
-                const truncatedBody =
-                  parsedContent.body.length > 200 ? parsedContent.body.substring(0, 200) + '...' : parsedContent.body;
+            if (
+              String(post?.details?.kind) === PubkyAppPostKind[1].toLocaleLowerCase() &&
+              parsedContent?.title &&
+              parsedContent?.body
+            ) {
+              const truncatedBody =
+                parsedContent.body.length > 200 ? parsedContent.body.substring(0, 200) + '...' : parsedContent.body;
 
-                return (
-                  <div className="w-full justify-between flex flex-col md:flex-row gap-4">
-                    <div>
-                      <Typography.Body className="mb-1" variant="large-bold">
-                        {parsedContent.title}
-                      </Typography.Body>
-                      <div
-                        className="opacity-70 text-white break-words [&_a]:text-[#C8FF00] [&_a:hover]:text-[#C8FF00]/90"
-                        dangerouslySetInnerHTML={{ __html: truncatedBody }}
-                      />
-                    </div>
-                    {fileContents.length > 0 && (
-                      <div>
-                        {loading
-                          ? renderSkeleton()
-                          : fileContents.map((file, index) => {
-                              return (
-                                <div key={index} className="relative">
-                                  {file.content_type === 'skeleton' ? (
-                                    renderSkeleton()
-                                  ) : (
-                                    <img
-                                      src={generateFileUrl(file, file.content_type !== 'image/gif' ? 'feed' : 'main')}
-                                      alt={`Fetched file ${index}`}
-                                      width={360}
-                                      height={200}
-                                      className="w-full min-w-[200px] max-w-[360px] h-[104px] object-cover rounded-[8px] overflow-hidden"
-                                    />
-                                  )}
-                                </div>
-                              );
-                            })}
-                      </div>
-                    )}
+              return (
+                <div className="w-full justify-between flex flex-col md:flex-row gap-4">
+                  <div>
+                    <Typography.Body className="mb-1" variant="large-bold">
+                      {parsedContent.title}
+                    </Typography.Body>
+                    <div
+                      className="opacity-70 text-white break-words [&_a]:text-[#C8FF00] [&_a:hover]:text-[#C8FF00]/90"
+                      dangerouslySetInnerHTML={{ __html: truncatedBody }}
+                    />
                   </div>
-                );
-              }
+                  {fileContents.length > 0 && (
+                    <div>
+                      {loading
+                        ? renderSkeleton()
+                        : fileContents.map((file, index) => {
+                            return (
+                              <div key={index} className="relative">
+                                {file.content_type === 'skeleton' ? (
+                                  renderSkeleton()
+                                ) : (
+                                  <img
+                                    src={generateFileUrl(file, file.content_type !== 'image/gif' ? 'feed' : 'main')}
+                                    alt={`Fetched file ${index}`}
+                                    width={360}
+                                    height={200}
+                                    className="w-full min-w-[200px] max-w-[360px] h-[104px] object-cover rounded-[8px] overflow-hidden"
+                                  />
+                                )}
+                              </div>
+                            );
+                          })}
+                    </div>
+                  )}
+                </div>
+              );
             }
           } catch (error) {
             console.error(error);
