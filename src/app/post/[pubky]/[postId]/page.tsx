@@ -27,34 +27,29 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const fetchedFile = post?.details?.attachments && (await getFile(post?.details?.attachments[0]));
     const fileType = fetchedFile?.content_type;
     const fileUrl = fetchedFile && JSON.parse(fetchedFile?.urls).main;
-    const image = fileUrl ? `${BASE_URL}/static/files/${fileUrl}` : undefined;
-
-    let postTitle = '';
-    let description = '';
-
-    if (post?.details?.kind === PubkyAppPostKind[1].toLocaleLowerCase()) {
-      const parsedContent = JSON.parse(post?.details?.content);
-      postTitle = Utils.truncateText(parsedContent.title, 20);
-      const firstParagraph = parsedContent.body.replace(/<[^>]*>/g, '').split('\n')[0];
-      description = Utils.truncateText(firstParagraph, 100);
-    } else {
-      postTitle = Utils.truncateText(post.details.content, 50);
-      description = Utils.truncateText(post.details.content, 100);
-    }
-
+    const imageUrl = fileUrl ? `${BASE_URL}/static/files/${fileUrl}` : undefined;
     const profile = await getUserDetails(post?.details.author);
     const profileName = Utils.truncateText(profile?.name, 20);
 
+    // DEFAULT SEO
     let title = `${profileName} on Pubky`;
+    let description = Utils.truncateText(post.details.content, 100);
+    let image = fileType?.startsWith('image/') ? imageUrl : undefined;
 
-    if (postTitle && post?.details?.kind === PubkyAppPostKind[1].toLocaleLowerCase()) {
+    // LONG POST
+    if (post?.details?.kind === PubkyAppPostKind[1].toLocaleLowerCase()) {
+      const parsedContent = JSON.parse(post?.details?.content);
+      const postTitle = Utils.truncateText(parsedContent.title, 20);
+      const firstParagraph = parsedContent.body.replace(/<[^>]*>/g, '').split('\n')[0];
+
       title = `${postTitle} | ${profileName} on Pubky`;
+      description = Utils.truncateText(firstParagraph, 100);
     }
 
     const metadata = getSeoMetadata({
       title,
       description,
-      image: fileType?.startsWith('image/') ? image : undefined
+      image
     });
 
     return metadata;
