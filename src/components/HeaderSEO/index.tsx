@@ -91,8 +91,10 @@ export function getSeoMetadata(params: SeoMetadataParams = {}) {
   };
 }
 
-export default {
+const HeaderSEO = {
   getPWAConfig,
   getHeaderMetaTags,
   getSeoMetadata
 };
+
+export default HeaderSEO;
