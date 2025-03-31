@@ -11,19 +11,18 @@ export default function ContentCheck({ setShow, setShow2 }: CheckContentProps) {
       <Typography.Body className="text-opacity-60 mt-4" variant="medium">
         If you do, you will lose the content.
       </Typography.Body>
-      <div className="flex gap-4 my-6">
+      <div className="flex gap-4 mt-6">
         <Button.Large variant="secondary" onClick={() => setShow(false)}>
           Cancel
         </Button.Large>
-        <Modal.SubmitAction
+        <Button.Large
           onClick={() => {
             setShow(false);
             setShow2(false);
           }}
-          icon={<Icon.ArrowRight size="16" />}
         >
-          Continue
-        </Modal.SubmitAction>
+          Yes, close it
+        </Button.Large>
       </div>
     </>
   );
