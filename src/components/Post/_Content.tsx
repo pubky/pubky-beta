@@ -44,7 +44,18 @@ export default function Content({
   const [spotifyUrl, setSpotifyUrl] = useState('');
   const [fileContents, setFileContents] = useState<FileView[]>([]);
   const [loading, setLoading] = useState(true);
-  const text = post?.details?.content;
+
+  const cleanText = (text: string) => {
+    return text.replace(/\n{3,}/g, '\n\n');
+  };
+
+  const stripHtml = (html: string) => {
+    return html.replace(/<[^>]*>/g, '');
+  };
+
+  // check long post kind
+  const isLongPost = String(post?.details?.kind) === PubkyAppPostKind[1].toLocaleLowerCase();
+  const text = isLongPost ? stripHtml(JSON.parse(post?.details?.content).body) : stripHtml(post?.details?.content);
   const files = post?.details?.attachments;
   const uri = post?.details?.uri;
   const generateFileUrl = (file: FileView, type = 'main') => `${BASE_URL}/${file.owner_id}/${file.id}/${type}`;
@@ -75,10 +86,6 @@ export default function Content({
       if (spotifyRegex.test(url)) setSpotifyUrl(url);
     }
   }
-
-  const cleanText = (text: string) => {
-    return text.replace(/\n{3,}/g, '\n\n');
-  };
 
   useEffect(() => {
     const cleanedText = cleanText(text.toString());
