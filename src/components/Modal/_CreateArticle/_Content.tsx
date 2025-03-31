@@ -66,10 +66,7 @@ export default function ContentCreateArticle({
         addAlert(
           <>
             Article created!{' '}
-            <a
-              className="text-[#c8ff00] font-bold text-opacity-90 hover:text-opacity-100"
-              href={Utils.encodePostUri(newArticle?.uri)}
-            >
+            <a className="text-[#c8ff00] font-bold hover:text-opacity-90" href={Utils.encodePostUri(newArticle?.uri)}>
               View
             </a>
           </>
@@ -308,7 +305,11 @@ export default function ContentCreateArticle({
                 autoCorrect="off"
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setContentTitle(e.target.value)}
               />
-              <Section.UserArea name={profile?.name ?? Utils.minifyPubky(pubky ?? '')} largeView={!isMobile} />
+              <Section.UserArea
+                name={profile?.name ?? Utils.minifyPubky(pubky ?? '')}
+                warningLink
+                largeView={!isMobile}
+              />
               <div className="relative my-4">
                 {selectedFile.length > 0 ? (
                   <div className="relative">

@@ -62,7 +62,7 @@ export default function ContentCreatePost({ setShowModalPost, setHasContent, cla
           <>
             Post created!{' '}
             <a
-              className="text-[#c8ff00] font-bold text-opacity-90 hover:text-opacity-100"
+              className="text-[#c8ff00] font-bold hover:text-opacity-90"
               href={Utils.encodePostUri(newPost?.uri)}
             >
               View

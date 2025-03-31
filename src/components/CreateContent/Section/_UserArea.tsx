@@ -1,22 +1,41 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { Typography } from '@social/ui-shared';
-import { usePubkyClientContext } from '@/contexts';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { ImageByUri } from '@/components/ImageByUri';
-import Link from 'next/link';
 
 interface UserAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   largeView?: boolean;
   name: string;
+  warningLink?: boolean;
   variant?: 'small';
 }
 
-export default function UserArea({ largeView, name, variant }: UserAreaProps) {
+export default function UserArea({ largeView, name, warningLink, variant }: UserAreaProps) {
+  const router = useRouter();
+  const { addAlert } = useAlertContext();
   const { pubky } = usePubkyClientContext();
 
+  const handleProfileLink = () => {
+    if (warningLink) {
+      addAlert(
+        <>
+          Link disabled while creating content.{' '}
+          <span onClick={() => router.push('/profile')} className="cursor-pointer font-bold hover:text-opacity-90">
+            View profile
+          </span>
+        </>,
+        'warning'
+      );
+    } else {
+      router.push('/profile');
+    }
+  };
+
   return (
-    <Link href="/profile" className="justify-start gap-2 flex">
+    <div onClick={handleProfileLink} className="justify-start gap-2 flex">
       <ImageByUri
         id={pubky}
         width={largeView ? 48 : 32}
@@ -46,6 +65,6 @@ export default function UserArea({ largeView, name, variant }: UserAreaProps) {
           )}
         </>
       )}
-    </Link>
+    </div>
   );
 }
