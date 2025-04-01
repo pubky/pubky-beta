@@ -7,6 +7,7 @@ import LinksSection from './_LinksSection';
 import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import { UserTags } from '@/types/User';
+import { Feedback } from '@/components';
 
 export default function Sidebar({ creatorPubky, activeTab }: { creatorPubky?: string | null; activeTab: number }) {
   const { pubky, profile } = usePubkyClientContext();
@@ -87,6 +88,7 @@ export default function Sidebar({ creatorPubky, activeTab }: { creatorPubky?: st
         )}
 
         <LinksSection links={links || []} />
+        <Feedback />
       </div>
     </div>
   );

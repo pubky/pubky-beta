@@ -51,6 +51,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
   const [loadingTag, setLoadingTag] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
+  const bgCard = profileTags?.length > 0 && 'bg-white/10';
 
   const { addProfileTag, deleteProfileTag, loadingTags } = useUtilsTag({
     profileTags,
@@ -228,8 +229,8 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
   };
 
   return (
-    <div className="w-full p-6 bg-white/10 rounded-lg">
-      {name && (
+    <div className={`${bgCard} w-full p-6 rounded-lg`}>
+      {name && profileTags?.length > 0 && (
         <Typography.Body variant="medium-bold">
           {name} {profileTags?.length > 0 ? 'was tagged as' : 'was not tagged yet'}:
         </Typography.Body>
@@ -238,31 +239,31 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
         <Skeleton.Simple />
       ) : (
         <>
-          <div className="mt-4 justify-start items-start gap-2 flex flex-col">
-            <div className="mb-4 relative">
-              {showEmojis && (
-                <div className="absolute translate-y-[10%] translate-x-[30%] z-10" ref={wrapperRefEmojis}>
-                  <EmojiPicker
-                    onEmojiSelect={(emojiObject) => {
-                      setTagInput(tagInput + emojiObject.native);
-                      setShowEmojis(false);
-                    }}
-                    maxLength={20}
-                    currentInput={tagInput}
-                  />
-                </div>
-              )}
-              <Input.Tag
-                value={tagInput}
-                onChange={setTagInput}
-                onAddTag={handleAddTag}
-                onEmojiPickerClick={() => setShowEmojis(true)}
-                loading={loadingTag}
-                variant="small"
-              />
-            </div>
+          <div className="mt-3 justify-start items-start gap-2 flex flex-col">
             {profileTags && profileTags.length > 0 ? (
               <>
+                <div className="relative">
+                  {showEmojis && (
+                    <div className="absolute translate-y-[10%] translate-x-[30%] z-10" ref={wrapperRefEmojis}>
+                      <EmojiPicker
+                        onEmojiSelect={(emojiObject) => {
+                          setTagInput(tagInput + emojiObject.native);
+                          setShowEmojis(false);
+                        }}
+                        maxLength={20}
+                        currentInput={tagInput}
+                      />
+                    </div>
+                  )}
+                  <Input.Tag
+                    value={tagInput}
+                    onChange={setTagInput}
+                    onAddTag={handleAddTag}
+                    onEmojiPickerClick={() => setShowEmojis(true)}
+                    loading={loadingTag}
+                    variant="small"
+                  />
+                </div>
                 {!selectedTag ? (
                   <>
                     {profileTags.map((tag, index) => {
@@ -373,7 +374,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                       const isFollowed = followedUser[user];
 
                       return (
-                        <div key={userIndex} className="w-full flex justify-between gap-10">
+                        <div key={userIndex} className="w-full max-w-[250px] flex justify-between gap-10">
                           <SideCard.User
                             uri={profile?.details?.id.replace('pubky:', '')}
                             username={profile?.details?.name && Utils.minifyText(profile?.details?.name)}
@@ -422,16 +423,38 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                 description={
                   isMyProfile ? (
                     <>
-                      Find out which posts, photos, or content include tags mentioning you.
+                      No one has tagged you yet.
                       <br />
-                      Stay connected to what others are sharing about you.
+                      Tip: You can add tags to your own profile too.
                     </>
                   ) : (
                     'There are no tags to show.'
                   )
                 }
               >
-                <div className="absolute top-0 z-0">
+                <div className="z-10 relative">
+                  {showEmojis && (
+                    <div className="absolute translate-y-[10%] translate-x-[30%] z-20" ref={wrapperRefEmojis}>
+                      <EmojiPicker
+                        onEmojiSelect={(emojiObject) => {
+                          setTagInput(tagInput + emojiObject.native);
+                          setShowEmojis(false);
+                        }}
+                        maxLength={20}
+                        currentInput={tagInput}
+                      />
+                    </div>
+                  )}
+                  <Input.Tag
+                    value={tagInput}
+                    onChange={setTagInput}
+                    onAddTag={handleAddTag}
+                    onEmojiPickerClick={() => setShowEmojis(true)}
+                    loading={loadingTag}
+                    variant="small"
+                  />
+                </div>
+                <div className="absolute top-12 z-0">
                   <Image alt="not-found-taggedAs" width={461} height={303} src="/images/webp/not-found/taggedAs.webp" />
                 </div>
               </ContentNotFound>
