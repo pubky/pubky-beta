@@ -229,8 +229,10 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
 
   return (
     <div className="w-full p-6 bg-white/10 rounded-lg">
-      {name && profileTags?.length > 0 && (
-        <Typography.Body variant="medium-bold">{name} was tagged as:</Typography.Body>
+      {name && (
+        <Typography.Body variant="medium-bold">
+          {name} {profileTags?.length > 0 ? 'was tagged as' : 'was not tagged yet'}:
+        </Typography.Body>
       )}
       {loading ? (
         <Skeleton.Simple />
@@ -429,7 +431,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                   )
                 }
               >
-                <div className="absolute top-12 z-0">
+                <div className="absolute top-0 z-0">
                   <Image alt="not-found-taggedAs" width={461} height={303} src="/images/webp/not-found/taggedAs.webp" />
                 </div>
               </ContentNotFound>
