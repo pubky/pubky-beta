@@ -7,7 +7,7 @@ import { UserTags } from '@/types/User';
 import { Button, Icon, PostUtil, SideCard, Typography, Input } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { ImageByUri } from '@/components/ImageByUri';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import LinksSection from './Sidebar/_LinksSection';
 import Image from 'next/image';
@@ -17,6 +17,8 @@ import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useUserTagTaggers } from '@/hooks/useUser';
 import { getUserProfile } from '@/services/userService';
 import { useAlertContext } from '@/contexts';
+import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
+import EmojiPicker from '@/components/EmojiPicker';
 
 type TaggedAsProps = {
   creatorPubky?: string | undefined;
@@ -47,6 +49,8 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
   const [hasMoreTaggers, setHasMoreTaggers] = useState(false);
   const [tagInput, setTagInput] = useState('');
   const [loadingTag, setLoadingTag] = useState(false);
+  const [showEmojis, setShowEmojis] = useState(false);
+  const wrapperRefEmojis = useRef<HTMLDivElement>(null);
 
   const { addProfileTag, deleteProfileTag, loadingTags } = useUtilsTag({
     profileTags,
@@ -64,6 +68,8 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
     skipTaggers,
     limitTaggers
   );
+
+  useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
 
   useEffect(() => {
     setProfileTags(user?.tags);
@@ -231,11 +237,24 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
       ) : (
         <>
           <div className="mt-4 justify-start items-start gap-2 flex flex-col">
-            <div className="mb-4">
+            <div className="mb-4 relative">
+              {showEmojis && (
+                <div className="absolute translate-y-[10%] translate-x-[30%] z-10" ref={wrapperRefEmojis}>
+                  <EmojiPicker
+                    onEmojiSelect={(emojiObject) => {
+                      setTagInput(tagInput + emojiObject.native);
+                      setShowEmojis(false);
+                    }}
+                    maxLength={20}
+                    currentInput={tagInput}
+                  />
+                </div>
+              )}
               <Input.Tag
                 value={tagInput}
                 onChange={setTagInput}
                 onAddTag={handleAddTag}
+                onEmojiPickerClick={() => setShowEmojis(true)}
                 loading={loadingTag}
                 variant="small"
               />
