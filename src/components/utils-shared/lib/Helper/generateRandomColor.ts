@@ -1,6 +1,20 @@
-const generateRandomColor = (str: string) => {
-  if (str.toLowerCase() === 'bitcoin') {
-    return '#FF9900';
+const customCases = [
+  { name: 'bitcoin', color: '#FF9900' },
+  { name: 'synonym', color: '#FF6600' },
+  { name: 'bitkit', color: '#FF4400' },
+  { name: 'pubky', color: '#C8FF00' },
+  { name: 'blocktank', color: '#FFAE00' },
+  { name: 'tether', color: '#26A17B' }
+];
+
+const generateRandomColor = (str: string): string => {
+  const lowerStr = str.toLowerCase();
+
+  // Check for cases
+  for (const special of customCases) {
+    if (lowerStr === special.name) {
+      return special.color;
+    }
   }
 
   // Generate a hash value from the input string
