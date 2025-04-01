@@ -49,7 +49,7 @@ export const Tag = ({
       if (boxShadow) {
         style.boxShadow = `inset 0 0 10px 2px ${hexToRgba(color, 1)}`;
       } else {
-        style.backgroundColor = hexToRgba(color, 1);
+        style.backgroundColor = hexToRgba(color, 0.6);
       }
     }
 
