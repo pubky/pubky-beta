@@ -76,7 +76,7 @@ export default function CustomFeeds({ loading, setLoading, ...rest }: CustomFeed
   return (
     <>
       {!loading && (
-        <div id="custom-feeds-tabs" className="flex gap-1 flex-wrap">
+        <div id="custom-feeds-tabs" className="flex gap-1 max-w-[785px] overflow-x-auto no-scrollbar">
           <div className={twMerge(baseCSS, !selectedFeed ? activeCSS : '', rest.className)} onClick={handleForYouClick}>
             <Typography.Body className="text-[13px] leading-[13px]" variant="small-bold">
               {reach.charAt(0).toUpperCase() + reach.slice(1)}
@@ -104,7 +104,7 @@ export default function CustomFeeds({ loading, setLoading, ...rest }: CustomFeed
               </div>
             );
           })}
-          {feeds && feeds?.length < 4 && (
+          {feeds && (
             <div
               id="add-custom-feed"
               onClick={() => (loading ? undefined : openModal('createFeed', { handleLoadFeeds }))}
