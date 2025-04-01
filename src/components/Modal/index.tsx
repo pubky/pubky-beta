@@ -16,7 +16,6 @@ import FilesCarousel from './_FilesCarousel';
 import Join from './_Join';
 import Link from './_Link';
 import Logout from './_Logout';
-import ProfileTag from './_TagProfile';
 import ReportPost from './_ReportPost';
 import ReportProfile from './_ReportProfile';
 import SearchedUsersCard from './_SearchedUsersCard';
@@ -44,7 +43,6 @@ export const Modal = {
   Join,
   Link,
   Logout,
-  ProfileTag,
   ReportPost,
   ReportProfile,
   SearchedUsersCard,

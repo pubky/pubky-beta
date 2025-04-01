@@ -70,8 +70,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     tagCreatePost: 'TagCreatePost',
     menuPost: 'Menu',
     menuProfile: 'MenuProfile',
-    tags: 'Tag',
-    profileTags: 'ProfileTag'
+    tags: 'Tag'
   };
 
   const renderModal = (modalType: string, modalId: string, props?: Record<string, any>) => {

@@ -8,7 +8,7 @@ import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import { UserTags } from '@/types/User';
 
-export default function Sidebar({ creatorPubky }: { creatorPubky?: string | null }) {
+export default function Sidebar({ creatorPubky, activeTab }: { creatorPubky?: string | null; activeTab: number }) {
   const { pubky, profile } = usePubkyClientContext();
   const userPubky = creatorPubky || pubky;
   const { data: profileUser, isLoading } = useUserProfile(userPubky ?? '', pubky ?? '');
@@ -74,15 +74,17 @@ export default function Sidebar({ creatorPubky }: { creatorPubky?: string | null
       />
       <div className="w-full flex-col justify-start items-start gap-8 xl:inline-flex lg:ml-3">
         {/**<BioSection id="profile-bio-content" loading={isLoading} bio={bio} />*/}
-        <TaggedSection
-          profileTags={profileTags}
-          setProfileTags={setProfileTags}
-          loadingProfileTags={isLoading}
-          creatorPubky={creatorPubky}
-          name={name}
-          userPubky={userPubky ?? ''}
-          user={profileUser}
-        />
+        {activeTab !== 6 && (
+          <TaggedSection
+            profileTags={profileTags}
+            setProfileTags={setProfileTags}
+            loadingProfileTags={isLoading}
+            creatorPubky={creatorPubky}
+            name={name}
+            userPubky={userPubky ?? ''}
+            user={profileUser}
+          />
+        )}
 
         <LinksSection links={links || []} />
       </div>

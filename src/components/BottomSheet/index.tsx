@@ -20,7 +20,6 @@ import Link from './_Link';
 import Logout from './_Logout';
 import Menu from './_Menu';
 import MenuProfile from './_MenuProfile';
-import ProfileTag from './_ProfileTag';
 import Reach from './_Reach';
 import ReportPost from './_ReportPost';
 import ReportProfile from './_ReportProfile';
@@ -53,7 +52,6 @@ export const BottomSheet = {
   Logout,
   Menu,
   MenuProfile,
-  ProfileTag,
   Reach,
   ReportPost,
   ReportProfile,

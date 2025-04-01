@@ -1,11 +1,10 @@
 import { Skeleton } from '@/components';
-import { useUtilsTag } from '@/components/Modal/_TagProfile/components/_Utils';
+import { useUtilsTag } from '@/app/profile/components/_UtilsTags';
 import { useModal, usePubkyClientContext } from '@/contexts';
 import { UserTags, UserView } from '@/types/User';
 import { Button, Icon, PostUtil, SideCard, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import Link from 'next/link';
-import { useEffect } from 'react';
 
 interface TaggedSectionProps {
   profileTags: UserTags[];
@@ -27,29 +26,13 @@ export default function TaggedSection({
   user
 }: TaggedSectionProps) {
   const { pubky } = usePubkyClientContext();
-  const { openModal, isOpen } = useModal();
+  const { openModal } = useModal();
   const { addProfileTag, deleteProfileTag, loadingTags } = useUtilsTag({
     profileTags,
     setProfileTags,
     pubkyUser: userPubky,
     user
   });
-
-  const handleOpenModal = () => {
-    openModal('profileTags', {
-      profileTags: profileTags,
-      setProfileTags: setProfileTags,
-      pubkyUser: userPubky,
-      user: user
-    });
-  };
-
-  // Update post in Modal when profileTags changes
-  useEffect(() => {
-    if (isOpen('profileTags')) {
-      handleOpenModal();
-    }
-  }, [profileTags]);
 
   return (
     <div className="w-full">
@@ -101,14 +84,15 @@ export default function TaggedSection({
               No tags yet
             </Typography.Body>
           )}
-          <Button.Medium
-            id="profile-tag-btn"
-            className="whitespace-nowrap mt-2 w-auto h-8 inline-flex items-center"
-            onClick={() => (pubky ? handleOpenModal() : openModal('join'))}
-            icon={<Icon.Tag size="16" />}
-          >
-            Tag {!creatorPubky || creatorPubky === pubky ? 'yourself' : Utils.minifyText(name, 9)}
-          </Button.Medium>
+          <Link href={creatorPubky ? `/profile/${creatorPubky}/tagged` : '/profile/tagged'}>
+            <Button.Medium
+              id="profile-tag-btn"
+              className="whitespace-nowrap mt-2 w-auto h-8 inline-flex items-center"
+              icon={<Icon.Tag size="16" />}
+            >
+              Tag {!creatorPubky || creatorPubky === pubky ? 'yourself' : Utils.minifyText(name, 9)}
+            </Button.Medium>
+          </Link>
         </div>
       )}
     </div>

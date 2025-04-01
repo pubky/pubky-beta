@@ -64,7 +64,7 @@ export default function LayoutProfile({ children }: { children: React.ReactNode 
             {children}
           </Profile.FilterTabs>
         </PostsLayout>
-        <Profile.Sidebar />
+        <Profile.Sidebar activeTab={activeTab} />
       </Content.Grid>
       <CreatePost />
       <Components.FooterMobile title="Profile" />
