@@ -184,6 +184,13 @@ export default function CreateContent({
   };
 
   useEffect(() => {
+    if (selectedFiles?.length === 0) {
+      filePreviews.forEach((previewUrl) => URL.revokeObjectURL(previewUrl));
+      setFilePreviews([]);
+    }
+  }, [selectedFiles]);
+
+  useEffect(() => {
     const handlePasteEvent = (event: ClipboardEvent) => {
       if (textAreaRef.current && document.activeElement === textAreaRef.current) {
         handlePaste(event);
