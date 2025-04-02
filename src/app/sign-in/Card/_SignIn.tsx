@@ -67,11 +67,16 @@ export default function SignIn() {
         }
       } catch (error: unknown | { message: string }) {
         try {
-          const errorMessage = error === 'aead::Error' ? 'Failed to login.' : null;
+          const isNetworkError = error === 'error sending request';
 
-          if (errorMessage) {
-            setLoginError(errorMessage);
+          if (isNetworkError) {
+            setAuthUrl('');
+            setLoginError('No internet connection. Please try again.');
+            return;
+          } else {
+            setLoginError('Failed to login.');
           }
+
           handleGenerateAuthUrl(signal);
         } catch (error) {
           console.error('Unexpected error occurred:', error);
