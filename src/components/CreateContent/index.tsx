@@ -91,7 +91,7 @@ export default function CreateContent({
 
   useEffect(() => {
     return () => {
-      filePreviews.forEach(previewUrl => URL.revokeObjectURL(previewUrl));
+      filePreviews.forEach((previewUrl) => URL.revokeObjectURL(previewUrl));
     };
   }, [filePreviews]);
 
@@ -191,7 +191,7 @@ export default function CreateContent({
 
   useEffect(() => {
     if (selectedFiles?.length === 0) {
-      filePreviews.forEach(previewUrl => URL.revokeObjectURL(previewUrl));
+      filePreviews.forEach((previewUrl) => URL.revokeObjectURL(previewUrl));
       setFilePreviews([]);
     }
   }, [selectedFiles]);
