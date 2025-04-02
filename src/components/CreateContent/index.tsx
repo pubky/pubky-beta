@@ -89,6 +89,12 @@ export default function CreateContent({
   const [searchedUsers, setSearchedUsers] = useState<UserView[]>([]);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
 
+  useEffect(() => {
+    return () => {
+      filePreviews.forEach(previewUrl => URL.revokeObjectURL(previewUrl));
+    };
+  }, [filePreviews]);
+
   const searchProfiles = async (text: string) => {
     try {
       const result = await searchUsersByUsername(text);
@@ -182,6 +188,13 @@ export default function CreateContent({
       return newPreviews;
     });
   };
+
+  useEffect(() => {
+    if (selectedFiles?.length === 0) {
+      filePreviews.forEach(previewUrl => URL.revokeObjectURL(previewUrl));
+      setFilePreviews([]);
+    }
+  }, [selectedFiles]);
 
   useEffect(() => {
     const handlePasteEvent = (event: ClipboardEvent) => {
