@@ -1084,13 +1084,21 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
   });
 
   const saveFeed = withAuth(async (feed: ICustomFeed, name: string): Promise<boolean> => {
+    const contentTypeMap = {
+      posts: 'short',
+      articles: 'long',
+      images: 'image',
+      videos: 'video',
+      links: 'link',
+      files: 'file'
+    };
     // Map the ICustomFeed to the arguments for `createFeed`:
     // feed might have e.g. tags, reach, layout, etc.
     const { tags, reach, layout, sort, content } = feed;
 
     // If feed.tags is null, pass null. Otherwise pass as is.
     const tagsValue = tags && tags.length > 0 ? tags : null;
-    const contentVal = content === 'all' ? null : content;
+    const contentVal = contentTypeMap[content] || null;
 
     const result = specsBuilder!.createFeed(tagsValue, reach, layout, sort, contentVal, name);
 
