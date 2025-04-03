@@ -9,7 +9,7 @@ interface MessageProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const Message = ({ icon, children, variant = 'default', ...rest }: MessageProps) => {
-  const baseCSS = `relative py-2 px-4 rounded-md shadow border w-full`;
+  const baseCSS = `z-max relative py-2 px-4 rounded-md shadow border w-full`;
 
   let variantCSS = '';
   let colorTextCSS = '';
