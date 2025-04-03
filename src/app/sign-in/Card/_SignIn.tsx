@@ -72,18 +72,16 @@ export default function SignIn() {
         router.push('/home');
       }
     } catch (error: unknown) {
-      const errorMessage =
-        error === 'error sending request' ? 'No internet connection. Please try again.' : 'Failed to login.';
-
+      const networkMessage = 'Error sending request. Check internet connection.';
+      const errorMessage = error === 'error sending request' ? networkMessage : String(error);
       setLoginError(errorMessage);
 
-      if (errorMessage === 'No internet connection. Please try again.') {
+      if (errorMessage === networkMessage) {
         setAuthUrl('');
       } else {
         // Retry generating auth URL only for non-network errors
         handleGenerateAuthUrl(signal);
       }
-
       console.error('Login error:', error);
     }
   };
@@ -170,7 +168,7 @@ export default function SignIn() {
       {loginError && (
         <div className="flex w-full justify-between items-center px-4 py-2 mt-6 mb-4 rounded-lg border-2 border-red-600 bg-[#e95164] bg-opacity-10">
           <Typography.Body className="break-words text-red-600" variant="small-bold">
-            {Utils.minifyText(loginError, 50)}
+            {Utils.minifyText(loginError, 60)}
           </Typography.Body>
           <div>
             <Icon.Warning color="#dc2626" />
