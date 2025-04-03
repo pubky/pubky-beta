@@ -15,7 +15,9 @@ import {
   createQuickPostWithTags,
   fastTagWhilstCreatingPost,
   addImage,
-  waitForBookmarksToLoad
+  waitForBookmarksToLoad,
+  checkPostIsIndexed,
+  checkLatestPostIsIndexed
 } from '../support/posts';
 import { defaultMs, fastMs } from '../support/slow-down';
 import { CheckIndexed, HasBackedUp, SkipOnboardingSlides } from '../support/types/enums';
@@ -52,6 +54,9 @@ describe('posts', () => {
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
 
+    // wait for post to be indexed before reloading page
+    checkLatestPostIsIndexed();
+
     // reload and check post is still displayed correctly
     cy.reload();
     waitForFeedToLoad();
@@ -76,6 +81,9 @@ describe('posts', () => {
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
+
+    // wait for post to be indexed before reloading page
+    checkLatestPostIsIndexed();
 
     // reload and check post is still displayed correctly
     cy.reload();
@@ -105,10 +113,19 @@ describe('posts', () => {
       'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
       `ooooooooooooooooooooooooooooooooooooooooooog post! ${Date.now()}`;
 
+    const expectedPostContent =
+    'I can make a really looooooooooooooooooooooooooooooooooooooooooooooooooo' +
+    'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
+    'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
+    'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
+    'oooooooooooo...Show more';
+
     createQuickPost(postContent);
 
     // verify the post is displayed correctly in feed
-    latestPostInFeedContentEq(postContent);
+    latestPostInFeedContentEq(expectedPostContent);
+
+    // TODO: click 'Show more' and assert full content is displayed
   });
 
   it('can post with emojis', () => {

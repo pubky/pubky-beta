@@ -17,6 +17,33 @@ export const selectEmojis = (emojiName: string[]) => {
   cy.get('#emoji-picker').parent().click('left');
 };
 
+// check if post at index has two green ticks
+export const checkPostIsIndexed = (postIdx: number, t = 50) => {
+  if (t === 0) assert(false, `findPostInFeed: Post not indexed`);
+  cy.log(`findPostInFeed: Checking if post ${postIdx} is indexed`);
+  cy.get('#posts-feed')
+    .find('#timeline')
+    .children()
+    .eq(postIdx)
+    .then(($post) => {
+      // if post has the status checkmarks then wait for it to have two green ticks
+      if ($post.find('#post-status').length > 0) {
+        if ($post.find('#post-status #post-status-indexed').length === 0) {
+          cy.log('findPostInFeed: Post not indexed; waiting 200ms and checking again');
+          cy.wait(200);
+          checkPostIsIndexed(postIdx, t - 1);
+        }
+      } else {
+        cy.log(`findPostInFeed: Post ${postIdx} was already indexed`);
+      }
+    });
+  cy.log(`findPostInFeed: Post ${postIdx} is indexed`);
+};
+
+export const checkLatestPostIsIndexed = () => {
+  checkPostIsIndexed(0);
+};
+
 // verify that a post in the feed has the expected content, post is located by index
 export const postInFeedContentEq = (postContent: string, idx: number) => {
   cy.get('#posts-feed')
