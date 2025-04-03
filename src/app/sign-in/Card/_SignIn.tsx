@@ -53,35 +53,40 @@ export default function SignIn() {
     setLoginError('');
     const result = await generateAuthUrl();
 
-    if (result && result.url) {
-      setAuthUrl(result.url);
+    if (!result || !result.url) {
+      setLoginError('Failed to generate authentication URL.');
+      return;
+    }
 
-      try {
-        const pubkey = await result.promise;
-        if (pubkey) {
-          const handleLoginResult = await loginWithAuthUrl(pubkey);
-          if (handleLoginResult) {
-            addAlert('Login successful!');
-            router.push('/home');
-          }
-        }
-      } catch (error: unknown | { message: string }) {
-        try {
-          const isNetworkError = error === 'error sending request';
+    setAuthUrl(result.url);
 
-          if (isNetworkError) {
-            setAuthUrl('');
-            setLoginError('No internet connection. Please try again.');
-            return;
-          } else {
-            setLoginError('Failed to login.');
-          }
-
-          handleGenerateAuthUrl(signal);
-        } catch (error) {
-          console.error('Unexpected error occurred:', error);
-        }
+    try {
+      const pubkey = await result.promise;
+      if (!pubkey) {
+        setLoginError('Failed to get public key.');
+        return;
       }
+
+      const handleLoginResult = await loginWithAuthUrl(pubkey);
+      if (handleLoginResult) {
+        addAlert('Login successful!');
+        router.push('/home');
+      }
+    } catch (error: unknown) {
+      const errorMessage = typeof error === 'string' && error === 'error sending request'
+        ? 'No internet connection. Please try again.'
+        : 'Failed to login.';
+      
+      setLoginError(errorMessage);
+      
+      if (errorMessage === 'No internet connection. Please try again.') {
+        setAuthUrl('');
+      } else {
+        // Retry generating auth URL only for non-network errors
+        handleGenerateAuthUrl(signal);
+      }
+      
+      console.error('Login error:', error);
     }
   };
 
