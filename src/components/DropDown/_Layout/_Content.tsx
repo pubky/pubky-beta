@@ -1,9 +1,11 @@
 'use client';
 
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
-import { useFilterContext } from '@/contexts';
+import { TLayouts } from '@/types';
 
 interface ContentLayoutProps {
+  layout: TLayouts;
+  setLayout: (layout: TLayouts) => void;
   setDropdownValue: any;
   setOpenDropdown: any;
 }
@@ -16,9 +18,7 @@ const icons = {
   loading: <Icon.LoadingSpin className="animate-spin" />
 };
 
-export default function ContentLayout({ setDropdownValue, setOpenDropdown }: ContentLayoutProps) {
-  const { layout, setLayout } = useFilterContext();
-
+export default function ContentLayout({ layout, setLayout, setDropdownValue, setOpenDropdown }: ContentLayoutProps) {
   return (
     <>
       <DropDownUI.Item

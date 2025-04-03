@@ -2,7 +2,7 @@ import { BottomSheet } from '@/components/BottomSheet';
 import DropDown from '@/components/DropDown';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { ICustomFeed } from '@/types';
+import { ICustomFeed, TReach } from '@/types';
 import { Button, Icon, Input, PostUtil, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { useEffect, useRef, useState } from 'react';
@@ -16,7 +16,11 @@ interface CreateFeedProps {
 
 export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFeeds }: CreateFeedProps) {
   const { saveFeed, searchTags } = usePubkyClientContext();
-  const { reach, layout, sort } = useFilterContext();
+  const { reach, layout, sort, content } = useFilterContext();
+  const [localReach, setLocalReach] = useState<TReach>(reach as TReach);
+  const [localLayout, setLocalLayout] = useState(layout);
+  const [localSort, setLocalSort] = useState(sort);
+  const [localContent, setLocalContent] = useState(content);
   const isMobile = useIsMobile();
   const [tag, setTag] = useState('');
   const [tagsFeed, setTagsFeed] = useState<string[]>([]);
@@ -40,10 +44,10 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
     setLoading(true);
     const feed: ICustomFeed = {
       tags: tagsFeed,
-      reach: reach,
-      layout: layout,
-      sort: sort,
-      content: 'all'
+      reach: localReach,
+      layout: localLayout,
+      sort: localSort,
+      content: localContent
     };
 
     await handleAddFeed(feed, nameFeed);
@@ -160,20 +164,32 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
         <div className="flex gap-4 sm:gap-2 order-1 sm:order-2 sm:flex-col w-[180px]">
           <div>
             <Typography.Label className="text-opacity-30">Reach</Typography.Label>
-            {isMobile ? <BottomSheet.Reach /> : <DropDown.Reach />}
+            {isMobile ? (
+              <BottomSheet.Reach reach={localReach} setReach={setLocalReach} />
+            ) : (
+              <DropDown.Reach reach={localReach} setReach={setLocalReach} />
+            )}
           </div>
           <div>
             <Typography.Label className="text-opacity-30">Sort</Typography.Label>
-            {isMobile ? <BottomSheet.SortPosts /> : <DropDown.SortPosts />}{' '}
+            {isMobile ? (
+              <BottomSheet.SortPosts sort={localSort} setSort={setLocalSort} />
+            ) : (
+              <DropDown.SortPosts sort={localSort} setSort={setLocalSort} />
+            )}{' '}
           </div>
           <div>
             <Typography.Label className="text-opacity-30">Content</Typography.Label>
-            {isMobile ? <BottomSheet.Content /> : <DropDown.Content />}
+            {isMobile ? (
+              <BottomSheet.Content content={localContent} setContent={setLocalContent} />
+            ) : (
+              <DropDown.Content content={localContent} setContent={setLocalContent} />
+            )}
           </div>
           {!isMobile && (
             <div>
               <Typography.Label className="text-opacity-30">Layout</Typography.Label>
-              <DropDown.Layout />
+              <DropDown.Layout layout={localLayout} setLayout={setLocalLayout} />
             </div>
           )}
         </div>

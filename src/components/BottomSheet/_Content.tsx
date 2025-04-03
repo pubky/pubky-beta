@@ -2,10 +2,12 @@
 
 import { BottomSheet, Icon, Typography } from '@social/ui-shared';
 import { useState } from 'react';
-import { useFilterContext } from '@/contexts';
 import ContentType from '../DropDown/_Content/_Content';
+import { TContent } from '@/types';
 
 interface ContentProps {
+  content: TContent;
+  setContent: (content: TContent) => void;
   title?: string;
   className?: string;
 }
@@ -21,8 +23,7 @@ const icons = {
   loading: <Icon.LoadingSpin className="animate-spin" />
 };
 
-export default function Content({ title, className }: ContentProps) {
-  const { content } = useFilterContext();
+export default function Content({ content, setContent, title, className }: ContentProps) {
   const [show, setShow] = useState(false);
   const [dropdownValue, setDropdownValue] = useState({
     value: content || 'all',
@@ -43,7 +44,12 @@ export default function Content({ title, className }: ContentProps) {
         </div>
       </Typography.Body>
       <BottomSheet.Root show={show} setShow={setShow} title={title} className={className}>
-        <ContentType setDropdownValue={setDropdownValue} setOpenDropdown={setShow} />
+        <ContentType
+          content={content}
+          setContent={setContent}
+          setDropdownValue={setDropdownValue}
+          setOpenDropdown={setShow}
+        />
       </BottomSheet.Root>
     </>
   );

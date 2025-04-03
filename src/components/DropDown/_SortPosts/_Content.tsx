@@ -1,5 +1,5 @@
+import { TSort } from '@/types';
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
-import { useFilterContext } from '@/contexts';
 
 const icons = {
   recent: <Icon.Asterisk size="24" />,
@@ -8,13 +8,13 @@ const icons = {
 };
 
 interface ContentSortProps {
+  sort: TSort;
+  setSort: (sort: TSort) => void;
   setDropdownValue: any;
   setOpenDropdown: any;
 }
 
-export default function ContentSortPosts({ setDropdownValue, setOpenDropdown }: ContentSortProps) {
-  const { sort, setSort } = useFilterContext();
-
+export default function ContentSortPosts({ sort, setSort, setDropdownValue, setOpenDropdown }: ContentSortProps) {
   return (
     <>
       <DropDownUI.Item

@@ -3,11 +3,15 @@
 import { useState } from 'react';
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
 import DropDown from '../_DropDown';
-import { useFilterContext } from '@/contexts';
 import ContentSortPosts from './_Content';
+import { TSort } from '@/types';
 
-export default function SortPosts() {
-  const { sort } = useFilterContext();
+interface SortPostsProps {
+  sort: TSort;
+  setSort: (sort: TSort) => void;
+}
+
+export default function SortPosts({ sort, setSort }: SortPostsProps) {
   const [openDropdown, setOpenDropdown] = useState(false);
 
   const icons = {
@@ -31,7 +35,12 @@ export default function SortPosts() {
       type="text"
     >
       <DropDownUI.Content className="right-0 mt-0 px-4 py-2" isOpen={openDropdown}>
-        <ContentSortPosts setDropdownValue={setDropdownValue} setOpenDropdown={setOpenDropdown} />
+        <ContentSortPosts
+          sort={sort}
+          setSort={setSort}
+          setDropdownValue={setDropdownValue}
+          setOpenDropdown={setOpenDropdown}
+        />
       </DropDownUI.Content>
     </DropDown>
   );
