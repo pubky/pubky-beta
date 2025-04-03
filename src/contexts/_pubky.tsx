@@ -1090,9 +1090,9 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
 
     // If feed.tags is null, pass null. Otherwise pass as is.
     const tagsValue = tags && tags.length > 0 ? tags : null;
-    const contentVal = content == 'all' ? null : content;
+    const contentVal = content === 'all' ? null : content;
 
-    const result = specsBuilder!.createFeed(tagsValue, reach, layout, sort, contentVal || null, name);
+    const result = specsBuilder!.createFeed(tagsValue, reach, layout, sort, contentVal, name);
 
     const feedObj = result.feed.toJson();
     await homeserver.put(result.meta.url, JSON.stringify(feedObj));
