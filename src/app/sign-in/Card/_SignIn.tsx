@@ -73,19 +73,20 @@ export default function SignIn() {
         router.push('/home');
       }
     } catch (error: unknown) {
-      const errorMessage = typeof error === 'string' && error === 'error sending request'
-        ? 'No internet connection. Please try again.'
-        : 'Failed to login.';
-      
+      const errorMessage =
+        typeof error === 'string' && error === 'error sending request'
+          ? 'No internet connection. Please try again.'
+          : 'Failed to login.';
+
       setLoginError(errorMessage);
-      
+
       if (errorMessage === 'No internet connection. Please try again.') {
         setAuthUrl('');
       } else {
         // Retry generating auth URL only for non-network errors
         handleGenerateAuthUrl(signal);
       }
-      
+
       console.error('Login error:', error);
     }
   };
