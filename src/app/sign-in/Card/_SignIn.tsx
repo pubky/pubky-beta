@@ -124,7 +124,7 @@ export default function SignIn() {
       className="w-full col-span-2"
     >
       {!isMobile && (
-        <div className="relative cursor-pointer" onClick={copyToClipboard}>
+        <div className={`${authUrl && 'cursor-pointer'} relative`} onClick={authUrl ? copyToClipboard : undefined}>
           {authUrl && !isiOSPWA ? (
             <div className="relative w-fit mt-6">
               <QRCodeSVG
