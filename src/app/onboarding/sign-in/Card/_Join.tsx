@@ -50,7 +50,6 @@ export default function Join() {
   const handleGenerateAuthUrl = async (signal: AbortSignal) => {
     if (signal.aborted) return;
 
-    setLoginError('');
     const result = await generateAuthUrl();
 
     if (!result || !result.url) {
@@ -74,9 +73,7 @@ export default function Join() {
       }
     } catch (error: unknown) {
       const errorMessage =
-        typeof error === 'string' && error === 'error sending request'
-          ? 'No internet connection. Please try again.'
-          : 'Failed to login.';
+        error === 'error sending request' ? 'No internet connection. Please try again.' : 'Failed to login.';
 
       setLoginError(errorMessage);
 
@@ -130,7 +127,7 @@ export default function Join() {
     >
       {!isMobile && (
         <div className="relative cursor-pointer" onClick={copyToClipboard}>
-          {authUrl && !loginError && !isiOSPWA ? (
+          {authUrl && !isiOSPWA ? (
             <div className="relative w-fit mt-6">
               <QRCodeSVG
                 value={authUrl}
