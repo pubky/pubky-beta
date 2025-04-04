@@ -50,33 +50,39 @@ export default function Join() {
   const handleGenerateAuthUrl = async (signal: AbortSignal) => {
     if (signal.aborted) return;
 
-    setLoginError('');
     const result = await generateAuthUrl();
 
-    if (result && result.url) {
-      setAuthUrl(result.url);
+    if (!result || !result.url) {
+      setLoginError('Failed to generate authentication URL.');
+      return;
+    }
 
-      try {
-        const pubkey = await result.promise;
-        if (pubkey) {
-          const handleLoginResult = await loginWithAuthUrl(pubkey);
-          if (handleLoginResult) {
-            addAlert('Login successful!');
-            router.push('/home');
-          }
-        }
-      } catch (error: unknown | { message: string }) {
-        try {
-          const errorMessage = error === 'aead::Error' ? 'Failed to login.' : null;
+    setAuthUrl(result.url);
 
-          if (errorMessage) {
-            setLoginError(errorMessage);
-          }
-          handleGenerateAuthUrl(signal);
-        } catch (error) {
-          console.error('Unexpected error occurred:', error);
-        }
+    try {
+      const pubkey = await result.promise;
+      if (!pubkey) {
+        setLoginError('Failed to get public key.');
+        return;
       }
+
+      const handleLoginResult = await loginWithAuthUrl(pubkey);
+      if (handleLoginResult) {
+        addAlert('Login successful!');
+        router.push('/home');
+      }
+    } catch (error: unknown) {
+      const networkMessage = 'Error sending request. Check internet connection.';
+      const errorMessage = error === 'error sending request' ? networkMessage : String(error);
+      setLoginError(errorMessage);
+
+      if (errorMessage === networkMessage) {
+        setAuthUrl('');
+      } else {
+        // Retry generating auth URL only for non-network errors
+        handleGenerateAuthUrl(signal);
+      }
+      console.error('Login error:', error);
     }
   };
 
@@ -118,8 +124,8 @@ export default function Join() {
       className="w-full col-span-2"
     >
       {!isMobile && (
-        <div className="relative cursor-pointer" onClick={copyToClipboard}>
-          {authUrl && !loginError && !isiOSPWA ? (
+        <div className={`${authUrl && 'cursor-pointer'} relative`} onClick={authUrl ? copyToClipboard : undefined}>
+          {authUrl && !isiOSPWA ? (
             <div className="relative w-fit mt-6">
               <QRCodeSVG
                 value={authUrl}
@@ -162,7 +168,7 @@ export default function Join() {
       {loginError && (
         <div className="flex w-full justify-between items-center px-4 py-2 mt-6 mb-4 rounded-lg border-2 border-red-600 bg-[#e95164] bg-opacity-10">
           <Typography.Body className="break-words text-red-600" variant="small-bold">
-            {Utils.minifyText(loginError, 50)}
+            {Utils.minifyText(loginError, 60)}
           </Typography.Body>
           <div>
             <Icon.Warning color="#dc2626" />
