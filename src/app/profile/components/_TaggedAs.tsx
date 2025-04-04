@@ -74,22 +74,26 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
 
   useEffect(() => {
     setProfileTags(user?.tags);
-  }, [user?.tags]);
+    setSkip(limit);
+    setHasMore(user?.counts?.tags > limit);
+  }, [user?.tags, user?.counts?.tags, limit]);
 
   useEffect(() => {
-    if (!isLoading && moreTags && moreTags.length) {
+    if (!isLoading && moreTags) {
       setProfileTags((prev) => {
-        const newTags = moreTags.filter((tag) => {
-          if (!prev) return true;
-          return !prev.some((t) => t.label === tag.label);
-        });
-        setHasMore(newTags.length === limit);
-        return [...(prev ?? []), ...newTags];
+        if (!prev) return moreTags;
+        
+        const newTags = moreTags.filter((tag) => !prev.some((t) => t.label === tag.label));
+        const updatedTags = [...prev, ...newTags];
+        
+        setHasMore(newTags.length > 0);
+        
+        return updatedTags;
       });
-    } else if (!isLoading && (!moreTags || moreTags.length === 0)) {
+    } else if (!isLoading && !moreTags) {
       setHasMore(false);
     }
-  }, [moreTags, isLoading, limit]);
+  }, [moreTags, isLoading]);
 
   useEffect(() => {
     if (moreTaggers && moreTaggers.users) {
