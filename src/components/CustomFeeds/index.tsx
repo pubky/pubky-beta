@@ -102,7 +102,7 @@ export default function CustomFeeds({ loading, setLoading, ...rest }: CustomFeed
                 className={twMerge(baseCSS, selectedFeed === feed.feed ? activeCSS : '', rest.className)}
                 onClick={() => handleFeedSelect(feed.feed)}
               >
-                <Typography.Body className="text-[13px] leading-[13px]" variant="small-bold">
+                <Typography.Body className="whitespace-nowrap text-[13px] leading-[13px]" variant="small-bold">
                   {Utils.minifyText(feed.name, 11)}
                 </Typography.Body>
                 <div
