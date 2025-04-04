@@ -37,7 +37,7 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
 
   const handleAddFeed = async (feedToAdd: ICustomFeed, name: string) => {
     await saveFeed(feedToAdd, name);
-    handleLoadFeeds();
+    handleLoadFeeds(feedToAdd, name);
   };
 
   const handleSubmit = async () => {
