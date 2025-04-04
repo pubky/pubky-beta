@@ -324,7 +324,7 @@ describe('notifications', () => {
     // * profile 1 edits own post (1)
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(backupDownloadFilePath(profile1.username));
-    editPost('I edited my post!', postContent, 0);
+    editPost({ newPostContent: 'I edited my post!', filterText: postContent});
 
     // * profile 2 checks for notification for post (1) being edited
     cy.signOut(HasBackedUp.Yes);
@@ -355,10 +355,10 @@ describe('notifications', () => {
     cy.findFirstPostInFeed().innerTextContains(postContent);
     repostPost({ repostContent: 'I reposted your post!', filterText: postContent });
 
-    // * profile 1 edits own post (1)
+    // * profile 1 edits own post (1) not the repost
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(backupDownloadFilePath(profile1.username));
-    editPost('I edited my post!', postContent, 1);
+    editPost({ newPostContent: 'I edited my post!', filterText: postContent, postIdx: 1});
 
     // * profile 2 checks for notification for post (1) being edited
     cy.signOut(HasBackedUp.Yes);

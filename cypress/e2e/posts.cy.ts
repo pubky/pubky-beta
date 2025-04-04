@@ -204,7 +204,7 @@ describe('posts', () => {
   it('can post with profile reference', () => {
     // create profile to refer to in a post
     cy.signOut(HasBackedUp.Yes);
-    const uniquePrefix = Cypress._.uniqueId(Date.now().toString().slice(-3));
+    const uniquePrefix = Cypress._.uniqueId(Date.now().toString().slice(-2));
     const otherUsername = 'Jeremy The Poser';
     const fullUsername = uniquePrefix + '_' + otherUsername;
     const pubkyAlias = 'jPubky';
@@ -249,12 +249,12 @@ describe('posts', () => {
     deletePost({});
 
     // verify post is deleted
-    checkPostIsNotAtTopOfFeed(postContent);
+    checkPostIsNotAtTopOfFeed({postContent, refreshIfPostExists: false});
 
     // reload and check post is still deleted
     cy.reload();
     waitForFeedToLoad();
-    checkPostIsNotAtTopOfFeed(postContent);
+    checkPostIsNotAtTopOfFeed({postContent, refreshIfPostExists: true});
   });
 
   // todo: consider combining with 'can delete a post' test
@@ -552,7 +552,7 @@ describe('posts', () => {
     cy.location('pathname').should('eq', '/bookmarks');
 
     // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/1083
-    cy.reload();
+    // cy.reload();
     waitForBookmarksToLoad();
 
     // verify both posts are now bookmarked (note the most recently bookmarked is at the top)
@@ -694,7 +694,7 @@ describe('posts', () => {
       createQuickPost(postContent);
 
       // reply to the post
-      replyToPost({ replyContent, postContent, waitForIndexed });
+      replyToPost({ replyContent, filterText: postContent, postContent, waitForIndexed });
 
       // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/#887
       cy.waitReload();
