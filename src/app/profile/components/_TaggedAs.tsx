@@ -82,12 +82,12 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
     if (!isLoading && moreTags) {
       setProfileTags((prev) => {
         if (!prev) return moreTags;
-        
+
         const newTags = moreTags.filter((tag) => !prev.some((t) => t.label === tag.label));
         const updatedTags = [...prev, ...newTags];
-        
+
         setHasMore(newTags.length > 0);
-        
+
         return updatedTags;
       });
     } else if (!isLoading && !moreTags) {
