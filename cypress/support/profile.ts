@@ -92,10 +92,10 @@ export const waitForNotificationsToLoad = (attempts: number = 5) => {
 };
 
 // wait for notification dot to disappear from all listed notifications (useful to prevent 'no longer attached to the DOM' error when checking list of notifications)
-const waitForNotificationDotToDisappear = (t: number = 25) => {
+export const waitForNotificationDotToDisappear = (t: number = 25) => {
   if (t === 0) assert(false, `waitForNotificationDotToDisappear: Notification dot id not disappear`);
-  cy.get('#notifications-list').then(($firstNotif) => {
-    if ($firstNotif.find('#notification-unread-dot').length > 0) {
+  cy.get('#notifications-list').then(($notifs) => {
+    if ($notifs.find('#notification-unread-dot').length > 0) {
       cy.log('waitForNotificationDotToDisappear: Notification dot is still visible; waiting 200ms and checking again');
       cy.wait(200);
       waitForNotificationDotToDisappear(t - 1);
@@ -105,7 +105,6 @@ const waitForNotificationDotToDisappear = (t: number = 25) => {
 
 export const checkLatestNotification = (expectedContent: string[], profileToNavigateTo?: string) => {
   waitForNotificationsToLoad();
-  waitForNotificationDotToDisappear();
   // assert that each expected string is present in the first notification listed
   cy.get('#notifications-list')
     .should('be.visible')

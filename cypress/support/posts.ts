@@ -213,9 +213,9 @@ export const fastTagPostInFeed = (tags: string[], postContent: string) => {
 
 // menuBtnIdx: 0 for original post, 1 for reply
 
-export const editPost = (newPostContent: string, postIdx = 0, menuBtnIdx = 0) => {
+export const editPost = (newPostContent: string, filterText?: string, postIdx = 0, menuBtnIdx = 0) => {
   // find post and click menu button
-  cy.findPostInFeed(postIdx).within(() => {
+  cy.findPostInFeed(postIdx, filterText).within(() => {
     // '[id="menu-btn"]' finds all with id
     cy.get('[id="menu-btn"]').eq(menuBtnIdx).should('be.visible').click();
     cy.get('#post-tooltip-menu')
@@ -236,9 +236,17 @@ export const editPost = (newPostContent: string, postIdx = 0, menuBtnIdx = 0) =>
 };
 
 // menuBtnIdx: 0 for original post, 1 for reply
-export const deletePost = (postIdx = 0, menuBtnIdx = 0) => {
+export const deletePost = ({
+  filterText = '',
+  postIdx = 0,
+  menuBtnIdx = 0
+}: {
+  filterText?: string;
+  postIdx?: number;
+  menuBtnIdx?: number;
+}) => {
   // find post and click menu button
-  cy.findPostInFeed(postIdx).within(() => {
+  cy.findPostInFeed(postIdx, filterText).within(() => {
     // '[id="menu-btn"]' finds all with id
     cy.get('[id="menu-btn"]').eq(menuBtnIdx).should('be.visible').click();
     cy.get('#post-tooltip-menu')
@@ -288,19 +296,21 @@ export const checkPostIsAtIndexInFeed = (postContent: string, index: number) => 
     });
 };
 
-// wait for feed timeline to not show "No posts yet" or "Loading"
-export const waitForFeedToLoad = (seconds: number = 6) => {
+// wait for feed timeline to not show placeholder text, optionally wait for specific post content to be displayed
+export const waitForFeedToLoad = (postContent?: string) => {
   const checkTimelineRecursively = (attempts: number, firstCheck: boolean = true) => {
-    if (attempts <= 0) assert(false, "Timeline still shows 'No posts yet' or 'Loading' after 5 seconds");
+    if (attempts <= 0) assert(false, "Timeline still shows 'Welcome to your feed', 'Loading' after 5 seconds, or 'Checking for new content'");
 
     cy.get('#posts-feed')
       .find('#timeline')
       .invoke('text')
       .then((text) => {
+        // handle whitespace consistently
+        const normalisedText = text.replace(/\s+/g, ' ').trim();
         if (
-          text.includes('Welcome to your feed!') ||
-          text.includes('Loading') ||
-          text.includes('Checking for new content')
+          normalisedText.includes('Welcome to your feed') ||
+          normalisedText.includes('Loading') ||
+          normalisedText.includes('Checking for new content')
         ) {
           firstCheck ? cy.wait(200) : cy.wait(1000);
           checkTimelineRecursively(attempts - 1, false);
@@ -308,7 +318,27 @@ export const waitForFeedToLoad = (seconds: number = 6) => {
       });
   };
 
-  checkTimelineRecursively(seconds);
+  const checkPostContentRecursively = (postContent: string, attempts: number, firstCheck: boolean = true) => {
+    if (attempts <= 0) assert(false, "Timeline doesn't contain expected post with text: " + postContent);
+
+    cy.get('#posts-feed')
+      .find('#timeline')
+      .invoke('text')
+      .then((text) => {
+        // trim whitespace and normalise spaces to compare
+        const normalisedText = text.replace(/\s+/g, ' ').trim();
+        const normalisedPostContent = postContent.replace(/\s+/g, ' ').trim();
+
+        if (!normalisedText.includes(normalisedPostContent)) {
+          firstCheck ? cy.wait(200) : cy.wait(1000);
+          checkPostContentRecursively(postContent, attempts - 1, false);
+        }
+      });
+  };
+
+  checkTimelineRecursively(10);
+  // optionally check for specific post content (useful for waiting on new post after sign in)
+  if (postContent) checkPostContentRecursively(postContent, 10);
 };
 
 // wait for bookmarks to not show "Save posts for later" or "Loading"

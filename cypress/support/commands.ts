@@ -290,7 +290,7 @@ Cypress.Commands.add('findPostInBookmarks', (postIdx: number) => {
 });
 
 const findPostInFeed = (postIdx = 0, filterText?: string, checkIndexed = CheckIndexed.Yes) => {
-  waitForFeedToLoad();
+  waitForFeedToLoad(filterText);
 
   // if 'checkIndexed' then wait for the post to have two green ticks, indicating it is indexed
   // this is needed because the container element is rerendered when the post is indexed

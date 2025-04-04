@@ -246,7 +246,7 @@ describe('posts', () => {
     latestPostInFeedContentEq(postContent);
 
     // delete the post
-    deletePost();
+    deletePost({});
 
     // verify post is deleted
     checkPostIsNotAtTopOfFeed(postContent);
@@ -619,7 +619,7 @@ describe('posts', () => {
       });
 
       // delete the repost
-      deletePost();
+      deletePost({});
 
       // verify the repost is deleted
       cy.findFirstPostInFeed(waitForIndexed).within(() => {
@@ -668,7 +668,7 @@ describe('posts', () => {
     repostPost({ repostContent, postContent });
 
     // delete the original post (index 1 as the repost is at index 0)
-    deletePost(1);
+    deletePost({ postIdx: 1 });
 
     // verify the repost is displayed in feed with deleted post content
     cy.findFirstPostInFeed().within(($post) => {
@@ -706,7 +706,7 @@ describe('posts', () => {
       });
 
       // delete the original post
-      deletePost();
+      deletePost({});
 
       // verify the reply and original post are no longer displayed in feed
       cy.get('#timeline').within(($timeline) => {
