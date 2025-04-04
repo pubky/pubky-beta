@@ -311,8 +311,9 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                                 width={32}
                                 height={32}
                                 key={`${tag?.label}-${imageIndex}`}
-                                className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${imageIndex > 0 && '-ml-2'
-                                  }`}
+                                className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${
+                                  imageIndex > 0 && '-ml-2'
+                                }`}
                                 alt={`tag-${imageIndex + 1}`}
                               />
                             ))}
@@ -329,7 +330,11 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                         </div>
                       );
                     })}
-                    {hasMore && <div ref={loader}><Icon.LoadingSpin size='24' /></div>}
+                    {hasMore && (
+                      <div ref={loader}>
+                        <Icon.LoadingSpin size="24" />
+                      </div>
+                    )}
                   </>
                 ) : (
                   <>
