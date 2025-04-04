@@ -76,7 +76,7 @@ export default function CustomFeeds({ loading, setLoading, ...rest }: CustomFeed
   return (
     <>
       {!loading && (
-        <div id="custom-feeds-tabs" className="flex gap-1 max-w-[785px] overflow-x-auto no-scrollbar">
+        <div id="custom-feeds-tabs" className="flex gap-1 max-w-[520px] xl:max-w-[785px] overflow-x-auto no-scrollbar">
           <div className={twMerge(baseCSS, !selectedFeed ? activeCSS : '', rest.className)} onClick={handleForYouClick}>
             <Typography.Body className="text-[13px] leading-[13px]" variant="small-bold">
               {reach.charAt(0).toUpperCase() + reach.slice(1)}
