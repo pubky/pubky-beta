@@ -78,18 +78,18 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
 
   useEffect(() => {
     if (!isLoading && moreTags && moreTags.length) {
-      if (!user?.tags) {
-        setProfileTags((prev) => {
-          const newTags = moreTags.filter((tag) => {
-            if (!prev) return true;
-            return !prev.some((t) => t.label === tag.label);
-          });
-          setHasMore(newTags.length > 0);
-          return [...(prev ?? []), ...newTags];
+      setProfileTags((prev) => {
+        const newTags = moreTags.filter((tag) => {
+          if (!prev) return true;
+          return !prev.some((t) => t.label === tag.label);
         });
-      }
+        setHasMore(newTags.length === limit);
+        return [...(prev ?? []), ...newTags];
+      });
+    } else if (!isLoading && (!moreTags || moreTags.length === 0)) {
+      setHasMore(false);
     }
-  }, [moreTags, isLoading, user?.tags]);
+  }, [moreTags, isLoading, limit]);
 
   useEffect(() => {
     if (moreTaggers && moreTaggers.users) {
@@ -311,9 +311,8 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                                 width={32}
                                 height={32}
                                 key={`${tag?.label}-${imageIndex}`}
-                                className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${
-                                  imageIndex > 0 && '-ml-2'
-                                }`}
+                                className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${imageIndex > 0 && '-ml-2'
+                                  }`}
                                 alt={`tag-${imageIndex + 1}`}
                               />
                             ))}
@@ -330,7 +329,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                         </div>
                       );
                     })}
-                    {hasMore && <div ref={loader} />}
+                    {hasMore && <div ref={loader}><Icon.LoadingSpin size='24' /></div>}
                   </>
                 ) : (
                   <>
