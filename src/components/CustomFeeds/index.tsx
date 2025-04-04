@@ -18,9 +18,10 @@ export default function CustomFeeds({ loading, setLoading, ...rest }: CustomFeed
   const activeCSS = 'bg-white bg-opacity-10 rounded-tr-lg';
 
   const { loadFeeds, deleteFeed } = usePubkyClientContext();
-  const { selectedFeed, setSelectedFeed, reach } = useFilterContext();
+  const { layout, selectedFeed, setSelectedFeed, setReach, setSort, setContent, setLayout } = useFilterContext();
   const { openModal } = useModal();
   const [feeds, setFeeds] = useState<{ feed: ICustomFeed; name: string }[]>();
+  const maxWidth = layout === 'wide' ? 'max-w-full' : 'max-w-[520px] xl:max-w-[785px]';
 
   const handleLoadFeeds = async () => {
     setLoading(true);
@@ -55,12 +56,24 @@ export default function CustomFeeds({ loading, setLoading, ...rest }: CustomFeed
     if (selectedFeed === feedToDelete) {
       setSelectedFeed(undefined);
     }
-    handleLoadFeeds();
+    setFeeds((prevFeeds) => prevFeeds?.filter((feed) => JSON.stringify(feed.feed) !== JSON.stringify(feedToDelete)));
   };
 
   const handleForYouClick = () => {
     setSelectedFeed(undefined);
     Utils.storage.remove('feed');
+    setReach('all');
+    setSort('recent');
+    setContent('all');
+    setLayout('columns');
+  };
+
+  const handleAddFeed = async (feedToAdd: ICustomFeed, name: string) => {
+    try {
+      setFeeds((prevFeeds) => [...(prevFeeds || []), { feed: feedToAdd, name }]);
+    } catch (error) {
+      console.error('Error adding feed:', error);
+    }
   };
 
   useEffect(() => {
@@ -76,10 +89,10 @@ export default function CustomFeeds({ loading, setLoading, ...rest }: CustomFeed
   return (
     <>
       {!loading && (
-        <div id="custom-feeds-tabs" className="flex gap-1 max-w-[785px] overflow-x-auto no-scrollbar">
+        <div id="custom-feeds-tabs" className={`${maxWidth} flex gap-1 overflow-x-auto no-scrollbar`}>
           <div className={twMerge(baseCSS, !selectedFeed ? activeCSS : '', rest.className)} onClick={handleForYouClick}>
             <Typography.Body className="text-[13px] leading-[13px]" variant="small-bold">
-              {reach.charAt(0).toUpperCase() + reach.slice(1)}
+              All
             </Typography.Body>
           </div>
           {feeds?.map((feed, index) => {
@@ -89,7 +102,7 @@ export default function CustomFeeds({ loading, setLoading, ...rest }: CustomFeed
                 className={twMerge(baseCSS, selectedFeed === feed.feed ? activeCSS : '', rest.className)}
                 onClick={() => handleFeedSelect(feed.feed)}
               >
-                <Typography.Body className="text-[13px] leading-[13px]" variant="small-bold">
+                <Typography.Body className="whitespace-nowrap text-[13px] leading-[13px]" variant="small-bold">
                   {Utils.minifyText(feed.name, 11)}
                 </Typography.Body>
                 <div
@@ -107,7 +120,7 @@ export default function CustomFeeds({ loading, setLoading, ...rest }: CustomFeed
           {feeds && (
             <div
               id="add-custom-feed"
-              onClick={() => (loading ? undefined : openModal('createFeed', { handleLoadFeeds }))}
+              onClick={() => (loading ? undefined : openModal('createFeed', { handleLoadFeeds: handleAddFeed }))}
               className={twMerge(
                 baseCSS,
                 'bg-transparent border border-white border-opacity-30 hover:bg-white/10 border-dashed',

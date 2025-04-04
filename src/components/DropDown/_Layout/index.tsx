@@ -5,9 +5,14 @@ import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
 import { useFilterContext } from '@/contexts';
 import DropDown from '../_DropDown';
 import ContentLayout from './_Content';
+import { TLayouts } from '@/types';
 
-export default function Layout() {
-  const { layout } = useFilterContext();
+interface LayoutProps {
+  layout: TLayouts;
+  setLayout: (layout: TLayouts) => void;
+}
+
+export default function Layout({ layout, setLayout }: LayoutProps) {
   const [openDropdown, setOpenDropdown] = useState(false);
   const icons = {
     columns: <Icon.ThreeColumns />,
@@ -32,7 +37,12 @@ export default function Layout() {
       type="text"
     >
       <DropDownUI.Content className="right-0 mt-0 px-4 py-2" isOpen={openDropdown}>
-        <ContentLayout setDropdownValue={setDropdownValue} setOpenDropdown={setOpenDropdown} />
+        <ContentLayout
+          layout={layout}
+          setLayout={setLayout}
+          setDropdownValue={setDropdownValue}
+          setOpenDropdown={setOpenDropdown}
+        />
       </DropDownUI.Content>
     </DropDown>
   );

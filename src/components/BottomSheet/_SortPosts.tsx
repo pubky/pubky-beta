@@ -2,10 +2,12 @@
 
 import { BottomSheet, Icon, Typography } from '@social/ui-shared';
 import { useState } from 'react';
-import { useFilterContext } from '@/contexts';
 import ContentSortPosts from '../DropDown/_SortPosts/_Content';
+import { TSort } from '@/types';
 
 interface SortPostsProps {
+  sort: TSort;
+  setSort: (sort: TSort) => void;
   title?: string;
   className?: string;
 }
@@ -16,8 +18,7 @@ const icons = {
   loading: <Icon.LoadingSpin className="animate-spin" />
 };
 
-export default function SortPosts({ title, className }: SortPostsProps) {
-  const { sort } = useFilterContext();
+export default function SortPosts({ sort, setSort, title, className }: SortPostsProps) {
   const [show, setShow] = useState(false);
   const [dropdownValue, setDropdownValue] = useState({
     value: sort || 'recent',
@@ -38,7 +39,7 @@ export default function SortPosts({ title, className }: SortPostsProps) {
         </div>
       </Typography.Body>
       <BottomSheet.Root show={show} setShow={setShow} title={title} className={className}>
-        <ContentSortPosts setDropdownValue={setDropdownValue} setOpenDropdown={setShow} />
+        <ContentSortPosts sort={sort} setSort={setSort} setDropdownValue={setDropdownValue} setOpenDropdown={setShow} />
       </BottomSheet.Root>
     </>
   );

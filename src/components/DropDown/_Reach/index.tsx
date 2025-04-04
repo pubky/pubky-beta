@@ -3,11 +3,15 @@
 import { useState } from 'react';
 import { Icon, DropDown as DropDownUI } from '@social/ui-shared';
 import DropDown from '../_DropDown';
-import { useFilterContext } from '@/contexts';
 import ContentReach from './_Content';
+import { TReach } from '@/types';
 
-export default function Reach() {
-  const { reach } = useFilterContext();
+interface ReachProps {
+  reach: TReach;
+  setReach: (reach: TReach) => void;
+}
+
+export default function Reach({ reach, setReach }: ReachProps) {
   const [openDropdown, setOpenDropdown] = useState(false);
   const icons = {
     following: <Icon.UsersRight />,
@@ -33,7 +37,12 @@ export default function Reach() {
       type="text"
     >
       <DropDownUI.Content className="right-0 mt-0 px-4 py-2" isOpen={openDropdown}>
-        <ContentReach setDropdownValue={setDropdownValue} setOpenDropdown={setOpenDropdown} />
+        <ContentReach
+          reach={reach}
+          setReach={setReach}
+          setDropdownValue={setDropdownValue}
+          setOpenDropdown={setOpenDropdown}
+        />
       </DropDownUI.Content>
     </DropDown>
   );

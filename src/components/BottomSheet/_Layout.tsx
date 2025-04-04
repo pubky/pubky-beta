@@ -3,9 +3,11 @@
 import { BottomSheet, Icon, Typography } from '@social/ui-shared';
 import ContentLayout from '../DropDown/_Layout/_Content';
 import { useState } from 'react';
-import { useFilterContext } from '@/contexts';
+import { TLayouts } from '@/types';
 
 interface LayoutProps {
+  layout: TLayouts;
+  setLayout: (layout: TLayouts) => void;
   title?: string;
   className?: string;
 }
@@ -18,8 +20,7 @@ const icons = {
   loading: <Icon.LoadingSpin className="animate-spin" />
 };
 
-export default function Layout({ title, className }: LayoutProps) {
-  const { layout } = useFilterContext();
+export default function Layout({ layout, setLayout, title, className }: LayoutProps) {
   const [show, setShow] = useState(false);
   const [dropdownValue, setDropdownValue] = useState({
     value: layout || 'columns',
@@ -40,7 +41,12 @@ export default function Layout({ title, className }: LayoutProps) {
         </div>
       </Typography.Body>
       <BottomSheet.Root show={show} setShow={setShow} title={title} className={className}>
-        <ContentLayout setDropdownValue={setDropdownValue} setOpenDropdown={setShow} />
+        <ContentLayout
+          layout={layout}
+          setLayout={setLayout}
+          setDropdownValue={setDropdownValue}
+          setOpenDropdown={setShow}
+        />
       </BottomSheet.Root>
     </>
   );

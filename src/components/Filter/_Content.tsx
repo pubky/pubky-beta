@@ -23,10 +23,19 @@ export default function Content({ disabled = false }: ReachProps) {
     files: <Icon.DownloadSimple size="24" />
   };
 
+  const contentMapping: Record<string, TContent> = {
+    long: 'articles',
+    short: 'posts',
+    image: 'images',
+    video: 'videos',
+    link: 'links',
+    file: 'files'
+  };
+
   useEffect(() => {
-    setContent(content ? content : 'all');
+    setContent((contentMapping[content] || content || 'all') as TContent);
     setLoading(false);
-  }, [content, setContent]);
+  }, [content]);
 
   const handleItemClick = (value: TContent) => {
     setContent(value);

@@ -30,6 +30,15 @@ const NEXT_PUBLIC_DEFAULT_HTTP_RELAY = process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELA
 const client = TESTNET ? Client.testnet() : new Client();
 const NEXT_PUBLIC_HOMESERVER = PublicKey.from(process.env.NEXT_PUBLIC_HOMESERVER);
 
+const contentTypeMap = {
+  posts: 'short',
+  articles: 'long',
+  images: 'image',
+  videos: 'video',
+  links: 'link',
+  files: 'file'
+};
+
 type PubkyClientContextType = {
   pubky: string | undefined;
   seed: string | undefined;
@@ -1090,9 +1099,9 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
 
     // If feed.tags is null, pass null. Otherwise pass as is.
     const tagsValue = tags && tags.length > 0 ? tags : null;
-    const contentVal = content == 'all' ? null : content;
+    const contentVal = contentTypeMap[content] || null;
 
-    const result = specsBuilder!.createFeed(tagsValue, reach, layout, sort, contentVal || null, name);
+    const result = specsBuilder!.createFeed(tagsValue, reach, layout, sort, contentVal, name);
 
     const feedObj = result.feed.toJson();
     await homeserver.put(result.meta.url, JSON.stringify(feedObj));
@@ -1130,7 +1139,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
 
     // If feed.tags is null, pass null. Otherwise pass as is.
     const tagsValue = tags && tags.length > 0 ? tags : null;
-    const contentVal = content == 'all' ? null : content;
+    const contentVal = contentTypeMap[content] || null;
 
     // create feed according to specs to compute ID and URL
     const result = specsBuilder!.createFeed(tagsValue, reach, layout, sort, contentVal || null, 'placeholder');

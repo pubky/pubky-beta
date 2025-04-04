@@ -2,10 +2,12 @@
 
 import { BottomSheet, Icon, Typography } from '@social/ui-shared';
 import { useState } from 'react';
-import { useFilterContext } from '@/contexts';
 import ContentReach from '../DropDown/_Reach/_Content';
+import { TReach } from '@/types';
 
 interface ReachProps {
+  reach: TReach;
+  setReach: (reach: TReach) => void;
   title?: string;
   className?: string;
 }
@@ -18,8 +20,7 @@ const icons = {
   loading: <Icon.LoadingSpin className="animate-spin" />
 };
 
-export default function Reach({ title, className }: ReachProps) {
-  const { reach } = useFilterContext();
+export default function Reach({ reach, setReach, title, className }: ReachProps) {
   const [show, setShow] = useState(false);
   const [dropdownValue, setDropdownValue] = useState({
     value: reach || 'all',
@@ -40,7 +41,7 @@ export default function Reach({ title, className }: ReachProps) {
         </div>
       </Typography.Body>
       <BottomSheet.Root show={show} setShow={setShow} title={title} className={className}>
-        <ContentReach setDropdownValue={setDropdownValue} setOpenDropdown={setShow} />
+        <ContentReach reach={reach} setReach={setReach} setDropdownValue={setDropdownValue} setOpenDropdown={setShow} />
       </BottomSheet.Root>
     </>
   );
