@@ -1133,7 +1133,6 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
   });
 
   const deleteFeed = withAuth(async (feed: ICustomFeed): Promise<boolean> => {
-
     // Map the ICustomFeed to the arguments for `createFeed`:
     // feed might have e.g. tags, reach, layout, etc.
     const { tags, reach, layout, sort, content } = feed;
