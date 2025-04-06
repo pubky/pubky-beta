@@ -299,16 +299,37 @@ const findPostInFeed = (postIdx = 0, filterText?: string, checkIndexed = CheckIn
   });
 
   // find the post in the timeline
+  // cy.get('#posts-feed')
+  //   .find('#timeline')
+  //   .children()
+  //   .should('have.length.gte', 1)
+  //   .then(($posts) => {
+  //     // optionally filter posts by contained text
+  //     return filterText
+  //       ? // cannot use :contains due to additional space inserted between each word in the post content
+  //         $posts.filter((_idx, element) => element.innerText.includes(filterText))
+  //       : $posts;
+  //   })
+  //   .eq(postIdx);
+
+  // TODO: revert to above implementation so we don't miss bugs with "Show n new posts" button appearing when bug is fixed, see https://github.com/pubky/pubky-app/issues/1033
   cy.get('#posts-feed')
     .find('#timeline')
+    .should('have.descendants', '*')
     .children()
-    .should('have.length.gte', 1)
     .then(($posts) => {
+      // Filter out "Show new posts" element
+      const actualPosts = $posts.filter((_, el) => {
+        const text = Cypress.$(el).text();
+        // Match "Show n new posts" pattern where n is a number
+        return !/Show\s+\d+\s+new posts/i.test(text);
+      });
+
       // optionally filter posts by contained text
       return filterText
         ? // cannot use :contains due to additional space inserted between each word in the post content
-          $posts.filter((_idx, element) => element.innerText.includes(filterText))
-        : $posts;
+          actualPosts.filter((_idx, element) => element.innerText.includes(filterText))
+        : actualPosts;
     })
     .eq(postIdx);
 };

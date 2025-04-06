@@ -247,6 +247,7 @@ describe('feed and filters', () => {
     cannotFindPostInFeed(profile4.postText);
   });
 
+  // TODO: remove workaround in checkPostIsAtIndexInFeed when bug is fixed, see https://github.com/pubky/pubky-app/issues/1393
   it('can sort by popularity', () => {
     // * sign in as profile 1 and sort by Popularity with Reach Following posts
     cy.signIn(backupDownloadFilePath(profile1.username));

@@ -114,11 +114,11 @@ describe('posts', () => {
       `ooooooooooooooooooooooooooooooooooooooooooog post! ${Date.now()}`;
 
     const expectedPostContent =
-    'I can make a really looooooooooooooooooooooooooooooooooooooooooooooooooo' +
-    'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-    'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-    'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-    'oooooooooooo...Show more';
+      'I can make a really looooooooooooooooooooooooooooooooooooooooooooooooooo' +
+      'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
+      'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
+      'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
+      'oooooooooooo...Show more';
 
     createQuickPost(postContent);
 
@@ -217,16 +217,16 @@ describe('posts', () => {
     cy.get('#quick-post-create-content').within(() => {
       cy.get('textarea').should('have.value', '');
       // type the post and submit
-      // todo: change to upper case J once bug fixed: https://github.com/pubky/pubky-app/issues/457
       cy.get('textarea').type(postContent + ` @${uniquePrefix}`);
       // check that profile searched is performed
       cy.get('#searched-users-card')
         .should('be.visible')
+        .should('have.descendants', '*')
         .children()
-        .should('have.length.greaterThan', 0)
-        .first()
-        .contains(uniquePrefix)
-        .click();
+        .within(() => {
+          // Wait for the search results to stabilise
+          cy.contains(uniquePrefix).should('be.visible').click();
+        });
       // verify that the profile reference is added to the post
       cy.get(`@${pubkyAlias}`).then((pubky) => {
         cy.get('textarea').should('have.value', postContent + ` ${pubky}`);
@@ -249,12 +249,12 @@ describe('posts', () => {
     deletePost({});
 
     // verify post is deleted
-    checkPostIsNotAtTopOfFeed({postContent, refreshIfPostExists: false});
+    checkPostIsNotAtTopOfFeed({ postContent, refreshIfPostExists: false });
 
     // reload and check post is still deleted
     cy.reload();
     waitForFeedToLoad();
-    checkPostIsNotAtTopOfFeed({postContent, refreshIfPostExists: true});
+    checkPostIsNotAtTopOfFeed({ postContent, refreshIfPostExists: true });
   });
 
   // todo: consider combining with 'can delete a post' test
@@ -307,11 +307,11 @@ describe('posts', () => {
       verifyPost();
 
       // refresh page before checking tags are still displayed
-      cy.reload();
+      cy.waitReload(500);
       waitForFeedToLoad();
 
       // check tags are still displayed in the post
-      verifyPost;
+      verifyPost();
     });
   });
 
@@ -551,8 +551,6 @@ describe('posts', () => {
     cy.get('#header-bookmarks-btn').click();
     cy.location('pathname').should('eq', '/bookmarks');
 
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/1083
-    // cy.reload();
     waitForBookmarksToLoad();
 
     // verify both posts are now bookmarked (note the most recently bookmarked is at the top)
@@ -585,10 +583,6 @@ describe('posts', () => {
     cy.location('pathname').should('eq', '/home');
     cy.get('#header-bookmarks-btn').click();
     cy.location('pathname').should('eq', '/bookmarks');
-
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/1083
-    cy.reload();
-    cy.wait(500);
 
     //verify the post is no longer bookmarked
     cy.get('#bookmarked-posts').should('contain.text', 'Save posts for later');
@@ -635,11 +629,10 @@ describe('posts', () => {
     const postContent = `This post will be reposted without content! ${Date.now()}`;
     createQuickPost(postContent);
 
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/546
-    cy.waitReload();
-
     // repost without content
     repostPost({ postContent });
+    // TODO: can find original post instead of repost in CI, remove wait when I have a better workaround
+    cy.wait(500);
 
     // verify the repost without content is displayed correctly in feed
     cy.findFirstPostInFeed().within(($post) => {

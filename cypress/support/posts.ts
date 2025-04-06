@@ -276,7 +276,7 @@ export const deletePost = ({
 
 // reloads the page until the post is no longer displayed in the feed
 const waitForPostToBeDeleted = (postContent: string, attempts: number = 5, firstCheck: boolean = true) => {
-  if (attempts <= 0) assert(false, "Post still exists with content: " + postContent);
+  if (attempts <= 0) assert(false, 'Post still exists with content: ' + postContent);
 
   cy.get('#posts-feed')
     .find('#timeline')
@@ -319,21 +319,48 @@ export const checkPostIsNotAtTopOfFeed = ({
     });
 };
 
+// export const checkPostIsAtIndexInFeed = (postContent: string, index: number) => {
+//   cy.get('#posts-feed')
+//     .find('#timeline')
+//     .children()
+//     .should('have.length.gte', 1)
+//     .eq(index)
+//     .within(() => {
+//       cy.get('#post-content-text').innerTextShouldEq(postContent);
+//     });
+// };
+
+// TODO: revert to above implementation so we don't miss bugs with "Show n new posts" button appearing when bug is fixed, see https://github.com/pubky/pubky-app/issues/1393
 export const checkPostIsAtIndexInFeed = (postContent: string, index: number) => {
   cy.get('#posts-feed')
     .find('#timeline')
+    .should('have.descendants', '*')
     .children()
-    .should('have.length.gte', 1)
-    .eq(index)
-    .within(() => {
-      cy.get('#post-content-text').innerTextShouldEq(postContent);
+    .then(($posts) => {
+      // Filter out "Show new posts" element
+      const actualPosts = $posts.filter((_, el) => {
+        const text = Cypress.$(el).text();
+        // Match "Show n new posts" pattern where n is a number
+        return !/Show\s+\d+\s+new posts/i.test(text);
+      });
+
+      // Use the filtered collection to get the correct post
+      cy.wrap(actualPosts)
+        .eq(index)
+        .within(() => {
+          cy.get('#post-content-text').innerTextShouldEq(postContent);
+        });
     });
 };
 
 // wait for feed timeline to not show placeholder text, optionally wait for specific post content to be displayed
 export const waitForFeedToLoad = (postContent?: string) => {
   const checkTimelineRecursively = (attempts: number, firstCheck: boolean = true) => {
-    if (attempts <= 0) assert(false, "Timeline still shows 'Welcome to your feed', 'Loading' after 5 seconds, or 'Checking for new content'");
+    if (attempts <= 0)
+      assert(
+        false,
+        "Timeline still shows 'Welcome to your feed', 'Loading' after 5 seconds, or 'Checking for new content'"
+      );
 
     cy.get('#posts-feed')
       .find('#timeline')

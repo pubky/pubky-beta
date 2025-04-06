@@ -141,7 +141,7 @@ describe('settings', () => {
 
     // check user 1's post is no longer seen in feed
     cy.get('#header-home-btn').click();
-    checkPostIsNotAtTopOfFeed({postContent});
+    checkPostIsNotAtTopOfFeed({ postContent });
 
     // confirm user 1 is now muted in settings page and unmute them
     cy.get('#header-settings-btn').click();
