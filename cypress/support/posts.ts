@@ -44,6 +44,25 @@ export const checkLatestPostIsIndexed = () => {
   checkPostIsIndexed(0);
 };
 
+// wait for latest post to be a repost
+export const waitForRepost = (t = 10, text?: string) => {
+  if (t === 0) assert(false, `waitForRepost: Latest post is not a repost. text=${text}`);
+  cy.get('#posts-feed')
+    .find('#timeline')
+    .children()
+    .eq(0)
+    .invoke('text')
+    .then((text) => {
+      if (text.includes('Undo repost')) {
+        cy.log('waitForRepost: Latest post is a repost');
+      } else {
+        cy.log('waitForRepost: Latest post is not a repost; waiting 200ms and checking again');
+        cy.wait(200);
+        waitForRepost(t - 1, text);
+      }
+    });
+}
+
 // verify that a post in the feed has the expected content, post is located by index
 export const postInFeedContentEq = (postContent: string, idx: number) => {
   cy.get('#posts-feed')

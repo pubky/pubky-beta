@@ -280,6 +280,7 @@ describe('posts', () => {
     });
   });
 
+  // todo: test is failing intermittently, possibly due to duplicate id bug, https://github.com/pubky/pubky-app/issues/1033
   [CheckIndexed.Yes, CheckIndexed.No].forEach((waitForIndexed) => {
     it(`can tag whilst creating post (waitForIndexed: ${waitForIndexed})`, () => {
       const postContent = `I can post with tags! ${Date.now()}`;
@@ -307,7 +308,6 @@ describe('posts', () => {
       verifyPost();
 
       // refresh page before checking tags are still displayed
-      cy.waitReload(500);
       waitForFeedToLoad();
 
       // check tags are still displayed in the post
@@ -624,6 +624,7 @@ describe('posts', () => {
   });
 
   // todo: consider creating user to create the post to repost
+  // todo: test is failing intermittently, possibly due to duplicate id bug, https://github.com/pubky/pubky-app/issues/1033
   it('can repost without content then delete the repost', () => {
     // create a post to repost
     const postContent = `This post will be reposted without content! ${Date.now()}`;
@@ -631,8 +632,6 @@ describe('posts', () => {
 
     // repost without content
     repostPost({ postContent });
-    // TODO: can find original post instead of repost in CI, remove wait when I have a better workaround
-    cy.wait(500);
 
     // verify the repost without content is displayed correctly in feed
     cy.findFirstPostInFeed().within(($post) => {
