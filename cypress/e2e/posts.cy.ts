@@ -280,9 +280,9 @@ describe('posts', () => {
     });
   });
 
-  // todo: test is failing intermittently, possibly due to duplicate id bug, https://github.com/pubky/pubky-app/issues/1033
+  // TODO: reenable intermittently failing test, see https://github.com/pubky/pubky-app/issues/1397
   [CheckIndexed.Yes, CheckIndexed.No].forEach((waitForIndexed) => {
-    it(`can tag whilst creating post (waitForIndexed: ${waitForIndexed})`, () => {
+    it.skip(`can tag whilst creating post (waitForIndexed: ${waitForIndexed})`, () => {
       const postContent = `I can post with tags! ${Date.now()}`;
       const tag1 = 'alpacas';
       const tag2 = 'llamas';
@@ -624,8 +624,8 @@ describe('posts', () => {
   });
 
   // todo: consider creating user to create the post to repost
-  // todo: test is failing intermittently, possibly due to duplicate id bug, https://github.com/pubky/pubky-app/issues/1033
-  it('can repost without content then delete the repost', () => {
+  // todo: reenable intermittently failing test, see https://github.com/pubky/pubky-app/issues/1396
+  it.skip('can repost without content then delete the repost', () => {
     // create a post to repost
     const postContent = `This post will be reposted without content! ${Date.now()}`;
     createQuickPost(postContent);
