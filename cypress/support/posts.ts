@@ -61,7 +61,7 @@ export const waitForRepost = (t = 10, text?: string) => {
         waitForRepost(t - 1, text);
       }
     });
-}
+};
 
 // verify that a post in the feed has the expected content, post is located by index
 export const postInFeedContentEq = (postContent: string, idx: number) => {
