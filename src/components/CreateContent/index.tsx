@@ -212,6 +212,7 @@ export default function CreateContent({
       for (let i = 0; i < items.length; i++) {
         const item = items[i];
         if (item.kind === 'file') {
+          event.preventDefault();
           const file = item.getAsFile();
           if (file) {
             const isImage = file.type.startsWith('image/');
