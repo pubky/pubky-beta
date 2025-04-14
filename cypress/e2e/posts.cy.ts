@@ -758,7 +758,8 @@ describe('posts', () => {
     createArticle(articleTitle, articleContent, 'mustache-you.png', [tag1, tag2]);
 
     // TODO: remove reload workaround, see https://github.com/pubky/pubky-app/issues/1397
-    cy.reload();
+    cy.findFirstPostInFeed(CheckIndexed.Yes);
+    cy.waitReload(200);
     waitForFeedToLoad();
 
     checkArticleInFeed(articleTitle, articleContent, ImageExpected.Yes, [tag1, tag2]);
@@ -785,7 +786,8 @@ describe('posts', () => {
     createArticle(articleTitle, articleContent);
 
     // TODO: remove reload workaround, see https://github.com/pubky/pubky-app/issues/1397
-    cy.reload();
+    cy.findFirstPostInFeed(CheckIndexed.Yes);
+    cy.waitReload(200);
     waitForFeedToLoad();
 
     checkArticleInFeed(articleTitle, articleContent, ImageExpected.No);
