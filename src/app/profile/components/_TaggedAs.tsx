@@ -36,8 +36,9 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
   const [profileTags, setProfileTags] = useState<UserTags[]>();
   const links = user?.details?.links ?? [];
   const limit = 5;
-  const [skip, setSkip] = useState(limit);
-  const [hasMore, setHasMore] = useState(user && user?.counts?.tags > limit);
+  const [skip, setSkip] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [selectedTag, setSelectedTag] = useState<UserTags | null>(null);
   const [taggers, setTaggers] = useState<string[]>([]);
   const [userProfiles, setUserProfiles] = useState<{ [key: string]: any }>({});
@@ -74,24 +75,43 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
 
   useEffect(() => {
     setProfileTags(user?.tags);
-    setSkip(limit);
-    setHasMore(user?.counts?.tags > limit);
-  }, [user?.tags, user?.counts?.tags, limit]);
+    setSkip(0);
+    setHasMore(true);
+  }, [user?.tags]);
 
   useEffect(() => {
     if (!isLoading && moreTags) {
       setProfileTags((prev) => {
         if (!prev) return moreTags;
 
-        const newTags = moreTags.filter((tag) => !prev.some((t) => t.label === tag.label));
-        const updatedTags = [...prev, ...newTags];
+        // Create a Map to track unique tags by label
+        const uniqueTags = new Map();
 
-        setHasMore(newTags.length > 0);
+        // First add all existing tags
+        prev.forEach((tag) => {
+          uniqueTags.set(tag.label, tag);
+        });
+
+        // Then add new tags, overwriting existing ones if they have more taggers
+        moreTags.forEach((tag) => {
+          const existingTag = uniqueTags.get(tag.label);
+          if (!existingTag || tag.taggers_count > existingTag.taggers_count) {
+            uniqueTags.set(tag.label, tag);
+          }
+        });
+
+        // Convert Map back to array and maintain order
+        const updatedTags = Array.from(uniqueTags.values());
+
+        // Set hasMore based on whether we received any new tags
+        setHasMore(moreTags.length > 0);
+        setIsLoadingMore(false);
 
         return updatedTags;
       });
     } else if (!isLoading && !moreTags) {
       setHasMore(false);
+      setIsLoadingMore(false);
     }
   }, [moreTags, isLoading]);
 
@@ -148,10 +168,11 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
   }, [taggers, pubky]);
 
   const loader = useInfiniteScroll(() => {
-    if (hasMore && !isLoading) {
+    if (hasMore && !isLoading && !isLoadingMore) {
+      setIsLoadingMore(true);
       setSkip((prev) => prev + limit);
     }
-  }, isLoading);
+  }, isLoading || isLoadingMore);
 
   const loaderTaggers = useInfiniteScroll(() => {
     if (hasMoreTaggers && !isLoadingTaggers) {
@@ -335,7 +356,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                       );
                     })}
                     {hasMore && (
-                      <div ref={loader}>
+                      <div ref={loader} className="flex justify-center">
                         <Icon.LoadingSpin size="24" />
                       </div>
                     )}
