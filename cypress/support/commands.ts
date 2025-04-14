@@ -1,5 +1,6 @@
 // <reference types="cypress" />
 
+import { checkPostIsIndexed, waitForFeedToLoad } from './posts';
 import { CheckIndexed, HasBackedUp, SkipOnboardingSlides } from './types/enums';
 // ***********************************************
 // This example commands.ts shows you how to
@@ -289,57 +290,12 @@ Cypress.Commands.add('findPostInBookmarks', (postIdx: number) => {
 });
 
 const findPostInFeed = (postIdx = 0, filterText?: string, checkIndexed = CheckIndexed.Yes) => {
-  // A function to check if timeline contains 'No post yet'.
-  // If it does then wait 1 second and check again.
-  // This is a wait for the timeline to load after the page loads.
-  const checkTimelineReady = (t = 5) => {
-    if (t === 0) assert(false, `findPostInFeed: Timeline not loaded`);
-    cy.get('#posts-feed')
-      .find('#timeline')
-      .then(($timeline) => {
-        // if contains 'No post yet' then wait 1 second and check again
-        cy.wrap($timeline)
-          .innerTextContains('No posts yet')
-          .then((hasNoPosts) => {
-            if (hasNoPosts) {
-              cy.log('findPostInFeed: Timeline not loaded; waiting 1 second and checking again');
-              cy.wait(1000);
-              checkTimelineReady(t - 1);
-            }
-          });
-      });
-  };
-
-  // check timeline 5 times to be ready for a post to be found
-  checkTimelineReady(5);
-
-  // A function to check if the post is indexed
-  const checkPostIsIndexed = (t = 50) => {
-    if (t === 0) assert(false, `findPostInFeed: Post not indexed`);
-    cy.log(`findPostInFeed: Checking if post ${postIdx} is indexed`);
-    cy.get('#posts-feed')
-      .find('#timeline')
-      .children()
-      .eq(postIdx)
-      .then(($post) => {
-        // if post has the status checkmarks then wait for it to have two green ticks
-        if ($post.find('#post-status').length > 0) {
-          if ($post.find('#post-status #post-status-indexed').length === 0) {
-            cy.log('findPostInFeed: Post not indexed; waiting 200ms and checking again');
-            cy.wait(200);
-            checkPostIsIndexed(t - 1);
-          }
-        } else {
-          cy.log(`findPostInFeed: Post ${postIdx} was already indexed`);
-        }
-      });
-    cy.log(`findPostInFeed: Post ${postIdx} is indexed`);
-  };
+  waitForFeedToLoad(filterText);
 
   // if 'checkIndexed' then wait for the post to have two green ticks, indicating it is indexed
   // this is needed because the container element is rerendered when the post is indexed
   cy.wrap(checkIndexed).then(($checkIndexed) => {
-    if ($checkIndexed === CheckIndexed.Yes) checkPostIsIndexed();
+    if ($checkIndexed === CheckIndexed.Yes) checkPostIsIndexed(postIdx);
   });
 
   // find the post in the timeline
@@ -355,6 +311,27 @@ const findPostInFeed = (postIdx = 0, filterText?: string, checkIndexed = CheckIn
         : $posts;
     })
     .eq(postIdx);
+
+  // TODO: this implementation is more robust when "Show n new posts" appears unexpectedly, see https://github.com/pubky/pubky-app/issues/1033
+  // cy.get('#posts-feed')
+  //   .find('#timeline')
+  //   .should('have.descendants', '*')
+  //   .children()
+  //   .then(($posts) => {
+  //     // Filter out "Show new posts" element
+  //     const actualPosts = $posts.filter((_, el) => {
+  //       const text = Cypress.$(el).text();
+  //       // Match "Show n new posts" pattern where n is a number
+  //       return !/Show\s+\d+\s+new posts/i.test(text);
+  //     });
+
+  //     // optionally filter posts by contained text
+  //     return filterText
+  //       ? // cannot use :contains due to additional space inserted between each word in the post content
+  //         actualPosts.filter((_idx, element) => element.innerText.includes(filterText))
+  //       : actualPosts;
+  //   })
+  //   .eq(postIdx);
 };
 
 // useful to find your latest new post

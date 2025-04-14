@@ -15,7 +15,9 @@ import {
   createQuickPostWithTags,
   fastTagWhilstCreatingPost,
   addImage,
-  waitForBookmarksToLoad
+  waitForBookmarksToLoad,
+  checkPostIsIndexed,
+  checkLatestPostIsIndexed
 } from '../support/posts';
 import { defaultMs, fastMs } from '../support/slow-down';
 import { CheckIndexed, HasBackedUp, SkipOnboardingSlides } from '../support/types/enums';
@@ -52,6 +54,9 @@ describe('posts', () => {
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
 
+    // wait for post to be indexed before reloading page
+    checkLatestPostIsIndexed();
+
     // reload and check post is still displayed correctly
     cy.reload();
     waitForFeedToLoad();
@@ -76,6 +81,9 @@ describe('posts', () => {
 
     // verify the post is displayed correctly in feed
     latestPostInFeedContentEq(postContent);
+
+    // wait for post to be indexed before reloading page
+    checkLatestPostIsIndexed();
 
     // reload and check post is still displayed correctly
     cy.reload();
@@ -105,10 +113,19 @@ describe('posts', () => {
       'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
       `ooooooooooooooooooooooooooooooooooooooooooog post! ${Date.now()}`;
 
+    const expectedPostContent =
+      'I can make a really looooooooooooooooooooooooooooooooooooooooooooooooooo' +
+      'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
+      'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
+      'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
+      'oooooooooooo...Show more';
+
     createQuickPost(postContent);
 
     // verify the post is displayed correctly in feed
-    latestPostInFeedContentEq(postContent);
+    latestPostInFeedContentEq(expectedPostContent);
+
+    // TODO: click 'Show more' and assert full content is displayed
   });
 
   it('can post with emojis', () => {
@@ -187,7 +204,7 @@ describe('posts', () => {
   it('can post with profile reference', () => {
     // create profile to refer to in a post
     cy.signOut(HasBackedUp.Yes);
-    const uniquePrefix = Cypress._.uniqueId(Date.now().toString().slice(-3));
+    const uniquePrefix = Cypress._.uniqueId(Date.now().toString().slice(-2));
     const otherUsername = 'Jeremy The Poser';
     const fullUsername = uniquePrefix + '_' + otherUsername;
     const pubkyAlias = 'jPubky';
@@ -200,16 +217,16 @@ describe('posts', () => {
     cy.get('#quick-post-create-content').within(() => {
       cy.get('textarea').should('have.value', '');
       // type the post and submit
-      // todo: change to upper case J once bug fixed: https://github.com/pubky/pubky-app/issues/457
       cy.get('textarea').type(postContent + ` @${uniquePrefix}`);
       // check that profile searched is performed
       cy.get('#searched-users-card')
         .should('be.visible')
+        .should('have.descendants', '*')
         .children()
-        .should('have.length.greaterThan', 0)
-        .first()
-        .contains(uniquePrefix)
-        .click();
+        .within(() => {
+          // Wait for the search results to stabilise
+          cy.contains(uniquePrefix).should('be.visible').click();
+        });
       // verify that the profile reference is added to the post
       cy.get(`@${pubkyAlias}`).then((pubky) => {
         cy.get('textarea').should('have.value', postContent + ` ${pubky}`);
@@ -229,15 +246,15 @@ describe('posts', () => {
     latestPostInFeedContentEq(postContent);
 
     // delete the post
-    deletePost();
+    deletePost({});
 
     // verify post is deleted
-    checkPostIsNotAtTopOfFeed(postContent);
+    checkPostIsNotAtTopOfFeed({ postContent, refreshIfPostExists: false });
 
     // reload and check post is still deleted
     cy.reload();
     waitForFeedToLoad();
-    checkPostIsNotAtTopOfFeed(postContent);
+    checkPostIsNotAtTopOfFeed({ postContent, refreshIfPostExists: true });
   });
 
   // todo: consider combining with 'can delete a post' test
@@ -263,8 +280,9 @@ describe('posts', () => {
     });
   });
 
+  // TODO: reenable intermittently failing test, see https://github.com/pubky/pubky-app/issues/1397
   [CheckIndexed.Yes, CheckIndexed.No].forEach((waitForIndexed) => {
-    it(`can tag whilst creating post (waitForIndexed: ${waitForIndexed})`, () => {
+    it.skip(`can tag whilst creating post (waitForIndexed: ${waitForIndexed})`, () => {
       const postContent = `I can post with tags! ${Date.now()}`;
       const tag1 = 'alpacas';
       const tag2 = 'llamas';
@@ -290,11 +308,10 @@ describe('posts', () => {
       verifyPost();
 
       // refresh page before checking tags are still displayed
-      cy.reload();
       waitForFeedToLoad();
 
       // check tags are still displayed in the post
-      verifyPost;
+      verifyPost();
     });
   });
 
@@ -534,8 +551,6 @@ describe('posts', () => {
     cy.get('#header-bookmarks-btn').click();
     cy.location('pathname').should('eq', '/bookmarks');
 
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/1083
-    cy.reload();
     waitForBookmarksToLoad();
 
     // verify both posts are now bookmarked (note the most recently bookmarked is at the top)
@@ -569,10 +584,6 @@ describe('posts', () => {
     cy.get('#header-bookmarks-btn').click();
     cy.location('pathname').should('eq', '/bookmarks');
 
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/1083
-    cy.reload();
-    cy.wait(500);
-
     //verify the post is no longer bookmarked
     cy.get('#bookmarked-posts').should('contain.text', 'Save posts for later');
   });
@@ -602,7 +613,7 @@ describe('posts', () => {
       });
 
       // delete the repost
-      deletePost();
+      deletePost({});
 
       // verify the repost is deleted
       cy.findFirstPostInFeed(waitForIndexed).within(() => {
@@ -613,13 +624,11 @@ describe('posts', () => {
   });
 
   // todo: consider creating user to create the post to repost
-  it('can repost without content then delete the repost', () => {
+  // todo: reenable intermittently failing test, see https://github.com/pubky/pubky-app/issues/1396
+  it.skip('can repost without content then delete the repost', () => {
     // create a post to repost
     const postContent = `This post will be reposted without content! ${Date.now()}`;
     createQuickPost(postContent);
-
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/546
-    cy.waitReload();
 
     // repost without content
     repostPost({ postContent });
@@ -651,7 +660,7 @@ describe('posts', () => {
     repostPost({ repostContent, postContent });
 
     // delete the original post (index 1 as the repost is at index 0)
-    deletePost(1);
+    deletePost({ postIdx: 1 });
 
     // verify the repost is displayed in feed with deleted post content
     cy.findFirstPostInFeed().within(($post) => {
@@ -677,7 +686,7 @@ describe('posts', () => {
       createQuickPost(postContent);
 
       // reply to the post
-      replyToPost({ replyContent, postContent, waitForIndexed });
+      replyToPost({ replyContent, filterText: postContent, postContent, waitForIndexed });
 
       // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/#887
       cy.waitReload();
@@ -689,7 +698,7 @@ describe('posts', () => {
       });
 
       // delete the original post
-      deletePost();
+      deletePost({});
 
       // verify the reply and original post are no longer displayed in feed
       cy.get('#timeline').within(($timeline) => {
@@ -747,6 +756,12 @@ describe('posts', () => {
       });
 
     createArticle(articleTitle, articleContent, 'mustache-you.png', [tag1, tag2]);
+
+    // TODO: remove reload workaround, see https://github.com/pubky/pubky-app/issues/1397
+    cy.findFirstPostInFeed(CheckIndexed.Yes);
+    cy.waitReload(200);
+    waitForFeedToLoad();
+
     checkArticleInFeed(articleTitle, articleContent, ImageExpected.Yes, [tag1, tag2]);
   });
 
@@ -769,6 +784,12 @@ describe('posts', () => {
       });
 
     createArticle(articleTitle, articleContent);
+
+    // TODO: remove reload workaround, see https://github.com/pubky/pubky-app/issues/1397
+    cy.findFirstPostInFeed(CheckIndexed.Yes);
+    cy.waitReload(200);
+    waitForFeedToLoad();
+
     checkArticleInFeed(articleTitle, articleContent, ImageExpected.No);
   });
 

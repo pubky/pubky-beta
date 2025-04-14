@@ -204,6 +204,7 @@ describe('feed and filters', () => {
   it('can filter view only posts and reposts of friends', () => {
     // * sign in as profile 1 and view Reach Friends, only profile 2's post can be seen
     cy.signIn(backupDownloadFilePath(profile1.username));
+    waitForFeedToLoad();
     cy.get('#left-sidebar').find('#reach-friends-btn').click();
     waitForFeedToLoad();
 
@@ -222,6 +223,7 @@ describe('feed and filters', () => {
 
     // * sign in as profile 2 and view Reach Friends, only profile 1's posts can be seen
     cy.signIn(backupDownloadFilePath(profile2.username));
+    waitForFeedToLoad();
     cy.get('#left-sidebar').find('#reach-friends-btn').click();
     waitForFeedToLoad();
     cy.findFirstPostInFeedFiltered(profile1.postText1).should('be.visible');
@@ -236,6 +238,7 @@ describe('feed and filters', () => {
 
     // * sign in as profile 3 and view Reach Friends, no posts can be seen
     cy.signIn(backupDownloadFilePath(profile3.username));
+    waitForFeedToLoad();
     cy.get('#left-sidebar').find('#reach-friends-btn').click();
 
     cannotFindPostInFeed(profile1.postText1);
@@ -247,6 +250,7 @@ describe('feed and filters', () => {
     cannotFindPostInFeed(profile4.postText);
   });
 
+  // TODO: remove workaround in checkPostIsAtIndexInFeed when bug is fixed, see https://github.com/pubky/pubky-app/issues/1393
   it('can sort by popularity', () => {
     // * sign in as profile 1 and sort by Popularity with Reach Following posts
     cy.signIn(backupDownloadFilePath(profile1.username));

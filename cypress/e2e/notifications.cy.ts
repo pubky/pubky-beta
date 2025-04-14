@@ -1,9 +1,17 @@
 import { backupDownloadFilePath } from '../support/auth';
-import { createQuickPost, deletePost, editPost, fastTagPost, replyToPost, repostPost } from '../support/posts';
+import {
+  createQuickPost,
+  deletePost,
+  editPost,
+  fastTagPost,
+  replyToPost,
+  repostPost,
+  waitForFeedToLoad
+} from '../support/posts';
 import { slowCypressDown } from 'cypress-slow-down';
 import 'cypress-slow-down/commands';
 import { searchAndFollowProfile, searchForProfile } from '../support/contacts';
-import { clickFollowButton } from '../support/profile';
+import { clickFollowButton, waitForNotificationDotToDisappear } from '../support/profile';
 import { addTagsWithModal } from '../support/common';
 import { checkLatestNotification } from '../support/profile';
 import { HasBackedUp, SkipOnboardingSlides } from '../support/types/enums';
@@ -56,11 +64,12 @@ describe('notifications', () => {
 
     cy.signIn(backupDownloadFilePath(profile2.username));
     // wait and reload if notification counter doesn't show
-    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
+    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
     // check notification counter on profile picture is 1
     cy.get('#header-notification-counter').should('have.text', '1');
     // navigate to profile 2 profile page
     cy.get('#header-profile-pic').click();
+    cy.location('pathname').should('eq', '/profile');
     // check latest notification on profile page and navigate to profile 1 profile page
     checkLatestNotification([profile1.username, 'followed you'], profile1.username);
 
@@ -71,14 +80,22 @@ describe('notifications', () => {
     cy.signOut(HasBackedUp.Yes);
 
     cy.signIn(backupDownloadFilePath(profile1.username));
+    // todo: remove wait - Franky needs this
+    waitForFeedToLoad();
     // wait and reload if notification counter doesn't show
-    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
+    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
     // check notification counter on profile picture is 1
     cy.get('#header-notification-counter').should('have.text', '1');
     // navigate to profile 1 profile page
     cy.get('#header-profile-pic').click();
+    cy.location('pathname').should('eq', '/profile');
     // check latest notification on profile page
     checkLatestNotification([profile2.username, 'is your friend now']);
+
+    // * check that toggling profile page tabs clears notification counter for new notification
+    cy.get('#profile-tab-posts').click();
+    cy.get('#profile-tab-notifications').click();
+    waitForNotificationDotToDisappear();
 
     // TODO: add checks for unfollowing
     // * profile 1 unfollows profile 2
@@ -113,14 +130,22 @@ describe('notifications', () => {
     cy.signOut(HasBackedUp.Yes);
 
     cy.signIn(backupDownloadFilePath(profile2.username));
+    // todo: remove wait - Franky needs this
+    waitForFeedToLoad();
     // wait and reload if notification counter doesn't show
-    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
+    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
     // check notification counter on profile picture is 1
     cy.get('#header-notification-counter').should('have.text', '1');
     // navigate to profile 2 profile page
     cy.get('#header-profile-pic').click();
+    cy.location('pathname').should('eq', '/profile');
     // check latest notification on profile page
     checkLatestNotification([profile1.username, 'tagged your profile', profileTag]);
+
+    // * check that toggling profile page tabs clears notification counter for new notification
+    cy.get('#profile-tab-posts').click();
+    cy.get('#profile-tab-notifications').click();
+    waitForNotificationDotToDisappear();
 
     // * profile 2 tags profile 1's post (from their profile page)
     cy.get(`@${profile1.pubkyAlias}`).then((pubky) => {
@@ -142,10 +167,13 @@ describe('notifications', () => {
     cy.signOut(HasBackedUp.Yes);
 
     cy.signIn(backupDownloadFilePath(profile1.username));
+    // todo: remove wait - Franky needs this
+    waitForFeedToLoad();
     // wait and reload if notification counter doesn't show
-    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
+    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
     cy.get('#header-notification-counter').should('have.text', '1');
     cy.get('#header-profile-pic').click();
+    cy.location('pathname').should('eq', '/profile');
     checkLatestNotification([profile2.username, 'tagged your post', postTag]);
 
     // TODO: add checks for disabled notifications
@@ -168,12 +196,15 @@ describe('notifications', () => {
     cy.signOut(HasBackedUp.Yes);
 
     cy.signIn(backupDownloadFilePath(profile2.username));
+    // todo: remove wait - Franky needs this
+    waitForFeedToLoad();
     // wait and reload if notification counter doesn't show
-    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
+    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
     // check notification counter on profile picture is 1
     cy.get('#header-notification-counter').should('have.text', '1');
     // navigate to profile 2 profile page
     cy.get('#header-profile-pic').click();
+    cy.location('pathname').should('eq', '/profile');
     // check latest notification on profile page
     checkLatestNotification([profile1.username, 'mentioned you in a post']);
 
@@ -185,21 +216,25 @@ describe('notifications', () => {
 
   it('can be notified for your post being replied to', () => {
     // * profile 1 creates a post (1)
-    createQuickPost(`I will be notified when this post is replied to! ${Date.now()}`);
+    const postContent = `I will be notified when this post is replied to! ${Date.now()}`;
+    createQuickPost(postContent);
 
     // * profile 2 replies to profile 1's post (1)
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(backupDownloadFilePath(profile2.username));
-    replyToPost({ replyContent: 'I replied to your post!' });
+    replyToPost({ replyContent: 'I replied to your post!', filterText: postContent });
     cy.wait(1000); // TODO: remove workaround for notifictation counter not showing for profile 1
 
     // * profile 1 checks for notification for being replied to
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(backupDownloadFilePath(profile1.username));
+    // todo: remove wait - Franky needs this
+    waitForFeedToLoad();
     // wait and reload if notification counter doesn't show
-    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
+    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
     cy.get('#header-notification-counter').should('have.text', '1');
     cy.get('#header-profile-pic').click();
+    cy.location('pathname').should('eq', '/profile');
     checkLatestNotification([profile2.username, 'replied to your post']);
 
     // TODO: add checks for disabled notifications
@@ -221,10 +256,13 @@ describe('notifications', () => {
     // * profile 1 checks for notification for being reposted
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(backupDownloadFilePath(profile1.username));
+    // todo: remove wait - Franky needs this
+    waitForFeedToLoad();
     // wait and reload if notification counter doesn't show
-    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
+    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
     cy.get('#header-notification-counter').should('have.text', '1');
     cy.get('#header-profile-pic').click();
+    cy.location('pathname').should('eq', '/profile');
     checkLatestNotification([profile2.username, 'reposted your post']);
 
     // TODO: add checks for disabled notifications
@@ -236,27 +274,30 @@ describe('notifications', () => {
 
   it('can be notified for a post being deleted that you replied to', () => {
     // * profile 1 creates a post (1) that will be replied to and then deleted
-    createQuickPost(`The one who replies to this post will be notified when it is deleted! ${Date.now()}`);
+    const postContent = `The one who replies to this post will be notified when it is deleted! ${Date.now()}`;
+    createQuickPost(postContent);
 
     // * profile 2 replies to profile 1's post (1)
     cy.signOut(HasBackedUp.Yes);
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/922
-    cy.reload();
     cy.signIn(backupDownloadFilePath(profile2.username));
-    replyToPost({ replyContent: 'I replied to your post!' });
+
+    replyToPost({ replyContent: 'I replied to your post!', filterText: postContent });
 
     // * profile 1 deletes own post (1)
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(backupDownloadFilePath(profile1.username));
-    deletePost(0);
+    deletePost({ postIdx: 0, filterText: postContent });
 
     // * profile 2 checks for notification for post (1) being deleted
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(backupDownloadFilePath(profile2.username));
+    // todo: remove wait - Franky needs this
+    waitForFeedToLoad();
     // wait and reload if notification counter doesn't show
-    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
+    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
     cy.get('#header-notification-counter').should('have.text', '1');
     cy.get('#header-profile-pic').click();
+    cy.location('pathname').should('eq', '/profile');
     checkLatestNotification([profile1.username, 'deleted a post you replied to']);
 
     // TODO: add checks for disabled notifications
@@ -275,23 +316,24 @@ describe('notifications', () => {
     // * profile 2 reposts profile 1's post
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(backupDownloadFilePath(profile2.username));
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/922
-    cy.reload();
     cy.findFirstPostInFeed().innerTextContains(postContent);
     repostPost({ repostContent: 'I reposted your post!' });
 
     // * profile 1 deletes own post (1)
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(backupDownloadFilePath(profile1.username));
-    deletePost(1);
+    deletePost({ postIdx: 1, filterText: postContent });
 
     // * profile 2 checks for notification for post being deleted
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(backupDownloadFilePath(profile2.username));
+    // todo: remove wait - Franky needs this
+    waitForFeedToLoad();
     // wait and reload if notification counter doesn't show
-    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
+    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
     cy.get('#header-notification-counter').should('have.text', '1');
     cy.get('#header-profile-pic').click();
+    cy.location('pathname').should('eq', '/profile');
     checkLatestNotification([profile1.username, 'deleted a post you reposted']);
 
     // TODO: add checks for disabled notifications
@@ -304,27 +346,29 @@ describe('notifications', () => {
 
   it('can be notified for a post being edited that you replied to', () => {
     // * profile 1 creates a post (1) that will be replied to and then edited
-    createQuickPost(`The one who replies to this post will be notified when it is edited! ${Date.now()}`);
+    const postContent = `The one who replies to this post will be notified when it is edited! ${Date.now()}`;
+    createQuickPost(postContent);
 
     // * profile 2 replies to profile 1's post (1)
     cy.signOut(HasBackedUp.Yes);
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/922
-    cy.reload();
     cy.signIn(backupDownloadFilePath(profile2.username));
-    replyToPost({ replyContent: 'I replied to your post!' });
+    replyToPost({ replyContent: 'I replied to your post!', filterText: postContent });
 
     // * profile 1 edits own post (1)
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(backupDownloadFilePath(profile1.username));
-    editPost('I edited my post!', 0);
+    editPost({ newPostContent: 'I edited my post!', filterText: postContent });
 
     // * profile 2 checks for notification for post (1) being edited
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(backupDownloadFilePath(profile2.username));
+    // todo: remove wait - Franky needs this
+    waitForFeedToLoad();
     // wait and reload if notification counter doesn't show
-    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
+    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
     cy.get('#header-notification-counter').should('have.text', '1');
     cy.get('#header-profile-pic').click();
+    cy.location('pathname').should('eq', '/profile');
     checkLatestNotification([profile1.username, 'edited a post you replied to']);
 
     // TODO: add checks for disabled notifications
@@ -344,23 +388,24 @@ describe('notifications', () => {
     // * profile 2 reposts profile 1's post (1)
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(backupDownloadFilePath(profile2.username));
-    // TODO: remove manual refresh, see https://github.com/pubky/pubky-app/issues/922
-    cy.reload();
     cy.findFirstPostInFeed().innerTextContains(postContent);
-    repostPost({ repostContent: 'I reposted your post!' });
+    repostPost({ repostContent: 'I reposted your post!', filterText: postContent });
 
-    // * profile 1 edits own post (1)
+    // * profile 1 edits own post (1) not the repost
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(backupDownloadFilePath(profile1.username));
-    editPost('I edited my post!', 1);
+    editPost({ newPostContent: 'I edited my post!', filterText: postContent, postIdx: 1 });
 
     // * profile 2 checks for notification for post (1) being edited
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(backupDownloadFilePath(profile2.username));
+    // todo: remove wait - Franky needs this
+    waitForFeedToLoad();
     // wait and reload if notification counter doesn't show
-    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter');
+    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
     cy.get('#header-notification-counter').should('have.text', '1');
     cy.get('#header-profile-pic').click();
+    cy.location('pathname').should('eq', '/profile');
     checkLatestNotification([profile1.username, 'edited a post you reposted']);
 
     // TODO: add checks for disabled notifications

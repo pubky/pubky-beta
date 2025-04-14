@@ -69,12 +69,12 @@ describe('contacts', () => {
     //
 
     // Check account 1 profile for updated followers
-    // workaround: reload page to get updated counter https://github.com/pubky/pubky-app/issues/395
-    cy.waitReload();
+    // TODO: remove reload page to get updated counter https://github.com/pubky/pubky-app/issues/395
+    cy.waitReload(1000);
 
     // check followers tab and click it
     cy.get('#profile-tab-followers').within(($tab) => {
-      cy.get('#counter').should('have.text', 1);
+      cy.get('#counter').should('have.text', '1');
       cy.get('#label').should('have.text', 'Followers');
       cy.wrap($tab).click();
     });
@@ -180,7 +180,7 @@ describe('contacts', () => {
       });
 
     // workaround: reload page to get updated counter https://github.com/pubky/pubky-app/issues/395
-    cy.waitReload();
+    cy.waitReload(1000);
 
     // tab shows number of following is 1
     cy.get('#profile-tab-following').find('#counter').should('have.text', 1);

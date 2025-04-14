@@ -73,4 +73,16 @@ describe('profile', () => {
       expect($elem.get(0).innerText).to.eq('This bio is editable');
     });
   });
+
+  // IN PROGRESS
+  it.skip('can tag own profile and other profile', () => {
+    // navigate to own profile page
+    cy.get('#profile-tag-btn').click();
+
+    // add tag
+    cy.get('#profile-tag-input').type('test-tag-1');
+    cy.get('#profile-tag-add-btn').click();
+
+    // verify tag is added
+  });
 });
