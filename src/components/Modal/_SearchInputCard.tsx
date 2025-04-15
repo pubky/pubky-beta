@@ -107,16 +107,16 @@ export default function SearchInputCard({ refCard, inputValue, isOpenCard, ...re
   const handleTagSearch = (tag: string) => {
     if (!searchTags.includes(tag)) {
       setSearchTags(searchTags.length < 3 ? [...searchTags, tag] : [...searchTags.slice(1), tag]);
+
+      const updatedHistory = [
+        { type: 'tag', value: tag },
+        ...searchHistory.filter((item: any) => item.value !== tag)
+      ].slice(0, 5);
+
+      Utils.storage.set('searchHistory', JSON.stringify(updatedHistory));
+
+      router.push('/search');
     }
-
-    const updatedHistory = [
-      { type: 'tag', value: tag },
-      ...searchHistory.filter((item: any) => item.value !== tag)
-    ].slice(0, 5);
-
-    Utils.storage.set('searchHistory', JSON.stringify(updatedHistory));
-
-    router.push('/search');
   };
 
   const handleUserClick = (user: UserView) => {
