@@ -105,8 +105,8 @@ export default function Tags({ post, postType }: TagsProps) {
                 );
               })}
               {hasMore && (
-                <div ref={loader}>
-                  <Icon.LoadingSpin />
+                <div ref={loader} className="flex justify-center">
+                  <Icon.LoadingSpin size="24" />
                 </div>
               )}
             </>
