@@ -112,7 +112,7 @@ describe('notifications', () => {
     // * profile 2 checks for follow notification? and absence of friend notification
   });
 
-  it.only('can be notified for tagged post and profile', () => {
+  it('can be notified for tagged post and profile', () => {
     // * profile 1 creates a post
     createQuickPost(`I will be notified when this post is tagged! ${Date.now()}`);
 
