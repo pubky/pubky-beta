@@ -26,23 +26,20 @@ function LinkPreview({ url }: { url: string }) {
     const fetchData = async () => {
       try {
         const response = await fetch(`/api/preview?url=${encodeURIComponent(url)}`);
-        const data = await response.text();
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(data, 'text/html');
+        const data = await response.json();
 
-        const title =
-          doc.querySelector('meta[name="title"]')?.getAttribute('content') ||
-          doc.querySelector('title')?.textContent ||
-          '';
-        const description = doc.querySelector('meta[name="description"]')?.getAttribute('content') || '';
-        const image = doc.querySelector('meta[property="og:image"]')?.getAttribute('content') || '';
+        if (data.error) {
+          console.error('Error fetching preview:', data.error);
+          setPreviewData(null);
+          return;
+        }
 
-        const validImage = image ? await isValidImage(image) : false;
+        const validImage = data.image ? await isValidImage(data.image) : false;
 
         const preview = {
-          title,
-          description,
-          image: validImage ? image : null
+          title: data.title || '',
+          description: data.description || '',
+          image: validImage ? data.image : null
         };
 
         if (preview.title || preview.description || preview.image) {
@@ -52,6 +49,7 @@ function LinkPreview({ url }: { url: string }) {
         }
       } catch (error) {
         console.error(error);
+        setPreviewData(null);
       } finally {
         setLoading(false);
       }
