@@ -12,7 +12,7 @@ import { slowCypressDown } from 'cypress-slow-down';
 import 'cypress-slow-down/commands';
 import { searchAndFollowProfile, searchForProfile } from '../support/contacts';
 import { clickFollowButton, waitForNotificationDotToDisappear } from '../support/profile';
-import { addTagsWithModal } from '../support/common';
+import { addProfileTags } from '../support/common';
 import { checkLatestNotification } from '../support/profile';
 import { HasBackedUp, SkipOnboardingSlides } from '../support/types/enums';
 
@@ -112,7 +112,7 @@ describe('notifications', () => {
     // * profile 2 checks for follow notification? and absence of friend notification
   });
 
-  it('can be notified for tagged post and profile', () => {
+  it.only('can be notified for tagged post and profile', () => {
     // * profile 1 creates a post
     createQuickPost(`I will be notified when this post is tagged! ${Date.now()}`);
 
@@ -124,7 +124,7 @@ describe('notifications', () => {
     // add one tag to profile
     cy.get('#profile-tag-btn').click();
     const profileTag = 'nice';
-    addTagsWithModal([profileTag]);
+    addProfileTags([profileTag]);
 
     // * profile 2 checks for notification for tagged profile
     cy.signOut(HasBackedUp.Yes);

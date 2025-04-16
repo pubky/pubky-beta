@@ -49,3 +49,18 @@ export const addTagsWithModal = (tags: string[]) => {
     cy.get('#close-btn').click();
   });
 };
+
+// add tags to a profile using the profile tagged page
+export const addProfileTags = (tags: string[]) => {
+  // click on the profile tagged tab
+  cy.get('#profile-tab-tagged').click();
+
+  // add the tag
+  for (const tag of tags) {
+    cy.get('#add-tag-input').type(tag);
+    cy.get('#add-tag-btn').should('be.visible').click();
+  }
+
+  // wait for the tags to be added
+  cy.get(`#tag-${tags[0]}`).should('be.visible');
+};
