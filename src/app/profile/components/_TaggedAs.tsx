@@ -103,8 +103,8 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
         // Convert Map back to array and maintain order
         const updatedTags = Array.from(uniqueTags.values());
 
-        // Set hasMore based on whether we received any new tags
-        setHasMore(moreTags.length > 0);
+        // Set hasMore based on whether we received the expected number of tags
+        setHasMore(moreTags.length === limit);
         setIsLoadingMore(false);
 
         return updatedTags;
