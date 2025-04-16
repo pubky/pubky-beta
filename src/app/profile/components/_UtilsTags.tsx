@@ -184,13 +184,13 @@ export const useUtilsTag = ({ profileTags, setProfileTags, pubkyUser, user }: Ut
       } else {
         // update tag optimistic in the UI
         setProfileTags([
-          ...profileTags,
           {
             label: tag,
             taggers: [pubky || ''],
             taggers_count: 1,
             relationship: true
-          }
+          },
+          ...profileTags
         ]);
       }
       const response = await createTagProfile(pubkyUser, tag);

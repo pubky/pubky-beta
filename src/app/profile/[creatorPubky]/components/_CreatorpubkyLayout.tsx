@@ -108,7 +108,7 @@ export default function CreatorpubkyLayout({
               {children}
             </Profile.FilterTabs>
           </PostsLayout>
-          <Profile.Sidebar creatorPubky={creatorPubky} />
+          <Profile.Sidebar creatorPubky={creatorPubky} activeTab={activeTab} />
         </Content.Grid>
         <CreatePost />
         <Components.FooterMobile />

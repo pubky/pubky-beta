@@ -75,15 +75,17 @@ export const useUtilsTag = (post: PostView, postType: PostType) => {
   }, [moreTaggers]);
 
   useEffect(() => {
-    if (!isLoading && moreTags && moreTags.length) {
+    if (!isLoading && moreTags) {
       setAllTags((prev) => {
         const updatedTags = [...prev, ...moreTags];
         const uniqueTags = updatedTags.filter(
           (tag, index, self) => index === self.findIndex((t) => t.label === tag.label)
         );
-        setHasMore(uniqueTags.length > prev.length);
+        setHasMore(moreTags.length === limit);
         return uniqueTags;
       });
+    } else if (!isLoading && !moreTags) {
+      setHasMore(false);
     }
   }, [moreTags, isLoading]);
 
