@@ -125,13 +125,13 @@ export default function SearchInputCard({ refCard, inputValue, isOpenCard, ...re
       value: user.details.id
     };
 
-      const updatedHistory = [userEntry, ...searchHistory.filter((item: any) => item.value !== user.details.id)].slice(
-        0,
-        5
-      );
+    const updatedHistory = [userEntry, ...searchHistory.filter((item: any) => item.value !== user.details.id)].slice(
+      0,
+      5
+    );
 
-      Utils.storage.set('searchHistory', JSON.stringify(updatedHistory));
-      setSearchHistory(updatedHistory);
+    Utils.storage.set('searchHistory', JSON.stringify(updatedHistory));
+    setSearchHistory(updatedHistory);
 
     router.push(`/profile/${user.details.id}`);
   };
@@ -143,7 +143,7 @@ export default function SearchInputCard({ refCard, inputValue, isOpenCard, ...re
       const fetchProfiles = async () => {
         const profilesData: Record<string, UserView> = {};
         const validUserIds: string[] = [];
-        
+
         for (const userId of userIds) {
           try {
             const profileUser = await getUserProfile(userId, pubky ?? '');
@@ -157,10 +157,10 @@ export default function SearchInputCard({ refCard, inputValue, isOpenCard, ...re
         }
 
         // Remove non-existent users from search history
-        const updatedHistory = searchHistory.filter((item: any) => 
-          item.type !== 'user' || validUserIds.includes(item.value)
+        const updatedHistory = searchHistory.filter(
+          (item: any) => item.type !== 'user' || validUserIds.includes(item.value)
         );
-        
+
         if (updatedHistory.length !== searchHistory.length) {
           Utils.storage.set('searchHistory', JSON.stringify(updatedHistory));
           setSearchHistory(updatedHistory);
