@@ -2,7 +2,7 @@ import { editProfileAndVerify, addLinks, addProfileTags } from '../support/profi
 import { slowCypressDown } from 'cypress-slow-down';
 import { HasBackedUp, SkipOnboardingSlides } from '../support/types/enums';
 import { backupDownloadFilePath } from '../support/auth';
-import { searchForProfile } from '../support/contacts';
+import { searchForProfileByName, searchForProfileByPubky } from '../support/contacts';
 
 describe('profile', () => {
   before(() => {
@@ -112,16 +112,15 @@ describe('profile', () => {
 
   it('can tag other profile', () => {
     // sign up a user to tag and sign back in as the primary user
-    const profileToTagPubkyAlias = 'tag-me';
+    // random username required to avoid conflicts with existing profiles when searching by name
+    const profileToTagPubkyName = `${Cypress._.random(100_000)}-Tag Me`;
     cy.signOut(HasBackedUp.Yes);
-    cy.onboardAsNewUser(profileToTagPubkyAlias, 'This profile is destined to be tagged', SkipOnboardingSlides.Yes, profileToTagPubkyAlias);
+    cy.onboardAsNewUser(profileToTagPubkyName, 'This profile is destined to be tagged');
     cy.signOut(HasBackedUp.No);
     cy.signIn(backupDownloadFilePath(profile1));
 
     // navigate to the profile to tag
-    cy.get(`@${profileToTagPubkyAlias}`).then((pubky) => {
-      searchForProfile(`${pubky}`, profileToTagPubkyAlias);
-    });
+    searchForProfileByName(profileToTagPubkyName);
 
     // add taggs to other profile
     cy.get('#profile-tab-tagged').click();
