@@ -12,7 +12,7 @@ import { slowCypressDown } from 'cypress-slow-down';
 import 'cypress-slow-down/commands';
 import { searchAndFollowProfile, searchForProfile } from '../support/contacts';
 import { clickFollowButton, waitForNotificationDotToDisappear } from '../support/profile';
-import { addProfileTags } from '../support/common';
+import { addProfileTags } from '../support/profile';
 import { checkLatestNotification } from '../support/profile';
 import { HasBackedUp, SkipOnboardingSlides } from '../support/types/enums';
 
