@@ -18,6 +18,7 @@ interface BlankProps extends React.HTMLAttributes<HTMLDivElement> {
   largeView?: boolean;
   fullContent?: boolean;
   postType: PostType;
+  restClassName?: string;
 }
 
 export default function Blank({
@@ -30,6 +31,7 @@ export default function Blank({
   largeView,
   fullContent,
   postType,
+  restClassName,
   ...rest
 }: BlankProps) {
   const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-full border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[0.5px]`;
@@ -49,7 +51,7 @@ export default function Blank({
           line && 'ml-6',
           largeView && 'p-12 inline-flex flex-row gap-6 xl:gap-12',
           'relative',
-          rest.className
+          restClassName
         )}
       >
         <div className="w-full flex-col justify-between inline-flex">

@@ -100,6 +100,7 @@ export default function Post({
                   lineStyle={lineStyle}
                   largeView={largeView}
                   fullContent={fullContent}
+                  restClassName={rest.className}
                 />
               ) : (
                 <Repost.Quote
@@ -111,6 +112,7 @@ export default function Post({
                   lineStyle={lineStyle}
                   largeView={largeView}
                   fullContent={fullContent}
+                  restClassName={rest.className}
                 />
               )
             ) : post?.details?.content === '[DELETED]' ? (
