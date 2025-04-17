@@ -624,13 +624,14 @@ describe('posts', () => {
   });
 
   // todo: consider creating user to create the post to repost
-  // todo: reenable intermittently failing test, see https://github.com/pubky/pubky-app/issues/1396
-  it.skip('can repost without content then delete the repost', () => {
+  it('can repost without content then delete the repost', () => {
     // create a post to repost
     const postContent = `This post will be reposted without content! ${Date.now()}`;
     createQuickPost(postContent);
 
     // repost without content
+    // todo: remove wait once bug fixed https://github.com/pubky/pubky-app/issues/1396
+    cy.wait(2000);
     repostPost({ postContent });
 
     // verify the repost without content is displayed correctly in feed
