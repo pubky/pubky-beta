@@ -85,4 +85,30 @@ describe('profile', () => {
 
     // verify tag is added
   });
+
+  it('should not add non-existent user to recent history when visiting their profile', () => {
+    // Navigate to home page
+    cy.visit('/');
+
+    // Search for a non-existent user
+    const nonExistentUser = 'pk:gujx6qd8ksydh1makdphd3bxu351d9b8waqka8hfg6q7hnqkxexo';
+    cy.get('#header-search-input').type(nonExistentUser).type('{enter}');
+
+    // Verify page is empty
+    cy.get('#profile-username-header').should('not.exist');
+    cy.get('#profile-bio-content').should('not.exist');
+
+    // Go back to home page
+    cy.visit('/');
+
+    // Open search bar to check history
+    cy.get('#header-search-input').click();
+
+    // Verify user was not added to recent history
+    // History is stored in localStorage
+    cy.window().then((win) => {
+      const searchHistory = JSON.parse(win.localStorage.getItem('searchHistory') || '[]');
+      expect(searchHistory).to.not.contain(nonExistentUser);
+    });
+  });
 });
