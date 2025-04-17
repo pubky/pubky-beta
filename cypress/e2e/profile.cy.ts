@@ -110,5 +110,8 @@ describe('profile', () => {
       const searchHistory = JSON.parse(win.localStorage.getItem('searchHistory') || '[]');
       expect(searchHistory).to.not.contain(nonExistentUser);
     });
+
+    // Verify user was not added to recent history
+    cy.get('#user-0').should('not.exist');
   });
 });
