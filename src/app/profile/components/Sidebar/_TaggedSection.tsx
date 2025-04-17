@@ -35,7 +35,7 @@ export default function TaggedSection({
   });
 
   return (
-    <div className="w-full">
+    <div id="profile-tagged-section" className="w-full">
       <SideCard.Header title="Tagged as" />
       {loadingProfileTags ? (
         <Skeleton.Simple />

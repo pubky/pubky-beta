@@ -630,8 +630,8 @@ describe('posts', () => {
     createQuickPost(postContent);
 
     // repost without content
-    // todo: remove wait once bug fixed https://github.com/pubky/pubky-app/issues/1396
-    cy.wait(2000);
+    // todo: remove reload once bug fixed https://github.com/pubky/pubky-app/issues/1396
+    cy.waitReload(500);
     repostPost({ postContent });
 
     // verify the repost without content is displayed correctly in feed
