@@ -12,7 +12,7 @@ import { slowCypressDown } from 'cypress-slow-down';
 import 'cypress-slow-down/commands';
 import { searchAndFollowProfile, searchForProfile } from '../support/contacts';
 import { clickFollowButton, waitForNotificationDotToDisappear } from '../support/profile';
-import { addTagsWithModal } from '../support/common';
+import { addProfileTags } from '../support/profile';
 import { checkLatestNotification } from '../support/profile';
 import { HasBackedUp, SkipOnboardingSlides } from '../support/types/enums';
 
@@ -124,7 +124,7 @@ describe('notifications', () => {
     // add one tag to profile
     cy.get('#profile-tag-btn').click();
     const profileTag = 'nice';
-    addTagsWithModal([profileTag]);
+    addProfileTags([profileTag]);
 
     // * profile 2 checks for notification for tagged profile
     cy.signOut(HasBackedUp.Yes);

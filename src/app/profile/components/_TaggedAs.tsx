@@ -299,6 +299,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                       return (
                         <div className="flex gap-2" key={index}>
                           <PostUtil.Tag
+                            id={`tag-${tag?.label}`}
                             clicked={isTagFound}
                             onClick={(event) => {
                               event.stopPropagation();
