@@ -46,7 +46,7 @@ Cypress.Commands.add(
     // request invite code from homeserver and input it
     cy.request({
       method: 'GET',
-      url: 'http://localhost:6286/admin/generate_signup_token',
+      url: 'http://localhost:6288/admin/generate_signup_token',
       headers: {
         'X-Admin-Password': 'admin'
       }
