@@ -104,7 +104,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
         const updatedTags = Array.from(uniqueTags.values());
 
         // Set hasMore based on whether we received any new tags
-        setHasMore(moreTags.length > 0);
+        setHasMore(moreTags.length === limit);
         setIsLoadingMore(false);
 
         return updatedTags;
