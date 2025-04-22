@@ -2,6 +2,7 @@ import { latestPostInFeedContentEq, createQuickPost, checkPostIsNotAtTopOfFeed }
 import { slowCypressDown } from 'cypress-slow-down';
 import 'cypress-slow-down/commands';
 import { HasBackedUp } from '../support/types/enums';
+import { backupDownloadFilePath } from '../support/auth';
 
 describe('settings', () => {
   before(() => {
@@ -156,6 +157,108 @@ describe('settings', () => {
     // check user 1's post is seen in feed again
     cy.get('#header-home-btn').click();
     latestPostInFeedContentEq(postContent);
+  });
+
+  it('can save changed to notification settings', () => {
+    // create a new user and backup
+    cy.onboardAsNewUser('Mr Notifications', 'I like to test notification settings');
+    cy.backupRecoveryFile();
+    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath('MrNotifications'));
+
+    // function to navigate to notification settings page
+    const navigateToNotificationsPage = () => {
+      cy.get('#header-settings-btn').click();
+      cy.location('pathname').should('eq', '/settings/account');
+      cy.get('#settings-menu-item-notifications').click();
+      cy.location('pathname').should('eq', '/settings/notifications');
+    }
+
+    // navigate to notification settings page
+    navigateToNotificationsPage();
+
+    // disable some notifications
+    cy.get('#notification-switch-follow').click();
+    cy.get('#notification-switch-lost_friend').click();
+    cy.get('#notification-switch-tag_profile').click();
+    cy.get('#notification-switch-reply').click();
+    cy.get('#notification-switch-post_deleted').click();
+
+    // sign out, sign back in, and navigate to notification settings page
+    cy.signOut(HasBackedUp.Yes);
+    cy.signIn(backupDownloadFilePath('MrNotifications'));
+    navigateToNotificationsPage();
+
+    // function to check notification is enabled
+    const checkNotificationIsEnabled = ($toggle: JQuery<HTMLElement>) => {
+      cy.wrap($toggle).should('have.class', 'border-white');
+    }
+
+    // function to check notification is disabled
+    const checkNotificationIsDisabled = ($toggle: JQuery<HTMLElement>) => {
+      cy.wrap($toggle).should('not.have.class', 'border-white');
+    }
+
+    // check notifications remain enabled
+    cy.get('#notification-switch-new_friend').then(checkNotificationIsEnabled);
+    cy.get('#notification-switch-tag_post').then(checkNotificationIsEnabled);
+    cy.get('#notification-switch-mention').then(checkNotificationIsEnabled);
+    cy.get('#notification-switch-repost').then(checkNotificationIsEnabled);
+    cy.get('#notification-switch-post_edited').then(checkNotificationIsEnabled);
+
+    // check some notifications remain disabled
+    cy.get('#notification-switch-follow').then(checkNotificationIsDisabled);
+    cy.get('#notification-switch-lost_friend').then(checkNotificationIsDisabled);
+    cy.get('#notification-switch-tag_profile').then(checkNotificationIsDisabled);
+    cy.get('#notification-switch-reply').then(checkNotificationIsDisabled);
+    cy.get('#notification-switch-post_deleted').then(checkNotificationIsDisabled);
+
+    // disable remaining enabled notifications
+    cy.get('#notification-switch-new_friend').click();
+    cy.get('#notification-switch-tag_post').click();
+    cy.get('#notification-switch-mention').click();
+    cy.get('#notification-switch-repost').click();
+    cy.get('#notification-switch-post_edited').click();
+
+    // sign out, sign back in, and navigate to notification settings page
+    cy.signOut(HasBackedUp.Yes);
+    cy.signIn(backupDownloadFilePath('MrNotifications'));
+    navigateToNotificationsPage();
+
+    // check all notifications are disabled
+    cy.get('#notification-switch-new_friend').then(checkNotificationIsDisabled);
+    cy.get('#notification-switch-follow').then(checkNotificationIsDisabled);
+    cy.get('#notification-switch-tag_post').then(checkNotificationIsDisabled);
+    cy.get('#notification-switch-lost_friend').then(checkNotificationIsDisabled);
+    cy.get('#notification-switch-mention').then(checkNotificationIsDisabled);
+    cy.get('#notification-switch-tag_profile').then(checkNotificationIsDisabled);
+    cy.get('#notification-switch-repost').then(checkNotificationIsDisabled);
+    cy.get('#notification-switch-reply').then(checkNotificationIsDisabled);
+    cy.get('#notification-switch-post_edited').then(checkNotificationIsDisabled);
+    cy.get('#notification-switch-post_deleted').then(checkNotificationIsDisabled);
+
+    // enable some notifications
+    cy.get('#notification-switch-follow').click();
+    cy.get('#notification-switch-tag_profile').click();
+    cy.get('#notification-switch-post_deleted').click();
+
+    // sign out, sign back in, and navigate to notification settings page
+    cy.signOut(HasBackedUp.Yes);
+    cy.signIn(backupDownloadFilePath('MrNotifications'));
+    navigateToNotificationsPage();
+
+    // check some notifications remain enabled
+    cy.get('#notification-switch-follow').then(checkNotificationIsEnabled);
+    cy.get('#notification-switch-tag_profile').then(checkNotificationIsEnabled);
+    cy.get('#notification-switch-post_deleted').then(checkNotificationIsEnabled);
+
+    // check some notifications remain disabled
+    cy.get('#notification-switch-new_friend').then(checkNotificationIsDisabled);
+    cy.get('#notification-switch-tag_post').then(checkNotificationIsDisabled);
+    cy.get('#notification-switch-lost_friend').then(checkNotificationIsDisabled);
+    cy.get('#notification-switch-mention').then(checkNotificationIsDisabled);
+    cy.get('#notification-switch-repost').then(checkNotificationIsDisabled);
+    cy.get('#notification-switch-reply').then(checkNotificationIsDisabled);
+    cy.get('#notification-switch-post_edited').then(checkNotificationIsDisabled);
   });
 
   it.skip('Language settings:new language can be selected', () => {});

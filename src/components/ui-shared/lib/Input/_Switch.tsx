@@ -2,12 +2,13 @@ import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 interface SwitchProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'checked' | 'onChange'> {
+  id?: string;
   checked?: boolean;
   disabled?: boolean;
   onChange?: (checked: boolean) => void;
 }
 
-export const Switch = ({ checked = false, disabled = false, onChange, ...rest }: SwitchProps) => {
+export const Switch = ({ id, checked = false, disabled = false, onChange, ...rest }: SwitchProps) => {
   const toggleSwitch = () => {
     if (!disabled) {
       onChange && onChange(!checked);
@@ -37,7 +38,7 @@ export const Switch = ({ checked = false, disabled = false, onChange, ...rest }:
         onChange={onChange && toggleSwitch}
         disabled={disabled} // Explicitly setting disabled prop for clarity
       />
-      <span className={switchStyles.spanClass}>
+      <span id={`${id}`} className={switchStyles.spanClass}>
         <span className={switchStyles.dotClass} />
       </span>
     </label>
