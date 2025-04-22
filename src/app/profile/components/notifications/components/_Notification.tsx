@@ -184,34 +184,30 @@ export default function Notification({ notification, unread }: { notification: N
     <div className="py-2 justify-between items-start flex flex-row border-b md:border-0 border-white border-opacity-10">
       <div className="flex sm:gap-1 md:gap-3 flex-col sm:flex-row">
         <div className="flex gap-2">
-          {!isLoading && user && (
-            <ImageByUri
-              id={user?.details?.id}
-              width={32}
-              height={32}
-              className="w-[32px] h-[32px] rounded-full sm:hidden"
-              alt="user-pic"
-            />
-          )}
-          {userId && (
+          {isLoading ? (
             <Link href={`/profile/${userId}`} className="flex gap-2 items-center">
-              {!isLoading && user && (
-                <ImageByUri
-                  id={user?.details?.id}
-                  width={32}
-                  height={32}
-                  className="w-[32px] h-[32px] rounded-full hidden sm:flex"
-                  alt="user-pic"
-                />
-              )}
+              <div className="w-[32px] h-[32px] rounded-full bg-white/10 animate-pulse" />
               <Typography.Body className="hover:underline hover:decoration-solid" variant="medium-bold">
-                {isLoading || user === null
-                  ? Utils.minifyPubky(userId)
-                  : user
-                    ? Utils.minifyText(user?.details?.name, 20)
-                    : '[DELETED]'}
+                {Utils.minifyPubky(userId)}
               </Typography.Body>
             </Link>
+          ) : user || user === null ? (
+            <Link href={`/profile/${userId}`} className="flex gap-2 items-center">
+              <ImageByUri
+                id={user?.details?.id}
+                width={32}
+                height={32}
+                className="w-[32px] h-[32px] rounded-full"
+                alt="user-pic"
+              />
+              <Typography.Body className="hover:underline hover:decoration-solid" variant="medium-bold">
+                {Utils.minifyText(user?.details?.name, 20) || '[DELETED]'}
+              </Typography.Body>
+            </Link>
+          ) : (
+            <Typography.Body variant="medium-bold" className="text-red-500">
+              Error loading user
+            </Typography.Body>
           )}
         </div>
         <div className="flex gap-1 md:gap-2 items-center flex-wrap">
