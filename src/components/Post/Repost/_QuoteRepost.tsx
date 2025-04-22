@@ -19,6 +19,7 @@ interface QuoteProps extends React.HTMLAttributes<HTMLDivElement> {
   lineStyle?: string;
   largeView?: boolean;
   fullContent?: boolean;
+  restClassName?: string;
 }
 
 export default function Quote({
@@ -30,6 +31,7 @@ export default function Quote({
   repostView,
   largeView,
   fullContent,
+  restClassName,
   ...rest
 }: QuoteProps) {
   const { pubky, deletePost } = usePubkyClientContext();
@@ -59,7 +61,7 @@ export default function Quote({
         </>
       )}
       {/* Repost Card */}
-      <div className={twMerge(`${line && 'ml-6'} w-full`, rest.className)}>
+      <div className={twMerge(`${line && 'ml-6'} w-full`, restClassName)}>
         <PostUI.RepostCard className="relative">
           <div className="flex gap-2 items-center">
             <Button.Action

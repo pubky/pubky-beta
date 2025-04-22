@@ -55,7 +55,7 @@ export function ValidPostContent({ postRef, data }) {
 }
 
 const NormalPost = ({ data }) => {
-  const isMobile = useIsMobile();
+  const isMobile = useIsMobile(1280);
   const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-[52%] -top-3 border-[#444447]`;
 
   return (
