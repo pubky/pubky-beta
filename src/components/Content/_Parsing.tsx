@@ -103,7 +103,7 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
 
         return (
           <Link
-            className="text-[#C8FF00] break-all"
+            className="text-[#C8FF00] break-all mr-1"
             href={fullUrl}
             target="_blank"
             rel="noreferrer"
@@ -124,7 +124,7 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
         if (!isValidEmail(email)) return url;
         return (
           <Link
-            className="text-[#C8FF00] break-all"
+            className="text-[#C8FF00] break-all mr-1"
             href={`mailto:${email.trim()}`}
             target="_blank"
             rel="noreferrer noopener"
