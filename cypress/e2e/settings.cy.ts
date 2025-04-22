@@ -98,8 +98,7 @@ describe('settings', () => {
 
   // TODO: add Privacy and Safety tests in a separate file
 
-  // TODO: skipped due to https://github.com/pubky/pubky-app/issues/693
-  it.skip('Muted users settings displays muted users and hides posts in feed', () => {
+  it('Muted users settings displays muted users and hides posts in feed', () => {
     // create user 1
     cy.onboardAsNewUser('Mr Muted', 'I like to be muted');
 
@@ -146,7 +145,7 @@ describe('settings', () => {
 
     // confirm user 1 is now muted in settings page and unmute them
     cy.get('#header-settings-btn').click();
-    cy.location('search').should('eq', '?section=account');
+    cy.location('pathname').should('eq', '/settings/account');
     cy.get('#settings-menu-item-muted_users').should('be.visible').click();
     cy.get('#muted-users-root').within(() => {
       cy.get('div:contains("Mr Muted")').should('be.visible');
