@@ -58,7 +58,8 @@ export default function ContentCreateArticle({
       setSendingArticle(true);
 
       const hashtags = Utils.extractHashtags(content);
-      const updatedTags = [...new Set([...arrayTags, ...hashtags])];
+      const filteredHashtags = hashtags.filter((tag) => tag.length <= 20);
+      const updatedTags = [...new Set([...arrayTags, ...filteredHashtags])];
 
       const newArticle = await createArticle(contentTitle, content, selectedFile, updatedTags);
 

@@ -68,7 +68,8 @@ export default function ContentCreateReply({ setShowModalReply, post, setHasCont
       const newReply = await createReply(post?.details?.uri, content, postKind, selectedFiles, quote);
 
       const hashtags = Utils.extractHashtags(content);
-      const updatedTags = [...new Set([...arrayTags, ...hashtags])];
+      const filteredHashtags = hashtags.filter((tag) => tag.length <= 20);
+      const updatedTags = [...new Set([...arrayTags, ...filteredHashtags])];
 
       if (newReply) {
         const replyId = parse_uri(newReply).resource_id!;

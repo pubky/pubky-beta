@@ -52,7 +52,8 @@ export default function ContentCreateRepost({ setShowModalRepost, post, setHasCo
       const newRepost = await createRepost(post?.details?.id, post?.details?.author, content, postKind, selectedFiles);
 
       const hashtags = Utils.extractHashtags(content);
-      const updatedTags = [...new Set([...arrayTags, ...hashtags])];
+      const filteredHashtags = hashtags.filter((tag) => tag.length <= 20);
+      const updatedTags = [...new Set([...arrayTags, ...filteredHashtags])];
 
       if (newRepost) {
         const repostId = parse_uri(newRepost).resource_id!;
