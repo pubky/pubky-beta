@@ -7,10 +7,27 @@ import { useEffect, useState } from 'react';
 import { Utils } from '@social/utils-shared';
 
 export default function Feeds() {
-  const { reach, selectedFeed, setSelectedFeed } = useFilterContext();
+  const { reach, setReach, setSort, setContent, setLayout, selectedFeed, setSelectedFeed } = useFilterContext();
   const { openModal } = useModal();
   const [feeds, setFeeds] = useState<{ feed: ICustomFeed; name: string }[]>();
   const { loadFeeds, deleteFeed } = usePubkyClientContext();
+
+  const updateFeed = (feedToUpdate: ICustomFeed | null, name: string, originalFeed: ICustomFeed) => {
+    if (feedToUpdate === null) {
+      // Handle feed deletion
+      setFeeds((prevFeeds) => prevFeeds.filter((f) => JSON.stringify(f.feed) !== JSON.stringify(originalFeed)));
+      if (selectedFeed === originalFeed) {
+        setSelectedFeed(undefined);
+      }
+    } else {
+      // Handle feed update
+      setFeeds((prevFeeds) =>
+        prevFeeds.map((f) =>
+          JSON.stringify(f.feed) === JSON.stringify(originalFeed) ? { feed: feedToUpdate, name } : f
+        )
+      );
+    }
+  };
 
   useEffect(() => {
     handleLoadFeeds();
@@ -52,12 +69,16 @@ export default function Feeds() {
     if (selectedFeed === feedToDelete) {
       setSelectedFeed(undefined);
     }
-    handleLoadFeeds();
+    setFeeds((prevFeeds) => prevFeeds?.filter((feed) => JSON.stringify(feed.feed) !== JSON.stringify(feedToDelete)));
   };
 
   const handleForYouClick = () => {
     setSelectedFeed(undefined);
     Utils.storage.remove('feed');
+    setReach('all');
+    setSort('recent');
+    setContent('all');
+    setLayout('columns');
   };
 
   return (
@@ -75,17 +96,24 @@ export default function Feeds() {
           return (
             <div className="flex w-full gap-4 justify-between" key={`${index}/${feed.name}`}>
               <SideCard.Item
-                label={String(Utils.minifyText(feed.name, 11))}
+                label={Utils.minifyText(feed.name, 11) as string}
                 value={feed.name}
                 selected={JSON.stringify(selectedFeed) === JSON.stringify(feed.feed)}
                 onClick={() => handleFeedSelect(feed.feed)}
                 icon={<Icon.Activity size="24" />}
               />
               <div
-                onClick={() => handleDeleteFeed(feed.feed)}
+                onClick={() => {
+                  openModal('editFeed', {
+                    handleUpdateFeeds: (updatedFeed: ICustomFeed | null, name: string) =>
+                      updateFeed(updatedFeed, name, feed.feed),
+                    feedToEdit: feed.feed,
+                    feedName: feed.name
+                  });
+                }}
                 className="cursor-pointer opacity-50 hover:opacity-80 mt-2"
               >
-                <Icon.X size="16" />
+                <Icon.Pencil size="16" />
               </div>
             </div>
           );

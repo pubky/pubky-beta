@@ -17,11 +17,32 @@ export default function CustomFeeds({ loading, setLoading, ...rest }: CustomFeed
     'cursor-pointer hover:bg-opacity-10 py-3 px-5 justify-center items-center gap-2 hidden lg:inline-flex bg-white bg-opacity-5 rounded-tl-lg rounded-tr-lg';
   const activeCSS = 'bg-white bg-opacity-10 rounded-tr-lg';
 
-  const { loadFeeds, deleteFeed } = usePubkyClientContext();
+  const { loadFeeds } = usePubkyClientContext();
   const { layout, selectedFeed, setSelectedFeed, setReach, setSort, setContent, setLayout } = useFilterContext();
   const { openModal } = useModal();
   const [feeds, setFeeds] = useState<{ feed: ICustomFeed; name: string }[]>();
   const maxWidth = layout === 'wide' ? 'max-w-full' : 'max-w-[520px] xl:max-w-[785px]';
+
+  const updateFeed = (feedToUpdate: ICustomFeed | null, name: string, originalFeed: ICustomFeed) => {
+    if (feedToUpdate === null) {
+      // Handle feed deletion
+      setFeeds((prevFeeds) => prevFeeds.filter((f) => JSON.stringify(f.feed) !== JSON.stringify(originalFeed)));
+      if (selectedFeed === originalFeed) {
+        setSelectedFeed(undefined);
+      }
+    } else {
+      // Handle feed update
+      setFeeds((prevFeeds) =>
+        prevFeeds.map((f) =>
+          JSON.stringify(f.feed) === JSON.stringify(originalFeed) ? { feed: feedToUpdate, name } : f
+        )
+      );
+      // If the updated feed was selected, keep it selected
+      if (selectedFeed === originalFeed) {
+        setSelectedFeed(feedToUpdate);
+      }
+    }
+  };
 
   const handleLoadFeeds = async () => {
     setLoading(true);
@@ -49,14 +70,6 @@ export default function CustomFeeds({ loading, setLoading, ...rest }: CustomFeed
 
   const handleFeedSelect = (feed: ICustomFeed) => {
     setSelectedFeed(feed);
-  };
-
-  const handleDeleteFeed = async (feedToDelete: ICustomFeed) => {
-    await deleteFeed(feedToDelete);
-    if (selectedFeed === feedToDelete) {
-      setSelectedFeed(undefined);
-    }
-    setFeeds((prevFeeds) => prevFeeds?.filter((feed) => JSON.stringify(feed.feed) !== JSON.stringify(feedToDelete)));
   };
 
   const handleForYouClick = () => {
@@ -109,10 +122,15 @@ export default function CustomFeeds({ loading, setLoading, ...rest }: CustomFeed
                   id="delete-custom-feed"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleDeleteFeed(feed.feed);
+                    openModal('editFeed', {
+                      handleUpdateFeeds: (updatedFeed: ICustomFeed | null, name: string) =>
+                        updateFeed(updatedFeed, name, feed.feed),
+                      feedToEdit: feed.feed,
+                      feedName: feed.name
+                    });
                   }}
                 >
-                  <Icon.X size="16" color="gray" />
+                  <Icon.Pencil size="16" color="gray" />
                 </div>
               </div>
             );
