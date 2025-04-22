@@ -80,7 +80,7 @@ export const Timeline = () => {
   }, [reach, sort, content, searchTags, layout]);
 
   return (
-    <div className="flex flex-col gap-3">
+    <div id="post-search-results" className="flex flex-col gap-3">
       {timeline.map((post) => (
         <div key={post.details.id} className="flex gap-2 items-center">
           <Post

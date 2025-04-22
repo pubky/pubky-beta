@@ -28,6 +28,7 @@ declare global {
       waitReloadWhileElementDoesNotExist(selector: string, attempts?: number): Chainable<void>;
       findPostInBookmarks(postIdx: number, expectedCount?: number): Chainable<JQuery<HTMLElement>>;
       countPostsInBookmarks(expectedCount: number): Chainable<void>;
+      findPostInSearchResults(filterText?: string, postIdx?: number): Chainable<JQuery<HTMLElement>>;
       findFirstPostInFeed(checkIndexed?: CheckIndexed): Chainable<JQuery<HTMLElement>>;
       findFirstPostInFeedFiltered(filterText: string, checkIndexed?: CheckIndexed): Chainable<JQuery<HTMLElement>>;
       findPostInFeed(

@@ -349,6 +349,16 @@ Cypress.Commands.add('findPostInFeed', (postIdx = 0, filterText?, checkIndexed =
   findPostInFeed(postIdx, filterText, checkIndexed);
 });
 
+// useful for finding a specific post by text in search results
+Cypress.Commands.add('findPostInSearchResults', (filterText?: string, postIdx = 0) => {
+  cy.get('#post-search-results')
+    .children()
+    .then(($posts) => {
+      return filterText ? $posts.filter((_idx, element) => element.innerText.includes(filterText)) : $posts;
+    })
+    .eq(postIdx);
+});
+
 // To prevent Cypress from failing the test when running pubky-app with dev build:
 // `Uncaught SyntaxError: Invalid or unexpected token` on Chrome, and
 // `Uncaught SyntaxError: "" literal not terminated before end of script` on firefox.

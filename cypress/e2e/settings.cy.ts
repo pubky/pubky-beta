@@ -170,7 +170,7 @@ describe('settings', () => {
       cy.location('pathname').should('eq', '/settings/account');
       cy.get('#settings-menu-item-notifications').click();
       cy.location('pathname').should('eq', '/settings/notifications');
-    }
+    };
 
     // navigate to notification settings page
     navigateToNotificationsPage();
@@ -190,12 +190,12 @@ describe('settings', () => {
     // function to check notification is enabled
     const checkNotificationIsEnabled = ($toggle: JQuery<HTMLElement>) => {
       cy.wrap($toggle).should('have.class', 'border-white');
-    }
+    };
 
     // function to check notification is disabled
     const checkNotificationIsDisabled = ($toggle: JQuery<HTMLElement>) => {
       cy.wrap($toggle).should('not.have.class', 'border-white');
-    }
+    };
 
     // check notifications remain enabled
     cy.get('#notification-switch-new_friend').then(checkNotificationIsEnabled);
