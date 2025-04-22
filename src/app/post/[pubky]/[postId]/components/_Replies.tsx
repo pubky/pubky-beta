@@ -49,17 +49,34 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
         } else {
           setReplies((prev) => [...prev, ...filteredReplies]);
         }
+      } else {
+        // If no replies data, ensure we set an empty array
+        setReplies([]);
       }
     } catch (error) {
       setInitialLoadComplete(true);
+      setReplies([]);
     } finally {
       setIsLoading(false);
+      setInitialLoadComplete(true);
     }
   };
 
   useEffect(() => {
+    setReplies([]);
+    setSkip(0);
+    setInitialLoadComplete(false);
+    setIsLoading(true);
     fetchReplies({ skipValue: 0 });
-    // setInterval(fetchNewReplies, 5000);
+  }, [pubkyAuthor, postId]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      setReplies([]);
+      setSkip(0);
+      setInitialLoadComplete(false);
+    };
   }, []);
 
   const fetchingPost = async (reply: PostView) => {
