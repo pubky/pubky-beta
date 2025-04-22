@@ -37,7 +37,8 @@ export default function CreateQuickReply({ post }: CreateQuickPostProps) {
     const sendReply = await createReply(post?.details?.uri, content, PubkyAppPostKind.Short, selectedFiles, quote);
 
     const hashtags = Utils.extractHashtags(content);
-    const updatedTags = [...new Set([...arrayTags, ...hashtags])];
+    const filteredHashtags = hashtags.filter((tag) => tag.length <= 20);
+    const updatedTags = [...new Set([...arrayTags, ...filteredHashtags])];
 
     if (sendReply) {
       const postId = parse_uri(sendReply).resource_id!;
