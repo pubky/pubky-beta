@@ -96,7 +96,8 @@ type PubkyClientContextType = {
     kind: PubkyAppPostKind,
     files?: File[],
     quote?: string,
-    tags?: string[]
+    tags?: string[],
+    isNestedReply?: boolean
   ) => Promise<string | false>;
   follow: (user_id: string) => Promise<boolean>;
   unfollow: (user_id: string) => Promise<boolean>;
@@ -766,7 +767,8 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
       kind: PubkyAppPostKind,
       files?: File[],
       quote?: string,
-      tags?: string[]
+      tags?: string[],
+      isNestedReply?: boolean
     ): Promise<string | false> => {
       const result = await createBasePost(replyContent, kind, originalPostUri, quote, files, tags);
 
@@ -796,7 +798,10 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
         cached: 'homeserver'
       } as PostView;
 
-      setReplies((prev) => [newReplyView, ...prev]);
+      // Only add to replies list if it's not a nested reply
+      if (!isNestedReply) {
+        setReplies((prev) => [newReplyView, ...prev]);
+      }
 
       return result ? result.uri : false;
     }
