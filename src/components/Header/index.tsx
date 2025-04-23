@@ -23,8 +23,10 @@ export default function Header({ title }: HeaderProps) {
   const [isOpenCard, setIsOpenCard] = useState(false);
   const [logoLink, setLogoLink] = useState('/onboarding');
   const [inputValue, setInputValue] = useState('');
+  const [tagsWidth, setTagsWidth] = useState(0);
 
   const refSearchInputCard = useRef<HTMLDivElement>(null);
+  const refTagsContainer = useRef<HTMLDivElement>(null);
 
   async function fetchLoggedIn() {
     const loggedIn = await isLoggedIn();
@@ -58,6 +60,13 @@ export default function Header({ title }: HeaderProps) {
       setSearchTags([]);
     }
   }, [pathname, setSearchTags]);
+
+  useEffect(() => {
+    if (refTagsContainer.current) {
+      const width = refTagsContainer.current.offsetWidth;
+      setTagsWidth(width);
+    }
+  }, [searchTags]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
@@ -127,7 +136,7 @@ export default function Header({ title }: HeaderProps) {
         <div className="w-full flex justify-between gap-6">
           <Input.Search>
             {searchTags && (
-              <Input.SearchTags>
+              <Input.SearchTags ref={refTagsContainer}>
                 {searchTags.map((searchTag, index) => (
                   <Input.SearchTag
                     key={index}
@@ -153,8 +162,9 @@ export default function Header({ title }: HeaderProps) {
               className={`${
                 isOpenCard && 'rounded-2xl rounded-b-none border-b-0 bg-gradient-to-b from-[#05050A] to-[#05050A]'
               }`}
+              style={{ paddingLeft: `${tagsWidth + 24}px` }}
               onClick={() => setIsOpenCard(true)}
-              readOnly={!!searchTags.length}
+              readOnly={searchTags.length >= 3}
               autoComplete="off"
             />
             <Modal.SearchInputCard

@@ -22,6 +22,7 @@ import { supportedImageTypes } from './lib/Helper/FileType/_image';
 import { supportedVideoTypes } from './lib/Helper/FileType/_video';
 import { supportedAudioTypes } from './lib/Helper/FileType/_audio';
 import truncateText from './lib/Text/truncateText';
+import truncateTag from './lib/Text/truncateTag';
 import genJdenticon from './lib/Helper/genJdenticon';
 
 export const Utils = {
@@ -49,5 +50,6 @@ export const Utils = {
   copyToClipboard,
   uint8ArrayToBase64,
   truncateText,
+  truncateTag,
   genJdenticon
 };

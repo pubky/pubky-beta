@@ -17,7 +17,7 @@ export const SearchTag = ({ value, action, ...rest }: SearchTagProps) => {
       color={value && Utils.generateRandomColor(value)}
       clicked={false}
     >
-      {value}
+      {Utils.truncateTag(value, 20)}
     </PostUtil.Tag>
   );
 };

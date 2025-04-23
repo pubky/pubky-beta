@@ -19,7 +19,7 @@ export default function ContentNotFound({ icon, title, description, className, c
           <div className="p-4 bg-[#c8ff00]/10 rounded-full justify-center items-center gap-2.5 inline-flex">{icon}</div>
         )}
         {title && (
-          <Typography.Body className="text-center" variant="large-bold">
+          <Typography.Body className="text-center break-words" variant="large-bold">
             {title}
           </Typography.Body>
         )}

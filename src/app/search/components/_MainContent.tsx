@@ -20,7 +20,9 @@ export function MainContent() {
   const router = useRouter();
   const [inputValue, setInputValue] = useState('');
   const [isOpenCard, setIsOpenCard] = useState(false);
+  const [tagsWidth, setTagsWidth] = useState(0);
   const refSearchInputCard = useRef<HTMLDivElement>(null);
+  const refTagsContainer = useRef<HTMLDivElement>(null);
   const [isSearchBarVisible, setIsSearchBarVisible] = useState(true);
   const lastScrollY = useRef(0);
 
@@ -134,6 +136,13 @@ export function MainContent() {
     };
   }, [isSearchBarVisible]);
 
+  useEffect(() => {
+    if (refTagsContainer.current) {
+      const width = refTagsContainer.current.offsetWidth;
+      setTagsWidth(width);
+    }
+  }, [searchTags]);
+
   return (
     <Components.PostsLayout className="w-full flex-col inline-flex gap-3">
       <div
@@ -143,7 +152,7 @@ export function MainContent() {
       >
         <Input.Search>
           {searchTags && (
-            <Input.SearchTags>
+            <Input.SearchTags ref={refTagsContainer}>
               {searchTags.map((searchTag, index) => (
                 <Input.SearchTag
                   key={index}
@@ -168,9 +177,10 @@ export function MainContent() {
             className={`${
               isOpenCard && 'rounded-2xl rounded-b-none border-b-0 bg-gradient-to-b from-[#05050A] to-[#05050A]'
             }`}
+            style={{ paddingLeft: `${tagsWidth + 24}px` }}
             placeholder={!searchTags.length ? 'Search' : ''}
             onClick={() => setIsOpenCard(true)}
-            readOnly={!!searchTags.length}
+            readOnly={searchTags.length >= 3}
             autoComplete="off"
             autoFocus={searchTags.length === 0}
           />
