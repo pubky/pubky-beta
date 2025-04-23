@@ -35,7 +35,15 @@ export default function CreateQuickReply({ post, isNestedReply }: CreateQuickPos
     //   ? post.relationships?.replied
     //   : post?.details?.uri;
 
-    const sendReply = await createReply(post?.details?.uri, content, PubkyAppPostKind.Short, selectedFiles, quote, arrayTags, isNestedReply);
+    const sendReply = await createReply(
+      post?.details?.uri,
+      content,
+      PubkyAppPostKind.Short,
+      selectedFiles,
+      quote,
+      arrayTags,
+      isNestedReply
+    );
 
     const hashtags = Utils.extractHashtags(content);
     const filteredHashtags = hashtags.filter((tag) => tag.length <= 20);
