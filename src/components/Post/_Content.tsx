@@ -169,7 +169,7 @@ export default function Content({
     }
   })();
   const textToMinified = parsedContent?.body || cleanedText;
-  const minifiedContent = Utils.minifyContent(textToMinified, 7, 300);
+  const minifiedContent = Utils.minifyContent(textToMinified, 7, 500);
   const contentText = fullContent ? textToMinified : minifiedContent;
 
   const showMore = !fullContent && textToMinified !== minifiedContent;
