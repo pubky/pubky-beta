@@ -180,8 +180,8 @@ export default function Account() {
       <div className="w-full h-px bg-white bg-opacity-10 my-12" />
       <div className="flex-col justify-start items-start gap-6 flex">
         <div className="justify-start items-center gap-2 inline-flex">
-          <Icon.Trash size="24" color="#FF0000" />
-          <Typography.H2 className="text-[#FF0000]">Delete your account</Typography.H2>
+          <Icon.Trash size="24" />
+          <Typography.H2>Delete your account</Typography.H2>
         </div>
         <Typography.Body variant="medium" className="text-opacity-80">
           Deleting your account will remove all of your posts, tags, profile information, contacts, custom streams, and
@@ -189,9 +189,10 @@ export default function Account() {
         </Typography.Body>
         <Button.Large
           id="delete-account-btn"
-          icon={<Icon.Trash size="16" />}
+          icon={<Icon.Trash size="16" color="#FF0000" />}
           variant="secondary"
-          className="w-auto"
+          className="w-auto bg-[#FF0000] border border-[#FF0000]"
+          colorText="text-[#FF0000]"
           onClick={() => openModal('deleteAccount')}
         >
           Delete Account
