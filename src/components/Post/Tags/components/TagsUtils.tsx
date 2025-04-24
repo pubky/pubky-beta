@@ -5,7 +5,6 @@ import { PostTag, PostType, PostView } from '@/types/Post';
 import { useAlertContext, useModal, usePubkyClientContext } from '@/contexts';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { getUserProfile } from '@/services/userService';
 
 export const useTagsLogic = (post: PostView, postType: PostType) => {
   const [tags, setTags] = useState<PostTag[]>([]);
@@ -34,13 +33,13 @@ export const useTagsLogic = (post: PostView, postType: PostType) => {
     if (isAdding) {
       if (!existingTag) {
         newTags = [
-          ...tags,
           {
             label: tag,
             taggers_count: 1,
             taggers: [pubky ?? ''],
             relationship: true
-          }
+          },
+          ...tags
         ];
         uniqueTagsChange = 1;
       } else if (!existingTag.taggers.includes(pubky ?? '')) {
@@ -80,7 +79,6 @@ export const useTagsLogic = (post: PostView, postType: PostType) => {
       }));
     }
 
-    // if (postType === 'replies') {
     setReplies((prev) =>
       prev.map((p) =>
         p.details.id === post.details.id
@@ -92,9 +90,7 @@ export const useTagsLogic = (post: PostView, postType: PostType) => {
           : p
       )
     );
-    // }
 
-    // if (postType === 'timeline') {
     setTimeline((prev) =>
       prev.map((p) =>
         p.details.id === post.details.id
@@ -109,7 +105,6 @@ export const useTagsLogic = (post: PostView, postType: PostType) => {
           : p
       )
     );
-    // }
     closeModal('tags');
   };
 

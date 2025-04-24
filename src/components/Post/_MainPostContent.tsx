@@ -16,6 +16,8 @@ interface MainPostContentProps {
   replyView?: boolean;
   restClassName?: string;
   postType: PostType;
+  showTags: boolean;
+  setShowTags: (showTags: boolean) => void;
 }
 
 export default function MainPostContent({
@@ -27,7 +29,9 @@ export default function MainPostContent({
   repostView,
   replyView,
   restClassName,
-  postType
+  postType,
+  showTags,
+  setShowTags
 }: MainPostContentProps) {
   const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-full border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[0.8px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[0.5px]`;
 
@@ -51,8 +55,10 @@ export default function MainPostContent({
           </div>
           <div>
             <div className={`flex flex-col md:flex-row ${largeView ? '' : 'justify-between'}`}>
-              {!repostView && <Tags.Standard largeView={largeView} post={post} postType={postType} />}
-              {!repostView && <Actions post={post} postType={postType} />}
+              {!repostView && (
+                <Tags.Standard largeView={largeView} post={post} postType={postType} showTags={showTags} />
+              )}
+              {!repostView && <Actions post={post} postType={postType} showTags={showTags} setShowTags={setShowTags} />}
             </div>
           </div>
         </div>
