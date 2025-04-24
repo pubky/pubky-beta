@@ -4,7 +4,7 @@ export const extractHashtags = (text: string) => {
   // 2. Followed by a # symbol
   // 3. Followed by one or more word characters (letters, numbers, underscores, hyphens, and special characters)
   // 4. Stop at whitespace, newline or end of string
-  const regex = /(?:^|\s|\n)#([a-zA-Z0-9_\-!@#$%^&*()]+)(?=\s|\n|$)/g;
+  const regex = /(?:^|\s|\n)#([a-zA-Z0-9_]+|[^\s\n]+)(?=\s|\n|$)/g;
 
   const matches = [];
   let match;
