@@ -225,7 +225,7 @@ export default function SearchInputCard({ refCard, inputValue, isOpenCard, ...re
                 </span>
               </Typography.Label>
               <div className="mt-2 flex flex-col">
-                <div className="flex flex-wrap gap-4 justify-start items-start">
+                <div className="flex flex-wrap gap-2 justify-start items-start">
                   {searchHistory.slice(0, 5).map((item: any, index: number) => {
                     if (item.type === 'user') {
                       const profileUser = userProfiles[item.value];
@@ -257,7 +257,7 @@ export default function SearchInputCard({ refCard, inputValue, isOpenCard, ...re
                           className="my-1"
                           boxShadow={false}
                         >
-                          {item.value}
+                          {Utils.truncateTag(item.value, 20)}
                         </PostUtil.Tag>
                       );
                     }
