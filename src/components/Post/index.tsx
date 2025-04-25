@@ -48,6 +48,7 @@ export default function Post({
   const { pubky } = usePubkyClientContext();
   const [repostedPost, setRepostedPost] = useState<PostView>();
   const [loadingRepostedPost, setLoadingRepostedPost] = useState(true);
+  const [showTags, setShowTags] = useState(false);
   const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-full border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[0.5px]`;
 
   const fetchRepostedPost = async () => {
@@ -100,6 +101,8 @@ export default function Post({
                   lineStyle={lineStyle}
                   largeView={largeView}
                   fullContent={fullContent}
+                  showTags={showTags}
+                  setShowTags={setShowTags}
                   restClassName={rest.className}
                 />
               ) : (
@@ -139,6 +142,8 @@ export default function Post({
                 repostView={repostView}
                 replyView={replyView}
                 postType={postType}
+                showTags={showTags}
+                setShowTags={setShowTags}
                 restClassName={rest.className}
               />
             )}

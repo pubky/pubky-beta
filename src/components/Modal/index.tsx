@@ -22,7 +22,6 @@ import ReportProfile from './_ReportProfile';
 import SearchedUsersCard from './_SearchedUsersCard';
 import SearchInputCard from './_SearchInputCard';
 import SessionExpired from './_SessionExpired';
-import Tag from './_Tag';
 import TagCreatePost from './_TagCreatePost';
 
 export const Modal = {
@@ -50,7 +49,6 @@ export const Modal = {
   SearchedUsersCard,
   SearchInputCard,
   SessionExpired,
-  Tag,
   TagCreatePost
 };
 

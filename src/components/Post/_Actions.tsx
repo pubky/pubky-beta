@@ -13,6 +13,8 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   repost?: PostView;
   deleteRepost?: boolean;
   postType: PostType;
+  showTags: boolean;
+  setShowTags: (showTags: boolean) => void;
 }
 
 const BookmarkButton = ({
@@ -83,10 +85,10 @@ const MenuButton = ({ post, repost }: { post: PostView; repost?: PostView }) => 
   );
 };
 
-export default function Actions({ post, repost, deleteRepost = false, postType }: PostProps) {
+export default function Actions({ post, repost, deleteRepost = false, postType, showTags, setShowTags }: PostProps) {
   const { pubky } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
-  const { openModal, isOpen } = useModal();
+  const { openModal } = useModal();
   const { data: author } = useUserProfile(post?.details?.author, pubky ?? '');
   const { data: authorRepost } = useUserProfile(repost?.details?.author ?? '', pubky ?? '');
   const { addBookmark, deleteBookmark } = usePubkyClientContext();
@@ -159,19 +161,8 @@ export default function Actions({ post, repost, deleteRepost = false, postType }
     }
   };
 
-  const handleOpenModal = () => {
-    openModal('tags', { post, postType });
-  };
-
-  // // Update post in Modal when post.tags changes
-  // useEffect(() => {
-  //   if (isOpen('tags')) {
-  //     handleOpenModal();
-  //   }
-  // }, [post?.tags]);
-
   return (
-    <div className="mt-3">
+    <div className="flex items-end mt-3">
       <PostUI.Actions>
         <Button.Action
           id="mobile-tag-btn"
@@ -179,7 +170,7 @@ export default function Actions({ post, repost, deleteRepost = false, postType }
           variant="custom"
           onClick={(event) => {
             event.stopPropagation();
-            pubky ? handleOpenModal() : openModal('join');
+            pubky ? setShowTags(!showTags) : openModal('join');
           }}
           icon={
             <div>

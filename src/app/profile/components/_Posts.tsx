@@ -48,14 +48,15 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
       const filteredData = data
         .filter((post) => !deletedPosts.includes(post.details.id))
         .map((post) => {
-          if (!isMyProfile && post.tags) {
-            return {
+          if (post.tags) {
+            const updatedPost = {
               ...post,
               tags: post.tags.map((tag) => ({
                 ...tag,
-                relationship: tag.taggers.includes(pubky ?? '')
+                relationship: tag.relationship ?? tag.taggers.includes(pubky ?? '')
               }))
             };
+            return updatedPost;
           }
           return post;
         });

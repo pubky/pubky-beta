@@ -70,8 +70,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     sessionExpired: 'SessionExpired',
     tagCreatePost: 'TagCreatePost',
     menuPost: 'Menu',
-    menuProfile: 'MenuProfile',
-    tags: 'Tag'
+    menuProfile: 'MenuProfile'
   };
 
   const renderModal = (modalType: string, modalId: string, props?: Record<string, any>) => {

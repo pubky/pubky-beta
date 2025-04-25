@@ -18,6 +18,8 @@ interface BlankProps extends React.HTMLAttributes<HTMLDivElement> {
   largeView?: boolean;
   fullContent?: boolean;
   postType: PostType;
+  showTags: boolean;
+  setShowTags: (showTags: boolean) => void;
   restClassName?: string;
 }
 
@@ -31,6 +33,8 @@ export default function Blank({
   largeView,
   fullContent,
   postType,
+  showTags,
+  setShowTags,
   restClassName,
   ...rest
 }: BlankProps) {
@@ -69,8 +73,8 @@ export default function Blank({
             restClassName="mt-4"
           />
           <div className={`flex flex-col md:flex-row ${largeView ? 'gap-2' : 'justify-between'}`}>
-            {!repostView && <Tags.Standard largeView={largeView} post={post} postType={postType} />}
-            {!repostView && <Actions post={post} postType={postType} />}
+            {!repostView && <Tags.Standard largeView={largeView} post={post} postType={postType} showTags={showTags} />}
+            {!repostView && <Actions post={post} showTags={showTags} setShowTags={setShowTags} postType={postType} />}
           </div>
         </div>
         {largeView && <Tags.LargeView post={post} postType={postType} />}

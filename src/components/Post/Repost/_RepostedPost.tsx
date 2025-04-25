@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Post as PostUI, Typography } from '@social/ui-shared';
 import { twMerge } from 'tailwind-merge';
 import Header from '../_Header';
@@ -36,6 +37,7 @@ export default function Post({
   postType
 }: RepostedPostProps) {
   const router = useRouter();
+  const [showTags, setShowTags] = useState(false);
   const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-full border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[1px]`;
 
   if (loadingRepostedPost) {
@@ -68,8 +70,12 @@ export default function Post({
           </div>
 
           <div className={`flex flex-col md:flex-row ${largeView ? 'gap-2' : 'justify-between'}`}>
-            {!repostView && <Tags.Standard largeView={largeView} post={repostedPost} postType={postType} />}
-            {!repostView && <Actions post={repostedPost} postType={postType} />}
+            {!repostView && (
+              <Tags.Standard largeView={largeView} post={repostedPost} postType={postType} showTags={showTags} />
+            )}
+            {!repostView && (
+              <Actions post={repostedPost} showTags={showTags} setShowTags={setShowTags} postType={postType} />
+            )}
           </div>
         </div>
         {largeView && <Tags.LargeView post={repostedPost} postType={postType} />}

@@ -27,7 +27,6 @@ import ReportProfile from './_ReportProfile';
 import SessionExpired from './_SessionExpired';
 import SortPosts from './_SortPosts';
 import Status from './_Status';
-import Tag from './_Tag';
 import TagCreatePost from './_TagCreatePost';
 
 export const BottomSheet = {
@@ -60,6 +59,5 @@ export const BottomSheet = {
   SessionExpired,
   SortPosts,
   Status,
-  Tag,
   TagCreatePost
 };
