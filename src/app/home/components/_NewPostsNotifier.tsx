@@ -14,6 +14,7 @@ export function NewPostsNotifier() {
   const [newPostsCount, setNewPostsCount] = useState(0);
   const [latestTimestamp, setLatestTimestamp] = useState<number | undefined>(undefined);
 
+  // Reset state when filters change
   useEffect(() => {
     setNewPosts([]);
     setNewPostsCount(0);
@@ -26,7 +27,7 @@ export function NewPostsNotifier() {
       const maxIndexedAt = Math.max(...timeline.map((p) => p.details.indexed_at));
       setLatestTimestamp(maxIndexedAt);
     } else {
-      setLatestTimestamp(null);
+      setLatestTimestamp(undefined);
     }
   }, [timeline]);
 
@@ -44,16 +45,22 @@ export function NewPostsNotifier() {
         selectedFeed?.tags, // tags
         content // kind
       );
-      // filter out deleted posts and muted users and order by indexed_at and reverse the order
+
+      // filter out deleted posts and muted users
       const filteredNewPosts = newPostsValue
         .filter((post) => !deletedPosts.includes(post.details.id) && !mutedUsers.includes(post.details.author))
         .sort((a, b) => b.details.indexed_at - a.details.indexed_at);
 
-      setNewPosts([...newPosts, ...filteredNewPosts]);
-      setNewPostsCount(filteredNewPosts.length + newPostsCount);
+      // Only add posts that are not already in the timeline
+      const uniqueNewPosts = filteredNewPosts.filter(
+        (post) => !timeline.some((existingPost) => existingPost.details.id === post.details.id)
+      );
 
-      // set latest timestamp to the latest post timestamp
-      setLatestTimestamp(Math.max(...filteredNewPosts.map((p) => p.details.indexed_at)));
+      if (uniqueNewPosts.length > 0) {
+        setNewPosts((prev) => [...prev, ...uniqueNewPosts]);
+        setNewPostsCount((prev) => prev + uniqueNewPosts.length);
+        setLatestTimestamp(Math.max(...uniqueNewPosts.map((p) => p.details.indexed_at)));
+      }
     } catch (error) {
       // console.log('No new posts');
     }
@@ -62,7 +69,7 @@ export function NewPostsNotifier() {
   useEffect(() => {
     const interval = setInterval(fetchNewPosts, 10000);
     return () => clearInterval(interval);
-  }, [latestTimestamp]);
+  }, [latestTimestamp, sort, reach, content, selectedFeed?.tags]);
 
   // Handler to merge new posts into the main timeline
   const handleShowNewPosts = () => {
