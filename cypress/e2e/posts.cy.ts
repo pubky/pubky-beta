@@ -631,7 +631,7 @@ describe('posts', () => {
 
     // repost without content
     // todo: remove reload once bug fixed https://github.com/pubky/pubky-app/issues/1396
-    cy.waitReload(500);
+    cy.waitReload(Cypress.env('ci') ? 2_000 : 500);
     repostPost({ postContent });
 
     // verify the repost without content is displayed correctly in feed
