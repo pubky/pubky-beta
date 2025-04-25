@@ -47,6 +47,9 @@ export default function Menu({ setSelectedItem }: MenuProps) {
 
   return (
     <div className="self-start sticky top-[120px]">
+      <Typography.Body variant="large" className="font-light text-white/50">
+        Settings
+      </Typography.Body>
       {Object.keys(menuItems).map((key) => {
         const item = menuItems[key];
         const isSelected = pathname === item.path;
