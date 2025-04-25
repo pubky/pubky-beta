@@ -76,7 +76,7 @@ export const ReplyReplies = ({ reply }: { reply: PostView }) => {
         <div className="relative">
           <div className={lineBaseCSS2} />
           {lineHorizontalCSS2}
-          <CreateQuickReply post={reply} />
+          <CreateQuickReply post={reply} isNestedReply />
         </div>
       )}
     </>

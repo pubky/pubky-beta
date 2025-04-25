@@ -10,9 +10,10 @@ import { parse_uri, PubkyAppPostKind } from 'pubky-app-specs';
 
 interface CreateQuickPostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
+  isNestedReply?: boolean;
 }
 
-export default function CreateQuickReply({ post }: CreateQuickPostProps) {
+export default function CreateQuickReply({ post, isNestedReply }: CreateQuickPostProps) {
   const { pubky, createReply, createTag } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [contentReply, setContentReply] = useState('');
@@ -34,7 +35,15 @@ export default function CreateQuickReply({ post }: CreateQuickPostProps) {
     //   ? post.relationships?.replied
     //   : post?.details?.uri;
 
-    const sendReply = await createReply(post?.details?.uri, content, PubkyAppPostKind.Short, selectedFiles, quote);
+    const sendReply = await createReply(
+      post?.details?.uri,
+      content,
+      PubkyAppPostKind.Short,
+      selectedFiles,
+      quote,
+      arrayTags,
+      isNestedReply
+    );
 
     const hashtags = Utils.extractHashtags(content);
     const filteredHashtags = hashtags.filter((tag) => tag.length <= 20);
