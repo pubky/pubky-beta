@@ -149,6 +149,7 @@ type PubkyClientContextType = {
   deletedPosts: string[];
   singlePost: PostView | undefined;
   setSinglePost: React.Dispatch<React.SetStateAction<PostView | undefined>>;
+  updateFeed: (feed: ICustomFeed, name: string) => Promise<boolean>;
 };
 
 const PubkyClientContext = createContext({} as PubkyClientContextType);
@@ -1114,6 +1115,23 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
     return true;
   });
 
+  const updateFeed = withAuth(async (feed: ICustomFeed, name: string): Promise<boolean> => {
+    // Map the ICustomFeed to the arguments for `createFeed`:
+    const { tags, reach, layout, sort, content } = feed;
+
+    // If feed.tags is null, pass null. Otherwise pass as is.
+    const tagsValue = tags && tags.length > 0 ? tags : null;
+    const contentVal = contentTypeMap[content] || null;
+
+    // Create feed according to specs to compute ID and URL
+    const result = specsBuilder!.createFeed(tagsValue, reach, layout, sort, contentVal, name);
+
+    const feedObj = result.feed.toJson();
+    await homeserver.put(result.meta.url, JSON.stringify(feedObj));
+
+    return true;
+  });
+
   const loadFeeds = withAuth(async (): Promise<{ feed: ICustomFeed; name: string }[]> => {
     // Define the feeds directory path
     const feedsDirUrl = `pubky://${pubky}/pub/pubky.app/feeds/`;
@@ -1326,6 +1344,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
         setMnemonic,
         saveProfile,
         saveFeed,
+        updateFeed,
         deleteFeed,
         loadFeeds,
         createPost,

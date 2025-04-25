@@ -11,6 +11,7 @@ import CroppedImage from './_CroppedImage';
 import DeleteAccount from './_DeleteAccount';
 import DeletePost from './_DeletePost';
 import EditArticle from './_EditArticle';
+import EditFeed from './_EditFeed';
 import EditPost from './_EditPost';
 import Feedback from './_Feedback';
 import Join from './_Join';
@@ -43,6 +44,7 @@ export const BottomSheet = {
   DeleteAccount,
   DeletePost,
   EditArticle,
+  EditFeed,
   EditPost,
   Feedback,
   Join,

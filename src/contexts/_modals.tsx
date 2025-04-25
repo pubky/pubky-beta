@@ -58,6 +58,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     deleteAccount: 'DeleteAccount',
     deletePost: 'DeletePost',
     editArticle: 'EditArticle',
+    editFeed: 'EditFeed',
     editPost: 'EditPost',
     feedback: 'Feedback',
     filesCarousel: 'FilesCarousel',
