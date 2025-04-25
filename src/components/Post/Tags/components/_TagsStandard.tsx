@@ -8,6 +8,7 @@ import { Utils } from '@social/utils-shared';
 import { useState } from 'react';
 import { useTagsLogic } from './TagsUtils';
 import ShowAllTags from './_ShowAllTags';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 interface TagsProps {
   post: PostView;
@@ -17,6 +18,7 @@ interface TagsProps {
 }
 
 export default function TagsStandard({ post, largeView, postType, showTags }: TagsProps) {
+  const isMobile = useIsMobile(1024);
   const [showTooltipTag, setShowTooltipTag] = useState<string | null>(null);
   const { tags, loadingTags, handleAddTag, handleDeleteTag, openModal } = useTagsLogic(post, postType);
   const { pubky } = usePubkyClientContext();
@@ -27,7 +29,7 @@ export default function TagsStandard({ post, largeView, postType, showTags }: Ta
     return (
       <div className="flex gap-2" key={index}>
         <TooltipUI.Root delay={0} setShowTooltip={setShowTooltipTag} tagId={tagObj?.label}>
-          {showTooltipTag === tagObj?.label && <Tooltip.Tag2 tags={tagObj} />}
+          {showTooltipTag === tagObj?.label && !isMobile && <Tooltip.Tag2 tags={tagObj} />}
           {tagObj && (
             <PostUtil.Tag
               id={`tag-${index}`}
