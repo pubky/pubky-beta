@@ -114,11 +114,16 @@ describe('posts', () => {
       `ooooooooooooooooooooooooooooooooooooooooooog post! ${Date.now()}`;
 
     const expectedPostContent =
-      'I can make a really looooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooo...Show more';
+      'I can make a really looooooooooooooooooooooooooooooo' +
+      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
+      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
+      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
+      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
+      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
+      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
+      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
+      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
+      'oooooooooooooooooooooooooooooooo...Show more';
 
     createQuickPost(postContent);
 
@@ -380,13 +385,13 @@ describe('posts', () => {
 
       cy.findFirstPostInFeed(waitForIndexed).within(() => {
         // check tags are displayed within the latest post in the feed
-        checkTagsAreDisplayed(ExpectedTags.AllThree, ExpectedOrder.Alphanumeric);
+        checkTagsAreDisplayed(ExpectedTags.AllThree, ExpectedOrder.ReverseAlphanumeric);
 
         // verify tag can be removed and added back
         clickMiddleTag();
-        checkTagCounters(ExpectedTags.WithMiddleRemoved, ExpectedOrder.Alphanumeric);
+        checkTagCounters(ExpectedTags.WithMiddleRemoved, ExpectedOrder.ReverseAlphanumeric);
         clickMiddleTag();
-        checkTagCounters(ExpectedTags.AllThree, ExpectedOrder.Alphanumeric);
+        checkTagCounters(ExpectedTags.AllThree, ExpectedOrder.ReverseAlphanumeric);
       });
 
       // refresh page before checking tags are still displayed
@@ -467,29 +472,25 @@ describe('posts', () => {
 
     // add two more tags to the post
     cy.get('#post-container').within(() => {
-      cy.get('#show-add-tag-input-btn').click();
       cy.get('#add-tag-input').type(tag2);
       cy.get('#add-tag-btn  ').click();
-      cy.get('#show-add-tag-input-btn').click();
       cy.get('#add-tag-input').type(tag3);
       cy.get('#add-tag-btn').click();
     });
 
-    // todo: uncomment the following once bug fixed, see https://github.com/pubky/pubky-app/issues/1101
+    // check tags are displayed for post
+    checkTagsAreDisplayed(ExpectedTags.AllThree, ExpectedOrder.ReverseAlphanumeric);
+    checkTagCounters(ExpectedTags.AllThree, ExpectedOrder.ReverseAlphanumeric);
 
-    // // check tags are displayed for post
-    // checkTagsAreDisplayed(ExpectedTags.AllThree, ExpectedOrder.Alphanumeric);
-    // checkTagCounters(ExpectedTags.AllThree, ExpectedOrder.Alphanumeric);
+    // remove a tag from the post
+    clickMiddleTag();
+    checkTagsAreDisplayed(ExpectedTags.AllThree, ExpectedOrder.ReverseAlphanumeric);
+    checkTagCounters(ExpectedTags.WithMiddleRemoved, ExpectedOrder.ReverseAlphanumeric);
 
-    // // remove a tag from the post
-    // clickMiddleTag();
-    // checkTagsAreDisplayed(ExpectedTags.AllThree, ExpectedOrder.Alphanumeric);
-    // checkTagCounters(ExpectedTags.WithMiddleRemoved, ExpectedOrder.Alphanumeric);
-
-    // // add the tag back
-    // clickMiddleTag();
-    // checkTagsAreDisplayed(ExpectedTags.AllThree, ExpectedOrder.Alphanumeric);
-    // checkTagCounters(ExpectedTags.AllThree, ExpectedOrder.Alphanumeric);
+    // add the tag back
+    clickMiddleTag();
+    checkTagsAreDisplayed(ExpectedTags.AllThree, ExpectedOrder.ReverseAlphanumeric);
+    checkTagCounters(ExpectedTags.AllThree, ExpectedOrder.ReverseAlphanumeric);
 
     // refresh page before checking tags are still displayed
     cy.reload();
