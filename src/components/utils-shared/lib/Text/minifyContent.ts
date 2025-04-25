@@ -7,9 +7,12 @@ export const minifyContent = (text: string, maxLines: number, maxLength: number 
     return lines.slice(0, maxLines).join('\n') + '...';
   }
 
-  // If the text is longer than maxChars, truncate at the last complete word
-  const minifiedLines = lines.map((line) => (line.length > maxLength ? `${line.substring(0, maxLength)}...` : line));
-  return minifiedLines.join('\n');
+  // If the text is longer than maxLength, truncate at the last complete word
+  if (text.length > maxLength) {
+    return text.substring(0, maxLength) + '...';
+  }
+
+  return text;
 };
 
 export default minifyContent;
