@@ -297,7 +297,7 @@ export default function ContentCreateArticle({
             <div className="w-full">
               <Input.Cursor
                 id="article-title-input"
-                placeholder="Title"
+                placeholder="Article Title"
                 autoFocus
                 className="h-auto text-[40px] font-bold sm:text-[64px]"
                 defaultValue={contentTitle}
@@ -348,9 +348,11 @@ export default function ContentCreateArticle({
                       onChange={handleFileChange}
                       className="hidden"
                     />
-                    <div className={`${isDragging && selectedFile ? 'opacity-100' : 'opacity-50'} hover:opacity-100`}>
-                      <Icon.Plus size="64" />
-                      <p className="mt-2 text-white text-sm text-center">Add image</p>
+                    <div className={`${isDragging && selectedFile ? 'opacity-100' : 'opacity-30'} hover:opacity-100`}>
+                      <div className="w-12 h-12 bg-white/10 rounded-[48px] backdrop-blur-[10px] flex items-center justify-center justify-self-center">
+                        <Icon.Plus size="26" color="white" />
+                      </div>
+                      <p className="mt-2 text-white text-base text-center">Add image</p>
                     </div>
                     <Typography.Body className="text-red-500 mt-4" variant="small">
                       {errorFile}
