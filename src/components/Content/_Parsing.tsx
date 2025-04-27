@@ -214,25 +214,27 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
       } else {
         // Split the line by pk: pattern and process each part
         const parts = line.split(/(pk:[a-zA-Z0-9]{52})/);
-        const processedParts = parts.map((part, partIndex) => {
-          if (part.match(/pk:[a-zA-Z0-9]{52}/)) {
-            return <ProfileLink key={`pk-${partIndex}`} pk={part} />;
-          }
-          // Trim whitespace from non-pk parts to prevent extra spaces
-          const trimmedPart = part.trim();
-          if (!trimmedPart) return null;
-          return (
-            <span key={`text-${partIndex}`}>
-              {trimmedPart.includes('**') ? (
-                highlightBoldText(trimmedPart)
-              ) : trimmedPart.includes('`') ? (
-                highlightInlineCode(trimmedPart)
-              ) : (
-                <LinkParser watchers={watchers}>{trimmedPart}</LinkParser>
-              )}
-            </span>
-          );
-        }).filter(Boolean); // Remove null parts
+        const processedParts = parts
+          .map((part, partIndex) => {
+            if (part.match(/pk:[a-zA-Z0-9]{52}/)) {
+              return <ProfileLink key={`pk-${partIndex}`} pk={part} />;
+            }
+            // Trim whitespace from non-pk parts to prevent extra spaces
+            const trimmedPart = part.trim();
+            if (!trimmedPart) return null;
+            return (
+              <span key={`text-${partIndex}`}>
+                {trimmedPart.includes('**') ? (
+                  highlightBoldText(trimmedPart)
+                ) : trimmedPart.includes('`') ? (
+                  highlightInlineCode(trimmedPart)
+                ) : (
+                  <LinkParser watchers={watchers}>{trimmedPart}</LinkParser>
+                )}
+              </span>
+            );
+          })
+          .filter(Boolean); // Remove null parts
 
         elements.push(
           <span key={index} className={`${cssText} opacity-90 font-normal tracking-wide`}>
