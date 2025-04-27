@@ -11,9 +11,12 @@ function ProfileLink({ pk }: { pk: string }) {
   const [pkFound, setPkFound] = useState<string>('');
   const [userName, setUserName] = useState<string | null>(null);
 
+  const pkMatch = pk.match(/pk:[a-zA-Z0-9]{52}/);
+  const pkPart = pk.replace('pk:', '').trim();
+  const remainingPart = pk.replace(pkMatch?.[0] || '', '').trim();
+
   useEffect(() => {
     const fetchUser = async () => {
-      const pkMatch = pk.match(/pk:[a-zA-Z0-9]{52}/);
       if (pkMatch) {
         const pkFound = pkMatch[0];
         setPkFound(pkFound);
@@ -23,9 +26,6 @@ function ProfileLink({ pk }: { pk: string }) {
     };
     fetchUser();
   }, [pk]);
-
-  const pkPart = pk.replace('pk:', '').trim();
-  const remainingPart = pk.replace(`pk:${pkPart}`, '');
 
   return (
     <>
