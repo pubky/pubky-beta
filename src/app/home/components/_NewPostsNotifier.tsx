@@ -69,7 +69,7 @@ export function NewPostsNotifier() {
   useEffect(() => {
     const interval = setInterval(fetchNewPosts, 10000);
     return () => clearInterval(interval);
-  }, [latestTimestamp, sort, reach, content, selectedFeed?.tags]);
+  }, [latestTimestamp]);
 
   // Handler to merge new posts into the main timeline
   const handleShowNewPosts = () => {
