@@ -30,7 +30,7 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
 
     try {
       const data = await getStreamPosts(
-        currentPubky, // viewerId
+        pubky, // viewerId
         'author', // source
         currentPubky, // authorId
         limit, // limit
