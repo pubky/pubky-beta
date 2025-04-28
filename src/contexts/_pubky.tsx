@@ -83,6 +83,7 @@ type PubkyClientContextType = {
     files?: File[],
     tags?: string[]
   ) => Promise<{ uri: string; details: PubkyAppPost } | false>;
+  editArticle: (postId: string, title: string, articleContent: string, tags?: string[]) => Promise<string | false>;
   createRepost: (
     originalPostId: string,
     originalauthorId: string,
@@ -719,6 +720,81 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
       setTimeline((prev) => [newPostView, ...prev]);
 
       return result ? { uri: result.uri, details: result.details } : false;
+    }
+  );
+
+  const editArticle = withAuth(
+    async (postId: string, title: string, articleContent: string, tags?: string[]): Promise<string | false> => {
+      const content = JSON.stringify({ title, body: articleContent });
+
+      // optimistic edit post in the timeline
+      setTimeline((prevTimeline) =>
+        prevTimeline.map((p) => {
+          if (p.details.id === postId) {
+            return {
+              ...p,
+              details: { ...p.details, content },
+              tags: tags
+                ? tags.map((tag) => ({
+                    label: tag,
+                    taggers: [pubky!],
+                    taggers_count: 1,
+                    relationship: true
+                  }))
+                : p.tags,
+              counts: {
+                ...p.counts,
+                tags: tags?.length || 0
+              }
+            };
+          }
+          return p;
+        })
+      );
+
+      // optimistic edit post in the replies
+      setReplies((prevReplies) =>
+        prevReplies.map((p) => {
+          if (p.details.id === postId) {
+            return {
+              ...p,
+              details: { ...p.details, content },
+              tags: tags
+                ? tags.map((tag) => ({
+                    label: tag,
+                    taggers: [pubky!],
+                    taggers_count: 1,
+                    relationship: true
+                  }))
+                : p.tags,
+              counts: {
+                ...p.counts,
+                tags: tags?.length || 0
+              }
+            };
+          }
+          return p;
+        })
+      );
+
+      // Fetch the existing post from the homeserver
+      let postUri = postUriBuilder(pubky!, postId);
+      const response = await homeserver.get(postUri);
+      const originalPost = PubkyAppPost.fromJson(await response.json());
+
+      // Use specs to edit the existing post and store in homeserver
+      const result = specsBuilder!.editPost(originalPost, postId, content);
+      const updatedPost = { ...result.post.toJson() };
+      await homeserver.put(result.meta.url, JSON.stringify(updatedPost));
+
+      // Update tags
+      if (tags) {
+        for (const tag of tags) {
+          await createTag(pubky!, postId, tag);
+        }
+      }
+
+      return result.meta.url;
     }
   );
 
@@ -1361,6 +1437,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
         createReply,
         createTag,
         createArticle,
+        editArticle,
         deleteTag,
         createTagProfile,
         deleteTagProfile,
