@@ -42,6 +42,17 @@ body {
 .ql-toolbar.ql-snow {
   border: 1px solid rgba(255, 255, 255, 0.2) !important;
   border-radius: 10px !important;
+  align-self: flex-start;
+  position: sticky;
+  top: 15px;
+  background-color: #05050a !important;
+  z-index: 1;
+}
+
+@media screen and (min-width: 1024px) {
+  .ql-toolbar.ql-snow {
+    top: -30px;
+  }
 }
 
 .ql-container.ql-snow {
