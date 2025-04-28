@@ -60,7 +60,11 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
     {
       type: 'startsWith' as const,
       watchFor: 'pk:',
-      render: (pk: string) => <ProfileLink pk={pk} />
+      render: (pk: string) => {
+        // Extract the pk: pattern from anywhere in the text
+        const pkMatch = pk.match(/pk:[a-zA-Z0-9]{52}/);
+        return pkMatch ? <ProfileLink pk={pkMatch[0]} /> : pk;
+      }
     },
     {
       type: 'startsWith' as const,
@@ -208,15 +212,33 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
       } else if (isCodeBlock) {
         codeLines.push(line);
       } else {
+        // Split the line by pk: pattern and process each part
+        const parts = line.split(/(pk:[a-zA-Z0-9]{52})/);
+        const processedParts = parts
+          .map((part, partIndex) => {
+            if (part.match(/pk:[a-zA-Z0-9]{52}/)) {
+              return <ProfileLink key={`pk-${partIndex}`} pk={part} />;
+            }
+            // Trim whitespace from non-pk parts to prevent extra spaces
+            const trimmedPart = part.trim();
+            if (!trimmedPart) return null;
+            return (
+              <span key={`text-${partIndex}`}>
+                {trimmedPart.includes('**') ? (
+                  highlightBoldText(trimmedPart)
+                ) : trimmedPart.includes('`') ? (
+                  highlightInlineCode(trimmedPart)
+                ) : (
+                  <LinkParser watchers={watchers}>{trimmedPart}</LinkParser>
+                )}
+              </span>
+            );
+          })
+          .filter(Boolean); // Remove null parts
+
         elements.push(
           <span key={index} className={`${cssText} opacity-90 font-normal tracking-wide`}>
-            {line.includes('**') ? (
-              highlightBoldText(line)
-            ) : line.includes('`') ? (
-              highlightInlineCode(line)
-            ) : (
-              <LinkParser watchers={watchers}>{line}</LinkParser>
-            )}
+            {processedParts}
             {index < lines.length - 1 && <br />}
           </span>
         );
