@@ -23,11 +23,30 @@ const DynamicFavicon: React.FC = () => {
     // Load the original favicon
     const img = new Image();
     img.crossOrigin = 'anonymous'; // Enable CORS
-    img.src = '/images/pubky-logo.png';
+    img.src = '/images/pubky-logo.svg';
 
     img.onload = () => {
-      // Draw the original favicon
-      ctx.drawImage(img, 0, 0, 32, 32);
+      // Calculate aspect ratio
+      const aspectRatio = img.width / img.height;
+      let drawWidth = 32;
+      let drawHeight = 32;
+
+      // Maintain aspect ratio
+      if (aspectRatio > 1) {
+        drawHeight = 32 / aspectRatio;
+      } else {
+        drawWidth = 32 * aspectRatio;
+      }
+
+      // Center the image
+      const x = (32 - drawWidth) / 2;
+      const y = (32 - drawHeight) / 2;
+
+      // Clear canvas
+      ctx.clearRect(0, 0, 32, 32);
+
+      // Draw the original favicon maintaining aspect ratio
+      ctx.drawImage(img, x, y, drawWidth, drawHeight);
 
       // Draw the green dot with black border only if there are unread notifications
       if (unReadNotification) {

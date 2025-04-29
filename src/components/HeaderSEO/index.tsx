@@ -15,7 +15,7 @@ export function getPWAConfig() {
       title: 'Pubky.app'
     },
     icons: {
-      icon: '/images/pubky-logo.png',
+      icon: '/images/pubky-logo.svg',
       apple: [
         {
           url: '/web-app-manifest-192x192.png',
@@ -23,7 +23,7 @@ export function getPWAConfig() {
           type: 'image/png'
         }
       ],
-      shortcut: '/images/pubky-logo.png'
+      shortcut: '/images/pubky-logo.svg'
     }
   };
 }
@@ -39,13 +39,13 @@ export function getHeaderMetaTags() {
       <link rel="apple-touch-startup-image" href="/web-app-manifest-512x512.png" />
 
       {/* Regular favicon for desktop browsers */}
-      <link rel="icon" type="image/svg+xml" href="/images/pubky-logo.png" />
+      <link rel="icon" type="image/svg+xml" href="/images/pubky-logo.svg" />
       <link rel="icon" type="image/png" sizes="32x32" href="/web-app-manifest-192x192.png" />
       <link rel="icon" type="image/png" sizes="16x16" href="/web-app-manifest-192x192.png" />
 
       {/* Manifest and other PWA configs */}
       <link rel="manifest" href="/manifest.json" />
-      <link rel="mask-icon" href="/images/pubky-logo.png" color="#000000" />
+      <link rel="mask-icon" href="/images/pubky-logo.svg" color="#000000" />
       <meta name="msapplication-TileColor" content="#000000" />
       <meta name="theme-color" content="#000000" />
       <meta name="mobile-web-app-capable" content="yes" />
