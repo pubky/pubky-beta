@@ -3,7 +3,7 @@
   "short_name": "Pubky",
   "icons": [
     {
-      "src": "/images/pubky-logo.svg",
+      "src": "/images/pubky-logo.png",
       "type": "image/svg+xml",
       "purpose": "any"
     },

@@ -24,6 +24,7 @@ import RemindBackup from './RemindBackup';
 import Analytics from './Analytics';
 import HeaderSEO from './HeaderSEO';
 import { DynamicTitle } from './DynamicTitle';
+import DynamicFavicon from './DynamicFavicon';
 
 export {
   Analytics,
@@ -51,5 +52,6 @@ export {
   Toast,
   ProtectedRoutes,
   RemindBackup,
-  DynamicTitle
+  DynamicTitle,
+  DynamicFavicon
 };
