@@ -73,7 +73,7 @@ export function NewPostsNotifier() {
 
   // Handler to merge new posts into the main timeline
   const handleShowNewPosts = () => {
-    setTimeline((prev) => [...newPosts, ...prev]);
+    setTimeline((prev) => [...newPosts.reverse(), ...prev]);
     setNewPosts([]);
     setNewPostsCount(0);
   };
