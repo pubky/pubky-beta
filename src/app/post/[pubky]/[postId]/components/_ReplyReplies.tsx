@@ -25,7 +25,7 @@ export const ReplyReplies = ({ reply }: { reply: PostView }) => {
       <Icon.LineHorizontal size="14" color="#444447" />
     </div>
   );
-  const lineBaseCSS2 = `ml-[11px] absolute border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1.5px] after:h-[65px] after:block after:-mt-[38px] after:-ml-[1px]`;
+  const lineBaseCSS2 = `ml-[11px] absolute border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[62px] after:block after:mt-[-38px] after:-ml-[1px]`;
   const lineHorizontalCSS2 = (
     <div className="absolute ml-[10px] mt-[22px]">
       <Icon.LineHorizontal size="14" color="#444447" />
