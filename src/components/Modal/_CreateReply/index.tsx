@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Modal } from '@social/ui-shared';
-import { PostView } from '@/types/Post';
+import { PostType, PostView } from '@/types/Post';
 import ContentCreateReply from './_Content';
 import { useModal } from '@/contexts';
 
@@ -10,9 +10,10 @@ interface CreateReplyProps {
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   post: PostView;
+  postType?: PostType;
 }
 
-export default function CreateReply({ showModal, setShowModal, post }: CreateReplyProps) {
+export default function CreateReply({ showModal, setShowModal, post, postType }: CreateReplyProps) {
   const { openModal } = useModal();
   const [hasContent, setHasContent] = useState(false);
 
@@ -34,7 +35,12 @@ export default function CreateReply({ showModal, setShowModal, post }: CreateRep
       <div className="mb-4">
         <Modal.Header title="Reply" />
       </div>
-      <ContentCreateReply setShowModalReply={setShowModal} post={post} setHasContent={setHasContent} />
+      <ContentCreateReply
+        setShowModalReply={setShowModal}
+        post={post}
+        setHasContent={setHasContent}
+        postType={postType}
+      />
     </Modal.Root>
   );
 }

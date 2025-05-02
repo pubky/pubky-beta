@@ -191,7 +191,7 @@ export default function Actions({ post, repost, deleteRepost = false, postType, 
           counter={post?.counts?.replies}
           onClick={(event) => {
             event.stopPropagation();
-            pubky ? openModal('createReply', { post }) : openModal('join');
+            pubky ? openModal('createReply', { post, postType }) : openModal('join');
           }}
         />
         <div className="relative">
