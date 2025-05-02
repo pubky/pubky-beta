@@ -333,7 +333,7 @@ describe('posts', () => {
 
   [CheckIndexed.Yes, CheckIndexed.No].forEach((waitForIndexed) => {
     it(`can tag and remove tags from existing post on feed page (waitForIndexed: ${waitForIndexed})`, () => {
-      const postContent = `I can add and remove tags from my existing post! ${Date.now()}`;
+      const postContent = `I can add and remove tags from my existing post on the feed page! ${Date.now()}`;
       const tag1 = 'bananas';
       const tag2 = 'pjammas';
       const tag3 = 'rastas';
@@ -420,7 +420,7 @@ describe('posts', () => {
   });
 
   it(`can tag and remove tags from existing post on post page`, () => {
-    const postContent = `I can add and remove tags from my existing post! ${Date.now()}`;
+    const postContent = `I can add and remove tags from my existing post on the post page! ${Date.now()}`;
     const tag1 = 'açorda';
     const tag2 = 'cassava';
     const tag3 = 'feijoada';
@@ -633,7 +633,7 @@ describe('posts', () => {
 
     // repost without content
     // todo: remove reload once bug fixed https://github.com/pubky/pubky-app/issues/1396
-    cy.waitReload(Cypress.env('ci') ? 2_000 : 500);
+    cy.waitReload(Cypress.env('ci') ? 4_000 : 500);
     repostPost({ postContent });
 
     // verify the repost without content is displayed correctly in feed
