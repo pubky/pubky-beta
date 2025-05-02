@@ -14,7 +14,18 @@ interface ParsingProps {
   repostView?: boolean;
 }
 
-const tagsIcons: { [key: string]: JSX.Element } = {
+interface TagIcon {
+  [key: string]: JSX.Element;
+}
+
+const PK_PATTERN = /pk:[a-zA-Z0-9]{52}/;
+const PK_PATTERNS = {
+  WITH_SPACE: /\s+pk:[a-zA-Z0-9]{52}\s*/,
+  WITH_PARENTHESIS: /\(pk:[a-zA-Z0-9]{52}\)/,
+  BASE: /pk:[a-zA-Z0-9]{52}\s*/
+};
+
+const tagsIcons: TagIcon = {
   '#synonym': <Icon.Synonym size="24" />,
   '#blocktank': <Icon.Blocktank size="24" />,
   '#bitkit': <Icon.Bitkit size="24" />,
@@ -56,13 +67,25 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
     );
   };
 
+  const isValidUrl = (url: string): boolean => {
+    try {
+      const parsedUrl = new URL(url);
+      return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  };
+
+  const isValidEmail = (email: string): boolean => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  };
+
   const watchers = [
     {
       type: 'startsWith' as const,
       watchFor: 'pk:',
       render: (pk: string) => {
-        // Extract the pk: pattern from anywhere in the text
-        const pkMatch = pk.match(/pk:[a-zA-Z0-9]{52}/);
+        const pkMatch = pk.match(PK_PATTERN);
         return pkMatch ? <ProfileLink pk={pkMatch[0]} /> : pk;
       }
     },
@@ -89,19 +112,9 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
       type: 'startsWith' as const,
       watchFor: 'http',
       render: (url: string) => {
-        // Clean up the URL by removing any whitespace and ensuring proper format
         const cleanUrl = url.trim();
         const fullUrl =
           cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://') ? cleanUrl : `https://${cleanUrl}`;
-
-        const isValidUrl = (value: string) => {
-          try {
-            const parsedUrl = new URL(value);
-            return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
-          } catch {
-            return false;
-          }
-        };
 
         if (!isValidUrl(fullUrl)) return url;
 
@@ -123,9 +136,8 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
       watchFor: 'mailto:',
       render: (url: string) => {
         const email = url.replace('mailto:', '');
-        const isValidEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
-
         if (!isValidEmail(email)) return url;
+
         return (
           <Link
             className="text-[#C8FF00] break-all mr-1"
@@ -141,17 +153,32 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
     }
   ];
 
-  const cleanText = (text: string) => text.replace(/\n{3,}/g, '\n\n');
+  const cleanText = (text: string): string => text.replace(/\n{3,}/g, '\n\n');
   const cleanedText = cleanText(children.toString());
   const contentText = fullContent ? cleanedText : Utils.minifyContent(cleanedText, 7, 500);
   const lines = contentText.split('\n');
 
+  const handleCopy = async (codeContent: string) => {
+    if (!copy) {
+      try {
+        await navigator.clipboard.writeText(codeContent);
+        setCopy(true);
+        setTimeout(() => setCopy(false), 1000);
+      } catch (error) {
+        console.error('Failed to copy text to clipboard:', error);
+      }
+    }
+  };
+
   const renderCodeBlock = (codeContent: string, key: string) => {
     if (!codeContent.trim()) return null;
+
     return (
       <div
         key={key}
-        className={`w-auto max-w-[300px] sm:max-w-[520px] md:max-w-[640px] lg:max-w-[600px] ${repostView ? 'xl:max-w-[690px]' : 'xl:max-w-[720px]'}`}
+        className={`w-auto max-w-[300px] sm:max-w-[520px] md:max-w-[640px] lg:max-w-[600px] ${
+          repostView ? 'xl:max-w-[690px]' : 'xl:max-w-[720px]'
+        }`}
       >
         <div
           onClick={(event) => event.stopPropagation()}
@@ -160,20 +187,7 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
           <Typography.Body variant="small-bold" className="text-opacity-80">
             code
           </Typography.Body>
-          <div
-            className="flex gap-1 items-center opacity-80 hover:opacity-100"
-            onClick={async () => {
-              if (!copy) {
-                try {
-                  await navigator.clipboard.writeText(codeContent);
-                  setCopy(true);
-                  setTimeout(() => setCopy(false), 1000);
-                } catch (error) {
-                  console.error('Failed to copy text to clipboard:', error);
-                }
-              }
-            }}
-          >
+          <div className="flex gap-1 items-center opacity-80 hover:opacity-100" onClick={() => handleCopy(codeContent)}>
             {copy ? <Icon.Check size="16" /> : <Icon.Clipboard size="16" />}
             <Typography.Body variant="small-bold">{copy ? 'Copied!' : 'Copy'}</Typography.Body>
           </div>
@@ -194,6 +208,30 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
     );
   };
 
+  const renderPkLink = (part: string, partIndex: number) => {
+    if (part.match(PK_PATTERNS.WITH_SPACE)) {
+      return (
+        <>
+          {' '}
+          <ProfileLink key={`pk-${partIndex}`} pk={part.trim()} />
+        </>
+      );
+    }
+    if (part.match(PK_PATTERNS.WITH_PARENTHESIS)) {
+      return (
+        <>
+          {'('}
+          <ProfileLink key={`pk-${partIndex}`} pk={part.slice(1, -1)} />
+          {')'}
+        </>
+      );
+    }
+    if (part.match(PK_PATTERNS.BASE)) {
+      return <ProfileLink key={`pk-${partIndex}`} pk={part.trim()} />;
+    }
+    return null;
+  };
+
   const renderContent = () => {
     const cssText = largeView ? 'text-2xl leading-[30px]' : 'text-[17px] leading-snug';
     const elements: JSX.Element[] = [];
@@ -212,29 +250,26 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
       } else if (isCodeBlock) {
         codeLines.push(line);
       } else {
-        // Split the line by pk: pattern and process each part
-        const parts = line.split(/(pk:[a-zA-Z0-9]{52})/);
+        const parts = line.split(/(\s+pk:[a-zA-Z0-9]{52}\s*|\(pk:[a-zA-Z0-9]{52}\)|pk:[a-zA-Z0-9]{52}\s*)/);
         const processedParts = parts
           .map((part, partIndex) => {
-            if (part.match(/pk:[a-zA-Z0-9]{52}/)) {
-              return <ProfileLink key={`pk-${partIndex}`} pk={part} />;
-            }
-            // Trim whitespace from non-pk parts to prevent extra spaces
-            const trimmedPart = part.trim();
-            if (!trimmedPart) return null;
+            const pkLink = renderPkLink(part, partIndex);
+            if (pkLink) return pkLink;
+
+            if (!part) return null;
             return (
               <span key={`text-${partIndex}`}>
-                {trimmedPart.includes('**') ? (
-                  highlightBoldText(trimmedPart)
-                ) : trimmedPart.includes('`') ? (
-                  highlightInlineCode(trimmedPart)
+                {part.includes('**') ? (
+                  highlightBoldText(part)
+                ) : part.includes('`') ? (
+                  highlightInlineCode(part)
                 ) : (
-                  <LinkParser watchers={watchers}>{trimmedPart}</LinkParser>
+                  <LinkParser watchers={watchers}>{part}</LinkParser>
                 )}
               </span>
             );
           })
-          .filter(Boolean); // Remove null parts
+          .filter(Boolean);
 
         elements.push(
           <span key={index} className={`${cssText} opacity-90 font-normal tracking-wide`}>
