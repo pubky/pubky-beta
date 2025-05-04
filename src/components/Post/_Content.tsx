@@ -196,7 +196,7 @@ export default function Content({
                       {parsedContent.title}
                     </Typography.Body>
                     <div
-                      className="opacity-70 text-white break-words [&_a]:text-[#C8FF00] [&_a:hover]:text-[#C8FF00]/90"
+                      className="opacity-70 text-white break-words [&_a]:text-[#C8FF00] [&_a:hover]:text-[#C8FF00]/90 [&_h1]:text-4xl [&_h1]:font-bold [&_h1]:mb-4 [&_h2]:text-3xl [&_h2]:font-bold [&_h2]:mb-3 [&_h3]:text-2xl [&_h3]:font-bold [&_h3]:mb-2 [&_p]:mb-4 [&_strong]:font-bold [&_em]:italic [&_u]:underline [&_s]:line-through [&_ol]:list-decimal [&_ol]:ml-4 [&_ol]:mb-4 [&_li]:mb-2"
                       dangerouslySetInnerHTML={{ __html: truncatedBody }}
                     />
                   </div>
