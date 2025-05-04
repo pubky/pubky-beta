@@ -154,8 +154,8 @@ export default function InputArea({
 
     let textFiltered = text.replace(/&nbsp;/g, ' ');
 
-    // Remove <br> tags e &nbsp;
-    if (textFiltered.trim() === '<br>') {
+    // If the text is just a single <br> or empty, set it to empty string
+    if (textFiltered.trim() === '<br>' || textFiltered.trim() === '') {
       textFiltered = '';
     }
 

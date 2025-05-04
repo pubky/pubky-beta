@@ -42,6 +42,9 @@ const modules = {
         // This will be handled by the emoji picker
       }
     }
+  },
+  clipboard: {
+    matchVisual: false
   }
 };
 
@@ -56,8 +59,7 @@ const formats = [
   'blockquote',
   'code-block',
   'link',
-  'image',
-  'emoji'
+  'image'
 ];
 
 interface MarkdownEditorComponentProps {

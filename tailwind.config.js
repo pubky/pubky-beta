@@ -50,6 +50,11 @@ module.exports = {
         },
         '.z-max': {
           zIndex: 999
+        },
+        '.no-html-margins': {
+          '& > *': {
+            margin: '0 !important',
+          },
         }
       };
 
