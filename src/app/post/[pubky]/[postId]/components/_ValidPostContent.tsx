@@ -83,11 +83,13 @@ const NormalPost = ({ data }) => {
 
 const LongPost = ({ data, user }) => {
   const isMobile = useIsMobile();
+  const content = JSON.parse(data?.details?.content);
+  
   return (
     <div className="flex flex-col lg:flex-row gap-6">
       <div className="w-auto lg:w-[1200px] flex flex-col gap-4">
         <Typography.Display className="sm:leading-[64px] break-all">
-          {JSON.parse(data?.details?.content).title}
+          {content.title}
         </Typography.Display>
         <div className="flex w-full gap-4 justify-between items-center">
           <div className="justify-start gap-3 flex items-center mt-4 mb-2">
@@ -124,9 +126,9 @@ const LongPost = ({ data, user }) => {
           />
         )}
         <div
-          className="text-white break-words [&_a]:text-[#C8FF00] [&_a:hover]:text-[#C8FF00]/90"
+          className="text-white break-words [&_a]:text-[#C8FF00] [&_a:hover]:text-[#C8FF00]/90 [&_h1]:text-4xl [&_h1]:font-bold [&_h1]:mb-4 [&_h2]:text-3xl [&_h2]:font-bold [&_h2]:mb-3 [&_h3]:text-2xl [&_h3]:font-bold [&_h3]:mb-2 [&_p]:mb-4 [&_strong]:font-bold [&_em]:italic [&_u]:underline [&_s]:line-through [&_ol]:list-decimal [&_ol]:ml-4 [&_ol]:mb-4 [&_li]:mb-2"
           dangerouslySetInnerHTML={{
-            __html: JSON.parse(data?.details?.content).body
+            __html: content.body
           }}
         />
       </div>
