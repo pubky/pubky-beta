@@ -88,16 +88,10 @@ const MarkdownEditorComponent = ({
     if (quill) {
       const range = quill.getSelection();
       if (range) {
-        const text = quill.getText();
-        const newText = text.slice(0, range.index) + emoji.native + text.slice(range.index);
-
-        if (newText.length <= maxLength) {
-          quill.deleteText(0, quill.getLength());
-          quill.insertText(0, newText);
-          quill.setSelection(range.index + emoji.native.length);
-          onChange(quill.root.innerHTML);
-          setCharCount(newText.length);
-        }
+        quill.insertText(range.index, emoji.native);
+        quill.setSelection(range.index + emoji.native.length);
+        onChange(quill.root.innerHTML);
+        setCharCount(quill.getText().length);
       }
     }
   };
