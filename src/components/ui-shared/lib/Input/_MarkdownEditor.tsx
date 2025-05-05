@@ -6,6 +6,7 @@ import 'quill/dist/quill.snow.css';
 import { Icon } from '../Icon';
 import { renderToString } from 'react-dom/server';
 import EmojiPicker from '@/components/EmojiPicker';
+import { Delta } from 'quill';
 
 // Add custom CSS for the emoji button
 const customStyles = `
@@ -22,7 +23,7 @@ const customStyles = `
     display: inline-block;
   }
   .ql-editor p {
-    display: inline;
+    display: block;
   }
 `;
 
@@ -45,6 +46,21 @@ const modules = {
   },
   clipboard: {
     matchVisual: false
+  },
+  keyboard: {
+    bindings: {
+      enter: {
+        key: 13,
+        handler: function (range: any) {
+          const quill = this.quill;
+          const delta = new Delta().retain(range.index).delete(range.length).insert('\n');
+          quill.updateContents(delta, 'user');
+          quill.setSelection(range.index + 1, 0);
+          quill.focus();
+          return false;
+        }
+      }
+    }
   }
 };
 
