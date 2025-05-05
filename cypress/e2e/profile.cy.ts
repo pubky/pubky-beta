@@ -1,13 +1,20 @@
-import { editProfileAndVerify, addLinks } from '../support/profile';
+import { editProfileAndVerify, addLinks, addProfileTags } from '../support/profile';
 import { slowCypressDown } from 'cypress-slow-down';
+import { HasBackedUp, SkipOnboardingSlides } from '../support/types/enums';
+import { backupDownloadFilePath } from '../support/auth';
+import { searchForProfileByName, searchForProfileByPubky } from '../support/contacts';
 
 describe('profile', () => {
   before(() => {
     slowCypressDown();
   });
 
+  const profile1 = 'edit-me';
+
   beforeEach(() => {
-    cy.onboardAsNewUser('Edit Me', 'This bio is editable');
+    cy.onboardAsNewUser('Edit Me', 'This bio is editable', SkipOnboardingSlides.Yes, profile1);
+    cy.backupRecoveryFile();
+    cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(profile1));
   });
 
   it('editing should retain any changes made to own profile', () => {
@@ -66,7 +73,7 @@ describe('profile', () => {
     cy.location('pathname').should('eq', '/profile');
 
     // Reload the page to ensure changes are not persisted
-    cy.waitReload();
+    cy.waitReload(500);
     cy.get('#profile-username-header').invoke('text').should('eq', 'Edit Me');
     // This approach is necessary for bio due to additional space inserted before final word.
     cy.get('#profile-bio-content').should(($elem) => {
@@ -74,22 +81,70 @@ describe('profile', () => {
     });
   });
 
-  // IN PROGRESS
-  it.skip('can tag own profile and other profile', () => {
+  it('can tag own profile', () => {
     // navigate to own profile page
-    cy.get('#profile-tag-btn').click();
+    cy.get('#header-profile-pic').click();
 
-    // add tag
-    cy.get('#profile-tag-input').type('test-tag-1');
-    cy.get('#profile-tag-add-btn').click();
+    // assert 'No tags yet'
+    cy.get('#profile-tagged-section').contains('No tags yet');
 
-    // verify tag is added
+    // add tags to own profile
+    cy.get('#profile-tab-tagged').click();
+    addProfileTags(['me-1', 'me-2']);
+
+    // verify tags are displayed on 'Tagged' tab
+    cy.get('#profile-tab-content').contains('me-1');
+    cy.get('#profile-tab-content').contains('me-2');
+
+    // TODO: remove reload once bug fixed https://github.com/pubky/pubky-app/issues/1410
+    cy.reload();
+
+    // verify tags are displayed on main page (Notifications tab)
+    cy.get('#profile-tab-notifications').click();
+    cy.get('#profile-tagged-section').contains('me-1');
+    cy.get('#profile-tagged-section').contains('me-2');
+
+    // TODO: add check for tags persisted after reload once above workaround is removed, once bug is fixed https://github.com/pubky/pubky-app/issues/1410
+    // cy.reload();
+    // cy.get('#profile-tagged-section').contains('me-1');
+    // cy.get('#profile-tagged-section').contains('me-2');
+  });
+
+  it('can tag other profile', () => {
+    // sign up a user to tag and sign back in as the primary user
+    // random username required to avoid conflicts with existing profiles when searching by name
+    const profileToTagPubkyName = `${Cypress._.random(100_000)}-Tag Me`;
+    cy.signOut(HasBackedUp.Yes);
+    cy.onboardAsNewUser(profileToTagPubkyName, 'This profile is destined to be tagged');
+    cy.signOut(HasBackedUp.No);
+    cy.signIn(backupDownloadFilePath(profile1));
+
+    // navigate to the profile to tag
+    searchForProfileByName(profileToTagPubkyName);
+
+    // add taggs to other profile
+    cy.get('#profile-tab-tagged').click();
+    addProfileTags(['them-1', 'them-2']);
+
+    // verify tags are displayed on 'Tagged' tab
+    cy.get('#profile-tab-content').contains('them-1');
+    cy.get('#profile-tab-content').contains('them-2');
+
+    // TODO: remove reload once bug fixed https://github.com/pubky/pubky-app/issues/1410
+    cy.reload();
+
+    // verify tags are displayed on main page (Posts tab)
+    cy.get('#profile-tab-posts').click();
+    cy.get('#profile-tagged-section').contains('them-1');
+    cy.get('#profile-tagged-section').contains('them-2');
+
+    // TODO: add check for tags persisted after reload once above workaround is removed, once bug is fixed https://github.com/pubky/pubky-app/issues/1410
+    // cy.reload();
+    // cy.get('#profile-tagged-section').contains('them-1');
+    // cy.get('#profile-tagged-section').contains('them-2');
   });
 
   it('should not add non-existent user to recent history when visiting their profile', () => {
-    // Navigate to home page
-    cy.visit('/');
-
     // Search for a non-existent user
     const nonExistentUser = 'pk:gujx6qd8ksydh1makdphd3bxu351d9b8waqka8hfg6q7hnqkxexo';
     cy.get('#header-search-input').type(nonExistentUser).type('{enter}');

@@ -119,7 +119,7 @@ export default function CustomFeeds({ loading, setLoading, ...rest }: CustomFeed
                   {Utils.minifyText(feed.name, 11)}
                 </Typography.Body>
                 <div
-                  id="delete-custom-feed"
+                  id="edit-custom-feed"
                   onClick={(e) => {
                     e.stopPropagation();
                     openModal('editFeed', {

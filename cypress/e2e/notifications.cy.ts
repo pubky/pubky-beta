@@ -10,7 +10,7 @@ import {
 } from '../support/posts';
 import { slowCypressDown } from 'cypress-slow-down';
 import 'cypress-slow-down/commands';
-import { searchAndFollowProfile, searchForProfile } from '../support/contacts';
+import { searchAndFollowProfile, searchForProfileByPubky } from '../support/contacts';
 import { clickFollowButton, waitForNotificationDotToDisappear } from '../support/profile';
 import { addProfileTags } from '../support/profile';
 import { checkLatestNotification } from '../support/profile';
@@ -118,7 +118,7 @@ describe('notifications', () => {
 
     // * profile 1 tags profile 2's profile
     cy.get(`@${profile2.pubkyAlias}`).then((pubky) => {
-      searchForProfile(`${pubky}`, profile2.username);
+      searchForProfileByPubky(`${pubky}`, profile2.username);
     });
 
     // add one tag to profile
@@ -149,7 +149,7 @@ describe('notifications', () => {
 
     // * profile 2 tags profile 1's post (from their profile page)
     cy.get(`@${profile1.pubkyAlias}`).then((pubky) => {
-      searchForProfile(`${pubky}`, profile1.username);
+      searchForProfileByPubky(`${pubky}`, profile1.username);
     });
     // click Posts tab to show profile 1's posts
     cy.get('#profile-tab-posts').click();

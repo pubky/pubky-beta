@@ -46,7 +46,7 @@ Cypress.Commands.add(
     // request invite code from homeserver and input it
     cy.request({
       method: 'GET',
-      url: 'http://localhost:6286/admin/generate_signup_token',
+      url: 'http://localhost:6288/generate_signup_token',
       headers: {
         'X-Admin-Password': 'admin'
       }
@@ -347,6 +347,16 @@ Cypress.Commands.add('findFirstPostInFeedFiltered', (filterText, checkIndexed = 
 // useful for finding a specific post by index with optional filter text
 Cypress.Commands.add('findPostInFeed', (postIdx = 0, filterText?, checkIndexed = CheckIndexed.Yes) => {
   findPostInFeed(postIdx, filterText, checkIndexed);
+});
+
+// useful for finding a specific post by text in search results
+Cypress.Commands.add('findPostInSearchResults', (filterText?: string, postIdx = 0) => {
+  cy.get('#post-search-results')
+    .children()
+    .then(($posts) => {
+      return filterText ? $posts.filter((_idx, element) => element.innerText.includes(filterText)) : $posts;
+    })
+    .eq(postIdx);
 });
 
 // To prevent Cypress from failing the test when running pubky-app with dev build:

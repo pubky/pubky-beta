@@ -350,7 +350,12 @@ describe('feed and filters', () => {
     // * delete the custom feed
     cy.get('#custom-feeds-tabs').within(($tabs) => {
       cy.wrap($tabs).children().eq(1).contains("Mr Feed's");
-      cy.wrap($tabs).children().eq(1).find('#delete-custom-feed').click();
+      cy.wrap($tabs).children().eq(1).find('#edit-custom-feed').click();
+    });
+
+    cy.get('#modal-root').within(() => {
+      cy.get('h1').contains('Edit Feed');
+      cy.get('#delete-feed-btn').click();
     });
 
     // * confirm only 'All' feed is available

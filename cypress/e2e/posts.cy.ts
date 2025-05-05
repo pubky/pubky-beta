@@ -114,11 +114,16 @@ describe('posts', () => {
       `ooooooooooooooooooooooooooooooooooooooooooog post! ${Date.now()}`;
 
     const expectedPostContent =
-      'I can make a really looooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooo...Show more';
+      'I can make a really looooooooooooooooooooooooooooooo' +
+      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
+      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
+      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
+      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
+      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
+      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
+      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
+      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
+      'oooooooooooooooooooooooooooooooo...Show more';
 
     createQuickPost(postContent);
 
@@ -235,7 +240,8 @@ describe('posts', () => {
     });
 
     // verify the post is displayed correctly in feed
-    latestPostInFeedContentEq(postContent + ` @${fullUsername}`);
+    // TODO: re-add the space before profile name once bug is fixed, https://github.com/pubky/pubky-app/issues/1461
+    latestPostInFeedContentEq(postContent + `@${fullUsername}`);
   });
 
   it('can delete a post', () => {
@@ -327,7 +333,7 @@ describe('posts', () => {
 
   [CheckIndexed.Yes, CheckIndexed.No].forEach((waitForIndexed) => {
     it(`can tag and remove tags from existing post on feed page (waitForIndexed: ${waitForIndexed})`, () => {
-      const postContent = `I can add and remove tags from my existing post! ${Date.now()}`;
+      const postContent = `I can add and remove tags from my existing post on the feed page! ${Date.now()}`;
       const tag1 = 'bananas';
       const tag2 = 'pjammas';
       const tag3 = 'rastas';
@@ -380,13 +386,13 @@ describe('posts', () => {
 
       cy.findFirstPostInFeed(waitForIndexed).within(() => {
         // check tags are displayed within the latest post in the feed
-        checkTagsAreDisplayed(ExpectedTags.AllThree, ExpectedOrder.Alphanumeric);
+        checkTagsAreDisplayed(ExpectedTags.AllThree, ExpectedOrder.ReverseAlphanumeric);
 
         // verify tag can be removed and added back
         clickMiddleTag();
-        checkTagCounters(ExpectedTags.WithMiddleRemoved, ExpectedOrder.Alphanumeric);
+        checkTagCounters(ExpectedTags.WithMiddleRemoved, ExpectedOrder.ReverseAlphanumeric);
         clickMiddleTag();
-        checkTagCounters(ExpectedTags.AllThree, ExpectedOrder.Alphanumeric);
+        checkTagCounters(ExpectedTags.AllThree, ExpectedOrder.ReverseAlphanumeric);
       });
 
       // refresh page before checking tags are still displayed
@@ -414,7 +420,7 @@ describe('posts', () => {
   });
 
   it(`can tag and remove tags from existing post on post page`, () => {
-    const postContent = `I can add and remove tags from my existing post! ${Date.now()}`;
+    const postContent = `I can add and remove tags from my existing post on the post page! ${Date.now()}`;
     const tag1 = 'açorda';
     const tag2 = 'cassava';
     const tag3 = 'feijoada';
@@ -467,29 +473,25 @@ describe('posts', () => {
 
     // add two more tags to the post
     cy.get('#post-container').within(() => {
-      cy.get('#show-add-tag-input-btn').click();
       cy.get('#add-tag-input').type(tag2);
       cy.get('#add-tag-btn  ').click();
-      cy.get('#show-add-tag-input-btn').click();
       cy.get('#add-tag-input').type(tag3);
       cy.get('#add-tag-btn').click();
     });
 
-    // todo: uncomment the following once bug fixed, see https://github.com/pubky/pubky-app/issues/1101
+    // check tags are displayed for post
+    checkTagsAreDisplayed(ExpectedTags.AllThree, ExpectedOrder.ReverseAlphanumeric);
+    checkTagCounters(ExpectedTags.AllThree, ExpectedOrder.ReverseAlphanumeric);
 
-    // // check tags are displayed for post
-    // checkTagsAreDisplayed(ExpectedTags.AllThree, ExpectedOrder.Alphanumeric);
-    // checkTagCounters(ExpectedTags.AllThree, ExpectedOrder.Alphanumeric);
+    // remove a tag from the post
+    clickMiddleTag();
+    checkTagsAreDisplayed(ExpectedTags.AllThree, ExpectedOrder.ReverseAlphanumeric);
+    checkTagCounters(ExpectedTags.WithMiddleRemoved, ExpectedOrder.ReverseAlphanumeric);
 
-    // // remove a tag from the post
-    // clickMiddleTag();
-    // checkTagsAreDisplayed(ExpectedTags.AllThree, ExpectedOrder.Alphanumeric);
-    // checkTagCounters(ExpectedTags.WithMiddleRemoved, ExpectedOrder.Alphanumeric);
-
-    // // add the tag back
-    // clickMiddleTag();
-    // checkTagsAreDisplayed(ExpectedTags.AllThree, ExpectedOrder.Alphanumeric);
-    // checkTagCounters(ExpectedTags.AllThree, ExpectedOrder.Alphanumeric);
+    // add the tag back
+    clickMiddleTag();
+    checkTagsAreDisplayed(ExpectedTags.AllThree, ExpectedOrder.ReverseAlphanumeric);
+    checkTagCounters(ExpectedTags.AllThree, ExpectedOrder.ReverseAlphanumeric);
 
     // refresh page before checking tags are still displayed
     cy.reload();
@@ -624,13 +626,14 @@ describe('posts', () => {
   });
 
   // todo: consider creating user to create the post to repost
-  // todo: reenable intermittently failing test, see https://github.com/pubky/pubky-app/issues/1396
-  it.skip('can repost without content then delete the repost', () => {
+  it('can repost without content then delete the repost', () => {
     // create a post to repost
     const postContent = `This post will be reposted without content! ${Date.now()}`;
     createQuickPost(postContent);
 
     // repost without content
+    // todo: remove reload once bug fixed https://github.com/pubky/pubky-app/issues/1396
+    cy.waitReload(Cypress.env('ci') ? 4_000 : 500);
     repostPost({ postContent });
 
     // verify the repost without content is displayed correctly in feed

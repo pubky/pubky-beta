@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # https://github.com/pubky/pubky-stack
-      PUBKY_STACK_REF: b8ea5b61297551702eb8645a81f14ad84bafe521
+      PUBKY_STACK_REF: 37f26c7b238c7a6d9214f5c4ad88570f388ae258
     strategy:
       matrix:
         browser: [chrome] # [chrome, firefox]

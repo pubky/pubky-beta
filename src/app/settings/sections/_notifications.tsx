@@ -57,6 +57,7 @@ export default function Notifications() {
             <div key={type} className="w-full h-8 justify-between items-center inline-flex">
               <Typography.Body variant="small-bold">{getNotificationLabel(type as NotificationType)}</Typography.Body>
               <Input.Switch
+                id={`notification-switch-${type}`}
                 checked={preferences[type as NotificationType]}
                 onChange={() => handleToggle(type as NotificationType)}
               />
