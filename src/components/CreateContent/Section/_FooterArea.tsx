@@ -252,11 +252,11 @@ export default function FooterArea({
             <div className="grow" />
             <div className="w-full justify-between sm:justify-end flex gap-2">
               {isError && (
-                <Typography.Body className="self-center whitespace-nowrap text-[#e95164]" variant="small">
+                <Typography.Body className="self-center text-[#e95164]" variant="small">
                   Content invalid. Check image size.
                 </Typography.Body>
               )}
-              <div id="content-length" className="text-opacity-30 text-white text-sm mt-4 mr-2">
+              <div id="content-length" className="whitespace-nowrap text-opacity-30 text-white text-sm mt-4 mr-2">
                 {noFile ? charCountArticle : content.length} / {maxLength}
               </div>
               <div className="flex gap-2">
