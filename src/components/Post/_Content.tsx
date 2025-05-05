@@ -198,7 +198,7 @@ export default function Content({
                       {parsedContent.title}
                     </Typography.Body>
                     <div
-                      className="opacity-70 text-white break-words no-html-margins [&_a]:text-[#C8FF00] [&_a:hover]:text-[#C8FF00]/90 [&_h1]:text-4xl [&_h1]:font-bold [&_h1]:mb-4 [&_h2]:text-3xl [&_h2]:font-bold [&_h2]:mb-3 [&_h3]:text-2xl [&_h3]:font-bold [&_h3]:mb-2 [&_p]:mb-4 [&_strong]:font-bold [&_em]:italic [&_u]:underline [&_s]:line-through [&_ol]:list-decimal [&_ol]:pl-4"
+                      className="opacity-70 text-white break-words no-html-margins [&_a]:text-[#C8FF00] [&_a:hover]:text-[#C8FF00]/90 [&_h1]:text-4xl [&_h1]:font-bold [&_h1]:mb-4 [&_h2]:text-3xl [&_h2]:font-bold [&_h2]:mb-3 [&_h3]:text-2xl [&_h3]:font-bold [&_h3]:mb-2 [&_p]:mb-4 [&_strong]:font-bold [&_em]:italic [&_u]:underline [&_s]:line-through [&_ol]:pl-0 [&_li[data-list='ordered']]:list-decimal [&_li[data-list='ordered']]:list-inside [&_li[data-list='bullet']]:before:content-['•'] [&_li[data-list='bullet']]:before:mr-2 [&_li[data-list='bullet']]:list-none [&_.ql-code-block]:bg-[#1E1E1E] [&_.ql-code-block]:p-4 [&_.ql-code-block]:rounded-lg [&_.ql-code-block]:font-mono [&_.ql-code-block]:text-sm [&_.ql-code-block]:my-4 [&_.ql-code-block]:overflow-x-auto [&_.ql-code-block]:whitespace-pre"
                       dangerouslySetInnerHTML={{
                         __html: formattedContent
                       }}
