@@ -264,7 +264,9 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
       } else if (isCodeBlock) {
         codeLines.push(line);
       } else {
-        const parts = line.split(/(\s+pk:[a-zA-Z0-9]{52}\s*|pk:[a-zA-Z0-9]{52}[^a-zA-Z0-9]?|pk:[a-zA-Z0-9]{52})/);
+        const parts = line.split(
+          /(\s+pk:[a-zA-Z0-9]{52}\s*|pk:[a-zA-Z0-9]{52}(?:\s*[^\s]*)?|pk:[a-zA-Z0-9]{52}[?!.,;:])/
+        );
         const processedParts = parts
           .map((part, partIndex) => {
             if (!part) return null;
