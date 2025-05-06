@@ -20,7 +20,8 @@ interface TagIcon {
 
 const PK_PATTERN = /pk:[a-zA-Z0-9]{52}/;
 const PK_PATTERNS = {
-  WITH_SPACE: /\s+pk:[a-zA-Z0-9]{52}\s*/,
+  SPACE_BEFORE: /\s+pk:[a-zA-Z0-9]{52}/,
+  SPACE_AFTER: /pk:[a-zA-Z0-9]{52}\s+/,
   BASE: /pk:[a-zA-Z0-9]{52}/
 };
 
@@ -209,41 +210,20 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
   };
 
   const renderPkLink = (part: string, partIndex: number) => {
-    if (part.match(PK_PATTERNS.WITH_SPACE)) {
-      const pkMatch = part.match(PK_PATTERN);
-      if (!pkMatch) return part;
+    const pkMatch = part.match(PK_PATTERN);
+    if (!pkMatch) return part;
 
-      const pk = pkMatch[0];
-      const beforePk = part.slice(0, part.indexOf(pk));
-      const afterPk = part.slice(part.indexOf(pk) + pk.length);
+    const pk = pkMatch[0];
+    const beforePk = part.slice(0, part.indexOf(pk));
+    const afterPk = part.slice(part.indexOf(pk) + pk.length);
 
-      return (
-        <>
-          {beforePk}
-          <ProfileLink pk={pk} />
-          {afterPk}
-        </>
-      );
-    }
-
-    if (part.match(PK_PATTERNS.BASE)) {
-      const pkMatch = part.match(PK_PATTERN);
-      if (!pkMatch) return part;
-
-      const pk = pkMatch[0];
-      const beforePk = part.slice(0, part.indexOf(pk));
-      const afterPk = part.slice(part.indexOf(pk) + pk.length);
-
-      return (
-        <>
-          {beforePk}
-          <ProfileLink pk={pk} />
-          {afterPk}
-        </>
-      );
-    }
-
-    return null;
+    return (
+      <>
+        {beforePk}
+        <ProfileLink pk={pk} />
+        {afterPk}
+      </>
+    );
   };
 
   const renderContent = () => {
@@ -264,9 +244,7 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
       } else if (isCodeBlock) {
         codeLines.push(line);
       } else {
-        const parts = line.split(
-          /(\s+pk:[a-zA-Z0-9]{52}\s*|pk:[a-zA-Z0-9]{52}(?:\s*[^\s]*)?|pk:[a-zA-Z0-9]{52}[?!.,;:])/
-        );
+        const parts = line.split(new RegExp(`(${PK_PATTERNS.SPACE_BEFORE.source}|${PK_PATTERNS.SPACE_AFTER.source}|${PK_PATTERNS.BASE.source})`));
         const processedParts = parts
           .map((part, partIndex) => {
             if (!part) return null;
