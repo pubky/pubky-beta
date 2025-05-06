@@ -18,7 +18,6 @@ interface TagIcon {
   [key: string]: JSX.Element;
 }
 
-const PK_PATTERN = /pk:[a-zA-Z0-9]{52}/;
 const PK_PATTERNS = {
   SPACE_BEFORE: /\s+pk:[a-zA-Z0-9]{52}/,
   SPACE_AFTER: /pk:[a-zA-Z0-9]{52}\s+/,
@@ -86,7 +85,7 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
       type: 'startsWith' as const,
       watchFor: 'pk:',
       render: (pk: string) => {
-        const pkMatch = pk.match(PK_PATTERN);
+        const pkMatch = pk.match(PK_PATTERNS.BASE);
         return pkMatch ? <ProfileLink pk={pkMatch[0]} /> : pk;
       }
     },
@@ -210,7 +209,7 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
   };
 
   const renderPkLink = (part: string, partIndex: number) => {
-    const pkMatch = part.match(PK_PATTERN);
+    const pkMatch = part.match(PK_PATTERNS.BASE);
     if (!pkMatch) return part;
 
     const pk = pkMatch[0];
