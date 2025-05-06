@@ -36,7 +36,8 @@ const contentTypeMap = {
   images: 'image',
   videos: 'video',
   links: 'link',
-  files: 'file'
+  files: 'file',
+  all: null
 };
 
 type PubkyClientContextType = {
@@ -150,7 +151,7 @@ type PubkyClientContextType = {
   deletedPosts: string[];
   singlePost: PostView | undefined;
   setSinglePost: React.Dispatch<React.SetStateAction<PostView | undefined>>;
-  updateFeed: (feed: ICustomFeed, name: string) => Promise<boolean>;
+  updateFeed: (originalFeed: ICustomFeed, updatedFeed: ICustomFeed, name: string) => Promise<boolean>;
 };
 
 const PubkyClientContext = createContext({} as PubkyClientContextType);
@@ -1181,7 +1182,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
 
     // If feed.tags is null, pass null. Otherwise pass as is.
     const tagsValue = tags && tags.length > 0 ? tags : null;
-    const contentVal = contentTypeMap[content] || null;
+    const contentVal = content === 'all' ? null : content ? (contentTypeMap[content] ?? content) : null;
 
     const result = specsBuilder!.createFeed(tagsValue, reach, layout, sort, contentVal, name);
 
@@ -1191,22 +1192,16 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
     return true;
   });
 
-  const updateFeed = withAuth(async (feed: ICustomFeed, name: string): Promise<boolean> => {
-    // Map the ICustomFeed to the arguments for `createFeed`:
-    const { tags, reach, layout, sort, content } = feed;
+  const updateFeed = withAuth(
+    async (originalFeed: ICustomFeed, updatedFeed: ICustomFeed, name: string): Promise<boolean> => {
+      // First delete the existing feed
+      await deleteFeed(originalFeed);
 
-    // If feed.tags is null, pass null. Otherwise pass as is.
-    const tagsValue = tags && tags.length > 0 ? tags : null;
-    const contentVal = contentTypeMap[content] || null;
-
-    // Create feed according to specs to compute ID and URL
-    const result = specsBuilder!.createFeed(tagsValue, reach, layout, sort, contentVal, name);
-
-    const feedObj = result.feed.toJson();
-    await homeserver.put(result.meta.url, JSON.stringify(feedObj));
-
-    return true;
-  });
+      // Then create a new feed with the updated values
+      await saveFeed(updatedFeed, name);
+      return true;
+    }
+  );
 
   const loadFeeds = withAuth(async (): Promise<{ feed: ICustomFeed; name: string }[]> => {
     // Define the feeds directory path
@@ -1238,10 +1233,10 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
 
     // If feed.tags is null, pass null. Otherwise pass as is.
     const tagsValue = tags && tags.length > 0 ? tags : null;
-    const contentVal = contentTypeMap[content] || null;
+    const contentVal = content === 'all' ? null : content ? (contentTypeMap[content] ?? content) : null;
 
     // create feed according to specs to compute ID and URL
-    const result = specsBuilder!.createFeed(tagsValue, reach, layout, sort, contentVal || null, 'placeholder');
+    const result = specsBuilder!.createFeed(tagsValue, reach, layout, sort, contentVal, 'placeholder');
 
     // Delete the feed from the homeserver
     await homeserver.del(result.meta.url);

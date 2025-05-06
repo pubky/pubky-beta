@@ -51,7 +51,8 @@ export default function ContentEditFeed({
         content: localContent
       };
 
-      await updateFeed(updatedFeed, nameFeed);
+      await updateFeed(feedToEdit, updatedFeed, nameFeed);
+
       handleUpdateFeeds(updatedFeed, nameFeed);
       setShowModalEditFeed(false);
     } catch (error) {
@@ -231,7 +232,7 @@ export default function ContentEditFeed({
           icon={<Icon.Activity size="16" color={!nameFeed || tagsFeed?.length === 0 ? 'grey' : 'white'} />}
           onClick={() => (loadingEdit || !nameFeed || tagsFeed?.length === 0 ? undefined : handleUpdateFeed())}
         >
-          Save Feed
+          Edit Feed
         </Button.Medium>
       </div>
     </>
