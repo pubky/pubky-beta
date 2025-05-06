@@ -21,8 +21,7 @@ interface TagIcon {
 const PK_PATTERN = /pk:[a-zA-Z0-9]{52}/;
 const PK_PATTERNS = {
   WITH_SPACE: /\s+pk:[a-zA-Z0-9]{52}\s*/,
-  WITH_PARENTHESIS: /\(pk:[a-zA-Z0-9]{52}\)/,
-  BASE: /pk:[a-zA-Z0-9]{52}\s*/
+  BASE: /pk:[a-zA-Z0-9]{52}/
 };
 
 const tagsIcons: TagIcon = {
@@ -35,6 +34,7 @@ const tagsIcons: TagIcon = {
 };
 
 const Parsing = ({ children, fullContent = false, largeView, repostView }: ParsingProps) => {
+  console.log('children', children);
   const [copy, setCopy] = useState(false);
 
   const highlightInlineCode = (text: string): JSX.Element[] => {
@@ -213,22 +213,28 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
       return (
         <>
           {' '}
-          <ProfileLink key={`pk-${partIndex}`} pk={part.trim()} />
+          <ProfileLink pk={part.trim()} />
         </>
       );
     }
-    if (part.match(PK_PATTERNS.WITH_PARENTHESIS)) {
+
+    if (part.match(PK_PATTERNS.BASE)) {
+      const pkMatch = part.match(PK_PATTERN);
+      if (!pkMatch) return part;
+
+      const pk = pkMatch[0];
+      const beforePk = part.slice(0, part.indexOf(pk));
+      const afterPk = part.slice(part.indexOf(pk) + pk.length);
+
       return (
         <>
-          {'('}
-          <ProfileLink key={`pk-${partIndex}`} pk={part.slice(1, -1)} />
-          {')'}
+          {beforePk}
+          <ProfileLink pk={pk} />
+          {afterPk}
         </>
       );
     }
-    if (part.match(PK_PATTERNS.BASE)) {
-      return <ProfileLink key={`pk-${partIndex}`} pk={part.trim()} />;
-    }
+
     return null;
   };
 
@@ -250,13 +256,14 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
       } else if (isCodeBlock) {
         codeLines.push(line);
       } else {
-        const parts = line.split(/(\s+pk:[a-zA-Z0-9]{52}\s*|\(pk:[a-zA-Z0-9]{52}\)|pk:[a-zA-Z0-9]{52}\s*)/);
+        const parts = line.split(/(\s+pk:[a-zA-Z0-9]{52}\s*|pk:[a-zA-Z0-9]{52}[^a-zA-Z0-9]?|pk:[a-zA-Z0-9]{52})/);
         const processedParts = parts
           .map((part, partIndex) => {
+            if (!part) return null;
+
             const pkLink = renderPkLink(part, partIndex);
             if (pkLink) return pkLink;
 
-            if (!part) return null;
             return (
               <span key={`text-${partIndex}`}>
                 {part.includes('**') ? (
