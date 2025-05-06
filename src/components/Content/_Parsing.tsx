@@ -210,10 +210,18 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
 
   const renderPkLink = (part: string, partIndex: number) => {
     if (part.match(PK_PATTERNS.WITH_SPACE)) {
+      const pkMatch = part.match(PK_PATTERN);
+      if (!pkMatch) return part;
+
+      const pk = pkMatch[0];
+      const beforePk = part.slice(0, part.indexOf(pk));
+      const afterPk = part.slice(part.indexOf(pk) + pk.length);
+
       return (
         <>
-          {' '}
-          <ProfileLink pk={part.trim()} />
+          {beforePk}
+          <ProfileLink pk={pk} />
+          {afterPk}
         </>
       );
     }
