@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
-import { PostView } from '@/types/Post';
+import { PostType, PostView } from '@/types/Post';
 import Post from '@/components/Post';
 import CreateContent from '@/components/CreateContent';
 import { parse_uri, PubkyAppPostKind } from 'pubky-app-specs';
@@ -13,9 +13,16 @@ interface CreateReplyProps {
   post: PostView;
   setHasContent: React.Dispatch<React.SetStateAction<boolean>>;
   className?: string;
+  postType?: PostType;
 }
 
-export default function ContentCreateReply({ setShowModalReply, post, setHasContent, className }: CreateReplyProps) {
+export default function ContentCreateReply({
+  setShowModalReply,
+  post,
+  setHasContent,
+  className,
+  postType
+}: CreateReplyProps) {
   const { pubky, createReply, createTag } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [contentReply, setContentReply] = useState('');
@@ -65,17 +72,21 @@ export default function ContentCreateReply({ setShowModalReply, post, setHasCont
         }
       }
 
-      const newReply = await createReply(post?.details?.uri, content, postKind, selectedFiles, quote);
-
       const hashtags = Utils.extractHashtags(content);
       const filteredHashtags = hashtags.filter((tag) => tag.length <= 20);
       const updatedTags = [...new Set([...arrayTags, ...filteredHashtags])];
 
+      const newReply = await createReply(
+        post?.details?.uri,
+        content,
+        postKind,
+        selectedFiles,
+        quote,
+        updatedTags,
+        postType === 'replies'
+      );
+
       if (newReply) {
-        const replyId = parse_uri(newReply).resource_id!;
-        for (const tag of updatedTags) {
-          await createTag(pubky ?? '', replyId, tag);
-        }
         addAlert(
           <>
             Reply created!{' '}

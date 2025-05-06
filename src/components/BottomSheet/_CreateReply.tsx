@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { BottomSheet } from '@social/ui-shared';
-import { PostView } from '@/types/Post';
+import { PostType, PostView } from '@/types/Post';
 import ContentCreateReply from '../Modal/_CreateReply/_Content';
 import { useModal } from '@/contexts';
 
@@ -12,9 +12,10 @@ interface CreateReplyProps {
   post: PostView;
   title?: string;
   className?: string;
+  postType?: PostType;
 }
 
-export default function CreateReply({ show, setShow, post, title, className }: CreateReplyProps) {
+export default function CreateReply({ show, setShow, post, title, className, postType }: CreateReplyProps) {
   const { openModal } = useModal();
   const [hasContent, setHasContent] = useState(false);
 
@@ -33,6 +34,7 @@ export default function CreateReply({ show, setShow, post, title, className }: C
         setShowModalReply={setShow}
         post={post}
         setHasContent={setHasContent}
+        postType={postType}
       />
     </BottomSheet.Root>
   );
