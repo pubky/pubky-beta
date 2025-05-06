@@ -34,7 +34,6 @@ const tagsIcons: TagIcon = {
 };
 
 const Parsing = ({ children, fullContent = false, largeView, repostView }: ParsingProps) => {
-  console.log('children', children);
   const [copy, setCopy] = useState(false);
 
   const highlightInlineCode = (text: string): JSX.Element[] => {
