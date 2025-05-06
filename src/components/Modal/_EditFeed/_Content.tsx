@@ -231,7 +231,7 @@ export default function ContentEditFeed({
           icon={<Icon.Activity size="16" color={!nameFeed || tagsFeed?.length === 0 ? 'grey' : 'white'} />}
           onClick={() => (loadingEdit || !nameFeed || tagsFeed?.length === 0 ? undefined : handleUpdateFeed())}
         >
-          Edit Feed
+          Save Feed
         </Button.Medium>
       </div>
     </>
