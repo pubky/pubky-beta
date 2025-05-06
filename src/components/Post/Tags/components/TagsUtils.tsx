@@ -16,7 +16,7 @@ export const useTagsLogic = (post: PostView, postType: PostType) => {
   const { pubky, setTimeline, createTag, deleteTag, setSinglePost, setReplies, replies } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const { openModal, closeModal } = useModal();
-  const isMobile = useIsMobile();
+  const isMobile = useIsMobile(768);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
 
   useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
