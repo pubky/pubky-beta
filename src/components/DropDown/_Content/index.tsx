@@ -24,10 +24,22 @@ export default function Content({ content, setContent }: ContentProps) {
     loading: <Icon.LoadingSpin className="animate-spin" />
   };
 
+  const contentMapping: Record<string, TContent> = {
+    long: 'articles',
+    short: 'posts',
+    image: 'images',
+    video: 'videos',
+    link: 'links',
+    file: 'files'
+  };
+
+  const mappedContent = contentMapping[content] || content || 'all';
+  const displayContent = mappedContent.charAt(0).toUpperCase() + mappedContent.slice(1);
+
   const [dropdownValue, setDropdownValue] = useState({
-    value: content || 'all',
-    textOption: content?.charAt(0).toUpperCase() + content?.slice(1) || 'All',
-    iconOption: icons[content] || icons.all
+    value: mappedContent,
+    textOption: displayContent,
+    iconOption: icons[mappedContent] || icons.all
   });
 
   return (

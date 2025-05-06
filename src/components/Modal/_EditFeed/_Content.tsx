@@ -51,7 +51,8 @@ export default function ContentEditFeed({
         content: localContent
       };
 
-      await updateFeed(updatedFeed, nameFeed);
+      await updateFeed(feedToEdit, updatedFeed, nameFeed);
+
       handleUpdateFeeds(updatedFeed, nameFeed);
       setShowModalEditFeed(false);
     } catch (error) {

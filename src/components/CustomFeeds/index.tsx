@@ -29,6 +29,7 @@ export default function CustomFeeds({ loading, setLoading, ...rest }: CustomFeed
       setFeeds((prevFeeds) => prevFeeds.filter((f) => JSON.stringify(f.feed) !== JSON.stringify(originalFeed)));
       if (selectedFeed === originalFeed) {
         setSelectedFeed(undefined);
+        setLayout('columns');
       }
     } else {
       // Handle feed update
