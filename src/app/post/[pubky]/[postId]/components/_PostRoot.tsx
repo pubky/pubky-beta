@@ -98,9 +98,9 @@ export default function PostRoot({ post }: { uri: string; post: PostView }) {
           textArea={textArea}
           className="mb-3"
         />
-        <Replies postId={post.details.id} pubkyAuthor={post.details.author} />
+        <Replies postId={post?.details?.id} pubkyAuthor={post?.details?.author} />
       </Post.Root>
-      <Participants author={post.details.author} />
+      <Participants author={post?.details?.author} />
     </div>
   );
 }

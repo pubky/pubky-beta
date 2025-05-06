@@ -216,11 +216,11 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
     const afterPk = part.slice(part.indexOf(pk) + pk.length);
 
     return (
-      <>
-        {beforePk}
-        <ProfileLink pk={pk} />
-        {afterPk}
-      </>
+      <React.Fragment key={`pk-link-${partIndex}`}>
+        {beforePk && <span key={`before-${partIndex}`}>{beforePk}</span>}
+        <ProfileLink key={`pk-${partIndex}`} pk={pk} />
+        {afterPk && <span key={`after-${partIndex}`}>{afterPk}</span>}
+      </React.Fragment>
     );
   };
 
