@@ -244,7 +244,11 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
       } else if (isCodeBlock) {
         codeLines.push(line);
       } else {
-        const parts = line.split(new RegExp(`(${PK_PATTERNS.SPACE_BEFORE.source}|${PK_PATTERNS.SPACE_AFTER.source}|${PK_PATTERNS.BASE.source})`));
+        const parts = line.split(
+          new RegExp(
+            `(${PK_PATTERNS.SPACE_BEFORE.source}|${PK_PATTERNS.SPACE_AFTER.source}|${PK_PATTERNS.BASE.source})`
+          )
+        );
         const processedParts = parts
           .map((part, partIndex) => {
             if (!part) return null;
