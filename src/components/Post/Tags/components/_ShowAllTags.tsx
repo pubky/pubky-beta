@@ -326,7 +326,13 @@ export default function ShowAllTags({ post, postType, onTagClick }: ShowAllTagsP
             className="cursor-pointer text-white text-opacity-50 hover:text-opacity-80"
           />
         </Link>
-        <div className="cursor-pointer flex items-center">
+        <div
+          className="cursor-pointer flex items-center"
+          onClick={() => {
+            setSelectedTag(tagObj);
+            onTagClick?.(tagObj);
+          }}
+        >
           {displayedImages.slice(0, 4).map((image, imageIndex) => (
             <ImageByUri
               id={image}
@@ -340,16 +346,7 @@ export default function ShowAllTags({ post, postType, onTagClick }: ShowAllTagsP
             />
           ))}
           {extraImagesCount > 0 && <PostUtil.Counter className="-ml-2">+{extraImagesCount}</PostUtil.Counter>}
-          <Button.Action
-            variant="custom"
-            icon={<Icon.CaretRight size="16" />}
-            className="-ml-2"
-            size="small"
-            onClick={() => {
-              setSelectedTag(tagObj);
-              onTagClick?.(tagObj);
-            }}
-          />
+          <Button.Action variant="custom" icon={<Icon.CaretRight size="16" />} className="-ml-2" size="small" />
         </div>
       </div>
     );
