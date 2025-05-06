@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Button, Icon } from '@social/ui-shared';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
@@ -19,6 +19,7 @@ export const Timeline = () => {
   const { reach, layout, sort, content, selectedFeed } = useFilterContext();
 
   const isMobile = useIsMobile(1024);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const [skip, setSkip] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -32,6 +33,15 @@ export const Timeline = () => {
     skipValue?: number;
     timelineValue?: PostView[];
   }) => {
+    // Cancel any ongoing request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    // Create new AbortController for this request
+    abortControllerRef.current = new AbortController();
+    const signal = abortControllerRef.current.signal;
+
     setIsLoading(true);
 
     // getStreamPosts
@@ -49,32 +59,61 @@ export const Timeline = () => {
         content // kind
       );
 
+      // Check if the request was aborted
+      if (signal.aborted) {
+        return;
+      }
+
       setSkip(skipValue + limit);
 
-      // filter out deleted posts and muted users
+      // filter out deleted posts, muted users, and ensure content type matches
       const filteredData = data.filter(
         (post) => !deletedPosts.includes(post.details.id) && !mutedUsers.includes(post.details.author)
       );
+
       setTimeline([...timelineValue, ...filteredData]);
     } catch (error) {
+      if (error.name === 'AbortError') {
+        // Request was aborted, do nothing
+        return;
+      }
       setFinishedLoading(true);
     } finally {
-      setIsLoading(false);
+      if (!signal.aborted) {
+        setIsLoading(false);
+      }
     }
   };
 
   const loader = useInfiniteScroll(() => fetchPosts({ skipValue: skip, timelineValue: timeline }), isLoading);
 
   const initializeTimeline = async () => {
+    // Cancel any ongoing request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    // Reset all state before fetching new data
     setSkip(0);
     setFinishedLoading(false);
     setTimeline([]);
     setNewPosts([]);
+    setIsLoading(true);
 
-    await fetchPosts({
-      skipValue: 0,
-      timelineValue: []
-    });
+    try {
+      await fetchPosts({
+        skipValue: 0,
+        timelineValue: []
+      });
+    } catch (error) {
+      if (error.name === 'AbortError') {
+        return;
+      }
+      console.error('Error initializing timeline:', error);
+      setFinishedLoading(true);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const fetchNexusData = async () => {
@@ -131,17 +170,23 @@ export const Timeline = () => {
     await attemptFetch();
   };
 
-  const initializeTimelineCallback = useCallback(() => {
+  // Cleanup function to cancel any ongoing requests
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
+
+  // Reset and fetch new data when feed changes
+  useEffect(() => {
     initializeTimeline();
   }, [reach, sort, content, selectedFeed?.tags, layout]);
 
   useEffect(() => {
     fetchNexusData();
   }, [newPosts]);
-
-  useEffect(() => {
-    initializeTimelineCallback();
-  }, [reach, sort, content, selectedFeed?.tags, layout]);
 
   return (
     <div id="timeline" className="flex flex-col gap-3">
