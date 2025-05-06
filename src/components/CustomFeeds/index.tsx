@@ -117,7 +117,7 @@ export default function CustomFeeds({ loading, setLoading, ...rest }: CustomFeed
                 onClick={() => handleFeedSelect(feed.feed)}
               >
                 <Typography.Body className="whitespace-nowrap text-[13px] leading-[13px]" variant="small-bold">
-                  {Utils.minifyText(feed.name, 11)}
+                  {Utils.minifyText(feed.name, 20)}
                 </Typography.Body>
                 <div
                   id="edit-custom-feed"
