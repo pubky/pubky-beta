@@ -225,6 +225,53 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
     );
   };
 
+  const renderQuote = (text: string, level: number = 1): JSX.Element => {
+    // Line style
+    const lineColor = '#dddddd';
+    const lineWidth = 3;
+    const lineGap = 8;
+    const totalLineWidth = level * lineWidth + (level - 1) * lineGap;
+
+    return (
+      <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            width: `${totalLineWidth}px`,
+            minWidth: `${totalLineWidth}px`,
+            marginRight: '12px'
+          }}
+        >
+          {Array.from({ length: level }).map((_, i) => (
+            <div
+              key={i}
+              style={{
+                width: `${lineWidth}px`,
+                minWidth: `${lineWidth}px`,
+                alignSelf: 'stretch',
+                minHeight: '1.5em',
+                background: lineColor,
+                marginRight: i < level - 1 ? `${lineGap}px` : 0
+              }}
+            />
+          ))}
+        </div>
+        <div style={{ flex: 1 }}>{text}</div>
+      </div>
+    );
+  };
+
+  const processQuotes = (line: string): JSX.Element | null => {
+    const quoteMatch = line.match(/^(>{1,2})\s*(.+)$/);
+    if (!quoteMatch) return null;
+
+    const level = quoteMatch[1].length;
+    const content = quoteMatch[2];
+
+    return renderQuote(content, level);
+  };
+
   const renderContent = () => {
     const cssText = largeView ? 'text-2xl leading-[30px]' : 'text-[17px] leading-snug';
     const elements: JSX.Element[] = [];
@@ -243,38 +290,43 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
       } else if (isCodeBlock) {
         codeLines.push(line);
       } else {
-        const parts = line.split(
-          new RegExp(
-            `(${PK_PATTERNS.SPACE_BEFORE.source}|${PK_PATTERNS.SPACE_AFTER.source}|${PK_PATTERNS.BASE.source})`
-          )
-        );
-        const processedParts = parts
-          .map((part, partIndex) => {
-            if (!part) return null;
+        const quoteElement = processQuotes(line);
+        if (quoteElement) {
+          elements.push(quoteElement);
+        } else {
+          const parts = line.split(
+            new RegExp(
+              `(${PK_PATTERNS.SPACE_BEFORE.source}|${PK_PATTERNS.SPACE_AFTER.source}|${PK_PATTERNS.BASE.source})`
+            )
+          );
+          const processedParts = parts
+            .map((part, partIndex) => {
+              if (!part) return null;
 
-            const pkLink = renderPkLink(part, partIndex);
-            if (pkLink) return pkLink;
+              const pkLink = renderPkLink(part, partIndex);
+              if (pkLink) return pkLink;
 
-            return (
-              <span key={`text-${partIndex}`}>
-                {part.includes('**') ? (
-                  highlightBoldText(part)
-                ) : part.includes('`') ? (
-                  highlightInlineCode(part)
-                ) : (
-                  <LinkParser watchers={watchers}>{part}</LinkParser>
-                )}
-              </span>
-            );
-          })
-          .filter(Boolean);
+              return (
+                <span key={`text-${partIndex}`}>
+                  {part.includes('**') ? (
+                    highlightBoldText(part)
+                  ) : part.includes('`') ? (
+                    highlightInlineCode(part)
+                  ) : (
+                    <LinkParser watchers={watchers}>{part}</LinkParser>
+                  )}
+                </span>
+              );
+            })
+            .filter(Boolean);
 
-        elements.push(
-          <span key={index} className={`${cssText} opacity-90 font-normal tracking-wide`}>
-            {processedParts}
-            {index < lines.length - 1 && <br />}
-          </span>
-        );
+          elements.push(
+            <span key={index} className={`${cssText} opacity-90 font-normal tracking-wide`}>
+              {processedParts}
+              {index < lines.length - 1 && <br />}
+            </span>
+          );
+        }
       }
     });
 
