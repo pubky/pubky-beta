@@ -90,7 +90,7 @@ export default function Post({
         <PostUI.Root>
           <div>
             {post?.relationships?.reposted && !repostView ? (
-              post?.details?.content || post?.details?.attachments ? (
+              post?.details?.content || (post?.details?.attachments && post?.details?.attachments.length > 0) ? (
                 <Repost.Blank
                   postType={postType}
                   post={post}
