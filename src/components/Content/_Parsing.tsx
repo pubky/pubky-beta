@@ -252,6 +252,11 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
           .map((part, partIndex) => {
             if (!part) return null;
 
+            // Check for URLs first
+            if (part.startsWith('http://') || part.startsWith('https://')) {
+              return <LinkParser watchers={watchers}>{part}</LinkParser>;
+            }
+
             const pkLink = renderPkLink(part, partIndex);
             if (pkLink) return pkLink;
 
