@@ -209,20 +209,20 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
   };
 
   const renderPkLink = (part: string, partIndex: number) => {
-    const pkMatch = part.match(PK_PATTERNS.BASE);
-    if (!pkMatch) return part;
+      const pkMatch = part.match(PK_PATTERNS.BASE);
+      if (!pkMatch) return null;
 
-    const pk = pkMatch[0];
-    const beforePk = part.slice(0, part.indexOf(pk));
-    const afterPk = part.slice(part.indexOf(pk) + pk.length);
+      const pk = pkMatch[0];
+      const beforePk = part.slice(0, part.indexOf(pk));
+      const afterPk = part.slice(part.indexOf(pk) + pk.length);
 
-    return (
-      <>
-        {beforePk}
-        <ProfileLink pk={pk} />
-        {afterPk}
-      </>
-    );
+      return (
+        <>
+          {beforePk}
+          <ProfileLink pk={pk} />
+          {afterPk}
+        </>
+      );
   };
 
   const renderContent = () => {
