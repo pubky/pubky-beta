@@ -46,7 +46,7 @@ export default function Content({
   const [loading, setLoading] = useState(true);
 
   const cleanText = (text: string) => {
-    return text.replace(/\n{3,}/g, '\n\n');
+    return text?.replace(/\n{3,}/g, '\n\n');
   };
 
   const text = post?.details?.content;
@@ -82,9 +82,9 @@ export default function Content({
   }
 
   useEffect(() => {
-    const cleanedText = cleanText(text.toString());
-    const words = cleanedText.split(/\s+/);
-    words.forEach((word: string) => checkForLink(word.trim()));
+    const cleanedText = cleanText(text?.toString());
+    const words = cleanedText?.split(/\s+/);
+    words?.forEach((word: string) => checkForLink(word?.trim()));
   }, [text]);
 
   useEffect(() => {
@@ -160,7 +160,7 @@ export default function Content({
     });
   };
 
-  const cleanedText = cleanText(text.toString());
+  const cleanedText = cleanText(text?.toString() ?? '');
   const parsedContent = (() => {
     try {
       return JSON.parse(cleanedText);

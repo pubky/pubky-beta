@@ -53,10 +53,10 @@ export default function ShowAllTags({ post, postType, onTagClick }: ShowAllTagsP
   const loaderTaggersRef = useRef<HTMLDivElement>(null);
 
   // API hooks
-  const { data: moreTags, isLoading } = useTagsPost(post.details.author, post.details.id, pubky, skip, TAG_LIMIT);
+  const { data: moreTags, isLoading } = useTagsPost(post?.details?.author, post?.details?.id, pubky, skip, TAG_LIMIT);
   const { data: moreTaggers, isLoading: isLoadingTaggers } = usePostTagTaggers(
-    post.details.author,
-    post.details.id,
+    post?.details?.author,
+    post?.details?.id,
     selectedTag?.label ?? '',
     pubky,
     skipTaggers,
@@ -66,9 +66,9 @@ export default function ShowAllTags({ post, postType, onTagClick }: ShowAllTagsP
   // Effects for tag management
   useEffect(() => {
     setSkip(TAG_LIMIT);
-    setHasMore(post.counts?.tags > TAG_LIMIT);
+    setHasMore(post?.counts?.tags > TAG_LIMIT);
     setAllTags([...tags].sort((a, b) => (b.taggers_count || 0) - (a.taggers_count || 0)));
-  }, [post.details.id]);
+  }, [post?.details?.id]);
 
   useEffect(() => {
     setAllTags((prev) => {

@@ -28,9 +28,8 @@ export default function Header({ post, largeView = false, repostView = false }: 
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
   const [showTooltipPostChecked, setShowTooltipPostChecked] = useState('');
 
-  const {
-    details: { author, indexed_at }
-  } = post;
+  const author = post?.details?.author;
+  const indexed_at = post?.details?.indexed_at;
   const userDetails = data?.details || ({} as UserDetails);
 
   return (
