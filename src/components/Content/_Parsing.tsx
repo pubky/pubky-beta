@@ -261,6 +261,9 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
                   highlightBoldText(part)
                 ) : part.includes('`') ? (
                   highlightInlineCode(part)
+                ) : // Handle special symbols before LinkParser
+                  (/^[^a-zA-Z0-9\s]+$/.test(part)) ? (
+                  <>{part}</>
                 ) : (
                   <LinkParser watchers={watchers}>{part}</LinkParser>
                 )}
