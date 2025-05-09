@@ -128,7 +128,7 @@ export default function Content({
     };
 
     const fetchFiles = async () => {
-      if (files) {
+      if (files?.length > 0) {
         setLoading(true);
         const fileUris = Object.values(files).map((file) => file);
         const fetchedFiles = await Promise.all(fileUris.map((fileUri) => fetchFile(fileUri)));
