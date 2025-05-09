@@ -23,10 +23,12 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [openModals, setOpenModals] = useState<Record<string, boolean>>({});
   const [modalProps, setModalProps] = useState<Record<string, any>>({});
+  const [modalOrder, setModalOrder] = useState<string[]>([]);
 
   const openModal = (modalId: string, props: Record<string, any> = {}) => {
     setOpenModals((prev) => ({ ...prev, [modalId]: true }));
     setModalProps((prev) => ({ ...prev, [modalId]: props }));
+    setModalOrder((prev) => [...prev, modalId]);
   };
 
   const closeModal = (modalId: string) => {
@@ -36,6 +38,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
       delete newProps[modalId];
       return newProps;
     });
+    setModalOrder((prev) => prev.filter((id) => id !== modalId));
   };
 
   const isOpen = (modalId: string) => !!openModals[modalId];
@@ -43,6 +46,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     setOpenModals({});
     setModalProps({});
+    setModalOrder([]);
   }, [pathname]);
 
   const modalComponents: Record<string, string> = {
@@ -86,10 +90,12 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
   return (
     <ModalContext.Provider value={{ openModal, closeModal, isOpen }}>
       {children}
-      {Object.keys(openModals).map(
-        (modalId) =>
+      {modalOrder.map(
+        (modalId, index) =>
           openModals[modalId] && (
-            <div key={modalId}>{renderModal(modalComponents[modalId], modalId, modalProps[modalId])}</div>
+            <div key={modalId} style={{ zIndex: 50 + index }}>
+              {renderModal(modalComponents[modalId], modalId, modalProps[modalId])}
+            </div>
           )
       )}
     </ModalContext.Provider>
