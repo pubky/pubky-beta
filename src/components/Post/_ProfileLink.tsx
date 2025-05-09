@@ -30,7 +30,7 @@ function ProfileLink({ pk }: { pk: string }) {
   return (
     <>
       <Link
-        className="text-[#C8FF00] break-all"
+        className="text-[#C8FF00] break-words"
         href={`/profile/${pkPart}`}
         onClick={(event) => event.stopPropagation()}
       >
