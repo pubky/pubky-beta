@@ -6,6 +6,7 @@ import 'quill/dist/quill.snow.css';
 import { Icon } from '../Icon';
 import { renderToString } from 'react-dom/server';
 import EmojiPicker from '@/components/EmojiPicker';
+import { Delta } from 'quill';
 
 // Add custom CSS for the emoji button
 const customStyles = `
@@ -22,7 +23,7 @@ const customStyles = `
     display: inline-block;
   }
   .ql-editor p {
-    display: inline;
+    display: block;
   }
 `;
 
@@ -42,6 +43,24 @@ const modules = {
         // This will be handled by the emoji picker
       }
     }
+  },
+  clipboard: {
+    matchVisual: false
+  },
+  keyboard: {
+    bindings: {
+      enter: {
+        key: 13,
+        handler: function (range: any) {
+          const quill = this.quill;
+          const delta = new Delta().retain(range.index).delete(range.length).insert('\n');
+          quill.updateContents(delta, 'user');
+          quill.setSelection(range.index + 1, 0);
+          quill.focus();
+          return false;
+        }
+      }
+    }
   }
 };
 
@@ -56,8 +75,7 @@ const formats = [
   'blockquote',
   'code-block',
   'link',
-  'image',
-  'emoji'
+  'image'
 ];
 
 interface MarkdownEditorComponentProps {
@@ -86,16 +104,10 @@ const MarkdownEditorComponent = ({
     if (quill) {
       const range = quill.getSelection();
       if (range) {
-        const text = quill.getText();
-        const newText = text.slice(0, range.index) + emoji.native + text.slice(range.index);
-
-        if (newText.length <= maxLength) {
-          quill.deleteText(0, quill.getLength());
-          quill.insertText(0, newText);
-          quill.setSelection(range.index + emoji.native.length);
-          onChange(quill.root.innerHTML);
-          setCharCount(newText.length);
-        }
+        quill.insertText(range.index, emoji.native);
+        quill.setSelection(range.index + emoji.native.length);
+        onChange(quill.root.innerHTML);
+        setCharCount(quill.getText().length);
       }
     }
   };

@@ -32,6 +32,7 @@ interface FooterAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   noFile?: boolean;
   maxLength?: number;
   setShowModalPost?: React.Dispatch<React.SetStateAction<boolean>>;
+  isError?: boolean;
   loading: boolean;
   charCountArticle?: number;
 }
@@ -61,6 +62,7 @@ export default function FooterArea({
   noFile,
   maxLength = 1000,
   setShowModalPost,
+  isError,
   loading,
   charCountArticle
 }: FooterAreaProps) {
@@ -249,7 +251,12 @@ export default function FooterArea({
             </div>
             <div className="grow" />
             <div className="w-full justify-between sm:justify-end flex gap-2">
-              <div id="content-length" className="text-opacity-30 text-white text-sm mt-4 mr-2">
+              {isError && (
+                <Typography.Body className="self-center text-[#e95164]" variant="small">
+                  Content invalid. Check image size.
+                </Typography.Body>
+              )}
+              <div id="content-length" className="whitespace-nowrap text-opacity-30 text-white text-sm mt-4 mr-2">
                 {noFile ? charCountArticle : content.length} / {maxLength}
               </div>
               <div className="flex gap-2">
