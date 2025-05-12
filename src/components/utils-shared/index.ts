@@ -24,6 +24,7 @@ import { supportedAudioTypes } from './lib/Helper/FileType/_audio';
 import truncateText from './lib/Text/truncateText';
 import truncateTag from './lib/Text/truncateTag';
 import genJdenticon from './lib/Helper/genJdenticon';
+import sanitizeUrlsArticle from './lib/Helper/sanitizeUrlsArticle';
 
 export const Utils = {
   base64ToUint8Array,
@@ -51,5 +52,6 @@ export const Utils = {
   uint8ArrayToBase64,
   truncateText,
   truncateTag,
-  genJdenticon
+  genJdenticon,
+  sanitizeUrlsArticle
 };
