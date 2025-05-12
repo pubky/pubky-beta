@@ -209,7 +209,7 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
 
   const renderPkLink = (part: string, partIndex: number) => {
     const pkMatch = part.match(PK_PATTERNS.BASE);
-    if (!pkMatch) return part;
+    if (!pkMatch) return null;
 
     const pk = pkMatch[0];
     const beforePk = part.slice(0, part.indexOf(pk));
@@ -260,6 +260,9 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
                   highlightBoldText(part)
                 ) : part.includes('`') ? (
                   highlightInlineCode(part)
+                ) : // Handle special symbols before LinkParser
+                /^[^a-zA-Z0-9\s]+$/.test(part) ? (
+                  <>{part}</>
                 ) : (
                   <LinkParser watchers={watchers}>{part}</LinkParser>
                 )}
