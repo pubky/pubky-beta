@@ -114,7 +114,7 @@ const LongPost = ({ data, user }) => {
           </div>
           <PostUI.Time className="mr-2">{Utils.timeAgo(data?.details?.indexed_at, isMobile)}</PostUI.Time>
         </div>
-        {data?.details?.attachments && data?.details?.attachments[0] && (
+        {data?.details?.attachments?.length > 0 && data?.details?.attachments[0] && (
           <ImageArticle
             uri={data?.details?.attachments[0]}
             width={1200}
