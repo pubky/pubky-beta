@@ -96,7 +96,7 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
         const icon = tagsIcons[trimmedTag];
         return (
           <Link
-            className="text-[#C8FF00] break-all inline-flex mr-1"
+            className="text-[#C8FF00] break-words inline-flex mr-1"
             href={`/search?tags=${tag.replace('#', '').trim()}`}
             target="_self"
             rel="noreferrer"
@@ -119,7 +119,7 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
 
         return (
           <Link
-            className="text-[#C8FF00] break-all mr-1"
+            className="text-[#C8FF00] break-words mr-1"
             href={fullUrl}
             target="_blank"
             rel="noreferrer"
@@ -139,7 +139,7 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
 
         return (
           <Link
-            className="text-[#C8FF00] break-all mr-1"
+            className="text-[#C8FF00] break-words mr-1"
             href={`mailto:${email.trim()}`}
             target="_blank"
             rel="noreferrer noopener"

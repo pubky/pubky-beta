@@ -73,18 +73,18 @@ function LinkPreview({ url }: { url: string }) {
       >
         <div className="grow shrink basis-0 flex-col justify-start items-start inline-flex">
           {previewData.title && (
-            <Typography.H2 className="break-all">
+            <Typography.H2 className="break-words">
               {previewData.title.length > 82 ? previewData.title.slice(0, 82) + '...' : previewData.title}
             </Typography.H2>
           )}
           {previewData.description ? (
-            <Typography.Body variant="small" className="break-all text-opacity-80 leading-5">
+            <Typography.Body variant="small" className="break-words text-opacity-80 leading-5">
               {previewData.description.length > 150
                 ? previewData.description.slice(0, 150) + '...'
                 : previewData.description}
             </Typography.Body>
           ) : (
-            <Typography.Body variant="small" className="break-all text-opacity-80 leading-5">
+            <Typography.Body variant="small" className="break-words text-opacity-80 leading-5">
               {url.length > 60 ? url.slice(0, 60) + '...' : url}
             </Typography.Body>
           )}

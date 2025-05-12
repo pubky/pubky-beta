@@ -296,7 +296,7 @@ export default function Content({
                       <Link
                         key={index}
                         onClick={(event) => event.stopPropagation()}
-                        className="text-[#C8FF00] break-all"
+                        className="text-[#C8FF00] break-words"
                         href={generateFileUrl(file)}
                         target="_blank"
                         rel="noopener noreferrer"
