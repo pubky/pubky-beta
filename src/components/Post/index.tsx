@@ -89,7 +89,21 @@ export default function Post({
       <div className="flex flex-col">
         <PostUI.Root>
           <div>
-            {post?.relationships?.reposted && !repostView ? (
+            {post?.details?.content === '[DELETED]' ? (
+              <div className="relative cursor-default" onClick={(event) => event.stopPropagation()}>
+                {line && (
+                  <>
+                    <div className={twMerge(lineBaseCSS, lineStyle)} />
+                    <div className="absolute ml-[10px]">
+                      <Icon.LineHorizontal size="14" color="#444447" />
+                    </div>
+                  </>
+                )}
+                <DeletedPostMessage
+                  className={`${post?.relationships?.replied && homeView && 'ml-6'} cursor-default`}
+                />
+              </div>
+            ) : post?.relationships?.reposted && !repostView ? (
               post?.details?.content || (post?.details?.attachments && post?.details?.attachments.length > 0) ? (
                 <Repost.Blank
                   postType={postType}
@@ -118,20 +132,6 @@ export default function Post({
                   restClassName={rest.className}
                 />
               )
-            ) : post?.details?.content === '[DELETED]' ? (
-              <div className="relative cursor-default" onClick={(event) => event.stopPropagation()}>
-                {line && (
-                  <>
-                    <div className={twMerge(lineBaseCSS, lineStyle)} />
-                    <div className="absolute ml-[10px]">
-                      <Icon.LineHorizontal size="14" color="#444447" />
-                    </div>
-                  </>
-                )}
-                <DeletedPostMessage
-                  className={`${post?.relationships?.replied && homeView && 'ml-6'} cursor-default`}
-                />
-              </div>
             ) : (
               <MainPostContent
                 post={post}
