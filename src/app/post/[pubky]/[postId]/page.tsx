@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
     const response = await fetch(`${BASE_URL}/v0/post/${pubky}/${postId}`);
     const post = await response.json();
-    const fetchedFile = post?.details?.attachments && (await getFile(post?.details?.attachments[0]));
+    const fetchedFile = post?.details?.attachments?.length > 0 && (await getFile(post?.details?.attachments[0]));
     const fileType = fetchedFile?.content_type;
     const fileUrl = fetchedFile && JSON.parse(fetchedFile?.urls).main;
     const imageUrl = fileUrl ? `${BASE_URL}/static/files/${fileUrl}` : undefined;

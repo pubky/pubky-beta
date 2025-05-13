@@ -34,7 +34,7 @@ export default function Index() {
             {pubky ? (
               <Typography.H2
                 id="onboarding-pubky"
-                className="break-all text-[13px] lg:text-2xl font-semibold uppercase"
+                className="break-words text-[13px] lg:text-2xl font-semibold uppercase"
                 variant="light"
               >
                 pk:{pubky}

@@ -34,7 +34,6 @@ const tagsIcons: TagIcon = {
 };
 
 const Parsing = ({ children, fullContent = false, largeView, repostView }: ParsingProps) => {
-  console.log('children', children);
   const [copy, setCopy] = useState(false);
 
   const highlightInlineCode = (text: string): JSX.Element[] => {
@@ -97,7 +96,7 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
         const icon = tagsIcons[trimmedTag];
         return (
           <Link
-            className="text-[#C8FF00] break-all inline-flex mr-1"
+            className="text-[#C8FF00] break-words inline-flex mr-1"
             href={`/search?tags=${tag.replace('#', '').trim()}`}
             target="_self"
             rel="noreferrer"
@@ -120,7 +119,7 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
 
         return (
           <Link
-            className="text-[#C8FF00] break-all mr-1"
+            className="text-[#C8FF00] break-words mr-1"
             href={fullUrl}
             target="_blank"
             rel="noreferrer"
@@ -140,7 +139,7 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
 
         return (
           <Link
-            className="text-[#C8FF00] break-all mr-1"
+            className="text-[#C8FF00] break-words mr-1"
             href={`mailto:${email.trim()}`}
             target="_blank"
             rel="noreferrer noopener"
@@ -210,18 +209,18 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
 
   const renderPkLink = (part: string, partIndex: number) => {
     const pkMatch = part.match(PK_PATTERNS.BASE);
-    if (!pkMatch) return part;
+    if (!pkMatch) return null;
 
     const pk = pkMatch[0];
     const beforePk = part.slice(0, part.indexOf(pk));
     const afterPk = part.slice(part.indexOf(pk) + pk.length);
 
     return (
-      <>
-        {beforePk}
-        <ProfileLink pk={pk} />
-        {afterPk}
-      </>
+      <React.Fragment key={`pk-link-${partIndex}`}>
+        {beforePk && <span key={`before-${partIndex}`}>{beforePk}</span>}
+        <ProfileLink key={`pk-${partIndex}`} pk={pk} />
+        {afterPk && <span key={`after-${partIndex}`}>{afterPk}</span>}
+      </React.Fragment>
     );
   };
 
@@ -305,13 +304,15 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
 
               const pkLink = renderPkLink(part, partIndex);
               if (pkLink) return pkLink;
-
               return (
                 <span key={`text-${partIndex}`}>
                   {part.includes('**') ? (
                     highlightBoldText(part)
                   ) : part.includes('`') ? (
                     highlightInlineCode(part)
+                  ) : // Handle special symbols before LinkParser
+                  /^[^a-zA-Z0-9\s]+$/.test(part) ? (
+                    <>{part}</>
                   ) : (
                     <LinkParser watchers={watchers}>{part}</LinkParser>
                   )}
@@ -319,7 +320,6 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
               );
             })
             .filter(Boolean);
-
           elements.push(
             <span key={index} className={`${cssText} opacity-90 font-normal tracking-wide`}>
               {processedParts}

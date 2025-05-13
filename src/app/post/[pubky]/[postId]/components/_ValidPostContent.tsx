@@ -83,12 +83,12 @@ const NormalPost = ({ data }) => {
 
 const LongPost = ({ data, user }) => {
   const isMobile = useIsMobile();
+  const content = JSON.parse(data?.details?.content);
+
   return (
     <div className="flex flex-col lg:flex-row gap-6">
       <div className="w-auto lg:w-[1200px] flex flex-col gap-4">
-        <Typography.Display className="sm:leading-[64px] break-all">
-          {JSON.parse(data?.details?.content).title}
-        </Typography.Display>
+        <Typography.Display className="sm:leading-[64px] break-words">{content.title}</Typography.Display>
         <div className="flex w-full gap-4 justify-between items-center">
           <div className="justify-start gap-3 flex items-center mt-4 mb-2">
             <ImageByUri
@@ -114,7 +114,7 @@ const LongPost = ({ data, user }) => {
           </div>
           <PostUI.Time className="mr-2">{Utils.timeAgo(data?.details?.indexed_at, isMobile)}</PostUI.Time>
         </div>
-        {data?.details?.attachments && data?.details?.attachments[0] && (
+        {data?.details?.attachments?.length > 0 && data?.details?.attachments[0] && (
           <ImageArticle
             uri={data?.details?.attachments[0]}
             width={1200}
@@ -124,9 +124,9 @@ const LongPost = ({ data, user }) => {
           />
         )}
         <div
-          className="text-white break-words [&_a]:text-[#C8FF00] [&_a:hover]:text-[#C8FF00]/90"
+          className="text-white break-words no-html-margins [&_a]:text-[#C8FF00] [&_a:hover]:text-[#C8FF00]/90 [&_h1]:text-4xl [&_h1]:font-bold [&_h1]:mb-4 [&_h2]:text-3xl [&_h2]:font-bold [&_h2]:mb-3 [&_h3]:text-2xl [&_h3]:font-bold [&_h3]:mb-2 [&_p]:mb-4 [&_strong]:font-bold [&_em]:italic [&_u]:underline [&_s]:line-through [&_ol]:pl-0 [&_li[data-list='ordered']]:list-decimal [&_li[data-list='ordered']]:list-inside [&_li[data-list='bullet']]:before:content-['•'] [&_li[data-list='bullet']]:before:mr-2 [&_li[data-list='bullet']]:list-none [&_blockquote]:border-l-4 [&_blockquote]:border-[#444447] [&_blockquote]:pl-4 [&_blockquote]:my-4 [&_blockquote]:italic [&_.ql-code-block-container]:bg-[#1E1E1E] [&_.ql-code-block-container]:p-4 [&_.ql-code-block-container]:rounded-lg [&_.ql-code-block-container]:font-mono [&_.ql-code-block-container]:text-sm [&_.ql-code-block-container]:my-4 [&_.ql-code-block-container]:overflow-x-auto [&_.ql-code-block-container]:whitespace-pre [&_.ql-code-block]:whitespace-pre-wrap [&_.ql-align-right]:text-right [&_.ql-align-center]:text-center [&_.ql-align-justify]:text-justify"
           dangerouslySetInnerHTML={{
-            __html: JSON.parse(data?.details?.content).body
+            __html: Utils.sanitizeUrlsArticle(content.body)
           }}
         />
       </div>

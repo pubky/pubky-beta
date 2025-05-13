@@ -631,9 +631,6 @@ describe('posts', () => {
     createQuickPost(postContent);
 
     // repost without content
-    // todo: remove wait for indexed once bug fixed https://github.com/pubky/pubky-app/issues/1396
-    cy.findFirstPostInFeedFiltered(postContent, CheckIndexed.Yes);
-    cy.wait(Cypress.env('ci') ? 2_000 : 200);
     repostPost({ postContent });
 
     // verify the repost without content is displayed correctly in feed

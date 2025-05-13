@@ -46,7 +46,7 @@ export default function Content({
   const [loading, setLoading] = useState(true);
 
   const cleanText = (text: string) => {
-    return text.replace(/\n{3,}/g, '\n\n');
+    return text?.replace(/\n{3,}/g, '\n\n');
   };
 
   const text = post?.details?.content;
@@ -82,9 +82,9 @@ export default function Content({
   }
 
   useEffect(() => {
-    const cleanedText = cleanText(text.toString());
-    const words = cleanedText.split(/\s+/);
-    words.forEach((word: string) => checkForLink(word.trim()));
+    const cleanedText = cleanText(text?.toString());
+    const words = cleanedText?.split(/\s+/);
+    words?.forEach((word: string) => checkForLink(word?.trim()));
   }, [text]);
 
   useEffect(() => {
@@ -128,7 +128,7 @@ export default function Content({
     };
 
     const fetchFiles = async () => {
-      if (files) {
+      if (files?.length > 0) {
         setLoading(true);
         const fileUris = Object.values(files).map((file) => file);
         const fetchedFiles = await Promise.all(fileUris.map((fileUri) => fetchFile(fileUri)));
@@ -160,7 +160,7 @@ export default function Content({
     });
   };
 
-  const cleanedText = cleanText(text.toString());
+  const cleanedText = cleanText(text?.toString() ?? '');
   const parsedContent = (() => {
     try {
       return JSON.parse(cleanedText);
@@ -196,8 +196,10 @@ export default function Content({
                       {parsedContent.title}
                     </Typography.Body>
                     <div
-                      className="opacity-70 text-white break-words [&_a]:text-[#C8FF00] [&_a:hover]:text-[#C8FF00]/90"
-                      dangerouslySetInnerHTML={{ __html: truncatedBody }}
+                      className="opacity-70 text-white break-words no-html-margins [&_a]:text-[#C8FF00] [&_a:hover]:text-[#C8FF00]/90 [&_h1]:text-4xl [&_h1]:font-bold [&_h1]:mb-4 [&_h2]:text-3xl [&_h2]:font-bold [&_h2]:mb-3 [&_h3]:text-2xl [&_h3]:font-bold [&_h3]:mb-2 [&_p]:mb-4 [&_strong]:font-bold [&_em]:italic [&_u]:underline [&_s]:line-through [&_ol]:pl-0 [&_li[data-list='ordered']]:list-decimal [&_li[data-list='ordered']]:list-inside [&_li[data-list='bullet']]:before:content-['•'] [&_li[data-list='bullet']]:before:mr-2 [&_li[data-list='bullet']]:list-none [&_blockquote]:border-l-4 [&_blockquote]:border-[#444447] [&_blockquote]:pl-4 [&_blockquote]:my-4 [&_blockquote]:italic [&_.ql-code-block-container]:bg-[#1E1E1E] [&_.ql-code-block-container]:p-4 [&_.ql-code-block-container]:rounded-lg [&_.ql-code-block-container]:font-mono [&_.ql-code-block-container]:text-sm [&_.ql-code-block-container]:my-4 [&_.ql-code-block-container]:overflow-x-auto [&_.ql-code-block-container]:whitespace-pre [&_.ql-code-block]:whitespace-pre-wrap [&_.ql-align-right]:text-right [&_.ql-align-center]:text-center [&_.ql-align-justify]:text-justify"
+                      dangerouslySetInnerHTML={{
+                        __html: Utils.sanitizeUrlsArticle(truncatedBody)
+                      }}
                     />
                   </div>
                   {fileContents.length > 0 && (
@@ -294,7 +296,7 @@ export default function Content({
                       <Link
                         key={index}
                         onClick={(event) => event.stopPropagation()}
-                        className="text-[#C8FF00] break-all"
+                        className="text-[#C8FF00] break-words"
                         href={generateFileUrl(file)}
                         target="_blank"
                         rel="noopener noreferrer"

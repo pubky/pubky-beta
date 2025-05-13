@@ -59,7 +59,7 @@ const RenderTags = ({ hotTags, loadingReachTags }: RenderTagsProps) => {
                   <div className="flex flex-col gap-2">
                     <div className="flex gap-2">
                       <PostUtil.Counter className="bg-transparent">{index + 1}</PostUtil.Counter>
-                      <Typography.Body className="break-all" variant="large-bold">
+                      <Typography.Body className="break-words" variant="large-bold">
                         {Utils.minifyText(tag?.label, 21)}
                       </Typography.Body>
                     </div>

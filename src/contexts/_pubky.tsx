@@ -1159,7 +1159,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
     }
 
     // delete the files
-    if (post?.details?.attachments) {
+    if (post?.details?.attachments?.length > 0) {
       const fileDeletions = Object.values(post?.details?.attachments).map(async (file) => {
         await deleteFile(file);
       });

@@ -192,7 +192,7 @@ export default function LinksSection({ links }: LinksSectionProps) {
                       {link.title.toLocaleLowerCase() === 'email' || link.title.toLocaleLowerCase() === 'mail' ? (
                         <Link href={`${link.url}`} target="_blank">
                           <Typography.Body
-                            className="text-opacity-80 hover:text-opacity-100 break-all leading-none"
+                            className="text-opacity-80 hover:text-opacity-100 break-words leading-none"
                             variant="medium"
                           >
                             {link.url.replace(/^mailto:/, '')}
@@ -212,7 +212,7 @@ export default function LinksSection({ links }: LinksSectionProps) {
                         >
                           <Typography.Body
                             id={`profile-link-${link.title.toLowerCase()}`}
-                            className="text-opacity-80 hover:text-opacity-100 break-all leading-none"
+                            className="text-opacity-80 hover:text-opacity-100 break-words leading-none"
                             variant="medium"
                           >
                             {renderSocialUsername(link.url)}

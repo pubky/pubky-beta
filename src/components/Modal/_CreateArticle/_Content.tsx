@@ -394,6 +394,7 @@ export default function ContentCreateArticle({
               showEmojis={showEmojis}
               setShowEmojis={setShowEmojis}
               largeView={!isMobile}
+              isError={isError}
               noEmoji
               noFile
               button={

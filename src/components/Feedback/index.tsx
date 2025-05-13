@@ -24,7 +24,7 @@ export default function Feedback() {
                 variant="medium-bold"
                 className="whitespace-nowrap hover:underline hover:decoration-solid"
               >
-                {Utils.minifyText(profile?.name ?? Utils.minifyPubky(pubky ?? ''), 10)}
+                {Utils.minifyText(profile?.name ?? Utils.minifyPubky(pubky ?? ''), 6)}
               </Typography.Body>
             </Link>
             <div className="cursor-pointer" onClick={() => openModal('feedback')}>
