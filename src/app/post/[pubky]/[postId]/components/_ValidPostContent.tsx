@@ -112,7 +112,9 @@ const LongPost = ({ data, user }) => {
               </div>
             </Link>
           </div>
-          <PostUI.Time className="mr-2">{Utils.timeAgo(data?.details?.indexed_at, isMobile)}</PostUI.Time>
+          <PostUI.Time articleView className="mr-2 cursor-default">
+            {data?.details?.indexed_at}
+          </PostUI.Time>
         </div>
         {data?.details?.attachments?.length > 0 && data?.details?.attachments[0] && (
           <ImageArticle
@@ -130,7 +132,7 @@ const LongPost = ({ data, user }) => {
           }}
         />
       </div>
-      <Tags.LargeView post={data} postType="single" />
+      <Tags.LargeView post={data} postType="single" articleView />
     </div>
   );
 };

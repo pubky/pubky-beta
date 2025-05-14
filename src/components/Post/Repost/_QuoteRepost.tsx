@@ -99,7 +99,7 @@ export default function Quote({
               </Typography.Body>
             )}
           </div>
-          <PostUI.Time>{Utils.timeAgo(post?.details?.indexed_at, isMobile)}</PostUI.Time>
+          <PostUI.Time>{post?.details?.indexed_at}</PostUI.Time>
         </PostUI.RepostCard>
         <Post
           postType="single"

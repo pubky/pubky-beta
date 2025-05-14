@@ -14,6 +14,7 @@ import minifyContent from './lib/Text/minifyContent';
 import minifyPubky from './lib/Text/minifyPubky';
 import storage from './lib/Storage/storage';
 import timeAgo from './lib/Helper/timeAgo';
+import formatTimestamp from './lib/Helper/formatTimestamp';
 import uint8ArrayToBase64 from './lib/Conversion/uint8ArrayToBase64';
 import minifyText from './lib/Text/minifyText';
 import promptPlaceholder from './lib/Text/promptPlaceholder';
@@ -44,6 +45,7 @@ export const Utils = {
   minifyText,
   promptPlaceholder,
   timeAgo,
+  formatTimestamp,
   statusHelper,
   supportedImageTypes,
   supportedVideoTypes,
