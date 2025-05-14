@@ -29,6 +29,10 @@ export default function CustomFeeds({ loading, setLoading, ...rest }: CustomFeed
       setFeeds((prevFeeds) => prevFeeds.filter((f) => JSON.stringify(f.feed) !== JSON.stringify(originalFeed)));
       if (selectedFeed === originalFeed) {
         setSelectedFeed(undefined);
+        // Reset filters to default when "All" is selected after deletion
+        setReach('all');
+        setSort('recent');
+        setContent('all');
         setLayout('columns');
       }
     } else {
