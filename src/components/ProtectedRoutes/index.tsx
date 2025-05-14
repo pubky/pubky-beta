@@ -130,7 +130,8 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
   const checkAccess = async () => {
     const sessionActive = await isSessionActive();
 
-    if (sessionActive) {
+    if (sessionActive.status) {
+      if (sessionActive.message === 'connection lost') openModal('connectionLost');
       const hasProfile = await checkProfileUser();
 
       if (!hasProfile) {

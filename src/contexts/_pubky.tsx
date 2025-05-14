@@ -54,7 +54,7 @@ type PubkyClientContextType = {
   loginWithAuthUrl: (publicKey: PublicKey) => Promise<string>;
   loginWithMnemonic: (mnemonic: string) => Promise<string>;
   isLoggedIn: () => Promise<boolean>;
-  isSessionActive: () => Promise<boolean>;
+  isSessionActive: () => Promise<{ status: boolean; message: string }>;
   logout: () => boolean;
   signUp: (
     name: string,
@@ -281,14 +281,17 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
   const isSessionActive = async () => {
     try {
       const currentPubky = pubky || Utils.storage.get('pubky_public_key');
-      if (!currentPubky) return false;
+      if (!currentPubky) return { status: false, message: 'User not logged in or pubky key not found' };
 
       const publicKey = PublicKey.from(currentPubky);
-      const session = await client.session(publicKey);
-      return Boolean(session);
+      await client.session(publicKey);
+      return { status: true, message: 'Ok' };
     } catch (error) {
+      if (String(error) === 'error sending request') {
+        return { status: true, message: 'connection lost' };
+      }
       console.error('Session Active error:', error);
-      return false;
+      return { status: false, message: String(error) };
     }
   };
 
