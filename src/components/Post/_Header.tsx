@@ -66,7 +66,7 @@ export default function Header({ post, largeView = false, repostView = false }: 
         </TooltipUI.Root>
       </div>
       <div className={`relative flex items-center gap-0 ${largeView ? 'hidden' : ''}`}>
-        <PostUI.Time>{Utils.timeAgo(indexed_at, isMobile)}</PostUI.Time>
+        <PostUI.Time>{indexed_at}</PostUI.Time>
         {post?.details?.author === pubky && (
           <TooltipUI.Root delay={50} tagId="1" setShowTooltip={setShowTooltipPostChecked}>
             <div
