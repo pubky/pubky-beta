@@ -7,6 +7,7 @@ import { Icon } from '../Icon';
 import { renderToString } from 'react-dom/server';
 import EmojiPicker from '@/components/EmojiPicker';
 import { Delta } from 'quill';
+import { Utils } from '@/components/utils-shared';
 
 // Add custom CSS for the emoji button
 const customStyles = `
@@ -112,6 +113,33 @@ const MarkdownEditorComponent = ({
     }
   };
 
+  // Custom handler for image upload
+  const imageHandler = () => {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+
+    input.onchange = async () => {
+      const file = input.files?.[0];
+      if (file) {
+        try {
+          const resizedBase64 = await Utils.resizeImageFile(file, 224); // max 224px
+          console.log('resizedBase64', resizedBase64);
+          if (quill) {
+            const range = quill.getSelection();
+            if (range) {
+              quill.insertEmbed(range.index, 'image', resizedBase64, 'user');
+            }
+          }
+        } catch (err) {
+          // Optionally handle error
+          console.error('Image upload error:', err);
+        }
+      }
+    };
+  };
+
   useEffect(() => {
     // Add custom styles to the document
     const style = document.createElement('style');
@@ -156,6 +184,8 @@ const MarkdownEditorComponent = ({
       toolbar.addHandler('emoji', () => {
         setShowEmojis(true);
       });
+      // Add custom image handler
+      toolbar.addHandler('image', imageHandler);
 
       // Set custom icon for emoji button
       const emojiButton = document.querySelector('.ql-emoji');
