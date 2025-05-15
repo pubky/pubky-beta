@@ -4,26 +4,14 @@ Install all the stack
 
 > Working directory, `pubky-core/pubky-testnet`
 
-We need to run `testnet` homeserver. This binary will have hook up apart in our local network:
+We need to run the `testnet` homeserver binary in our local network, exposing these services:
 
 - `homeserver` (`:6286`)
+- `admin-homeserver` (`:6288`)
 - `pkarr-relay` (`:15411`)
 - `http-relay`(`:15412`)
-- `admin-homeserver` (`:6288`)
-
-First we will configure testnet homeserver
 
 ```bash
-cd pubky-core/pubky-homeserver
-# clone the config.example.toml
-cp config.example.toml config.toml
-```
-
-Once it is configured,
-
-```bash
-# go to the pubky-testnet directory
-cd ../pubky-testnet
 # run testnet homeserver
 cargo run
 ```
@@ -51,21 +39,24 @@ docker compose up -d
 Once all the containers are up, run `nexusd`
 
 ```bash
-# Go to the pubky-nexus directory
+# Return to the pubky-nexus directory
 cd ..
 # Start the Nexus daemon (nexusd)
-cargo run -p nexusd
 # On first run, a config.toml will be created at ~/.pubky-nexus/config.toml
 # By default, it connects to the Synonym homeserver
+cargo run -p nexusd
 # To switch to the Pubky testnet homeserver, edit ~/.pubky-nexus/config.toml:
 #   testnet = true
 #   homeserver = "8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo"
-# Then restart the service:
+# Then restart the service: STOP (ctrl + c) and run again
 cargo run -p nexusd
+# EXTRA COMMANDS
 # To specify a custom config file, add the --config flag:
 cargo run -p nexusd -- --config="/path/to/config.toml"
 # To clear Redis and the graph database and re-index from scratch:
 cargo run -p nexusd -- db clear
+cargo run -p nexusd
+# More info about nexus: https://github.com/pubky/pubky-nexus/blob/main/README.md#%EF%B8%8F-setting-up-the-development-environment
 ```
 
 You will be able to access:
