@@ -20,7 +20,7 @@ export const Time = ({ children, articleView, ...rest }: RootProps) => {
   const tooltipCSS = articleView && 'left-auto -right-[75px]';
 
   return (
-    <Tooltip.RootSmall setShowTooltip={setShowTooltip} className={twMerge(baseCSS, rest.className)}>
+    <Tooltip.RootSmall delay={500} setShowTooltip={setShowTooltip} className={twMerge(baseCSS, rest.className)}>
       {children ? (
         <>
           <Icon.Clock size="16" color="#FFFFFF4D" />
