@@ -125,7 +125,6 @@ const MarkdownEditorComponent = ({
       if (file) {
         try {
           const resizedBase64 = await Utils.resizeImageFile(file, 224); // max 224px
-          console.log('resizedBase64', resizedBase64);
           if (quill) {
             const range = quill.getSelection();
             if (range) {
@@ -163,13 +162,13 @@ const MarkdownEditorComponent = ({
         let html = quill.root.innerHTML;
         let text = quill.getText();
 
-        let imgSrcLength = 0;
-        const imgRegex = /<img[^>]*src=["']([^"']+)["'][^>]*>/g;
+        let imgTagLength = 0;
+        const imgTagRegex = /<img[^>]*\/?\>/g;
         let match;
-        while ((match = imgRegex.exec(html)) !== null) {
-          imgSrcLength += match[1].length;
+        while ((match = imgTagRegex.exec(html)) !== null) {
+          imgTagLength += match[0].length;
         }
-        const totalCharCount = text.length + imgSrcLength;
+        const totalCharCount = text.length + imgTagLength;
 
         if (text.length <= maxLength) {
           setCharCount(totalCharCount);
