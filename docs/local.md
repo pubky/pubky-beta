@@ -26,7 +26,7 @@ curl -X GET "http://localhost:6288/generate_signup_token" -H "X-Admin-Password: 
 
 > Working directory, `pubky-nexus`
 
-First, we will need to spin up the ddbb: `Neo4j` and `redis`
+First, we will need to spin up the db: `Neo4j` and `redis`
 
 ```bash
 cd docker
