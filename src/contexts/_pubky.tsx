@@ -287,10 +287,9 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
       await client.session(publicKey);
       return { status: true, message: 'Ok' };
     } catch (error) {
-      if (String(error) === 'error sending request') {
+      if (String(error) === 'error sending request' && typeof window !== 'undefined' && !navigator.onLine) {
         return { status: true, message: 'connection lost' };
       }
-      console.error('Session Active error:', error);
       return { status: false, message: String(error) };
     }
   };
