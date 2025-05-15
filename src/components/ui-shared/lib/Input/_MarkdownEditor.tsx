@@ -135,8 +135,16 @@ const MarkdownEditorComponent = ({
         let html = quill.root.innerHTML;
         let text = quill.getText();
 
+        let imgSrcLength = 0;
+        const imgRegex = /<img[^>]*src=["']([^"']+)["'][^>]*>/g;
+        let match;
+        while ((match = imgRegex.exec(html)) !== null) {
+          imgSrcLength += match[1].length;
+        }
+        const totalCharCount = text.length + imgSrcLength;
+
         if (text.length <= maxLength) {
-          setCharCount(text.length);
+          setCharCount(totalCharCount);
           onChange(html);
         } else {
           quill.deleteText(maxLength, quill.getLength());
