@@ -75,7 +75,7 @@ export default function Notification({ notification, unread }: { notification: N
   const fetchProfile = useCallback(
     async (userId: string) => {
       if (!userId) return;
-      
+
       try {
         setIsLoading(true);
         setError(false);
