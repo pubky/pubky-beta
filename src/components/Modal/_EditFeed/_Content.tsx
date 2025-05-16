@@ -59,7 +59,7 @@ export default function ContentEditFeed({
 
       // First check for duplicate name (excluding current feed)
       const isDuplicateName = existingFeeds.some(
-        (existingFeed) => existingFeed.name === nameFeed && JSON.stringify(existingFeed.feed) !== JSON.stringify(feedToEdit)
+        (existingFeed) => existingFeed.name === nameFeed && existingFeed.name !== feedName // If the name is the same as the original feed name, it's not a duplicate
       );
       if (isDuplicateName) {
         setDuplicateError(`There is already a feed with the name: "${nameFeed}"`);
@@ -69,8 +69,8 @@ export default function ContentEditFeed({
 
       // Then check for duplicate content (regardless of name)
       const isDuplicateContent = existingFeeds.some((existingFeed) => {
-        // Skip comparing with the feed being edited
-        if (JSON.stringify(existingFeed.feed) === JSON.stringify(feedToEdit)) {
+        // Skip comparing with the feed being edited by checking the name
+        if (existingFeed.name === feedName) {
           return false;
         }
 
@@ -93,8 +93,8 @@ export default function ContentEditFeed({
 
       if (isDuplicateContent) {
         const duplicateFeed = existingFeeds.find((existingFeed) => {
-          // Skip comparing with the feed being edited
-          if (JSON.stringify(existingFeed.feed) === JSON.stringify(feedToEdit)) {
+          // Skip comparing with the feed being edited by checking the name
+          if (existingFeed.name === feedName) {
             return false;
           }
 
