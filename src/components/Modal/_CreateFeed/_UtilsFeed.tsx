@@ -1,29 +1,15 @@
 import { ICustomFeed } from '@/types';
 
-interface FeedContent {
-  tags: string[];
-  reach: string;
-  layout: string;
-  sort: string;
-  content: string;
-}
-
 export const checkDuplicateName = (existingFeeds: any[], nameFeed: string, feedName?: string) => {
   // If feedName is provided, we're in edit mode
   if (feedName) {
-    return existingFeeds.some(
-      (existingFeed) => existingFeed.name === nameFeed && existingFeed.name !== feedName
-    );
+    return existingFeeds.some((existingFeed) => existingFeed.name === nameFeed && existingFeed.name !== feedName);
   }
   // Otherwise we're in create mode
   return existingFeeds.some((existingFeed) => existingFeed.name === nameFeed);
 };
 
-export const checkDuplicateContent = (
-  existingFeeds: any[],
-  updatedFeed: ICustomFeed,
-  feedName?: string
-) => {
+export const checkDuplicateContent = (existingFeeds: any[], updatedFeed: ICustomFeed, feedName?: string) => {
   const isDuplicateContent = existingFeeds.some((existingFeed) => {
     // Skip comparing with the feed being edited by checking the name
     if (feedName && existingFeed.name === feedName) {
@@ -108,4 +94,4 @@ export const handleRemoveTag = (
   if (tagsFeed && tagsFeed.length < 5) {
     setTagsError(false);
   }
-}; 
+};

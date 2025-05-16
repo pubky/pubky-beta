@@ -5,7 +5,7 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 import { ICustomFeed, TReach } from '@/types';
 import { Button, Icon, Input, PostUtil, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import EmojiPicker from '@/components/EmojiPicker';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 import { checkDuplicateName, checkDuplicateContent, handleAddTag, handleRemoveTag } from '../_CreateFeed/_UtilsFeed';
