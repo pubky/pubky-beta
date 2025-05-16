@@ -22,9 +22,7 @@ export default function Feeds() {
     } else {
       // Handle feed update
       setFeeds((prevFeeds) =>
-        prevFeeds.map((f) =>
-          f.feed.created_at === originalFeed.created_at ? { feed: feedToUpdate, name } : f
-        )
+        prevFeeds.map((f) => (f.feed.created_at === originalFeed.created_at ? { feed: feedToUpdate, name } : f))
       );
     }
   };
