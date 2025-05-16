@@ -70,16 +70,21 @@ export default function Notification({ notification, unread }: { notification: N
   const isMobile = useIsMobile();
   const [user, setUser] = useState<UserView | null | undefined>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const fetchProfile = useCallback(
     async (userId: string) => {
+      if (!userId) return;
+      
       try {
         setIsLoading(true);
+        setError(false);
         const userProfile = await getUserProfile(userId, pubky ?? '');
         setUser(userProfile || null);
       } catch (error) {
         console.error('Error fetching user profile:', error);
         setUser(null);
+        setError(true);
       } finally {
         setIsLoading(false);
       }
@@ -191,6 +196,10 @@ export default function Notification({ notification, unread }: { notification: N
                 {Utils.minifyPubky(userId)}
               </Typography.Body>
             </Link>
+          ) : error ? (
+            <Typography.Body variant="medium-bold" className="text-red-500">
+              Error loading user
+            </Typography.Body>
           ) : user || user === null ? (
             <Link href={`/profile/${userId}`} className="flex gap-2 items-center">
               <ImageByUri
@@ -199,16 +208,13 @@ export default function Notification({ notification, unread }: { notification: N
                 height={32}
                 className="w-[32px] h-[32px] rounded-full"
                 alt="user-pic"
+                key={`${userId}-${user?.details?.id}`}
               />
               <Typography.Body className="hover:underline hover:decoration-solid" variant="medium-bold">
                 {Utils.minifyText(user?.details?.name, 20) || '[DELETED]'}
               </Typography.Body>
             </Link>
-          ) : (
-            <Typography.Body variant="medium-bold" className="text-red-500">
-              Error loading user
-            </Typography.Body>
-          )}
+          ) : null}
         </div>
         <div className="flex gap-1 md:gap-2 items-center flex-wrap">
           <Typography.Body variant="medium-bold" className="text-opacity-50">
