@@ -63,8 +63,8 @@ export default function FooterArea({
   maxLength = 1000,
   setShowModalPost,
   isError,
-  loading,
-  charCountArticle
+  loading
+  // charCountArticle
 }: FooterAreaProps) {
   const { addAlert } = useAlertContext();
   const { openModal } = useModal();
@@ -253,11 +253,11 @@ export default function FooterArea({
             <div className="w-full justify-between sm:justify-end flex gap-2">
               {isError && (
                 <Typography.Body className="self-center text-[#e95164]" variant="small">
-                  Maximum characters exceeded
+                  Content too long, reduce it and try again
                 </Typography.Body>
               )}
               <div id="content-length" className="whitespace-nowrap text-opacity-30 text-white text-sm mt-4 mr-2">
-                {noFile ? charCountArticle : content.length} / {maxLength}
+                {!noFile && `${content.length} / ${maxLength}`}
               </div>
               <div className="flex gap-2">
                 <Button.Action
