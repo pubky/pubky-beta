@@ -113,9 +113,9 @@ export default function RootParent({
 
   useEffect(() => {
     if (allParentPostsLoaded && postRef?.current) {
-      postRef.current.scrollIntoView();
+      postRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  }, [allParentPostsLoaded]);
+  }, [allParentPostsLoaded, postRef]);
 
   if (!allParentPostsLoaded) {
     return <Skeleton.Simple />;
