@@ -8,6 +8,7 @@ import { Utils } from '@social/utils-shared';
 import { useEffect, useRef, useState } from 'react';
 import EmojiPicker from '@/components/EmojiPicker';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
+import { checkDuplicateName, checkDuplicateContent, handleAddTag, handleRemoveTag } from './_UtilsFeed';
 
 interface CreateFeedProps {
   setShowModalCreateFeed: React.Dispatch<React.SetStateAction<boolean>>;
@@ -57,51 +58,16 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
     const existingFeeds = await loadFeeds();
 
     // First check for duplicate name
-    const isDuplicateName = existingFeeds.some((existingFeed) => existingFeed.name === nameFeed);
-    if (isDuplicateName) {
+    if (checkDuplicateName(existingFeeds, nameFeed)) {
       setDuplicateError(`There is already a feed with the name: "${nameFeed}"`);
       setLoading(false);
       return;
     }
 
-    // Then check for duplicate content (regardless of name)
-    const isDuplicateContent = existingFeeds.some((existingFeed) => {
-      const feedContent = JSON.stringify({
-        tags: existingFeed.feed.tags,
-        reach: existingFeed.feed.reach,
-        layout: existingFeed.feed.layout,
-        sort: existingFeed.feed.sort,
-        content: existingFeed.feed.content || 'all' // Default to 'all' if content is missing
-      });
-      const newFeedContent = JSON.stringify({
-        tags: feed.tags,
-        reach: feed.reach,
-        layout: feed.layout,
-        sort: feed.sort,
-        content: feed.content
-      });
-      return feedContent === newFeedContent;
-    });
-
-    if (isDuplicateContent) {
-      const duplicateFeed = existingFeeds.find((existingFeed) => {
-        const feedContent = JSON.stringify({
-          tags: existingFeed.feed.tags,
-          reach: existingFeed.feed.reach,
-          layout: existingFeed.feed.layout,
-          sort: existingFeed.feed.sort,
-          content: existingFeed.feed.content || 'all' // Default to 'all' if content is missing
-        });
-        const newFeedContent = JSON.stringify({
-          tags: feed.tags,
-          reach: feed.reach,
-          layout: feed.layout,
-          sort: feed.sort,
-          content: feed.content
-        });
-        return feedContent === newFeedContent;
-      });
-      setDuplicateError(`This feed already exists with the name: "${duplicateFeed?.name}"`);
+    // Then check for duplicate content
+    const duplicateFeed = checkDuplicateContent(existingFeeds, feed);
+    if (duplicateFeed) {
+      setDuplicateError(`This feed already exists with the name: "${duplicateFeed.name}"`);
       setLoading(false);
       return;
     }
@@ -114,29 +80,8 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
     setShowModalCreateFeed(false);
   };
 
-  const handleAddTag = () => {
-    // check if the tag is already in the array
-    if (tagsFeed?.includes(tag.trim())) {
-      return;
-    }
-
-    if (tagsFeed.length > 5) {
-      setTagsError(true);
-    } else {
-      const trimmedTag = tag.trim();
-      if (trimmedTag !== '' && !tagsFeed.includes(trimmedTag)) {
-        setTagsFeed([...tagsFeed, trimmedTag]);
-        setTag('');
-      }
-    }
-  };
-
-  const handleRemoveTag = (indexToRemove: number) => {
-    tagsFeed && setTagsFeed(tagsFeed.filter((_, index) => index !== indexToRemove));
-    if (tagsFeed && tagsFeed.length < 5) {
-      setTagsError(false);
-    }
-  };
+  const onAddTag = () => handleAddTag(tag, tagsFeed, setTagsFeed, setTag, setTagsError);
+  const onRemoveTag = (indexToRemove: number) => handleRemoveTag(indexToRemove, tagsFeed, setTagsFeed, setTagsError);
 
   return (
     <>
@@ -179,7 +124,7 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
                 idPrefix="create-feed"
                 value={tag}
                 onChange={(value) => setTag(value)}
-                onAddTag={handleAddTag}
+                onAddTag={onAddTag}
                 onEmojiPickerClick={() => setShowEmojis(true)}
                 variant="default"
                 className="w-full"
@@ -193,7 +138,7 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
                   <PostUtil.Tag
                     key={index}
                     action={
-                      <div className="flex items-center" onClick={() => handleRemoveTag(index)}>
+                      <div className="flex items-center" onClick={() => onRemoveTag(index)}>
                         <Icon.X size="16" />
                       </div>
                     }
