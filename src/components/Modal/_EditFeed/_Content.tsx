@@ -22,7 +22,7 @@ export default function ContentEditFeed({
   feedToEdit,
   feedName
 }: EditFeedProps) {
-  const { deleteFeed, updateFeed } = usePubkyClientContext();
+  const { deleteFeed, updateFeed, loadFeeds } = usePubkyClientContext();
   const { layout, sort, content } = useFilterContext();
   const [localReach, setLocalReach] = useState<TReach>((feedToEdit?.reach as TReach) || 'all');
   const [localLayout, setLocalLayout] = useState(feedToEdit?.layout || layout);
@@ -36,11 +36,14 @@ export default function ContentEditFeed({
   const [loadingEdit, setLoadingEdit] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
+  const [duplicateError, setDuplicateError] = useState<string | null>(null);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
 
   const handleUpdateFeed = async () => {
     setLoadingEdit(true);
+    setDuplicateError(null);
+
     try {
       const updatedFeed: ICustomFeed = {
         ...feedToEdit,
@@ -51,8 +54,72 @@ export default function ContentEditFeed({
         content: localContent
       };
 
-      await updateFeed(feedToEdit, updatedFeed, nameFeed);
+      // Check for duplicate feeds, excluding the current feed being edited
+      const existingFeeds = await loadFeeds();
 
+      // First check for duplicate name (excluding current feed)
+      const isDuplicateName = existingFeeds.some(
+        (existingFeed) => existingFeed.name === nameFeed && JSON.stringify(existingFeed.feed) !== JSON.stringify(feedToEdit)
+      );
+      if (isDuplicateName) {
+        setDuplicateError(`There is already a feed with the name: "${nameFeed}"`);
+        setLoadingEdit(false);
+        return;
+      }
+
+      // Then check for duplicate content (regardless of name)
+      const isDuplicateContent = existingFeeds.some((existingFeed) => {
+        // Skip comparing with the feed being edited
+        if (JSON.stringify(existingFeed.feed) === JSON.stringify(feedToEdit)) {
+          return false;
+        }
+
+        const feedContent = JSON.stringify({
+          tags: existingFeed.feed.tags,
+          reach: existingFeed.feed.reach,
+          layout: existingFeed.feed.layout,
+          sort: existingFeed.feed.sort,
+          content: existingFeed.feed.content || 'all' // Default to 'all' if content is missing
+        });
+        const newFeedContent = JSON.stringify({
+          tags: updatedFeed.tags,
+          reach: updatedFeed.reach,
+          layout: updatedFeed.layout,
+          sort: updatedFeed.sort,
+          content: updatedFeed.content
+        });
+        return feedContent === newFeedContent;
+      });
+
+      if (isDuplicateContent) {
+        const duplicateFeed = existingFeeds.find((existingFeed) => {
+          // Skip comparing with the feed being edited
+          if (JSON.stringify(existingFeed.feed) === JSON.stringify(feedToEdit)) {
+            return false;
+          }
+
+          const feedContent = JSON.stringify({
+            tags: existingFeed.feed.tags,
+            reach: existingFeed.feed.reach,
+            layout: existingFeed.feed.layout,
+            sort: existingFeed.feed.sort,
+            content: existingFeed.feed.content || 'all' // Default to 'all' if content is missing
+          });
+          const newFeedContent = JSON.stringify({
+            tags: updatedFeed.tags,
+            reach: updatedFeed.reach,
+            layout: updatedFeed.layout,
+            sort: updatedFeed.sort,
+            content: updatedFeed.content
+          });
+          return feedContent === newFeedContent;
+        });
+        setDuplicateError(`This feed already exists with the name: ${duplicateFeed?.name}`);
+        setLoadingEdit(false);
+        return;
+      }
+
+      await updateFeed(feedToEdit, updatedFeed, nameFeed);
       handleUpdateFeeds(updatedFeed, nameFeed);
       setShowModalEditFeed(false);
     } catch (error) {
@@ -213,6 +280,11 @@ export default function ContentEditFeed({
           )}
         </div>
       </div>
+      {duplicateError && (
+        <Typography.Body variant="small" className="text-[#e95164] mt-2">
+          {duplicateError}
+        </Typography.Body>
+      )}
       <div className="flex gap-4 mt-4">
         <Button.Medium
           id="delete-feed-btn"

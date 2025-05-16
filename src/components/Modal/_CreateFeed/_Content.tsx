@@ -15,7 +15,7 @@ interface CreateFeedProps {
 }
 
 export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFeeds }: CreateFeedProps) {
-  const { saveFeed, searchTags } = usePubkyClientContext();
+  const { saveFeed, searchTags, loadFeeds } = usePubkyClientContext();
   const { reach, layout, sort, content } = useFilterContext();
   const [localReach, setLocalReach] = useState<TReach>(reach as TReach);
   const [localLayout, setLocalLayout] = useState(layout);
@@ -28,6 +28,7 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
   const [tagsError, setTagsError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
+  const [duplicateError, setDuplicateError] = useState<string | null>(null);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
 
@@ -42,6 +43,8 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
 
   const handleSubmit = async () => {
     setLoading(true);
+    setDuplicateError(null);
+
     const feed: ICustomFeed = {
       tags: tagsFeed,
       reach: localReach,
@@ -49,6 +52,59 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
       sort: localSort,
       content: localContent
     };
+
+    // Check for duplicate feeds
+    const existingFeeds = await loadFeeds();
+
+    // First check for duplicate name
+    const isDuplicateName = existingFeeds.some((existingFeed) => existingFeed.name === nameFeed);
+    if (isDuplicateName) {
+      setDuplicateError(`There is already a feed with the name: "${nameFeed}"`);
+      setLoading(false);
+      return;
+    }
+
+    // Then check for duplicate content (regardless of name)
+    const isDuplicateContent = existingFeeds.some((existingFeed) => {
+      const feedContent = JSON.stringify({
+        tags: existingFeed.feed.tags,
+        reach: existingFeed.feed.reach,
+        layout: existingFeed.feed.layout,
+        sort: existingFeed.feed.sort,
+        content: existingFeed.feed.content || 'all' // Default to 'all' if content is missing
+      });
+      const newFeedContent = JSON.stringify({
+        tags: feed.tags,
+        reach: feed.reach,
+        layout: feed.layout,
+        sort: feed.sort,
+        content: feed.content
+      });
+      return feedContent === newFeedContent;
+    });
+
+    if (isDuplicateContent) {
+      const duplicateFeed = existingFeeds.find((existingFeed) => {
+        const feedContent = JSON.stringify({
+          tags: existingFeed.feed.tags,
+          reach: existingFeed.feed.reach,
+          layout: existingFeed.feed.layout,
+          sort: existingFeed.feed.sort,
+          content: existingFeed.feed.content || 'all' // Default to 'all' if content is missing
+        });
+        const newFeedContent = JSON.stringify({
+          tags: feed.tags,
+          reach: feed.reach,
+          layout: feed.layout,
+          sort: feed.sort,
+          content: feed.content
+        });
+        return feedContent === newFeedContent;
+      });
+      setDuplicateError(`This feed already exists with the name: "${duplicateFeed?.name}"`);
+      setLoading(false);
+      return;
+    }
 
     await handleAddFeed(feed, nameFeed);
 
@@ -194,6 +250,11 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
           )}
         </div>
       </div>
+      {duplicateError && (
+        <Typography.Body variant="small" className="text-[#e95164] mt-2">
+          {duplicateError}
+        </Typography.Body>
+      )}
       <Button.Medium
         id="create-feed-save-btn"
         loading={loading}
