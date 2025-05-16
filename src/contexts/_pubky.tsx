@@ -1197,8 +1197,12 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
       // First delete the existing feed
       await deleteFeed(originalFeed);
 
-      // Then create a new feed with the updated values
-      await saveFeed(updatedFeed, name);
+      // Then create a new feed with the updated values and preserve the original created_at
+      const feedToSave = {
+        ...updatedFeed,
+        created_at: originalFeed.created_at
+      };
+      await saveFeed(feedToSave, name);
       return true;
     }
   );

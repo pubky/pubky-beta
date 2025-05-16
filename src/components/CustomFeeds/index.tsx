@@ -26,8 +26,12 @@ export default function CustomFeeds({ loading, setLoading, ...rest }: CustomFeed
   const updateFeed = (feedToUpdate: ICustomFeed | null, name: string, originalFeed: ICustomFeed) => {
     if (feedToUpdate === null) {
       // Handle feed deletion
-      setFeeds((prevFeeds) => prevFeeds.filter((f) => JSON.stringify(f.feed) !== JSON.stringify(originalFeed)));
-      if (selectedFeed === originalFeed) {
+      setFeeds((prevFeeds) => {
+        if (!prevFeeds) return [];
+        const updatedFeeds = prevFeeds.filter((f) => f.feed.created_at !== originalFeed.created_at);
+        return updatedFeeds;
+      });
+      if (selectedFeed?.created_at === originalFeed.created_at) {
         setSelectedFeed(undefined);
         // Reset filters to default when "All" is selected after deletion
         setReach('all');
@@ -37,13 +41,15 @@ export default function CustomFeeds({ loading, setLoading, ...rest }: CustomFeed
       }
     } else {
       // Handle feed update
-      setFeeds((prevFeeds) =>
-        prevFeeds.map((f) =>
-          JSON.stringify(f.feed) === JSON.stringify(originalFeed) ? { feed: feedToUpdate, name } : f
-        )
-      );
+      setFeeds((prevFeeds) => {
+        if (!prevFeeds) return [];
+        const updatedFeeds = prevFeeds.map((f) =>
+          f.feed.created_at === originalFeed.created_at ? { feed: feedToUpdate, name } : f
+        );
+        return updatedFeeds;
+      });
       // If the updated feed was selected, keep it selected
-      if (selectedFeed === originalFeed) {
+      if (selectedFeed?.created_at === originalFeed.created_at) {
         setSelectedFeed(feedToUpdate);
       }
     }
@@ -55,9 +61,9 @@ export default function CustomFeeds({ loading, setLoading, ...rest }: CustomFeed
       const result = await loadFeeds();
       setFeeds(result);
 
-      const storedFeed = Utils.storage.get('feed');
+      const storedFeed = Utils.storage.get('feed') as ICustomFeed;
       if (storedFeed) {
-        const matchingFeed = result.find((feed) => JSON.stringify(feed.feed) === JSON.stringify(storedFeed));
+        const matchingFeed = result.find((feed) => feed.feed.created_at === storedFeed.created_at);
         if (matchingFeed) {
           setSelectedFeed(matchingFeed.feed);
         } else {
@@ -66,7 +72,7 @@ export default function CustomFeeds({ loading, setLoading, ...rest }: CustomFeed
         }
       }
     } catch (error) {
-      console.log(error);
+      console.error('Error loading feeds:', error);
       setLoading(false);
     } finally {
       setLoading(false);
@@ -88,7 +94,12 @@ export default function CustomFeeds({ loading, setLoading, ...rest }: CustomFeed
 
   const handleAddFeed = async (feedToAdd: ICustomFeed, name: string) => {
     try {
-      setFeeds((prevFeeds) => [...(prevFeeds || []), { feed: feedToAdd, name }]);
+      // Ensure the feed has a created_at timestamp
+      const feedWithTimestamp = feedToAdd;
+      setFeeds((prevFeeds) => {
+        if (!prevFeeds) return [{ feed: feedWithTimestamp, name }];
+        return [{ feed: feedWithTimestamp, name }, ...prevFeeds];
+      });
     } catch (error) {
       console.error('Error adding feed:', error);
     }
@@ -113,33 +124,35 @@ export default function CustomFeeds({ loading, setLoading, ...rest }: CustomFeed
               All
             </Typography.Body>
           </div>
-          {feeds?.map((feed, index) => {
-            return (
+          {feeds?.map((feed) => (
+            <div
+              key={feed.feed.created_at}
+              className={twMerge(
+                baseCSS,
+                selectedFeed?.created_at === feed.feed.created_at ? activeCSS : '',
+                rest.className
+              )}
+              onClick={() => handleFeedSelect(feed.feed)}
+            >
+              <Typography.Body className="whitespace-nowrap text-[13px] leading-[13px]" variant="small-bold">
+                {Utils.minifyText(feed.name, 20)}
+              </Typography.Body>
               <div
-                key={index}
-                className={twMerge(baseCSS, selectedFeed === feed.feed ? activeCSS : '', rest.className)}
-                onClick={() => handleFeedSelect(feed.feed)}
+                id="edit-custom-feed"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openModal('editFeed', {
+                    handleUpdateFeeds: (updatedFeed: ICustomFeed | null, name: string) =>
+                      updateFeed(updatedFeed, name, feed.feed),
+                    feedToEdit: feed.feed,
+                    feedName: feed.name
+                  });
+                }}
               >
-                <Typography.Body className="whitespace-nowrap text-[13px] leading-[13px]" variant="small-bold">
-                  {Utils.minifyText(feed.name, 20)}
-                </Typography.Body>
-                <div
-                  id="edit-custom-feed"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    openModal('editFeed', {
-                      handleUpdateFeeds: (updatedFeed: ICustomFeed | null, name: string) =>
-                        updateFeed(updatedFeed, name, feed.feed),
-                      feedToEdit: feed.feed,
-                      feedName: feed.name
-                    });
-                  }}
-                >
-                  <Icon.Pencil size="16" color="gray" />
-                </div>
+                <Icon.Pencil size="16" color="gray" />
               </div>
-            );
-          })}
+            </div>
+          ))}
           {feeds && (
             <div
               id="add-custom-feed"

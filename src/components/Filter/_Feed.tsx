@@ -15,15 +15,15 @@ export default function Feeds() {
   const updateFeed = (feedToUpdate: ICustomFeed | null, name: string, originalFeed: ICustomFeed) => {
     if (feedToUpdate === null) {
       // Handle feed deletion
-      setFeeds((prevFeeds) => prevFeeds.filter((f) => JSON.stringify(f.feed) !== JSON.stringify(originalFeed)));
-      if (selectedFeed === originalFeed) {
+      setFeeds((prevFeeds) => prevFeeds.filter((f) => f.feed.created_at !== originalFeed.created_at));
+      if (selectedFeed?.created_at === originalFeed.created_at) {
         setSelectedFeed(undefined);
       }
     } else {
       // Handle feed update
       setFeeds((prevFeeds) =>
         prevFeeds.map((f) =>
-          JSON.stringify(f.feed) === JSON.stringify(originalFeed) ? { feed: feedToUpdate, name } : f
+          f.feed.created_at === originalFeed.created_at ? { feed: feedToUpdate, name } : f
         )
       );
     }
@@ -57,10 +57,10 @@ export default function Feeds() {
 
   const handleDeleteFeed = async (feedToDelete: ICustomFeed) => {
     await deleteFeed(feedToDelete);
-    if (selectedFeed === feedToDelete) {
+    if (selectedFeed?.created_at === feedToDelete.created_at) {
       setSelectedFeed(undefined);
     }
-    setFeeds((prevFeeds) => prevFeeds?.filter((feed) => JSON.stringify(feed.feed) !== JSON.stringify(feedToDelete)));
+    setFeeds((prevFeeds) => prevFeeds?.filter((feed) => feed.feed.created_at !== feedToDelete.created_at));
   };
 
   const handleForYouClick = () => {
@@ -85,11 +85,11 @@ export default function Feeds() {
         />
         {feeds?.map((feed, index) => {
           return (
-            <div className="flex w-full gap-4 justify-between" key={`${index}/${feed.name}`}>
+            <div className="flex w-full gap-4 justify-between" key={`${feed.feed.created_at}/${feed.name}`}>
               <SideCard.Item
                 label={Utils.minifyText(feed.name, 11) as string}
                 value={feed.name}
-                selected={JSON.stringify(selectedFeed) === JSON.stringify(feed.feed)}
+                selected={selectedFeed?.created_at === feed.feed.created_at}
                 onClick={() => handleFeedSelect(feed.feed)}
                 icon={<Icon.Activity size="24" />}
               />

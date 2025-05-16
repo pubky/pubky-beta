@@ -131,6 +131,7 @@ export interface ICustomFeed {
   reach: TSource;
   layout: TLayouts;
   content: TContent;
+  created_at?: number;
 }
 
 export interface EmbedContent {
