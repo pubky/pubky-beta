@@ -3,7 +3,7 @@
 import { usePubkyClientContext } from '@/contexts';
 import { Post } from '.';
 import { usePost } from '@/hooks/usePost';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 export default function Root({ params }: { params: Promise<{ pubky: string; postId: string }> }) {
   const { pubky, setReplies } = usePubkyClientContext();
@@ -11,6 +11,7 @@ export default function Root({ params }: { params: Promise<{ pubky: string; post
     pubky: string;
     postId: string;
   } | null>(null);
+  const replyPostRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setReplies([]);
@@ -38,5 +39,12 @@ export default function Root({ params }: { params: Promise<{ pubky: string; post
     return <Post.DeletedContent />;
   }
 
-  return <Post.ValidPostContent postRef={null} data={data} />;
+  return (
+    <>
+      {data?.relationships?.replied && (
+        <Post.RootParent postRef={replyPostRef} parentURI={data?.relationships?.replied} />
+      )}
+      <Post.ValidPostContent postRef={replyPostRef} data={data} />
+    </>
+  );
 }
