@@ -5,9 +5,10 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 import { ICustomFeed, TReach } from '@/types';
 import { Button, Icon, Input, PostUtil, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import EmojiPicker from '@/components/EmojiPicker';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
+import { checkDuplicateName, checkDuplicateContent, handleAddTag, handleRemoveTag } from '../_CreateFeed/_UtilsFeed';
 
 interface EditFeedProps {
   setShowModalEditFeed: React.Dispatch<React.SetStateAction<boolean>>;
@@ -22,7 +23,7 @@ export default function ContentEditFeed({
   feedToEdit,
   feedName
 }: EditFeedProps) {
-  const { deleteFeed, updateFeed } = usePubkyClientContext();
+  const { deleteFeed, updateFeed, loadFeeds } = usePubkyClientContext();
   const { layout, sort, content } = useFilterContext();
   const [localReach, setLocalReach] = useState<TReach>((feedToEdit?.reach as TReach) || 'all');
   const [localLayout, setLocalLayout] = useState(feedToEdit?.layout || layout);
@@ -36,11 +37,14 @@ export default function ContentEditFeed({
   const [loadingEdit, setLoadingEdit] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
+  const [duplicateError, setDuplicateError] = useState<string | null>(null);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
 
   const handleUpdateFeed = async () => {
     setLoadingEdit(true);
+    setDuplicateError(null);
+
     try {
       const updatedFeed: ICustomFeed = {
         ...feedToEdit,
@@ -51,8 +55,25 @@ export default function ContentEditFeed({
         content: localContent
       };
 
-      await updateFeed(feedToEdit, updatedFeed, nameFeed);
+      // Check for duplicate feeds, excluding the current feed being edited
+      const existingFeeds = await loadFeeds();
 
+      // First check for duplicate name (excluding current feed)
+      if (checkDuplicateName(existingFeeds, nameFeed, feedName)) {
+        setDuplicateError(`There is already a feed with the name: "${nameFeed}"`);
+        setLoadingEdit(false);
+        return;
+      }
+
+      // Then check for duplicate content
+      const duplicateFeed = checkDuplicateContent(existingFeeds, updatedFeed, feedName);
+      if (duplicateFeed) {
+        setDuplicateError(`This feed already exists with the name: ${duplicateFeed.name}`);
+        setLoadingEdit(false);
+        return;
+      }
+
+      await updateFeed(feedToEdit, updatedFeed, nameFeed);
       handleUpdateFeeds(updatedFeed, nameFeed);
       setShowModalEditFeed(false);
     } catch (error) {
@@ -77,29 +98,8 @@ export default function ContentEditFeed({
     }
   };
 
-  const handleAddTag = () => {
-    // check if the tag is already in the array
-    if (tagsFeed?.includes(tag.trim())) {
-      return;
-    }
-
-    if (tagsFeed.length > 5) {
-      setTagsError(true);
-    } else {
-      const trimmedTag = tag.trim();
-      if (trimmedTag !== '' && !tagsFeed.includes(trimmedTag)) {
-        setTagsFeed([...tagsFeed, trimmedTag]);
-        setTag('');
-      }
-    }
-  };
-
-  const handleRemoveTag = (indexToRemove: number) => {
-    tagsFeed && setTagsFeed(tagsFeed.filter((_, index) => index !== indexToRemove));
-    if (tagsFeed && tagsFeed.length < 5) {
-      setTagsError(false);
-    }
-  };
+  const onAddTag = () => handleAddTag(tag, tagsFeed, setTagsFeed, setTag, setTagsError);
+  const onRemoveTag = (indexToRemove: number) => handleRemoveTag(indexToRemove, tagsFeed, setTagsFeed, setTagsError);
 
   return (
     <>
@@ -142,7 +142,7 @@ export default function ContentEditFeed({
                 idPrefix="create-feed"
                 value={tag}
                 onChange={(value) => setTag(value)}
-                onAddTag={handleAddTag}
+                onAddTag={onAddTag}
                 onEmojiPickerClick={() => setShowEmojis(true)}
                 variant="default"
                 className="w-full"
@@ -156,7 +156,7 @@ export default function ContentEditFeed({
                   <PostUtil.Tag
                     key={index}
                     action={
-                      <div className="flex items-center" onClick={() => handleRemoveTag(index)}>
+                      <div className="flex items-center" onClick={() => onRemoveTag(index)}>
                         <Icon.X size="16" />
                       </div>
                     }
@@ -213,6 +213,11 @@ export default function ContentEditFeed({
           )}
         </div>
       </div>
+      {duplicateError && (
+        <Typography.Body variant="small" className="text-[#e95164] mt-2">
+          {duplicateError}
+        </Typography.Body>
+      )}
       <div className="flex gap-4 mt-4">
         <Button.Medium
           id="delete-feed-btn"
