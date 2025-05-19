@@ -21,7 +21,7 @@ const NotificationsContext = createContext<NotificationsContextType>({
 export function NotificationsWrapper({ children }: { children: ReactNode }) {
   const { pubky, timestamp, notificationPreferences, mutedUsers, getTimestampNotification, setTimestamp } =
     usePubkyClientContext();
-  const { setUnReadNotification } = useFilterContext();
+  const { setUnReadNotification, unReadNotification } = useFilterContext();
 
   const limit = 30;
   const [skip, setSkip] = useState(0);
@@ -58,13 +58,16 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
 
     // Each 30 seconds
     const intervalId = setInterval(() => {
-      fetchNotifications();
+      // Only fetch if there are unread notifications
+      if (unReadNotification > 0) {
+        fetchNotifications();
+      }
     }, 30000);
 
     return () => {
       clearInterval(intervalId);
     };
-  }, [pubky, notificationPreferences]);
+  }, [pubky, notificationPreferences, unReadNotification]);
 
   useEffect(() => {
     // Don't process if we don't have notifications or if specs builder isn't ready yet
@@ -81,6 +84,9 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
       );
       if (unreadCount > 0) {
         setUnReadNotification(unreadCount);
+      } else {
+        // If there are no unread notifications, ensure counter is reset
+        setUnReadNotification(0);
       }
     }
   }, [initNotifications, timestamp, pubky, setUnReadNotification]);
@@ -120,7 +126,6 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     try {
       if (initNotifications) {
         const filteredNotifications = filterNotifications(initNotifications);
-
         updateNotifications(filteredNotifications);
 
         // Ensure timestamp is valid before calculating unread count
@@ -132,6 +137,9 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
 
           if (unreadCount > 0) {
             setUnReadNotification(unreadCount);
+          } else {
+            // If there are no unread notifications, ensure counter is reset
+            setUnReadNotification(0);
           }
         } else {
           // If timestamp is invalid, try to fetch it
