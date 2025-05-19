@@ -66,6 +66,51 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
     );
   };
 
+  const highlightItalicText = (text: string): JSX.Element[] => {
+    const parts = text.split(/(_[^_]+_)/g);
+    return parts.map((part, index) =>
+      part.startsWith('_') && part.endsWith('_') && part.length > 2 ? (
+        <em key={index} className="italic">
+          <LinkParser watchers={watchers as []}>{part.slice(1, -1)}</LinkParser>
+        </em>
+      ) : (
+        <span key={index}>
+          <LinkParser watchers={watchers as []}>{part}</LinkParser>
+        </span>
+      )
+    );
+  };
+
+  const highlightUnderlinedText = (text: string): JSX.Element[] => {
+    const parts = text.split(/(__[^_]+__)/g);
+    return parts.map((part, index) =>
+      part.startsWith('__') && part.endsWith('__') && part.length > 4 ? (
+        <span key={index} className="underline">
+          <LinkParser watchers={watchers as []}>{part.slice(2, -2)}</LinkParser>
+        </span>
+      ) : (
+        <span key={index}>
+          <LinkParser watchers={watchers as []}>{part}</LinkParser>
+        </span>
+      )
+    );
+  };
+
+  const highlightStrikethroughText = (text: string): JSX.Element[] => {
+    const parts = text.split(/(~~[^~]+~~)/g);
+    return parts.map((part, index) =>
+      part.startsWith('~~') && part.endsWith('~~') && part.length > 4 ? (
+        <span key={index} className="line-through">
+          <LinkParser watchers={watchers as []}>{part.slice(2, -2)}</LinkParser>
+        </span>
+      ) : (
+        <span key={index}>
+          <LinkParser watchers={watchers as []}>{part}</LinkParser>
+        </span>
+      )
+    );
+  };
+
   const isValidUrl = (url: string): boolean => {
     try {
       const parsedUrl = new URL(url);
@@ -308,6 +353,12 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
                 <span key={`text-${partIndex}`}>
                   {part.includes('**') ? (
                     highlightBoldText(part)
+                  ) : part.includes('__') ? (
+                    highlightUnderlinedText(part)
+                  ) : part.includes('~~') ? (
+                    highlightStrikethroughText(part)
+                  ) : part.includes('_') ? (
+                    highlightItalicText(part)
                   ) : part.includes('`') ? (
                     highlightInlineCode(part)
                   ) : // Handle special symbols before LinkParser
