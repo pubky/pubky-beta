@@ -9,7 +9,12 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
 export default function NotificationsProfile() {
-  const { notifications, loading: loadingNotifications, loadMoreNotifications, fetchNotifications } = useNotificationsContext();
+  const {
+    notifications,
+    loading: loadingNotifications,
+    loadMoreNotifications,
+    fetchNotifications
+  } = useNotificationsContext();
   const { unReadNotification, setUnReadNotification } = useFilterContext();
   const [tempUnReadNotification, setTempUnReadNotification] = useState(0);
   const { putTimestampNotification } = usePubkyClientContext();
@@ -22,7 +27,7 @@ export default function NotificationsProfile() {
     if (unReadNotification > 0) {
       setTempUnReadNotification(unReadNotification);
       setUnReadNotification(0);
-      
+
       const updateTimestamp = async () => {
         try {
           await putTimestampNotification();
