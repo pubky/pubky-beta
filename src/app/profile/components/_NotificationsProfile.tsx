@@ -25,10 +25,14 @@ export default function NotificationsProfile() {
 
     setUnReadNotification(0);
     const updateTimestamp = async () => {
-      await putTimestampNotification();
+      try {
+        await putTimestampNotification();
+      } catch (error) {
+        console.error('Error updating notification timestamp:', error);
+      }
     };
     updateTimestamp();
-  }, []);
+  }, [unReadNotification, setUnReadNotification, putTimestampNotification]);
 
   return (
     <>
