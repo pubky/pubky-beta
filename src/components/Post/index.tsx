@@ -88,11 +88,7 @@ export default function Post({
   }, [post?.relationships?.reposted]);
 
   return (
-    <div
-      id="post-container"
-      className="w-full cursor-pointer"
-      onClick={handlePostClick}
-    >
+    <div id="post-container" className="w-full cursor-pointer" onClick={handlePostClick}>
       <div className="flex flex-col">
         <PostUI.Root>
           <div>
