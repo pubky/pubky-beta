@@ -222,6 +222,8 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
     const handleOnline = () => {
       setIsOnline(true);
       closeModal('connectionLost');
+      // Refresh the page to reload all data
+      window.location.reload();
     };
 
     const handleOffline = () => {
