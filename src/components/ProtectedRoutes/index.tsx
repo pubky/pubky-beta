@@ -28,6 +28,7 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
   const { openModal, closeModal } = useModal();
   const [loading, setLoading] = useState(true);
   const [imagesLoaded, setImagesLoaded] = useState(false);
+  const [isOnline, setIsOnline] = useState(true);
 
   const publicRoutes = [
     '/onboarding',
@@ -131,7 +132,7 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
     const sessionActive = await isSessionActive();
 
     if (sessionActive.status) {
-      if (sessionActive.message === 'connection lost') openModal('connectionLost');
+      if (sessionActive.message === 'connection lost' || !isOnline) openModal('connectionLost');
       const hasProfile = await checkProfileUser();
 
       if (!hasProfile) {
@@ -216,6 +217,31 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
 
     preloadImages();
   }, [pathname]);
+
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOnline(true);
+      closeModal('connectionLost');
+    };
+
+    const handleOffline = () => {
+      setIsOnline(false);
+      openModal('connectionLost');
+    };
+
+    // Set initial online status
+    setIsOnline(navigator.onLine);
+
+    // Add event listeners
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   return (
     <>
