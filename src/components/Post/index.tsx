@@ -54,7 +54,7 @@ export default function Post({
   const handlePostClick = (event: React.MouseEvent<HTMLDivElement>) => {
     const selection = window.getSelection();
     if (!selection || selection.toString().length === 0) {
-      if (event.metaKey || event.ctrlKey) {
+      if (event.metaKey || event.ctrlKey || event.button === 1) {
         // Open in new tab
         window.open(Utils.encodePostUri(post?.details?.uri), '_blank');
       } else {
@@ -88,7 +88,7 @@ export default function Post({
   }, [post?.relationships?.reposted]);
 
   return (
-    <div id="post-container" className="w-full cursor-pointer" onClick={handlePostClick}>
+    <div id="post-container" className="w-full cursor-pointer" onClick={handlePostClick} onAuxClick={handlePostClick}>
       <div className="flex flex-col">
         <PostUI.Root>
           <div>
