@@ -71,7 +71,11 @@ export const Timeline = () => {
         (post) => !deletedPosts.includes(post.details.id) && !mutedUsers.includes(post.details.author)
       );
 
-      setTimeline([...timelineValue, ...filteredData]);
+      // Ensure no duplicates in timeline
+      const existingIds = new Set(timelineValue.map(p => p.details.id));
+      const uniqueNewPosts = filteredData.filter(post => !existingIds.has(post.details.id));
+
+      setTimeline([...timelineValue, ...uniqueNewPosts]);
     } catch (error) {
       if (error.name === 'AbortError') {
         // Request was aborted, do nothing
