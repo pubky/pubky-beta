@@ -5,7 +5,6 @@ const BASE_URL = `${NEXT_PUBLIC_NEXUS}/v0`;
 
 // Get info server
 export async function getServerInfo(): Promise<ServerInfo> {
-  console.log('getServerInfo', BASE_URL);
   const response = await fetch(`${BASE_URL}/info`);
   if (!response.ok) throw new Error('Failed to fetch server info');
   return response.json();
