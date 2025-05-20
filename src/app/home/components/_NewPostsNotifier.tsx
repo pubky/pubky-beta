@@ -59,8 +59,8 @@ export function NewPostsNotifier() {
       if (uniqueNewPosts.length > 0) {
         // Ensure no duplicates in newPosts array
         setNewPosts((prev) => {
-          const existingIds = new Set(prev.map(p => p.details.id));
-          const trulyUniquePosts = uniqueNewPosts.filter(post => !existingIds.has(post.details.id));
+          const existingIds = new Set(prev.map((p) => p.details.id));
+          const trulyUniquePosts = uniqueNewPosts.filter((post) => !existingIds.has(post.details.id));
           return [...prev, ...trulyUniquePosts];
         });
         setNewPostsCount((prev) => prev + uniqueNewPosts.length);
@@ -79,8 +79,8 @@ export function NewPostsNotifier() {
   // Handler to merge new posts into the main timeline
   const handleShowNewPosts = () => {
     setTimeline((prev) => {
-      const existingIds = new Set(prev.map(p => p.details.id));
-      const uniqueNewPosts = newPosts.filter(post => !existingIds.has(post.details.id));
+      const existingIds = new Set(prev.map((p) => p.details.id));
+      const uniqueNewPosts = newPosts.filter((post) => !existingIds.has(post.details.id));
       return [...uniqueNewPosts.reverse(), ...prev];
     });
     setNewPosts([]);

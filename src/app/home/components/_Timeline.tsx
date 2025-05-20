@@ -72,8 +72,8 @@ export const Timeline = () => {
       );
 
       // Ensure no duplicates in timeline
-      const existingIds = new Set(timelineValue.map(p => p.details.id));
-      const uniqueNewPosts = filteredData.filter(post => !existingIds.has(post.details.id));
+      const existingIds = new Set(timelineValue.map((p) => p.details.id));
+      const uniqueNewPosts = filteredData.filter((post) => !existingIds.has(post.details.id));
 
       setTimeline([...timelineValue, ...uniqueNewPosts]);
     } catch (error) {
