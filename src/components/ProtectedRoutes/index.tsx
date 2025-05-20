@@ -23,12 +23,13 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
     newUser,
     setNewUser,
     isSessionActive,
-    logout
+    logout,
+    isOnline,
+    setIsOnline
   } = usePubkyClientContext();
   const { openModal, closeModal } = useModal();
   const [loading, setLoading] = useState(true);
   const [imagesLoaded, setImagesLoaded] = useState(false);
-  const [isOnline, setIsOnline] = useState(true);
 
   const publicRoutes = [
     '/onboarding',

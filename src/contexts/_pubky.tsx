@@ -46,6 +46,8 @@ type PubkyClientContextType = {
   setSeed: (seed: string | undefined) => void;
   mnemonic: string | undefined;
   setMnemonic: (mnemonic: string | undefined) => void;
+  isOnline: boolean;
+  setIsOnline: (isOnline: boolean) => void;
   profile: PubkyAppUser | undefined;
   newUser: boolean;
   setNewUser: React.Dispatch<React.SetStateAction<boolean>>;
@@ -165,6 +167,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
   const [specsBuilder, setSpecsBuilder] = useState<PubkySpecsBuilder | undefined>(undefined);
   const [newUser, setNewUser] = useState(false);
   const [seed, setSeed] = useState<string | undefined>((Utils.storage.get('seed') as string | undefined) || undefined);
+  const [isOnline, setIsOnline] = useState(true);
   const [mnemonic, setMnemonic] = useState<string | undefined>(
     (Utils.storage.get('mnemonic') as string | undefined) || undefined
   );
@@ -1415,6 +1418,8 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
         signUp,
         setSeed,
         setMnemonic,
+        isOnline,
+        setIsOnline,
         saveProfile,
         saveFeed,
         updateFeed,
