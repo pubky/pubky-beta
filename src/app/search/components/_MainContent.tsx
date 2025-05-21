@@ -84,7 +84,7 @@ export function MainContent() {
     const search = searchParams.get('tags');
 
     if (search) {
-      const tagsArray = search.split(',').map(tag => {
+      const tagsArray = search.split(',').map((tag) => {
         try {
           return decodeURIComponent(tag);
         } catch (e) {
@@ -98,14 +98,16 @@ export function MainContent() {
   }, [searchParams]);
 
   useEffect(() => {
-    const searchTagsString = searchTags.map(tag => {
-      try {
-        return encodeURIComponent(tag);
-      } catch (e) {
-        // If encoding fails, return the original tag
-        return tag;
-      }
-    }).join(',');
+    const searchTagsString = searchTags
+      .map((tag) => {
+        try {
+          return encodeURIComponent(tag);
+        } catch (e) {
+          // If encoding fails, return the original tag
+          return tag;
+        }
+      })
+      .join(',');
     const searchUrl = searchTagsString ? `/search?tags=${searchTagsString}` : '/search';
     router.replace(searchUrl);
     // eslint-disable-next-line react-hooks/exhaustive-deps
