@@ -57,7 +57,12 @@ export function NewPostsNotifier() {
       );
 
       if (uniqueNewPosts.length > 0) {
-        setNewPosts((prev) => [...prev, ...uniqueNewPosts]);
+        // Ensure no duplicates in newPosts array
+        setNewPosts((prev) => {
+          const existingIds = new Set(prev.map((p) => p.details.id));
+          const trulyUniquePosts = uniqueNewPosts.filter((post) => !existingIds.has(post.details.id));
+          return [...prev, ...trulyUniquePosts];
+        });
         setNewPostsCount((prev) => prev + uniqueNewPosts.length);
         setLatestTimestamp(Math.max(...uniqueNewPosts.map((p) => p.details.indexed_at)));
       }
@@ -73,7 +78,11 @@ export function NewPostsNotifier() {
 
   // Handler to merge new posts into the main timeline
   const handleShowNewPosts = () => {
-    setTimeline((prev) => [...newPosts.reverse(), ...prev]);
+    setTimeline((prev) => {
+      const existingIds = new Set(prev.map((p) => p.details.id));
+      const uniqueNewPosts = newPosts.filter((post) => !existingIds.has(post.details.id));
+      return [...uniqueNewPosts.reverse(), ...prev];
+    });
     setNewPosts([]);
     setNewPostsCount(0);
   };
