@@ -68,13 +68,13 @@ export default function ContentCreateRepost({ setShowModalRepost, post, setHasCo
             </a>
           </>
         );
+        setArrayTags([]);
+        setContentRepost('');
+        setShowModalRepost(false);
+        setSelectedFiles([]);
       } else {
         addAlert('Something wrong. Try again', 'warning');
       }
-      setArrayTags([]);
-      setContentRepost('');
-      setShowModalRepost(false);
-      setSelectedFiles([]);
     } catch (error) {
       console.log(error);
     } finally {
@@ -100,13 +100,13 @@ export default function ContentCreateRepost({ setShowModalRepost, post, setHasCo
             </a>
           </>
         );
+        setArrayTags([]);
+        setContentRepost('');
+        setShowModalRepost(false);
+        setSelectedFiles([]);
       } else {
         addAlert('Something wrong. Try again', 'warning');
       }
-      setArrayTags([]);
-      setContentRepost('');
-      setShowModalRepost(false);
-      setSelectedFiles([]);
     } catch (error) {
       console.log(error);
     } finally {

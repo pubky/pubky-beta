@@ -95,13 +95,13 @@ export default function ContentCreateReply({
             </a>
           </>
         );
+        setArrayTags([]);
+        setContentReply('');
+        setShowModalReply(false);
+        setSelectedFiles([]);
       } else {
         addAlert('Something wrong. Try again', 'warning');
       }
-      setArrayTags([]);
-      setContentReply('');
-      setShowModalReply(false);
-      setSelectedFiles([]);
     } catch (error) {
       console.log(error);
     } finally {

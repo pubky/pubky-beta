@@ -67,13 +67,13 @@ export default function ContentCreatePost({ setShowModalPost, setHasContent, cla
             </a>
           </>
         );
+        setArrayTags([]);
+        setContentPost('');
+        setShowModalPost(false);
+        setSelectedFiles([]);
       } else {
         addAlert('Something wrong. Try again', 'warning');
       }
-      setArrayTags([]);
-      setContentPost('');
-      setShowModalPost(false);
-      setSelectedFiles([]);
     } catch (error) {
       console.log(error);
     } finally {

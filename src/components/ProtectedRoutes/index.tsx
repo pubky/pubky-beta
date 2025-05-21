@@ -1,6 +1,6 @@
 'use client';
 
-import { useModal, usePubkyClientContext } from '@/contexts';
+import { useAlertContext, useModal, usePubkyClientContext } from '@/contexts';
 import { useRouter, usePathname } from 'next/navigation';
 import NextTopLoader from 'nextjs-toploader';
 import React, { useEffect, useState } from 'react';
@@ -28,6 +28,7 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
     setIsOnline
   } = usePubkyClientContext();
   const { openModal, closeModal } = useModal();
+  const { connectionAlertStatus } = useAlertContext();
   const [loading, setLoading] = useState(true);
   const [imagesLoaded, setImagesLoaded] = useState(false);
 
@@ -221,18 +222,19 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
 
   useEffect(() => {
     const handleOnline = () => {
+      // Only show "connection restored" if we were previously offline
+      if (!isOnline) {
+        connectionAlertStatus(true);
+      }
       setIsOnline(true);
-      closeModal('connectionLost');
-      // Refresh the page to reload all data
-      window.location.reload();
     };
 
     const handleOffline = () => {
       setIsOnline(false);
-      openModal('connectionLost');
+      connectionAlertStatus(false);
     };
 
-    // Set initial online status
+    // Set initial online status without showing any alert
     setIsOnline(navigator.onLine);
 
     // Add event listeners
@@ -244,7 +246,7 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, []);
+  }, [isOnline]); // Add isOnline to dependencies to check previous state
 
   return (
     <>
