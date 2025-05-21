@@ -84,14 +84,28 @@ export function MainContent() {
     const search = searchParams.get('tags');
 
     if (search) {
-      const tagsArray = search.split(',');
+      const tagsArray = search.split(',').map(tag => {
+        try {
+          return decodeURIComponent(tag);
+        } catch (e) {
+          // If decoding fails, return the original tag
+          return tag;
+        }
+      });
       setSearchTags(tagsArray);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
   useEffect(() => {
-    const searchTagsString = searchTags.join(',');
+    const searchTagsString = searchTags.map(tag => {
+      try {
+        return encodeURIComponent(tag);
+      } catch (e) {
+        // If encoding fails, return the original tag
+        return tag;
+      }
+    }).join(',');
     const searchUrl = searchTagsString ? `/search?tags=${searchTagsString}` : '/search';
     router.replace(searchUrl);
     // eslint-disable-next-line react-hooks/exhaustive-deps
