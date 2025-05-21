@@ -65,7 +65,11 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
       case 'warning':
         return <Icon.Warning size="20" />;
       case 'connection':
-        return isOnline ? <Icon.CheckCircle size="20" color="#c8ff00" /> : <Icon.LoadingSpin size="20" color='#e95164' />;
+        return isOnline ? (
+          <Icon.CheckCircle size="20" color="#c8ff00" />
+        ) : (
+          <Icon.LoadingSpin size="20" color="#e95164" />
+        );
       case 'default':
       default:
         return <Icon.CheckCircle size="20" color="#c8ff00" />;
@@ -80,12 +84,7 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
         className="fixed z-max left-1/2 transform -translate-x-1/2 flex flex-col gap-2"
       >
         {alerts.map(({ id, content, variant = 'default', isOnline }) => (
-          <Alert.Message
-            key={id}
-            icon={iconToShow(variant, isOnline)}
-            variant={variant}
-            isOnline={isOnline}
-          >
+          <Alert.Message key={id} icon={iconToShow(variant, isOnline)} variant={variant} isOnline={isOnline}>
             {content}
           </Alert.Message>
         ))}
