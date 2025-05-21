@@ -365,7 +365,10 @@ export default function Content({
                               {isSkeleton ? (
                                 renderSkeleton()
                               ) : isVideo ? (
-                                <div className="flex justify-center items-center bg-black rounded-[10px] overflow-hidden w-auto md:min-w-[400px] max-w-full max-h-[544px]" style={{ aspectRatio: '16/9' }}>
+                                <div
+                                  className="flex justify-center items-center bg-black rounded-[10px] overflow-hidden w-auto md:min-w-[400px] max-w-full max-h-[544px]"
+                                  style={{ aspectRatio: '16/9' }}
+                                >
                                   <video
                                     src={generateFileUrl(file)}
                                     controls
