@@ -11,13 +11,14 @@ import { Utils } from '@/components/utils-shared';
 interface RootProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
   articleView?: boolean;
+  repostView?: boolean;
 }
 
-export const Time = ({ children, articleView, ...rest }: RootProps) => {
+export const Time = ({ children, articleView, repostView, ...rest }: RootProps) => {
   const isMobile = useIsMobile(1280);
   const [showTooltip, setShowTooltip] = useState(false);
   const baseCSS = `grow justify-end items-center gap-1 flex mt-2`;
-  const tooltipCSS = articleView && 'left-auto -right-[75px]';
+  const tooltipCSS = (articleView || repostView) && 'left-auto -right-[75px]';
 
   return (
     <Tooltip.RootSmall delay={500} setShowTooltip={setShowTooltip} className={twMerge(baseCSS, rest.className)}>
