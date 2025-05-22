@@ -131,7 +131,7 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
       const urlObj = new URL(url);
       // Remove common tracking parameters
       const trackingParams = ['pp', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
-      trackingParams.forEach(param => urlObj.searchParams.delete(param));
+      trackingParams.forEach((param) => urlObj.searchParams.delete(param));
       return urlObj.toString();
     } catch {
       return url;
