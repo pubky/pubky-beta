@@ -84,7 +84,7 @@ export function MainContent() {
     const search = searchParams.get('tags');
 
     if (search) {
-      const tagsArray = search.split(',');
+      const tagsArray = search.split(',').map(tag => tag.toLowerCase());
       setSearchTags(tagsArray);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
