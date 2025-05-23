@@ -87,6 +87,7 @@ export function MainContent() {
     const search = searchParams.get('tags');
 
     if (search) {
+      // lowercase all tags
       const tagsArray = search.split(',').map((tag) => tag.toLowerCase());
       setSearchTags(tagsArray);
     }
