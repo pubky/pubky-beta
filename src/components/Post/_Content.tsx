@@ -49,6 +49,15 @@ export default function Content({
     return text?.replace(/\n{3,}/g, '\n\n');
   };
 
+  const isValidUrl = (url: string): boolean => {
+    try {
+      const parsedUrl = new URL(url);
+      return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  };
+
   const text = post?.details?.content;
   const files = post?.details?.attachments;
   const uri = post?.details?.uri;
@@ -56,7 +65,9 @@ export default function Content({
 
   async function checkForLink(text: string) {
     const urlRegex = /(https?:\/\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+)/g;
+    const domainRegex = /^([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}$/;
     let urls = text.match(urlRegex);
+    let domains = text.match(domainRegex);
 
     if (urls) {
       let url = urls[0];
@@ -78,6 +89,12 @@ export default function Content({
 
       const spotifyRegex = /https:\/\/open\.spotify\.com\/track\/\w+/;
       if (spotifyRegex.test(url)) setSpotifyUrl(url);
+    } else if (domains) {
+      const domain = domains[0];
+      const fullUrl = `https://${domain}`;
+      if (isValidUrl(fullUrl)) {
+        setPreview(fullUrl);
+      }
     }
   }
 

@@ -332,6 +332,28 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
     );
   };
 
+  const renderDomainLink = (part: string, partIndex: number) => {
+    const domainMatch = part.match(/^([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}$/);
+    if (!domainMatch) return null;
+
+    const domain = domainMatch[0];
+    const fullUrl = `https://${domain}`;
+    if (!isValidUrl(fullUrl)) return null;
+
+    return (
+      <Link
+        key={`domain-${partIndex}`}
+        className="text-[#C8FF00] break-words"
+        href={fullUrl}
+        target="_blank"
+        rel="noreferrer"
+        onClick={(event) => event.stopPropagation()}
+      >
+        {domain}
+      </Link>
+    );
+  };
+
   const renderQuote = (text: string, level: number = 1): JSX.Element => {
     // Line style
     const lineColor = '#dddddd';
@@ -413,6 +435,10 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
 
               const pkLink = renderPkLink(part, partIndex);
               if (pkLink) return pkLink;
+
+              const domainLink = renderDomainLink(part, partIndex);
+              if (domainLink) return domainLink;
+
               return (
                 <span key={`text-${partIndex}`}>
                   {part.includes('**') ? (

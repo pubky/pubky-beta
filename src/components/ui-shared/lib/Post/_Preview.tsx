@@ -13,6 +13,15 @@ function LinkPreview({ url }: { url: string }) {
   const [previewData, setPreviewData] = useState<PreviewData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
+  const getMainDomain = (url: string): string => {
+    try {
+      const urlObj = new URL(url);
+      return `https://${urlObj.hostname}`;
+    } catch {
+      return url;
+    }
+  };
+
   const isValidImage = (url: string): Promise<boolean> => {
     return new Promise((resolve) => {
       const img = new Image();
@@ -25,7 +34,8 @@ function LinkPreview({ url }: { url: string }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`/api/preview?url=${encodeURIComponent(url)}`);
+        const mainDomain = getMainDomain(url);
+        const response = await fetch(`/api/preview?url=${encodeURIComponent(mainDomain)}`);
         const data = await response.json();
 
         if (data.error) {
@@ -85,7 +95,7 @@ function LinkPreview({ url }: { url: string }) {
             </Typography.Body>
           ) : (
             <Typography.Body variant="small" className="break-words text-opacity-80 leading-5">
-              {url.length > 60 ? url.slice(0, 60) + '...' : url}
+              {getMainDomain(url).length > 60 ? getMainDomain(url).slice(0, 60) + '...' : getMainDomain(url)}
             </Typography.Body>
           )}
         </div>
