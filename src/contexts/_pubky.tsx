@@ -84,7 +84,7 @@ type PubkyClientContextType = {
     files?: File[],
     tags?: string[]
   ) => Promise<{ uri: string; details: PubkyAppPost } | false>;
-  editArticle: (postId: string, title: string, articleContent: string, tags?: string[]) => Promise<string | false>;
+  editArticle: (postId: string, title: string, articleContent: string, files?: File[], tags?: string[]) => Promise<string | false>;
   createRepost: (
     originalPostId: string,
     originalauthorId: string,
@@ -725,7 +725,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
   );
 
   const editArticle = withAuth(
-    async (postId: string, title: string, articleContent: string, tags?: string[]): Promise<string | false> => {
+    async (postId: string, title: string, articleContent: string,  files?: File[], tags?: string[]): Promise<string | false> => {
       const content = JSON.stringify({ title, body: articleContent });
 
       // optimistic edit post in the timeline
