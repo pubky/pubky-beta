@@ -66,9 +66,56 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
     );
   };
 
+  const highlightItalicText = (text: string): JSX.Element[] => {
+    const parts = text.split(/(_[^_]+_)/g);
+    return parts.map((part, index) =>
+      part.startsWith('_') && part.endsWith('_') && part.length > 2 ? (
+        <em key={index} className="italic">
+          <LinkParser watchers={watchers as []}>{part.slice(1, -1)}</LinkParser>
+        </em>
+      ) : (
+        <span key={index}>
+          <LinkParser watchers={watchers as []}>{part}</LinkParser>
+        </span>
+      )
+    );
+  };
+
+  const highlightUnderlinedText = (text: string): JSX.Element[] => {
+    const parts = text.split(/(__[^_]+__)/g);
+    return parts.map((part, index) =>
+      part.startsWith('__') && part.endsWith('__') && part.length > 4 ? (
+        <span key={index} className="underline">
+          <LinkParser watchers={watchers as []}>{part.slice(2, -2)}</LinkParser>
+        </span>
+      ) : (
+        <span key={index}>
+          <LinkParser watchers={watchers as []}>{part}</LinkParser>
+        </span>
+      )
+    );
+  };
+
+  const highlightStrikethroughText = (text: string): JSX.Element[] => {
+    const parts = text.split(/(~~[^~]+~~)/g);
+    return parts.map((part, index) =>
+      part.startsWith('~~') && part.endsWith('~~') && part.length > 4 ? (
+        <span key={index} className="line-through">
+          <LinkParser watchers={watchers as []}>{part.slice(2, -2)}</LinkParser>
+        </span>
+      ) : (
+        <span key={index}>
+          <LinkParser watchers={watchers as []}>{part}</LinkParser>
+        </span>
+      )
+    );
+  };
+
   const isValidUrl = (url: string): boolean => {
     try {
-      const parsedUrl = new URL(url);
+      // Remove trailing punctuation marks
+      const cleanUrl = url.replace(/[.,;:!?]+$/, '');
+      const parsedUrl = new URL(cleanUrl);
       return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
     } catch {
       return false;
@@ -112,21 +159,31 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
       watchFor: 'http',
       render: (url: string) => {
         const cleanUrl = url.trim();
+        // Remove trailing punctuation marks
+        const urlWithoutPunctuation = cleanUrl.replace(/[.,;:!?]+$/, '');
         const fullUrl =
-          cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://') ? cleanUrl : `https://${cleanUrl}`;
+          urlWithoutPunctuation.startsWith('http://') || urlWithoutPunctuation.startsWith('https://')
+            ? urlWithoutPunctuation
+            : `https://${urlWithoutPunctuation}`;
 
         if (!isValidUrl(fullUrl)) return url;
 
+        // Get the punctuation that was removed (if any)
+        const punctuation = cleanUrl.slice(urlWithoutPunctuation.length);
+
         return (
-          <Link
-            className="text-[#C8FF00] break-words mr-1"
-            href={fullUrl}
-            target="_blank"
-            rel="noreferrer"
-            onClick={(event) => event.stopPropagation()}
-          >
-            {cleanUrl}
-          </Link>
+          <>
+            <Link
+              className="text-[#C8FF00] break-words"
+              href={fullUrl}
+              target="_blank"
+              rel="noreferrer"
+              onClick={(event) => event.stopPropagation()}
+            >
+              {urlWithoutPunctuation}
+            </Link>
+            {punctuation}
+          </>
         );
       }
     },
@@ -308,6 +365,12 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
                 <span key={`text-${partIndex}`}>
                   {part.includes('**') ? (
                     highlightBoldText(part)
+                  ) : part.includes('__') ? (
+                    highlightUnderlinedText(part)
+                  ) : part.includes('~~') ? (
+                    highlightStrikethroughText(part)
+                  ) : part.includes('_') ? (
+                    highlightItalicText(part)
                   ) : part.includes('`') ? (
                     highlightInlineCode(part)
                   ) : // Handle special symbols before LinkParser

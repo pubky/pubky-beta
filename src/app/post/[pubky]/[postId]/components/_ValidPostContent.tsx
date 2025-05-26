@@ -36,11 +36,7 @@ export function ValidPostContent({ postRef, data }) {
 
   return (
     <>
-      {singlePost?.relationships?.replied && (
-        <Post.RootParent postRef={postRef} parentURI={singlePost?.relationships?.replied} />
-      )}
-
-      <div ref={postRef} key={singlePost?.details?.uri}>
+      <div ref={postRef} key={singlePost?.details?.uri} className="scroll-mt-20">
         {String(singlePost?.details?.kind) === PubkyAppPostKind[1].toLocaleLowerCase() ? (
           <LongPost data={singlePost} user={user} />
         ) : (
@@ -82,7 +78,6 @@ const NormalPost = ({ data }) => {
 };
 
 const LongPost = ({ data, user }) => {
-  const isMobile = useIsMobile();
   const content = JSON.parse(data?.details?.content);
 
   return (

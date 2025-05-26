@@ -38,7 +38,6 @@ export default function SearchInputCard({
     return storedHistory ? storedHistory : [];
   });
   const [userProfiles, setUserProfiles] = useState<Record<string, UserView>>({});
-  const [isMouseInside, setIsMouseInside] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   async function fetchHotTags() {
@@ -144,8 +143,6 @@ export default function SearchInputCard({
       refCard={refCard}
       className={twMerge('outline-none absolute top-12 rounded-b-2xl rounded-t-none p-6 pt-2', rest.className)}
       background="bg-gradient-to-b from-[#05050A] to-transparent backdrop-blur-[25px] shadow-[0px_50px_100px_rgba(0,0,0,1)] border border-t-0 border-white border-opacity-20 z-20"
-      onMouseEnter={() => setIsMouseInside(true)}
-      onMouseLeave={() => setIsMouseInside(false)}
     >
       {inputValue && searchedUsers.length > 0 ? (
         <div

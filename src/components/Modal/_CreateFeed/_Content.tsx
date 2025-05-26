@@ -8,6 +8,7 @@ import { Utils } from '@social/utils-shared';
 import { useEffect, useRef, useState } from 'react';
 import EmojiPicker from '@/components/EmojiPicker';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
+import { checkDuplicateName, checkDuplicateContent, handleAddTag, handleRemoveTag } from './_UtilsFeed';
 
 interface CreateFeedProps {
   setShowModalCreateFeed: React.Dispatch<React.SetStateAction<boolean>>;
@@ -15,7 +16,7 @@ interface CreateFeedProps {
 }
 
 export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFeeds }: CreateFeedProps) {
-  const { saveFeed, searchTags } = usePubkyClientContext();
+  const { saveFeed, searchTags, loadFeeds } = usePubkyClientContext();
   const { reach, layout, sort, content } = useFilterContext();
   const [localReach, setLocalReach] = useState<TReach>(reach as TReach);
   const [localLayout, setLocalLayout] = useState(layout);
@@ -28,6 +29,7 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
   const [tagsError, setTagsError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showEmojis, setShowEmojis] = useState(false);
+  const [duplicateError, setDuplicateError] = useState<string | null>(null);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
 
@@ -42,6 +44,8 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
 
   const handleSubmit = async () => {
     setLoading(true);
+    setDuplicateError(null);
+
     const feed: ICustomFeed = {
       tags: tagsFeed,
       reach: localReach,
@@ -49,6 +53,24 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
       sort: localSort,
       content: localContent
     };
+
+    // Check for duplicate feeds
+    const existingFeeds = await loadFeeds();
+
+    // First check for duplicate name
+    if (checkDuplicateName(existingFeeds, nameFeed)) {
+      setDuplicateError(`There is already a feed with the name: "${nameFeed}"`);
+      setLoading(false);
+      return;
+    }
+
+    // Then check for duplicate content
+    const duplicateFeed = checkDuplicateContent(existingFeeds, feed);
+    if (duplicateFeed) {
+      setDuplicateError(`This feed already exists with the name: "${duplicateFeed.name}"`);
+      setLoading(false);
+      return;
+    }
 
     await handleAddFeed(feed, nameFeed);
 
@@ -58,29 +80,8 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
     setShowModalCreateFeed(false);
   };
 
-  const handleAddTag = () => {
-    // check if the tag is already in the array
-    if (tagsFeed?.includes(tag.trim())) {
-      return;
-    }
-
-    if (tagsFeed.length > 5) {
-      setTagsError(true);
-    } else {
-      const trimmedTag = tag.trim();
-      if (trimmedTag !== '' && !tagsFeed.includes(trimmedTag)) {
-        setTagsFeed([...tagsFeed, trimmedTag]);
-        setTag('');
-      }
-    }
-  };
-
-  const handleRemoveTag = (indexToRemove: number) => {
-    tagsFeed && setTagsFeed(tagsFeed.filter((_, index) => index !== indexToRemove));
-    if (tagsFeed && tagsFeed.length < 5) {
-      setTagsError(false);
-    }
-  };
+  const onAddTag = () => handleAddTag(tag, tagsFeed, setTagsFeed, setTag, setTagsError);
+  const onRemoveTag = (indexToRemove: number) => handleRemoveTag(indexToRemove, tagsFeed, setTagsFeed, setTagsError);
 
   return (
     <>
@@ -123,7 +124,7 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
                 idPrefix="create-feed"
                 value={tag}
                 onChange={(value) => setTag(value)}
-                onAddTag={handleAddTag}
+                onAddTag={onAddTag}
                 onEmojiPickerClick={() => setShowEmojis(true)}
                 variant="default"
                 className="w-full"
@@ -137,7 +138,7 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
                   <PostUtil.Tag
                     key={index}
                     action={
-                      <div className="flex items-center" onClick={() => handleRemoveTag(index)}>
+                      <div className="flex items-center" onClick={() => onRemoveTag(index)}>
                         <Icon.X size="16" />
                       </div>
                     }
@@ -194,6 +195,11 @@ export default function ContentCreateFeed({ setShowModalCreateFeed, handleLoadFe
           )}
         </div>
       </div>
+      {duplicateError && (
+        <Typography.Body variant="small" className="text-[#e95164] mt-2">
+          {duplicateError}
+        </Typography.Body>
+      )}
       <Button.Medium
         id="create-feed-save-btn"
         loading={loading}

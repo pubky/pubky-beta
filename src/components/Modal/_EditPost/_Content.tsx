@@ -44,16 +44,15 @@ export default function ContentEditPost({ setShowModalEditPost, post, setShowMen
             </a>
           </>
         );
+        setSendingEditPost(false);
+        setShowMenu(false);
+        setShowModalEditPost(false);
       } else {
         addAlert('Something wrong. Try again', 'warning');
       }
     } catch (error) {
       console.log(error);
       addAlert('Error editing post', 'warning');
-    } finally {
-      setSendingEditPost(false);
-      setShowMenu(false);
-      setShowModalEditPost(false);
     }
   };
 

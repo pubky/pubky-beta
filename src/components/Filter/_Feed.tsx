@@ -37,31 +37,22 @@ export default function Feeds() {
     try {
       const result = await loadFeeds();
       setFeeds(result);
-
-      const storedFeed = Utils.storage.get('feed');
-      if (storedFeed) {
-        const matchingFeed = result.find((feed) => JSON.stringify(feed.feed) === JSON.stringify(storedFeed));
-        if (matchingFeed) {
-          setSelectedFeed(matchingFeed.feed);
-        } else {
-          setSelectedFeed(undefined);
-          Utils.storage.remove('feed');
-        }
-      }
     } catch (error) {
       console.log(error);
-    } finally {
     }
   };
 
   useEffect(() => {
     if (selectedFeed) {
       Utils.storage.set('feed', selectedFeed);
+    } else {
+      Utils.storage.remove('feed');
     }
   }, [selectedFeed]);
 
   const handleFeedSelect = (feed: ICustomFeed) => {
     setSelectedFeed(feed);
+    Utils.storage.set('feed', feed);
   };
 
   const handleDeleteFeed = async (feedToDelete: ICustomFeed) => {

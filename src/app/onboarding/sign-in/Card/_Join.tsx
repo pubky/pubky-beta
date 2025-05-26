@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
 export default function Join() {
-  const { generateAuthUrl, loginWithAuthUrl } = usePubkyClientContext();
+  const { generateAuthUrl, loginWithAuthUrl, isOnline } = usePubkyClientContext();
   const isMobile = useIsMobile(640);
   const router = useRouter();
   const { addToast } = useToastContext();
@@ -28,6 +28,17 @@ export default function Join() {
   const canvasRef = useRef(null);
 
   useEffect(() => {
+    if (!isOnline) {
+      setLoginError('Error sending request. Check internet connection.');
+      setAuthUrl('');
+    } else {
+      const abortController = new AbortController();
+      handleGenerateAuthUrl(abortController.signal);
+      return () => abortController.abort();
+    }
+  }, [isOnline]);
+
+  useEffect(() => {
     setAppLink(`pubkyring://${authUrl}`);
   }, [authUrl]);
 
@@ -37,15 +48,6 @@ export default function Join() {
       if (newTab) newTab.location.href = fallbackUrl;
     }, 2000);
   };
-
-  useEffect(() => {
-    const abortController = new AbortController();
-    handleGenerateAuthUrl(abortController.signal);
-
-    return () => {
-      abortController.abort();
-    };
-  }, []);
 
   const handleGenerateAuthUrl = async (signal: AbortSignal) => {
     if (signal.aborted) return;
@@ -72,16 +74,7 @@ export default function Join() {
         router.push('/home');
       }
     } catch (error: unknown) {
-      const networkMessage = 'Error sending request. Check internet connection.';
-      const errorMessage = error === 'error sending request' ? networkMessage : String(error);
-      setLoginError(errorMessage);
-
-      if (errorMessage === networkMessage) {
-        setAuthUrl('');
-      } else {
-        // Retry generating auth URL only for non-network errors
-        handleGenerateAuthUrl(signal);
-      }
+      setLoginError(String(error));
       console.error('Login error:', error);
     }
   };

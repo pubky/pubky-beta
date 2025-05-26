@@ -46,6 +46,8 @@ type PubkyClientContextType = {
   setSeed: (seed: string | undefined) => void;
   mnemonic: string | undefined;
   setMnemonic: (mnemonic: string | undefined) => void;
+  isOnline: boolean;
+  setIsOnline: (isOnline: boolean) => void;
   profile: PubkyAppUser | undefined;
   newUser: boolean;
   setNewUser: React.Dispatch<React.SetStateAction<boolean>>;
@@ -54,7 +56,7 @@ type PubkyClientContextType = {
   loginWithAuthUrl: (publicKey: PublicKey) => Promise<string>;
   loginWithMnemonic: (mnemonic: string) => Promise<string>;
   isLoggedIn: () => Promise<boolean>;
-  isSessionActive: () => Promise<boolean>;
+  isSessionActive: () => Promise<{ status: boolean; message: string }>;
   logout: () => boolean;
   signUp: (
     name: string,
@@ -165,6 +167,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
   const [specsBuilder, setSpecsBuilder] = useState<PubkySpecsBuilder | undefined>(undefined);
   const [newUser, setNewUser] = useState(false);
   const [seed, setSeed] = useState<string | undefined>((Utils.storage.get('seed') as string | undefined) || undefined);
+  const [isOnline, setIsOnline] = useState(true);
   const [mnemonic, setMnemonic] = useState<string | undefined>(
     (Utils.storage.get('mnemonic') as string | undefined) || undefined
   );
@@ -281,14 +284,16 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
   const isSessionActive = async () => {
     try {
       const currentPubky = pubky || Utils.storage.get('pubky_public_key');
-      if (!currentPubky) return false;
+      if (!currentPubky) return { status: false, message: 'User not logged in or pubky key not found' };
 
       const publicKey = PublicKey.from(currentPubky);
-      const session = await client.session(publicKey);
-      return Boolean(session);
+      await client.session(publicKey);
+      return { status: true, message: 'Ok' };
     } catch (error) {
-      console.error('Session Active error:', error);
-      return false;
+      if (String(error) === 'error sending request' && typeof window !== 'undefined' && !navigator.onLine) {
+        return { status: true, message: 'connection lost' };
+      }
+      return { status: false, message: String(error) };
     }
   };
 
@@ -1413,6 +1418,8 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
         signUp,
         setSeed,
         setMnemonic,
+        isOnline,
+        setIsOnline,
         saveProfile,
         saveFeed,
         updateFeed,
