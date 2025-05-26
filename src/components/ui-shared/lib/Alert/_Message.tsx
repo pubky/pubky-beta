@@ -5,10 +5,11 @@ import { Typography } from '../Typography';
 interface MessageProps extends React.HTMLAttributes<HTMLDivElement> {
   icon?: React.ReactNode;
   children: React.ReactNode;
-  variant?: 'default' | 'warning';
+  variant?: 'default' | 'warning' | 'connection';
+  isOnline?: boolean;
 }
 
-export const Message = ({ icon, children, variant = 'default', ...rest }: MessageProps) => {
+export const Message = ({ icon, children, variant = 'default', isOnline, ...rest }: MessageProps) => {
   const baseCSS = `z-max relative py-2 px-4 rounded-md shadow border w-full`;
 
   let variantCSS = '';
@@ -18,6 +19,17 @@ export const Message = ({ icon, children, variant = 'default', ...rest }: Messag
     case 'warning':
       variantCSS = 'bg-yellow-600 shadow-[0px_50px_100px_0px_rgba(0,0,0,1.00)] backdrop-blur-[50px] border-yellow-500';
       colorTextCSS = 'text-white';
+      break;
+    case 'connection':
+      if (isOnline) {
+        variantCSS =
+          'bg-[#c8ff00] bg-opacity-10 shadow-[0px_50px_100px_0px_rgba(0,0,0,1.00)] backdrop-blur-[50px] border-[#C8FF00]';
+        colorTextCSS = 'text-[#c8ff00]';
+      } else {
+        variantCSS =
+          'bg-[#e95164] bg-opacity-10 shadow-[0px_50px_100px_0px_rgba(0,0,0,1.00)] backdrop-blur-[50px] border-[#e95164]';
+        colorTextCSS = 'text-[#e95164]';
+      }
       break;
     case 'default':
     default:

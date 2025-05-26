@@ -1,6 +1,7 @@
 import Backup from './_Backup';
 import CheckContent from './_CheckContent';
 import CheckLink from './_CheckLink';
+import ConnectionLost from './_ConnectionLost';
 import Content from './_Content';
 import CreateArticle from './_CreateArticle';
 import CreateFeed from './_CreateFeed';
@@ -33,6 +34,7 @@ export const BottomSheet = {
   Backup,
   CheckContent,
   CheckLink,
+  ConnectionLost,
   Content,
   CreateArticle,
   CreateFeed,

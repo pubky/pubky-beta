@@ -10,9 +10,18 @@ interface RootBottomSheetProps extends React.HTMLAttributes<HTMLDivElement> {
   title?: string;
   children?: React.ReactNode;
   homeIndicatorCSS?: string;
+  fixed?: boolean;
 }
 
-export default function Root({ show, setShow, title, children, homeIndicatorCSS, ...rest }: RootBottomSheetProps) {
+export default function Root({
+  show,
+  setShow,
+  title,
+  children,
+  homeIndicatorCSS,
+  fixed = false,
+  ...rest
+}: RootBottomSheetProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [animateIn, setAnimateIn] = useState(false);
   const [startY, setStartY] = useState<number | null>(null);
@@ -45,11 +54,12 @@ export default function Root({ show, setShow, title, children, homeIndicatorCSS,
   }, []);
 
   const handleTouchStart = (e: React.TouchEvent) => {
+    if (fixed) return;
     setStartY(e.touches[0].clientY);
   };
 
   const handleTouchMove = (e: TouchEvent) => {
-    if (startY === null) return;
+    if (fixed || startY === null) return;
 
     const currentY = e.touches[0].clientY;
     const diffY = currentY - startY;
@@ -78,7 +88,7 @@ export default function Root({ show, setShow, title, children, homeIndicatorCSS,
       id="bottom-sheet"
       {...rest}
       className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end"
-      onClick={() => setShow(false)}
+      onClick={fixed ? undefined : () => setShow(false)}
       onTouchStart={handleTouchStart}
     >
       <div
@@ -86,7 +96,7 @@ export default function Root({ show, setShow, title, children, homeIndicatorCSS,
         onClick={(e) => e.stopPropagation()}
       >
         <div
-          onClick={() => setShow(false)}
+          onClick={fixed ? undefined : () => setShow(false)}
           className={twMerge('flex items-center mt-2 mb-4 justify-center cursor-pointer z-50', homeIndicatorCSS)}
         >
           <Icon.HomeIndicator color="gray" />

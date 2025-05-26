@@ -7,15 +7,19 @@ import { createContext, useContext, useState, ReactNode } from 'react';
 type AlertMessage = {
   id: number;
   content: ReactNode;
-  variant?: 'default' | 'warning';
+  variant?: 'default' | 'warning' | 'connection';
+  persistent?: boolean;
+  isOnline?: boolean;
 };
 
 type AlertContextType = {
   addAlert: (content: ReactNode, variant?: 'default' | 'warning') => void;
+  connectionAlertStatus: (isOnline: boolean) => void;
 };
 
 const AlertContext = createContext<AlertContextType>({
-  addAlert: () => {}
+  addAlert: () => {},
+  connectionAlertStatus: () => {}
 });
 
 export function AlertWrapper({ children }: { children: React.ReactNode }) {
@@ -31,10 +35,41 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
     }, 5000);
   };
 
-  const iconToShow = (variant: 'default' | 'warning') => {
+  const connectionAlertStatus = (isOnline: boolean) => {
+    // Remove any existing connection alerts
+    setAlerts((prev) => prev.filter((alert) => alert.variant !== 'connection'));
+
+    const content = isOnline ? 'Internet connection restored' : 'No internet connection';
+    const id = Date.now();
+
+    setAlerts((prev) => [
+      ...prev,
+      {
+        id,
+        content,
+        variant: 'connection',
+        persistent: !isOnline,
+        isOnline
+      }
+    ]);
+
+    if (isOnline) {
+      setTimeout(() => {
+        setAlerts((prev) => prev.filter((alert) => alert.id !== id));
+      }, 3000);
+    }
+  };
+
+  const iconToShow = (variant: 'default' | 'warning' | 'connection', isOnline?: boolean) => {
     switch (variant) {
       case 'warning':
         return <Icon.Warning size="20" />;
+      case 'connection':
+        return isOnline ? (
+          <Icon.CheckCircle size="20" color="#c8ff00" />
+        ) : (
+          <Icon.LoadingSpin size="20" color="#e95164" />
+        );
       case 'default':
       default:
         return <Icon.CheckCircle size="20" color="#c8ff00" />;
@@ -42,14 +77,14 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AlertContext.Provider value={{ addAlert }}>
+    <AlertContext.Provider value={{ addAlert, connectionAlertStatus }}>
       {children}
       <div
         style={{ bottom: isMobile ? '96px' : '24px' }}
         className="fixed z-max left-1/2 transform -translate-x-1/2 flex flex-col gap-2"
       >
-        {alerts.map(({ id, content, variant = 'default' }) => (
-          <Alert.Message key={id} icon={iconToShow(variant)} variant={variant}>
+        {alerts.map(({ id, content, variant = 'default', isOnline }) => (
+          <Alert.Message key={id} icon={iconToShow(variant, isOnline)} variant={variant} isOnline={isOnline}>
             {content}
           </Alert.Message>
         ))}

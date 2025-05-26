@@ -53,6 +53,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     backup: 'Backup',
     checkContent: 'CheckContent',
     checkLink: 'CheckLink',
+    connectionLost: 'ConnectionLost',
     createArticle: 'CreateArticle',
     createFeed: 'CreateFeed',
     createPost: 'CreatePost',
