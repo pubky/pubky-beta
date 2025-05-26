@@ -116,36 +116,39 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     });
 
     // Group notifications by edited_uri and edit_source for post_edited type
-    const groupedNotifications = filtered.reduce((acc, notification) => {
-      if (notification.body.type === 'post_edited' && notification.body.edited_uri) {
-        // For tagged posts, group them together
-        if (notification.body.edit_source === 'tagged_post') {
-          const key = `${notification.body.edited_uri}_${notification.body.edited_by}_tagged_post`;
-          if (!acc[key]) {
+    const groupedNotifications = filtered.reduce(
+      (acc, notification) => {
+        if (notification.body.type === 'post_edited' && notification.body.edited_uri) {
+          // For tagged posts, group them together
+          if (notification.body.edit_source === 'tagged_post') {
+            const key = `${notification.body.edited_uri}_${notification.body.edited_by}_tagged_post`;
+            if (!acc[key]) {
+              acc[key] = {
+                notification,
+                sources: new Set([notification.body.edit_source])
+              };
+            } else {
+              acc[key].sources.add(notification.body.edit_source);
+            }
+          } else {
+            // For other types (reply, repost, etc.), keep them separate
+            const key = `${notification.timestamp}_${notification.body.type}_${notification.body.edit_source}`;
             acc[key] = {
               notification,
               sources: new Set([notification.body.edit_source])
             };
-          } else {
-            acc[key].sources.add(notification.body.edit_source);
           }
         } else {
-          // For other types (reply, repost, etc.), keep them separate
-          const key = `${notification.timestamp}_${notification.body.type}_${notification.body.edit_source}`;
-          acc[key] = {
+          // For non-post_edited notifications, keep them as is
+          acc[`${notification.timestamp}_${notification.body.type}`] = {
             notification,
-            sources: new Set([notification.body.edit_source])
+            sources: new Set()
           };
         }
-      } else {
-        // For non-post_edited notifications, keep them as is
-        acc[`${notification.timestamp}_${notification.body.type}`] = {
-          notification,
-          sources: new Set()
-        };
-      }
-      return acc;
-    }, {} as Record<string, { notification: NotificationView; sources: Set<string> }>);
+        return acc;
+      },
+      {} as Record<string, { notification: NotificationView; sources: Set<string> }>
+    );
 
     // Convert grouped notifications back to array
     return Object.values(groupedNotifications).map(({ notification, sources }) => {
