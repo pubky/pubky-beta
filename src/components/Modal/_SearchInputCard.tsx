@@ -1,5 +1,5 @@
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Card, Icon, PostUtil, SideCard, Typography } from '@social/ui-shared';
 import { twMerge } from 'tailwind-merge';
 import { usePubkyClientContext } from '@/contexts';
@@ -39,6 +39,7 @@ export default function SearchInputCard({
   });
   const [userProfiles, setUserProfiles] = useState<Record<string, UserView>>({});
   const [isMouseInside, setIsMouseInside] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   async function fetchHotTags() {
     try {
@@ -119,6 +120,24 @@ export default function SearchInputCard({
     setSearchHistory([]);
   };
 
+  // Add new useEffect for scrolling
+  useEffect(() => {
+    if (selectedUserIndex !== null && scrollContainerRef.current) {
+      const selectedElement = scrollContainerRef.current.children[selectedUserIndex + 1]; // +1 because of the search tag link
+      if (selectedElement) {
+        const containerRect = scrollContainerRef.current.getBoundingClientRect();
+        const elementRect = selectedElement.getBoundingClientRect();
+
+        // Check if element is outside the visible area
+        if (elementRect.bottom > containerRect.bottom) {
+          scrollContainerRef.current.scrollTop += elementRect.bottom - containerRect.bottom;
+        } else if (elementRect.top < containerRect.top) {
+          scrollContainerRef.current.scrollTop -= containerRect.top - elementRect.top;
+        }
+      }
+    }
+  }, [selectedUserIndex]);
+
   return (
     <Card.Primary
       {...rest}
@@ -129,7 +148,10 @@ export default function SearchInputCard({
       onMouseLeave={() => setIsMouseInside(false)}
     >
       {inputValue && searchedUsers.length > 0 ? (
-        <div className="overflow-y-auto max-h-[200px] scrollbar-thin scrollbar-webkit flex flex-col">
+        <div
+          ref={scrollContainerRef}
+          className="overflow-y-auto max-h-[200px] scrollbar-thin scrollbar-webkit flex flex-col"
+        >
           <Link
             href={`/search?tags=${inputValue}`}
             className="cursor-pointer opacity-80 hover:opacity-100 rounded flex items-center gap-2 mb-2"
