@@ -180,6 +180,16 @@ export default function Notification({ notification, unread }: { notification: N
       ? Utils.encodePostUri(notification.body.edited_uri)
       : '';
 
+  const linkedPostLink =
+    (notification.body.edit_source === 'reply' ||
+      notification.body.edit_source === 'repost' ||
+      notification.body.edit_source === 'reply_parent' ||
+      notification.body.edit_source === 'repost_embed' ||
+      notification.body.edit_source === 'tagged_post') &&
+    notification.body.linked_uri
+      ? Utils.encodePostUri(notification.body.linked_uri)
+      : '';
+
   return (
     <div className="py-2 justify-between items-start flex flex-row border-b md:border-0 border-white border-opacity-10">
       <div className="flex sm:gap-1 md:gap-3 flex-col sm:flex-row">
@@ -301,15 +311,23 @@ export default function Notification({ notification, unread }: { notification: N
             </Link>
           )}
           {notification.body.type === notificationType?.post_edited?.type && editedPostLink && (
-            <Link href={editedPostLink}>
-              <Typography.Body variant="small-bold" className="text-white text-opacity-80 hover:text-opacity-100">
-                {notification.body.edit_source === 'reply'
-                  ? 'View Reply'
-                  : notification.body.edit_source === 'repost'
-                    ? 'View Repost'
-                    : 'View Post'}
-              </Typography.Body>
-            </Link>
+            <>
+              <Link href={editedPostLink}>
+                <Typography.Body variant="small-bold" className="text-white text-opacity-80 hover:text-opacity-100">
+                  View Post
+                </Typography.Body>
+              </Link>
+              {linkedPostLink && notification.body.edit_source === 'reply_parent' && (
+                <>
+                  <Typography.Body variant="small">{' - '}</Typography.Body>
+                  <Link href={linkedPostLink}>
+                    <Typography.Body variant="small-bold" className="text-white text-opacity-80 hover:text-opacity-100">
+                      View Reply
+                    </Typography.Body>
+                  </Link>
+                </>
+              )}
+            </>
           )}
         </div>
       </div>
