@@ -64,14 +64,14 @@ export default function CreateQuickPost({ largeView = false, loadingFeed }: Crea
             </a>
           </>
         );
+        setArrayTags([]);
+        setContentPost('');
+        setIsValidContent(false);
+        setTextArea(false);
+        setSelectedFiles([]);
       } else {
         addAlert('Something wrong. Try again', 'warning');
       }
-      setArrayTags([]);
-      setContentPost('');
-      setIsValidContent(false);
-      setTextArea(false);
-      setSelectedFiles([]);
     } catch (error) {
       console.log(error);
     } finally {

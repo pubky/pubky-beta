@@ -26,7 +26,7 @@ import truncateText from './lib/Text/truncateText';
 import truncateTag from './lib/Text/truncateTag';
 import genJdenticon from './lib/Helper/genJdenticon';
 import sanitizeUrlsArticle from './lib/Helper/sanitizeUrlsArticle';
-
+import { resizeImageFile } from './lib/Helper/resizeImageFile';
 export const Utils = {
   base64ToUint8Array,
   svgToPng,
@@ -55,5 +55,6 @@ export const Utils = {
   truncateText,
   truncateTag,
   genJdenticon,
-  sanitizeUrlsArticle
+  sanitizeUrlsArticle,
+  resizeImageFile
 };

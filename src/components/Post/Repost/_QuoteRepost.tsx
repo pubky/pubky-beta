@@ -99,7 +99,7 @@ export default function Quote({
               </Typography.Body>
             )}
           </div>
-          <PostUI.Time>{post?.details?.indexed_at}</PostUI.Time>
+          <PostUI.Time repostView>{post?.details?.indexed_at}</PostUI.Time>
         </PostUI.RepostCard>
         <Post
           postType="single"

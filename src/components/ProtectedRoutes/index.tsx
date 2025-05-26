@@ -1,6 +1,6 @@
 'use client';
 
-import { useModal, usePubkyClientContext } from '@/contexts';
+import { useAlertContext, useModal, usePubkyClientContext } from '@/contexts';
 import { useRouter, usePathname } from 'next/navigation';
 import NextTopLoader from 'nextjs-toploader';
 import React, { useEffect, useState } from 'react';
@@ -23,9 +23,12 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
     newUser,
     setNewUser,
     isSessionActive,
-    logout
+    logout,
+    isOnline,
+    setIsOnline
   } = usePubkyClientContext();
   const { openModal, closeModal } = useModal();
+  const { connectionAlertStatus } = useAlertContext();
   const [loading, setLoading] = useState(true);
   const [imagesLoaded, setImagesLoaded] = useState(false);
 
@@ -130,7 +133,8 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
   const checkAccess = async () => {
     const sessionActive = await isSessionActive();
 
-    if (sessionActive) {
+    if (sessionActive.status) {
+      if (sessionActive.message === 'connection lost' || !isOnline) openModal('connectionLost');
       const hasProfile = await checkProfileUser();
 
       if (!hasProfile) {
@@ -215,6 +219,34 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
 
     preloadImages();
   }, [pathname]);
+
+  useEffect(() => {
+    const handleOnline = () => {
+      // Only show "connection restored" if we were previously offline
+      if (!isOnline) {
+        connectionAlertStatus(true);
+      }
+      setIsOnline(true);
+    };
+
+    const handleOffline = () => {
+      setIsOnline(false);
+      connectionAlertStatus(false);
+    };
+
+    // Set initial online status without showing any alert
+    setIsOnline(navigator.onLine);
+
+    // Add event listeners
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, [isOnline]); // Add isOnline to dependencies to check previous state
 
   return (
     <>

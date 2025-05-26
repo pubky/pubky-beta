@@ -51,6 +51,20 @@ export default function Post({
   const [showTags, setShowTags] = useState(false);
   const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-full border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[0.8px]`;
 
+  const handlePostClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    const selection = window.getSelection();
+    if (!selection || selection.toString().length === 0) {
+      if (event.metaKey || event.ctrlKey || event.button === 1) {
+        // Open in new tab
+        window.open(Utils.encodePostUri(post?.details?.uri), '_blank');
+      } else {
+        router.push(Utils.encodePostUri(post?.details?.uri));
+      }
+    } else {
+      event.stopPropagation();
+    }
+  };
+
   const fetchRepostedPost = async () => {
     if (post?.relationships?.reposted) {
       const url = post.relationships.reposted;
@@ -74,18 +88,7 @@ export default function Post({
   }, [post?.relationships?.reposted]);
 
   return (
-    <div
-      id="post-container"
-      className="w-full cursor-pointer"
-      onClick={(event) => {
-        const selection = window.getSelection();
-        if (!selection || selection.toString().length === 0) {
-          router.push(Utils.encodePostUri(post?.details?.uri));
-        } else {
-          event.stopPropagation();
-        }
-      }}
-    >
+    <div id="post-container" className="w-full cursor-pointer" onClick={handlePostClick} onAuxClick={handlePostClick}>
       <div className="flex flex-col">
         <PostUI.Root>
           <div>

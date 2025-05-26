@@ -9,6 +9,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 // import { TLayouts } from '@/types';
 import { Timeline } from './_Timeline';
 import { Utils } from '@social/utils-shared';
+import { searchUsersByUsername } from '@/services/streamService';
+import { UserView } from '@/types/User';
 
 // interface MainContentProps {
 //   layout: TLayouts;
@@ -25,6 +27,8 @@ export function MainContent() {
   const refTagsContainer = useRef<HTMLDivElement>(null);
   const [isSearchBarVisible, setIsSearchBarVisible] = useState(true);
   const lastScrollY = useRef(0);
+  const [searchedUsers, setSearchedUsers] = useState<UserView[]>([]);
+  const [selectedUserIndex, setSelectedUserIndex] = useState<number | null>(null);
 
   const handleRemoveTag = (indexToRemove: number) => {
     const newTags = [...searchTags];
@@ -53,7 +57,10 @@ export function MainContent() {
       router.push(`/profile/${profileId}`);
     } else {
       const trimmedValue = inputValue.trim();
-      const tags = trimmedValue.split(' ').filter((tag) => tag.length > 0);
+      const tags = trimmedValue
+        .split(' ')
+        .filter((tag) => tag.length > 0)
+        .map((tag) => tag.toLowerCase());
 
       const newTags = tags.filter((tag) => !searchTags.includes(tag));
 
@@ -86,10 +93,11 @@ export function MainContent() {
     if (search) {
       const tagsArray = search.split(',').map((tag) => {
         try {
-          return decodeURIComponent(tag);
+          // First decode the URL, then convert to lowercase
+          return decodeURIComponent(tag).toLowerCase();
         } catch (e) {
-          // If decoding fails, return the original tag
-          return tag;
+          // If decoding fails, return the original tag in lowercase
+          return tag.toLowerCase();
         }
       });
       setSearchTags(tagsArray);
@@ -159,6 +167,28 @@ export function MainContent() {
     }
   }, [searchTags]);
 
+  useEffect(() => {
+    if (!isOpenCard || !inputValue.trim()) {
+      setSearchedUsers([]);
+      setSelectedUserIndex(null);
+      return;
+    }
+    let isActive = true;
+    const fetchUsers = async () => {
+      try {
+        const users = await searchUsersByUsername(inputValue.trim(), undefined); // pass pubky if needed
+        if (isActive) setSearchedUsers(users || []);
+      } catch {
+        if (isActive) setSearchedUsers([]);
+      }
+    };
+    const timeout = setTimeout(fetchUsers, 500);
+    return () => {
+      isActive = false;
+      clearTimeout(timeout);
+    };
+  }, [inputValue, isOpenCard]);
+
   return (
     <Components.PostsLayout className="w-full flex-col inline-flex gap-3">
       <div
@@ -205,6 +235,13 @@ export function MainContent() {
             refCard={refSearchInputCard}
             inputValue={inputValue}
             isOpenCard={isOpenCard}
+            searchedUsers={searchedUsers}
+            selectedUserIndex={selectedUserIndex}
+            setSelectedUserIndex={setSelectedUserIndex}
+            onUserClick={(user) => {
+              setIsOpenCard(false);
+              router.push(`/profile/${user.details.id}`);
+            }}
           />
           <Input.SearchActions className="hidden lg:flex">
             <div className={inputValue && 'cursor-pointer'} onClick={inputValue ? handleSearchTag : undefined}>

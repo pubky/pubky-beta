@@ -15,7 +15,8 @@ import { getStreamPosts } from '@/services/streamService';
 import { PostView } from '@/types/Post';
 
 export const Timeline = () => {
-  const { pubky, mutedUsers, newPosts, setNewPosts, timeline, setTimeline, deletedPosts } = usePubkyClientContext();
+  const { pubky, mutedUsers, newPosts, setNewPosts, timeline, setTimeline, deletedPosts, isOnline } =
+    usePubkyClientContext();
   const { reach, layout, sort, content, selectedFeed } = useFilterContext();
 
   const isMobile = useIsMobile(1024);
@@ -186,11 +187,15 @@ export const Timeline = () => {
   // Reset and fetch new data when feed changes
   useEffect(() => {
     initializeTimeline();
-  }, [reach, sort, content, selectedFeed?.tags, layout]);
+  }, [reach, sort, content, selectedFeed?.tags, layout, isOnline]);
 
   useEffect(() => {
     fetchNexusData();
   }, [newPosts]);
+
+  const handleTryAgain = () => {
+    window.location.reload();
+  };
 
   return (
     <div id="timeline" className="flex flex-col gap-3">
@@ -213,25 +218,37 @@ export const Timeline = () => {
       {!isLoading && !finishedLoading && <div ref={loader} />}
       {finishedLoading && timeline.length === 0 && (
         <ContentNotFound
-          icon={<Icon.Smiley size="48" color="#C8FF00" />}
-          title="Welcome to your feed!"
+          icon={isOnline ? <Icon.Smiley size="48" color="#C8FF00" /> : <Icon.Globe size="48" color="#e95164" />}
+          title={isOnline ? 'Welcome to your feed!' : 'No internet connection'}
           description={
-            <>
-              It's a blank slate for now, but not for long.
-              <br />
-              Start to create posts, follow interesting people, or explore tags.
-            </>
+            isOnline ? (
+              <>
+                It's a blank slate for now, but not for long.
+                <br />
+                Start to create posts, follow interesting people, or explore tags.
+              </>
+            ) : (
+              <>It seems you're offline. Please check your internet connection and try again.</>
+            )
           }
         >
           <div className="flex gap-3 z-10 justify-center flex-wrap">
-            <Link href="/hot#active">
-              <Button.Medium icon={<Icon.UserPlus size="16" />} className="whitespace-nowrap">
-                Follow Active Users
+            {isOnline ? (
+              <>
+                <Link href="/hot#active">
+                  <Button.Medium icon={<Icon.UserPlus size="16" />} className="whitespace-nowrap">
+                    Follow Active Users
+                  </Button.Medium>
+                </Link>
+                <Link href="hot">
+                  <Button.Medium icon={<Icon.Tag size="16" />}>Explore Tags</Button.Medium>
+                </Link>
+              </>
+            ) : (
+              <Button.Medium className="cursor-pointer" icon={<Icon.Repost size="16" />} onClick={handleTryAgain}>
+                Try again
               </Button.Medium>
-            </Link>
-            <Link href="hot">
-              <Button.Medium icon={<Icon.Tag size="16" />}>Explore Tags</Button.Medium>
-            </Link>
+            )}
           </div>
           <div className="absolute top-64 z-0">
             <Image alt="not-found-feed" width={434} height={434} src="/images/webp/not-found/feed.webp" />

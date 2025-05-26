@@ -8,6 +8,8 @@ import { ImageByUri } from '../ImageByUri';
 import { usePathname, useRouter } from 'next/navigation';
 import Modal from '../Modal';
 import { Utils } from '@social/utils-shared';
+import { searchUsersByUsername } from '@/services/streamService';
+import { UserView } from '@/types/User';
 
 interface HeaderProps {
   title?: React.ReactNode;
@@ -24,6 +26,8 @@ export default function Header({ title }: HeaderProps) {
   const [logoLink, setLogoLink] = useState('/onboarding');
   const [inputValue, setInputValue] = useState('');
   const [tagsWidth, setTagsWidth] = useState(0);
+  const [searchedUsers, setSearchedUsers] = useState<UserView[]>([]);
+  const [selectedUserIndex, setSelectedUserIndex] = useState<number | null>(null);
 
   const refSearchInputCard = useRef<HTMLDivElement>(null);
   const refTagsContainer = useRef<HTMLDivElement>(null);
@@ -68,7 +72,54 @@ export default function Header({ title }: HeaderProps) {
     }
   }, [searchTags]);
 
+  useEffect(() => {
+    if (!isOpenCard || !inputValue.trim()) {
+      setSearchedUsers([]);
+      setSelectedUserIndex(null);
+      return;
+    }
+    let isActive = true;
+    const fetchUsers = async () => {
+      try {
+        const users = await searchUsersByUsername(inputValue.trim(), pubky);
+        if (isActive) {
+          setSearchedUsers(users || []);
+        }
+      } catch {
+        if (isActive) setSearchedUsers([]);
+      }
+    };
+    const timeout = setTimeout(fetchUsers, 500);
+    return () => {
+      isActive = false;
+      clearTimeout(timeout);
+    };
+  }, [inputValue, isOpenCard, pubky]);
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (searchedUsers.length > 0 && isOpenCard) {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        setSelectedUserIndex((prevIndex) => {
+          if (searchedUsers.length === 0) return null;
+          let nextIndex: number;
+          if (e.key === 'ArrowDown') {
+            nextIndex = prevIndex === null || prevIndex === searchedUsers.length - 1 ? 0 : prevIndex + 1;
+          } else {
+            nextIndex = prevIndex === null || prevIndex === 0 ? searchedUsers.length - 1 : prevIndex - 1;
+          }
+          return nextIndex;
+        });
+        return;
+      } else if (e.key === 'Enter' && selectedUserIndex !== null) {
+        const selectedUser = searchedUsers[selectedUserIndex];
+        if (selectedUser) {
+          setIsOpenCard(false);
+          router.push(`/profile/${selectedUser.details.id}`);
+        }
+        return;
+      }
+    }
     if (e.key === 'Enter') {
       handleSearchTag();
     }
@@ -172,6 +223,13 @@ export default function Header({ title }: HeaderProps) {
               refCard={refSearchInputCard}
               inputValue={inputValue}
               isOpenCard={isOpenCard}
+              searchedUsers={searchedUsers}
+              selectedUserIndex={selectedUserIndex}
+              setSelectedUserIndex={setSelectedUserIndex}
+              onUserClick={(user: UserView) => {
+                setIsOpenCard(false);
+                router.push(`/profile/${user.details.id}`);
+              }}
             />
             <Input.SearchActions className="hidden lg:flex">
               <div className={inputValue && 'cursor-pointer'} onClick={inputValue ? handleSearchTag : undefined}>
