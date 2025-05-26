@@ -51,63 +51,99 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
     );
   };
 
-  const highlightBoldText = (text: string): JSX.Element[] => {
-    const parts = text.split(/(\*\*[^*]+\*\*)/g);
-    return parts.map((part, index) =>
-      part.startsWith('**') && part.endsWith('**') && part.length > 4 ? (
-        <strong key={index} className="font-bold">
-          <LinkParser watchers={watchers as []}>{part.slice(2, -2)}</LinkParser>
+  const highlightBoldText = (text: string): JSX.Element => {
+    const boldMatch = text.match(/\*\*[^*]+\*\*/);
+    if (!boldMatch)
+      return (
+        <span>
+          <LinkParser watchers={watchers as []}>{text}</LinkParser>
+        </span>
+      );
+
+    const boldText = boldMatch[0];
+    const beforeBold = text.slice(0, text.indexOf(boldText));
+    const afterBold = text.slice(text.indexOf(boldText) + boldText.length);
+
+    return (
+      <>
+        {beforeBold && <span>{beforeBold}</span>}
+        <strong className="font-bold">
+          <LinkParser watchers={watchers as []}>{boldText.slice(2, -2)}</LinkParser>
         </strong>
-      ) : (
-        <span key={index}>
-          <LinkParser watchers={watchers as []}>{part}</LinkParser>
-        </span>
-      )
+        {afterBold && <span>{afterBold}</span>}
+      </>
     );
   };
 
-  const highlightItalicText = (text: string): JSX.Element[] => {
-    const parts = text.split(/(_[^_]+_)/g);
-    return parts.map((part, index) =>
-      part.startsWith('_') && part.endsWith('_') && part.length > 2 ? (
-        <em key={index} className="italic">
-          <LinkParser watchers={watchers as []}>{part.slice(1, -1)}</LinkParser>
+  const highlightItalicText = (text: string): JSX.Element => {
+    const italicMatch = text.match(/_[^_]+_/);
+    if (!italicMatch)
+      return (
+        <span>
+          <LinkParser watchers={watchers as []}>{text}</LinkParser>
+        </span>
+      );
+
+    const italicText = italicMatch[0];
+    const beforeItalic = text.slice(0, text.indexOf(italicText));
+    const afterItalic = text.slice(text.indexOf(italicText) + italicText.length);
+
+    return (
+      <>
+        {beforeItalic && <span>{beforeItalic}</span>}
+        <em className="italic">
+          <LinkParser watchers={watchers as []}>{italicText.slice(1, -1)}</LinkParser>
         </em>
-      ) : (
-        <span key={index}>
-          <LinkParser watchers={watchers as []}>{part}</LinkParser>
-        </span>
-      )
+        {afterItalic && <span>{afterItalic}</span>}
+      </>
     );
   };
 
-  const highlightUnderlinedText = (text: string): JSX.Element[] => {
-    const parts = text.split(/(__[^_]+__)/g);
-    return parts.map((part, index) =>
-      part.startsWith('__') && part.endsWith('__') && part.length > 4 ? (
-        <span key={index} className="underline">
-          <LinkParser watchers={watchers as []}>{part.slice(2, -2)}</LinkParser>
+  const highlightUnderlinedText = (text: string): JSX.Element => {
+    const underlineMatch = text.match(/__[^_]+__/);
+    if (!underlineMatch)
+      return (
+        <span>
+          <LinkParser watchers={watchers as []}>{text}</LinkParser>
         </span>
-      ) : (
-        <span key={index}>
-          <LinkParser watchers={watchers as []}>{part}</LinkParser>
+      );
+
+    const underlineText = underlineMatch[0];
+    const beforeUnderline = text.slice(0, text.indexOf(underlineText));
+    const afterUnderline = text.slice(text.indexOf(underlineText) + underlineText.length);
+
+    return (
+      <>
+        {beforeUnderline && <span>{beforeUnderline}</span>}
+        <span className="underline">
+          <LinkParser watchers={watchers as []}>{underlineText.slice(2, -2)}</LinkParser>
         </span>
-      )
+        {afterUnderline && <span>{afterUnderline}</span>}
+      </>
     );
   };
 
-  const highlightStrikethroughText = (text: string): JSX.Element[] => {
-    const parts = text.split(/(~~[^~]+~~)/g);
-    return parts.map((part, index) =>
-      part.startsWith('~~') && part.endsWith('~~') && part.length > 4 ? (
-        <span key={index} className="line-through">
-          <LinkParser watchers={watchers as []}>{part.slice(2, -2)}</LinkParser>
+  const highlightStrikethroughText = (text: string): JSX.Element => {
+    const strikethroughMatch = text.match(/~~[^~]+~~/);
+    if (!strikethroughMatch)
+      return (
+        <span>
+          <LinkParser watchers={watchers as []}>{text}</LinkParser>
         </span>
-      ) : (
-        <span key={index}>
-          <LinkParser watchers={watchers as []}>{part}</LinkParser>
+      );
+
+    const strikethroughText = strikethroughMatch[0];
+    const beforeStrikethrough = text.slice(0, text.indexOf(strikethroughText));
+    const afterStrikethrough = text.slice(text.indexOf(strikethroughText) + strikethroughText.length);
+
+    return (
+      <>
+        {beforeStrikethrough && <span>{beforeStrikethrough}</span>}
+        <span className="line-through">
+          <LinkParser watchers={watchers as []}>{strikethroughText.slice(2, -2)}</LinkParser>
         </span>
-      )
+        {afterStrikethrough && <span>{afterStrikethrough}</span>}
+      </>
     );
   };
 
