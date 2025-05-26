@@ -65,7 +65,12 @@ export default function SearchInputCard({ refCard, inputValue, isOpenCard, ...re
       try {
         const response = await searchUsersByUsername(inputValue.trim(), pubky);
         if (currentRequestId === requestIdRef.current) {
-          setSearchedUsers(response || []);
+          // Filter out duplicates before setting state
+          const uniqueUsers =
+            response?.filter(
+              (user, index, self) => index === self.findIndex((u) => u?.details?.id === user?.details?.id)
+            ) || [];
+          setSearchedUsers(uniqueUsers);
         }
       } catch (error) {
         if (currentRequestId === requestIdRef.current) {

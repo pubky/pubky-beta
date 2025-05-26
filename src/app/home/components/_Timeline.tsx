@@ -26,7 +26,8 @@ export const Timeline = () => {
     timelineScroll,
     setTimelineScroll,
     timelineLimit,
-    setTimelineLimit
+    setTimelineLimit,
+    isOnline
   } = usePubkyClientContext();
   const { reach, layout, sort, content, selectedFeed } = useFilterContext();
 
@@ -90,10 +91,14 @@ export const Timeline = () => {
         (post) => !deletedPosts.includes(post.details.id) && !mutedUsers.includes(post.details.author)
       );
 
+      // Ensure no duplicates in timeline
+      const existingIds = new Set(timelineValue.map((p) => p.details.id));
+      const uniqueNewPosts = filteredData.filter((post) => !existingIds.has(post.details.id));
+
       if (updateGlobalTimeline) {
-        setTimeline([...timelineValue, ...filteredData]);
+        setTimeline([...timelineValue, ...uniqueNewPosts]);
       }
-      return [...timelineValue, ...filteredData];
+      return [...timelineValue, ...uniqueNewPosts];
     } catch (error) {
       if (error.name === 'AbortError') {
         // Request was aborted, do nothing
@@ -234,7 +239,7 @@ export const Timeline = () => {
   // Reset and fetch new data when feed changes
   useEffect(() => {
     initializeTimeline();
-  }, [reach, sort, content, selectedFeed?.tags, layout]);
+  }, [reach, sort, content, selectedFeed?.tags, layout, isOnline]);
 
   useEffect(() => {
     fetchNexusData();
@@ -244,6 +249,10 @@ export const Timeline = () => {
   const handlePostClick = () => {
     setTimelineScroll(window.scrollY);
     setTimelineLimit(timeline.length);
+  };
+
+  const handleTryAgain = () => {
+    window.location.reload();
   };
 
   return (
@@ -267,25 +276,37 @@ export const Timeline = () => {
       {!isLoading && !finishedLoading && <div ref={loader} />}
       {finishedLoading && timeline.length === 0 && (
         <ContentNotFound
-          icon={<Icon.Smiley size="48" color="#C8FF00" />}
-          title="Welcome to your feed!"
+          icon={isOnline ? <Icon.Smiley size="48" color="#C8FF00" /> : <Icon.Globe size="48" color="#e95164" />}
+          title={isOnline ? 'Welcome to your feed!' : 'No internet connection'}
           description={
-            <>
-              It's a blank slate for now, but not for long.
-              <br />
-              Start to create posts, follow interesting people, or explore tags.
-            </>
+            isOnline ? (
+              <>
+                It's a blank slate for now, but not for long.
+                <br />
+                Start to create posts, follow interesting people, or explore tags.
+              </>
+            ) : (
+              <>It seems you're offline. Please check your internet connection and try again.</>
+            )
           }
         >
           <div className="flex gap-3 z-10 justify-center flex-wrap">
-            <Link href="/hot#active">
-              <Button.Medium icon={<Icon.UserPlus size="16" />} className="whitespace-nowrap">
-                Follow Active Users
+            {isOnline ? (
+              <>
+                <Link href="/hot#active">
+                  <Button.Medium icon={<Icon.UserPlus size="16" />} className="whitespace-nowrap">
+                    Follow Active Users
+                  </Button.Medium>
+                </Link>
+                <Link href="hot">
+                  <Button.Medium icon={<Icon.Tag size="16" />}>Explore Tags</Button.Medium>
+                </Link>
+              </>
+            ) : (
+              <Button.Medium className="cursor-pointer" icon={<Icon.Repost size="16" />} onClick={handleTryAgain}>
+                Try again
               </Button.Medium>
-            </Link>
-            <Link href="hot">
-              <Button.Medium icon={<Icon.Tag size="16" />}>Explore Tags</Button.Medium>
-            </Link>
+            )}
           </div>
           <div className="absolute top-64 z-0">
             <Image alt="not-found-feed" width={434} height={434} src="/images/webp/not-found/feed.webp" />

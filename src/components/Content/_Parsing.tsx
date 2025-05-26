@@ -113,7 +113,9 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
 
   const isValidUrl = (url: string): boolean => {
     try {
-      const parsedUrl = new URL(url);
+      // Remove trailing punctuation marks
+      const cleanUrl = url.replace(/[.,;:!?]+$/, '');
+      const parsedUrl = new URL(cleanUrl);
       return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
     } catch {
       return false;
@@ -157,21 +159,31 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
       watchFor: 'http',
       render: (url: string) => {
         const cleanUrl = url.trim();
+        // Remove trailing punctuation marks
+        const urlWithoutPunctuation = cleanUrl.replace(/[.,;:!?]+$/, '');
         const fullUrl =
-          cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://') ? cleanUrl : `https://${cleanUrl}`;
+          urlWithoutPunctuation.startsWith('http://') || urlWithoutPunctuation.startsWith('https://')
+            ? urlWithoutPunctuation
+            : `https://${urlWithoutPunctuation}`;
 
         if (!isValidUrl(fullUrl)) return url;
 
+        // Get the punctuation that was removed (if any)
+        const punctuation = cleanUrl.slice(urlWithoutPunctuation.length);
+
         return (
-          <Link
-            className="text-[#C8FF00] break-words mr-1"
-            href={fullUrl}
-            target="_blank"
-            rel="noreferrer"
-            onClick={(event) => event.stopPropagation()}
-          >
-            {cleanUrl}
-          </Link>
+          <>
+            <Link
+              className="text-[#C8FF00] break-words"
+              href={fullUrl}
+              target="_blank"
+              rel="noreferrer"
+              onClick={(event) => event.stopPropagation()}
+            >
+              {urlWithoutPunctuation}
+            </Link>
+            {punctuation}
+          </>
         );
       }
     },

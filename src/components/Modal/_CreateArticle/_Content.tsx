@@ -72,14 +72,14 @@ export default function ContentCreateArticle({
             </a>
           </>
         );
+        setArrayTags([]);
+        setContentArticle('');
+        setShowModalPost && setShowModalPost(false);
+        setShowModalArticle(false);
+        setSelectedFile([]);
       } else {
         addAlert('Something wrong. Try again', 'warning');
       }
-      setArrayTags([]);
-      setContentArticle('');
-      setShowModalPost && setShowModalPost(false);
-      setShowModalArticle(false);
-      setSelectedFile([]);
     } catch (error) {
       console.log(error);
     } finally {
