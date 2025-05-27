@@ -58,6 +58,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
 
     // Each 30 seconds
     const intervalId = setInterval(() => {
+      setSkip(0);
       fetchNotifications();
     }, 30000);
 
