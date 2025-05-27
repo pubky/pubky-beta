@@ -126,6 +126,18 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
   };
 
+  const removeTrackingParams = (url: string): string => {
+    try {
+      const urlObj = new URL(url);
+      // Remove common tracking parameters
+      const trackingParams = ['si', 'pp', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+      trackingParams.forEach((param) => urlObj.searchParams.delete(param));
+      return urlObj.toString();
+    } catch {
+      return url;
+    }
+  };
+
   const watchers = [
     {
       type: 'startsWith' as const,
@@ -168,6 +180,9 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
 
         if (!isValidUrl(fullUrl)) return url;
 
+        // Clean the URL by removing tracking parameters
+        const cleanedUrl = removeTrackingParams(fullUrl);
+
         // Get the punctuation that was removed (if any)
         const punctuation = cleanUrl.slice(urlWithoutPunctuation.length);
 
@@ -175,12 +190,12 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
           <>
             <Link
               className="text-[#C8FF00] break-words"
-              href={fullUrl}
+              href={cleanedUrl}
               target="_blank"
               rel="noreferrer"
               onClick={(event) => event.stopPropagation()}
             >
-              {urlWithoutPunctuation}
+              {cleanedUrl}
             </Link>
             {punctuation}
           </>
