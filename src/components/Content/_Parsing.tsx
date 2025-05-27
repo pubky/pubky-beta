@@ -304,14 +304,15 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
     const totalLineWidth = level * lineWidth + (level - 1) * lineGap;
 
     return (
-      <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+      <div style={{ display: 'flex', alignItems: 'stretch', width: '100%' }}>
         <div
           style={{
             display: 'flex',
             flexDirection: 'row',
             width: `${totalLineWidth}px`,
             minWidth: `${totalLineWidth}px`,
-            marginRight: '12px'
+            marginRight: '12px',
+            alignSelf: 'stretch'
           }}
         >
           {Array.from({ length: level }).map((_, i) => (
