@@ -20,6 +20,8 @@ import Languages from './_Languages';
 import Layout from './_Layout';
 import Link from './_Link';
 import Logout from './_Logout';
+import MinimumAge from './_MinimumAge';
+import PrivacyPolicy from './_PrivacyPolicy';
 import Menu from './_Menu';
 import MenuProfile from './_MenuProfile';
 import Reach from './_Reach';
@@ -29,6 +31,7 @@ import SessionExpired from './_SessionExpired';
 import SortPosts from './_SortPosts';
 import Status from './_Status';
 import TagCreatePost from './_TagCreatePost';
+import TermsOfService from './_TermsOfService';
 
 export const BottomSheet = {
   Backup,
@@ -53,6 +56,8 @@ export const BottomSheet = {
   Layout,
   Link,
   Logout,
+  MinimumAge,
+  PrivacyPolicy,
   Menu,
   MenuProfile,
   Reach,
@@ -61,5 +66,6 @@ export const BottomSheet = {
   SessionExpired,
   SortPosts,
   Status,
-  TagCreatePost
+  TagCreatePost,
+  TermsOfService
 };
