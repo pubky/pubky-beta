@@ -88,13 +88,20 @@ export function MainContent() {
   };
 
   useEffect(() => {
-    const search = searchParams.get('tags');
+    // Extract the full tags parameter from the URL
+    const url = window.location.href;
+    const tagsRegex = /[?&]tags=([^#]*)/;
+    const match = url.match(tagsRegex);
+    const search = match ? match[1] : null;
 
     if (search) {
       const tagsArray = search.split(',').map((tag) => {
+        console.log('tag', tag);
         try {
           // First decode the URL, then convert to lowercase
-          return decodeURIComponent(tag).toLowerCase();
+          const result = decodeURIComponent(tag).toLowerCase();
+          console.log('result', result);
+          return result;
         } catch (e) {
           // If decoding fails, return the original tag in lowercase
           return tag.toLowerCase();
@@ -109,6 +116,7 @@ export function MainContent() {
     const searchTagsString = searchTags
       .map((tag) => {
         try {
+          // Properly encode each tag to handle special characters
           return encodeURIComponent(tag);
         } catch (e) {
           // If encoding fails, return the original tag
