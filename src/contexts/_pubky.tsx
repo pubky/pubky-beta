@@ -26,15 +26,17 @@ import { clearUserProfileCache, clearUserRelationshipCache } from '@/services/us
 
 const TESTNET = process.env.NEXT_PUBLIC_TESTNET?.toLowerCase() === 'true';
 const NEXT_PUBLIC_DEFAULT_HTTP_RELAY = process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY || 'https://demo.httprelay.io/link/';
+const NEXT_PUBLIC_PKARR_RELAY_1 = process.env.NEXT_PUBLIC_PKARR_RELAY_1 || 'https://pkarr.pubky.app';
+const NEXT_PUBLIC_PKARR_RELAY_2 = process.env.NEXT_PUBLIC_PKARR_RELAY_2 || 'https://pkarr.pubky.org';
 
 const client = TESTNET
   ? Client.testnet()
   : new Client({
       pkarr: {
-        relays: [NEXT_PUBLIC_DEFAULT_HTTP_RELAY],
-        requestTimeout: 1000
+        relays: [NEXT_PUBLIC_PKARR_RELAY_1, NEXT_PUBLIC_PKARR_RELAY_2],
+        requestTimeout: 2000
       },
-      userMaxRecordAge: 1000
+      userMaxRecordAge: 2000
     });
 const NEXT_PUBLIC_HOMESERVER = PublicKey.from(process.env.NEXT_PUBLIC_HOMESERVER);
 
