@@ -34,9 +34,9 @@ const client = TESTNET
   : new Client({
       pkarr: {
         relays: [NEXT_PUBLIC_PKARR_RELAY_1, NEXT_PUBLIC_PKARR_RELAY_2],
-        requestTimeout: 2000
+        requestTimeout: null
       },
-      userMaxRecordAge: 2000
+      userMaxRecordAge: null
     });
 const NEXT_PUBLIC_HOMESERVER = PublicKey.from(process.env.NEXT_PUBLIC_HOMESERVER);
 
