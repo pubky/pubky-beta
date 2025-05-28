@@ -31,8 +31,8 @@ export default function Index() {
         <Header.Logo link={logoLink} />
         <div className="flex gap-6 items-center">
           <SocialLinks
-            colorIcon="#000000"
-            classNameIcon="opacity-100 hover:opacity-90"
+            colorIcon={!isMobile ? '#000000' : 'white'}
+            classNameIcon={!isMobile && 'opacity-100 hover:opacity-90'}
             className="hidden sm:inline-flex"
           />
           <Header.Action
