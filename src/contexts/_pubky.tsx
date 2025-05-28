@@ -27,7 +27,15 @@ import { clearUserProfileCache, clearUserRelationshipCache } from '@/services/us
 const TESTNET = process.env.NEXT_PUBLIC_TESTNET?.toLowerCase() === 'true';
 const NEXT_PUBLIC_DEFAULT_HTTP_RELAY = process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY || 'https://demo.httprelay.io/link/';
 
-const client = TESTNET ? Client.testnet() : new Client();
+const client = TESTNET
+  ? Client.testnet()
+  : new Client({
+      pkarr: {
+        relays: [NEXT_PUBLIC_DEFAULT_HTTP_RELAY],
+        requestTimeout: 1000
+      },
+      userMaxRecordAge: 1000
+    });
 const NEXT_PUBLIC_HOMESERVER = PublicKey.from(process.env.NEXT_PUBLIC_HOMESERVER);
 
 const contentTypeMap = {
@@ -286,7 +294,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
       const currentPubky = pubky || Utils.storage.get('pubky_public_key');
       if (!currentPubky) return { status: false, message: 'User not logged in or pubky key not found' };
 
-      const publicKey = PublicKey.from(currentPubky);
+      const publicKey = PublicKey.from(currentPubky as string);
       await client.session(publicKey);
       return { status: true, message: 'Ok' };
     } catch (error) {
