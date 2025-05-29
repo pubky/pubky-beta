@@ -5,6 +5,7 @@ import Content from './_Content';
 import Actions from './_Actions';
 import { PostType, PostView } from '@/types/Post';
 import Tags from './Tags';
+import { Utils } from '../utils-shared';
 
 interface MainPostContentProps {
   post: PostView;
@@ -15,7 +16,6 @@ interface MainPostContentProps {
   repostView: boolean;
   replyView?: boolean;
   restClassName?: string;
-  isCensored?: boolean;
   postType: PostType;
   showTags: boolean;
   setShowTags: (showTags: boolean) => void;
@@ -30,12 +30,12 @@ export default function MainPostContent({
   repostView,
   replyView,
   restClassName,
-  isCensored,
   postType,
   showTags,
   setShowTags
 }: MainPostContentProps) {
   const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-full border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[0.8px]`;
+  const isCensored = Utils.isCensored(post);
 
   return (
     <div className="flex items-center relative">

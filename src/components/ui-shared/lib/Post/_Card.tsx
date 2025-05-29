@@ -24,7 +24,7 @@ export const MainCard = ({ background = '', borderRadius = '', children, isCenso
   };
 
   return (
-    <>
+    <div className="w-full relative">
       <Card.Primary
         {...rest}
         borderRadius={borderRadius}
@@ -35,7 +35,7 @@ export const MainCard = ({ background = '', borderRadius = '', children, isCenso
       </Card.Primary>
       {censored && (
         <div
-          className="absolute inset-0 top-2 flex flex-col items-center justify-center cursor-pointer opacity-30 hover:opacity-100 transition-opacity duration-300 z-10"
+          className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer opacity-50 hover:opacity-100 transition-opacity duration-300 z-10 rounded-lg"
           onClick={handleUnblur}
         >
           <div className="flex flex-col items-center justify-center gap-2">
@@ -46,6 +46,6 @@ export const MainCard = ({ background = '', borderRadius = '', children, isCenso
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
