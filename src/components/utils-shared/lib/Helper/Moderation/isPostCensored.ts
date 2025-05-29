@@ -1,7 +1,9 @@
 import { Utils } from '@/components/utils-shared';
 import { PostView } from '@/types/Post';
 
-const censoredTags = JSON.parse(process.env.NEXT_PUBLIC_MODERATED_TAGS) || Utils.censoredTags;
+const censoredTags = process.env.NEXT_PUBLIC_MODERATED_TAGS 
+  ? JSON.parse(process.env.NEXT_PUBLIC_MODERATED_TAGS)
+  : Utils.censoredTags;
 
 const isCensored = (postToCheck: PostView) => {
   return postToCheck?.tags.some(
