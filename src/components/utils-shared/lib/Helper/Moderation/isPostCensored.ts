@@ -1,7 +1,7 @@
 import { Utils } from '@/components/utils-shared';
 import { PostView } from '@/types/Post';
 
-const censoredTags = process.env.NEXT_PUBLIC_MODERATED_TAGS 
+const censoredTags = process.env.NEXT_PUBLIC_MODERATED_TAGS
   ? JSON.parse(process.env.NEXT_PUBLIC_MODERATED_TAGS)
   : Utils.censoredTags;
 
