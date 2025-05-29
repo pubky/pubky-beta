@@ -20,6 +20,7 @@ interface BlankProps extends React.HTMLAttributes<HTMLDivElement> {
   postType: PostType;
   showTags: boolean;
   setShowTags: (showTags: boolean) => void;
+  isCensored?: boolean;
   restClassName?: string;
 }
 
@@ -35,6 +36,7 @@ export default function Blank({
   postType,
   showTags,
   setShowTags,
+  isCensored,
   restClassName,
   ...rest
 }: BlankProps) {
@@ -51,6 +53,7 @@ export default function Blank({
         </>
       )}
       <PostUI.MainCard
+        isCensored={isCensored}
         className={twMerge(
           line && 'ml-6',
           largeView && 'p-12 inline-flex flex-row gap-6 xl:gap-12',
@@ -64,6 +67,7 @@ export default function Blank({
             <Content largeView={largeView} post={post} fullContent={fullContent} />
           </div>
           <Post
+            isCensored={isCensored}
             repostedPost={repostedPost}
             loadingRepostedPost={loadingRepostedPost}
             fullContent={fullContent}

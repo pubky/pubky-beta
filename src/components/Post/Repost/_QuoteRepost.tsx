@@ -19,6 +19,7 @@ interface QuoteProps extends React.HTMLAttributes<HTMLDivElement> {
   lineStyle?: string;
   largeView?: boolean;
   fullContent?: boolean;
+  isCensored?: boolean;
   restClassName?: string;
 }
 
@@ -31,6 +32,7 @@ export default function Quote({
   repostView,
   largeView,
   fullContent,
+  isCensored,
   restClassName,
   ...rest
 }: QuoteProps) {
@@ -103,6 +105,7 @@ export default function Quote({
         </PostUI.RepostCard>
         <Post
           postType="single"
+          isCensored={isCensored}
           repostedPost={repostedPost}
           loadingRepostedPost={loadingRepostedPost}
           largeView={largeView}

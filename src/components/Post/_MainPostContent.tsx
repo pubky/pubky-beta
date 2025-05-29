@@ -15,6 +15,7 @@ interface MainPostContentProps {
   repostView: boolean;
   replyView?: boolean;
   restClassName?: string;
+  isCensored?: boolean;
   postType: PostType;
   showTags: boolean;
   setShowTags: (showTags: boolean) => void;
@@ -29,6 +30,7 @@ export default function MainPostContent({
   repostView,
   replyView,
   restClassName,
+  isCensored,
   postType,
   showTags,
   setShowTags
@@ -46,6 +48,7 @@ export default function MainPostContent({
         </>
       )}
       <PostUI.MainCard
+        isCensored={isCensored}
         className={twMerge(line && 'ml-6', largeView && 'p-12 inline-flex flex-row gap-6 xl:gap-12', restClassName)}
       >
         <div className="w-full flex-col justify-between inline-flex">

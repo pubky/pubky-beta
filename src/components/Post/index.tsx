@@ -50,6 +50,9 @@ export default function Post({
   const [loadingRepostedPost, setLoadingRepostedPost] = useState(true);
   const [showTags, setShowTags] = useState(false);
   const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-full border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[0.8px]`;
+  const isCensored = (post?.relationships?.reposted && !repostView ? repostedPost : post)?.tags.some(
+    (tag) => Utils.censoredTags.includes(tag.label) && tag.taggers[0] === process.env.NEXT_PUBLIC_MODERATION_ID
+  );
 
   const handlePostClick = (event: React.MouseEvent<HTMLDivElement>) => {
     const selection = window.getSelection();
@@ -120,6 +123,7 @@ export default function Post({
                   fullContent={fullContent}
                   showTags={showTags}
                   setShowTags={setShowTags}
+                  isCensored={isCensored}
                   restClassName={rest.className}
                 />
               ) : (
@@ -132,6 +136,7 @@ export default function Post({
                   lineStyle={lineStyle}
                   largeView={largeView}
                   fullContent={fullContent}
+                  isCensored={isCensored}
                   restClassName={rest.className}
                 />
               )
@@ -147,6 +152,7 @@ export default function Post({
                 postType={postType}
                 showTags={showTags}
                 setShowTags={setShowTags}
+                isCensored={isCensored}
                 restClassName={rest.className}
               />
             )}

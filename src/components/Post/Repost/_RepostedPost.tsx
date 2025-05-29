@@ -21,6 +21,7 @@ interface RepostedPostProps {
   repostView: boolean;
   restClassName?: string;
   notFoundClassName?: string;
+  isCensored?: boolean;
   postType: PostType;
 }
 
@@ -34,6 +35,7 @@ export default function Post({
   repostView,
   restClassName,
   notFoundClassName,
+  isCensored,
   postType
 }: RepostedPostProps) {
   const router = useRouter();
@@ -61,7 +63,7 @@ export default function Post({
         router.push(Utils.encodePostUri(repostedPost.details.uri));
       }}
     >
-      <PostUI.MainCard className={restClassName}>
+      <PostUI.MainCard isCensored={isCensored} className={restClassName}>
         <div>
           <Header post={repostedPost} largeView={largeView} repostView={repostView} />
           {line && <div className={twMerge(lineBaseCSS, lineStyle)} />}

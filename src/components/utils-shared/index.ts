@@ -27,10 +27,13 @@ import truncateTag from './lib/Text/truncateTag';
 import genJdenticon from './lib/Helper/genJdenticon';
 import sanitizeUrlsArticle from './lib/Helper/sanitizeUrlsArticle';
 import { resizeImageFile } from './lib/Helper/resizeImageFile';
+import { censoredTags } from './lib/Helper/censoredTags';
+
 export const Utils = {
   base64ToUint8Array,
   svgToPng,
   cleanText,
+  censoredTags,
   decodePostUri,
   encodeImageId,
   encodePostUri,
