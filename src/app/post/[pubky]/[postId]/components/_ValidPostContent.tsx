@@ -16,6 +16,8 @@ import Tags from '@/components/Post/Tags';
 import { PubkyAppPostKind } from 'pubky-app-specs';
 import { ImageArticle } from './_ImageArticle';
 
+const UNBLURRED_POSTS_KEY = 'unblurred_posts';
+
 export function ValidPostContent({ postRef, data }) {
   const { pubky } = usePubkyClientContext();
   const user = useUserProfile(data?.details?.author, pubky ?? '');
@@ -83,8 +85,21 @@ const LongPost = ({ data, user }) => {
   const isCensored = Utils.isPostCensored(data);
   const censored = !isUnblurred && isCensored;
 
+  useEffect(() => {
+    if (data?.details?.id && isCensored) {
+      const unblurredPosts = (Utils.storage.get(UNBLURRED_POSTS_KEY) as string[]) || [];
+      setIsUnblurred(unblurredPosts.includes(data.details.id));
+    }
+  }, [data?.details?.id, isCensored]);
+
   const handleUnblur = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
+    if (data?.details?.id) {
+      const unblurredPosts = (Utils.storage.get(UNBLURRED_POSTS_KEY) as string[]) || [];
+      if (!unblurredPosts.includes(data.details.id)) {
+        Utils.storage.set(UNBLURRED_POSTS_KEY, [...unblurredPosts, data.details.id]);
+      }
+    }
     setIsUnblurred(true);
   };
 

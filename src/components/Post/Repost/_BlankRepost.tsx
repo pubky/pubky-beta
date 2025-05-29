@@ -54,6 +54,7 @@ export default function Blank({
         </>
       )}
       <PostUI.MainCard
+        postId={post?.details?.id}
         isCensored={isCensoredPost}
         className={twMerge(
           line && 'ml-6',

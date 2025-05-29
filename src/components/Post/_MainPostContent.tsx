@@ -48,6 +48,7 @@ export default function MainPostContent({
         </>
       )}
       <PostUI.MainCard
+        postId={post?.details?.id}
         isCensored={isCensored}
         className={twMerge(line && 'ml-6', largeView && 'p-12 inline-flex flex-row gap-6 xl:gap-12', restClassName)}
       >
