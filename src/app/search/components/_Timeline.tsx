@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { Icon } from '@social/ui-shared';
+import { Button, Icon } from '@social/ui-shared';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { PostView } from '@/types/Post';
@@ -9,6 +9,7 @@ import { ContentNotFound, Post, Skeleton } from '@/components';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import Image from 'next/image';
 import { getStreamPosts } from '@/services/streamService';
+import Link from 'next/link';
 
 export const Timeline = () => {
   const limit = 10;
@@ -103,6 +104,11 @@ export const Timeline = () => {
           title={`No results ${searchTags.length > 0 ? `with the tag: ${searchTags}` : ''}`}
           description="Try searching for something else."
         >
+          <div className="md:hidden flex gap-3 z-10 justify-center flex-wrap">
+            <Link href="/home">
+              <Button.Medium icon={<Icon.House size="16" />}>Go back home</Button.Medium>
+            </Link>
+          </div>
           <div className="absolute top-32 z-0">
             <Image alt="not-found-search" width={477} height={271} src="/images/webp/not-found/search.webp" />
           </div>
