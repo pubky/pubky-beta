@@ -26,10 +26,9 @@ import { clearUserProfileCache, clearUserRelationshipCache } from '@/services/us
 
 const TESTNET = process.env.NEXT_PUBLIC_TESTNET?.toLowerCase() === 'true';
 const NEXT_PUBLIC_DEFAULT_HTTP_RELAY = process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY || 'https://demo.httprelay.io/link/';
-const NEXT_PUBLIC_PKARR_RELAYS = JSON.parse(process.env.NEXT_PUBLIC_PKARR_RELAYS) || [
-  'https://pkarr.pubky.app',
-  'https://pkarr.pubky.org'
-];
+const NEXT_PUBLIC_PKARR_RELAYS = process.env.NEXT_PUBLIC_PKARR_RELAYS
+  ? JSON.parse(process.env.NEXT_PUBLIC_PKARR_RELAYS)
+  : ['https://pkarr.pubky.app', 'https://pkarr.pubky.org'];
 
 const client = TESTNET
   ? Client.testnet()
