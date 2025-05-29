@@ -146,7 +146,7 @@ const LongPost = ({ data, user }) => {
           <div className="flex flex-col items-center justify-center gap-2">
             <Icon.EyeSlash size="32px" color="white" />
             <Typography.Body variant="small" className="text-center text-white">
-              This post may contain sexually explicit content
+              This article may contain sexually explicit content
             </Typography.Body>
           </div>
         </div>
