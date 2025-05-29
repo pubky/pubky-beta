@@ -1,12 +1,12 @@
-import { Utils } from '@/components/utils-shared';
 import { PostTag } from '@/types/Post';
+import { censoredTags } from './censoredTags';
 
-const censoredTags = process.env.NEXT_PUBLIC_MODERATED_TAGS
+const censoredTagsList = process.env.NEXT_PUBLIC_MODERATED_TAGS
   ? JSON.parse(process.env.NEXT_PUBLIC_MODERATED_TAGS)
-  : Utils.censoredTags;
+  : censoredTags;
 
 const isTagCensored = (tag: PostTag) => {
-  return censoredTags.includes(tag.label) && tag.taggers[0] === process.env.NEXT_PUBLIC_MODERATION_ID;
+  return censoredTagsList.includes(tag.label) && tag.taggers[0] === process.env.NEXT_PUBLIC_MODERATION_ID;
 };
 
 export default isTagCensored;
