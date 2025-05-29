@@ -20,7 +20,7 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 export function MainContent() {
   const { searchTags, setSearchTags } = usePubkyClientContext();
   const searchParams = useSearchParams();
-  const isMobile = useIsMobile(1280);
+  const isMobile = useIsMobile();
   const router = useRouter();
   const [inputValue, setInputValue] = useState('');
   const [isOpenCard, setIsOpenCard] = useState(false);
