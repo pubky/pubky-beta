@@ -80,7 +80,7 @@ const NormalPost = ({ data }) => {
 const LongPost = ({ data, user }) => {
   const [isUnblurred, setIsUnblurred] = useState(false);
   const content = JSON.parse(data?.details?.content);
-  const isCensored = Utils.isCensored(data);
+  const isCensored = Utils.isPostCensored(data);
   const censored = !isUnblurred && isCensored;
 
   const handleUnblur = (event: React.MouseEvent<HTMLDivElement>) => {

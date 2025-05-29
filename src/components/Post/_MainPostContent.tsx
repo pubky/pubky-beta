@@ -35,7 +35,7 @@ export default function MainPostContent({
   setShowTags
 }: MainPostContentProps) {
   const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-full border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[0.8px]`;
-  const isCensored = Utils.isCensored(post);
+  const isCensored = Utils.isPostCensored(post);
 
   return (
     <div className="flex items-center relative">
