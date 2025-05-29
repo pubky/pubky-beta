@@ -307,18 +307,22 @@ export default function Content({
                   </div>
                 ) : (
                   <>
-                    {fileContents.some((file) => file?.content_type.startsWith('image')) && (
+                    {fileContents.some(
+                      (file) => file?.content_type.startsWith('image') || file?.content_type.startsWith('video')
+                    ) && (
                       <div className="grid gap-1 overflow-hidden max-h-[544px]">
                         {(() => {
-                          const imageFiles = fileContents.filter((file) => file?.content_type.startsWith('image'));
+                          const mediaFiles = fileContents.filter(
+                            (file) => file?.content_type.startsWith('image') || file?.content_type.startsWith('video')
+                          );
 
                           let layoutClass = '';
-                          const widthImg = imageFiles.length === 1 ? 'w-auto md:min-w-[400px]' : 'w-full';
-                          if (imageFiles.length === 1) {
+                          const widthMedia = mediaFiles.length === 1 ? 'w-auto md:min-w-[400px]' : 'w-full';
+                          if (mediaFiles.length === 1) {
                             layoutClass = 'grid-cols-1';
-                          } else if (imageFiles.length === 2) {
+                          } else if (mediaFiles.length === 2) {
                             layoutClass = 'grid-cols-2';
-                          } else if (imageFiles.length === 3) {
+                          } else if (mediaFiles.length === 3) {
                             layoutClass = 'grid-cols-2 grid-rows-2';
                           } else {
                             layoutClass = 'grid-cols-2 grid-rows-2';
@@ -326,23 +330,44 @@ export default function Content({
 
                           return (
                             <div className={`grid ${layoutClass} gap-1 max-h-[544px]`}>
-                              {imageFiles.map((file, index) => (
+                              {mediaFiles.map((file, index) => (
                                 <div
                                   key={index}
                                   className={`relative cursor-pointer ${
-                                    imageFiles.length === 3 && index === 0 ? 'row-span-2 col-span-2 pb-1' : ''
+                                    mediaFiles.length === 3 && index === 0 ? 'row-span-2 col-span-2 pb-1' : ''
                                   }`}
-                                  style={{ height: imageFiles.length === 1 ? 'auto' : 'calc(544px / 2)' }}
+                                  style={{
+                                    height:
+                                      mediaFiles.length === 1
+                                        ? 'auto'
+                                        : mediaFiles.length === 3 && index === 0
+                                          ? 'calc(544px - 4px)'
+                                          : 'calc((544px - 4px) / 2)'
+                                  }}
                                 >
-                                  <img
-                                    src={generateFileUrl(file, file.content_type !== 'image/gif' ? 'feed' : 'main')}
-                                    onClick={(event) => {
-                                      event.stopPropagation();
-                                      handleOpenModal(index);
-                                    }}
-                                    alt={`Fetched file ${index}`}
-                                    className={`${widthImg} h-full max-h-[544px] object-cover rounded-[10px] overflow-hidden`}
-                                  />
+                                  {file.content_type.startsWith('image') ? (
+                                    <img
+                                      src={generateFileUrl(file, file.content_type !== 'image/gif' ? 'feed' : 'main')}
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+                                        handleOpenModal(index);
+                                      }}
+                                      alt={`Fetched file ${index}`}
+                                      className={`${widthMedia} h-full max-h-[544px] object-cover rounded-[10px] overflow-hidden`}
+                                    />
+                                  ) : (
+                                    <div
+                                      className="flex justify-center items-center bg-black rounded-[10px] overflow-hidden w-full h-full"
+                                      style={{ aspectRatio: '16/9' }}
+                                    >
+                                      <video
+                                        src={generateFileUrl(file)}
+                                        controls
+                                        onClick={(event) => event.stopPropagation()}
+                                        className="w-full h-full object-contain"
+                                      />
+                                    </div>
+                                  )}
                                 </div>
                               ))}
                             </div>
@@ -353,9 +378,10 @@ export default function Content({
 
                     <div className="flex flex-col gap-4">
                       {fileContents
-                        .filter((file) => !file?.content_type.startsWith('image'))
+                        .filter(
+                          (file) => !file?.content_type.startsWith('image') && !file?.content_type.startsWith('video')
+                        )
                         .map((file, index) => {
-                          const isVideo = file?.content_type.startsWith('video');
                           const isPDF = file?.content_type === 'application/pdf';
                           const isAudio = file?.content_type.startsWith('audio');
                           const isSkeleton = file?.content_type === 'skeleton';
@@ -364,18 +390,6 @@ export default function Content({
                             <div key={index}>
                               {isSkeleton ? (
                                 renderSkeleton()
-                              ) : isVideo ? (
-                                <div
-                                  className="flex justify-center items-center bg-black rounded-[10px] overflow-hidden w-auto md:min-w-[400px] max-w-full max-h-[544px]"
-                                  style={{ aspectRatio: '16/9' }}
-                                >
-                                  <video
-                                    src={generateFileUrl(file)}
-                                    controls
-                                    onClick={(event) => event.stopPropagation()}
-                                    className="w-full h-full object-contain bg-black"
-                                  />
-                                </div>
                               ) : isPDF ? (
                                 <div
                                   onClick={(event) => {
