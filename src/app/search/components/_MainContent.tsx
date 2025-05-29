@@ -185,7 +185,10 @@ export function MainContent() {
     const fetchUsers = async () => {
       try {
         const users = await searchUsersByUsername(inputValue.trim(), undefined); // pass pubky if needed
-        if (isActive) setSearchedUsers(users || []);
+        if (isActive) {
+          const uniqueUsers = users ? Array.from(new Map(users.map((user) => [user.details.id, user])).values()) : [];
+          setSearchedUsers(uniqueUsers);
+        }
       } catch {
         if (isActive) setSearchedUsers([]);
       }

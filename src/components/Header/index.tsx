@@ -83,7 +83,8 @@ export default function Header({ title }: HeaderProps) {
       try {
         const users = await searchUsersByUsername(inputValue.trim(), pubky);
         if (isActive) {
-          setSearchedUsers(users || []);
+          const uniqueUsers = users ? Array.from(new Map(users.map((user) => [user.details.id, user])).values()) : [];
+          setSearchedUsers(uniqueUsers);
         }
       } catch {
         if (isActive) setSearchedUsers([]);
