@@ -34,6 +34,13 @@ export const Timeline = () => {
     skipValue?: number;
     timelineValue?: PostView[];
   }) => {
+    // Don't fetch if we're offline
+    if (!isOnline) {
+      setFinishedLoading(true);
+      setIsLoading(false);
+      return;
+    }
+
     // Cancel any ongoing request
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -77,12 +84,22 @@ export const Timeline = () => {
       const uniqueNewPosts = filteredData.filter((post) => !existingIds.has(post.details.id));
 
       setTimeline([...timelineValue, ...uniqueNewPosts]);
+
+      // Set finishedLoading to true only if we received no new posts
+      if (uniqueNewPosts.length === 0) {
+        setFinishedLoading(true);
+      } else {
+        setFinishedLoading(false);
+      }
     } catch (error) {
       if (error.name === 'AbortError') {
         // Request was aborted, do nothing
         return;
       }
-      setFinishedLoading(true);
+      // Only set finishedLoading to true if we have no posts yet
+      if (timelineValue.length === 0) {
+        setFinishedLoading(true);
+      }
     } finally {
       if (!signal.aborted) {
         setIsLoading(false);
@@ -174,6 +191,22 @@ export const Timeline = () => {
 
     await attemptFetch();
   };
+
+  // Add a new effect to reset loading states when connection is restored
+  useEffect(() => {
+    if (isOnline && finishedLoading) {
+      setFinishedLoading(false);
+      fetchPosts({ skipValue: skip, timelineValue: timeline });
+    }
+  }, [isOnline]);
+
+  // Add effect to handle offline state
+  useEffect(() => {
+    if (!isOnline) {
+      setFinishedLoading(true);
+      setIsLoading(false);
+    }
+  }, [isOnline]);
 
   // Cleanup function to cancel any ongoing requests
   useEffect(() => {
