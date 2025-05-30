@@ -187,7 +187,7 @@ export const Timeline = () => {
   // Reset and fetch new data when feed changes
   useEffect(() => {
     initializeTimeline();
-  }, [reach, sort, content, selectedFeed?.tags, layout, isOnline]);
+  }, [reach, sort, content, selectedFeed?.tags, layout]);
 
   useEffect(() => {
     fetchNexusData();
