@@ -22,6 +22,12 @@ function LinkPreview({ url }: { url: string }) {
     }
   };
 
+  const decodeHtmlEntities = (text: string): string => {
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = text;
+    return textarea.value;
+  };
+
   const isValidImage = (url: string): Promise<boolean> => {
     return new Promise((resolve) => {
       const img = new Image();
@@ -47,8 +53,8 @@ function LinkPreview({ url }: { url: string }) {
         const validImage = data.image ? await isValidImage(data.image) : false;
 
         const preview = {
-          title: data.title || '',
-          description: data.description || '',
+          title: data.title ? decodeHtmlEntities(data.title) : '',
+          description: data.description ? decodeHtmlEntities(data.description) : '',
           image: validImage ? data.image : null
         };
 

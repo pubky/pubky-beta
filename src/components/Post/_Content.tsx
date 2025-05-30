@@ -65,7 +65,7 @@ export default function Content({
 
   async function checkForLink(text: string) {
     const urlRegex = /(https?:\/\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+)/g;
-    const domainRegex = /^([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}$/;
+    const domainRegex = /^(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)?$/;
     let urls = text.match(urlRegex);
     let domains = text.match(domainRegex);
 
@@ -91,7 +91,7 @@ export default function Content({
       if (spotifyRegex.test(url)) setSpotifyUrl(url);
     } else if (domains) {
       const domain = domains[0];
-      const fullUrl = `https://${domain}`;
+      const fullUrl = domain.startsWith('http') ? domain : `https://${domain}`;
       if (isValidUrl(fullUrl)) {
         setPreview(fullUrl);
       }

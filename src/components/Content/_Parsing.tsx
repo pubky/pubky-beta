@@ -333,11 +333,13 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
   };
 
   const renderDomainLink = (part: string, partIndex: number) => {
-    const domainMatch = part.match(/^([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}$/);
+    // Updated regex to handle more URL patterns
+    const domainMatch = part.match(/^(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)?$/);
     if (!domainMatch) return null;
 
     const domain = domainMatch[0];
-    const fullUrl = `https://${domain}`;
+    // Only add https:// if the URL doesn't already have a protocol
+    const fullUrl = domain.startsWith('http') ? domain : `https://${domain}`;
     if (!isValidUrl(fullUrl)) return null;
 
     return (
