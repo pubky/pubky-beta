@@ -81,6 +81,7 @@ export default function CreatorpubkyLayout({
               {profile?.details?.id && (
                 <Profile.Avatar
                   id={profile?.details?.id}
+                  isCensored={Utils.isProfileCensored(profile)}
                   className="lg:pl-12 cursor-pointer"
                   username={profile?.details?.name || Utils.minifyPubky(creatorPubky)}
                   onClick={() => setIsAvatarOpen(true)}
@@ -121,6 +122,7 @@ export default function CreatorpubkyLayout({
             <div onClick={(event) => event?.stopPropagation()} className="relative p-4 bg-transparent rounded-full">
               <ImageByUri
                 id={profile?.details?.id}
+                isCensored={Utils.isProfileCensored(profile)}
                 alt={profile?.details?.name || Utils.minifyPubky(creatorPubky)}
                 width={362}
                 height={362}

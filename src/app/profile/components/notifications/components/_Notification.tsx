@@ -195,6 +195,7 @@ export default function Notification({ notification, unread }: { notification: N
             <Link href={`/profile/${userId}`} className="flex gap-2 items-center">
               <ImageByUri
                 id={user?.details?.id}
+                isCensored={Utils.isProfileCensored(user)}
                 width={32}
                 height={32}
                 className="w-[32px] h-[32px] rounded-full"

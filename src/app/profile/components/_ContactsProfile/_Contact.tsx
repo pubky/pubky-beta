@@ -180,6 +180,7 @@ export default function Contact({ contacts, isLoading }: { contacts: UserView[] 
                     <Link className="flex gap-2 w-full" href={`/profile/${contact?.details?.id}`}>
                       <ImageByUri
                         id={contact?.details?.id}
+                        isCensored={Utils.isProfileCensored(contact)}
                         width={48}
                         height={48}
                         alt={`profile-pic-${contact?.details?.id}`}

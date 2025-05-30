@@ -159,6 +159,7 @@ export default function SearchInputCard({
           {searchedUsers.map((user, index) => (
             <SideCard.User
               key={user.details.id}
+              isCensored={Utils.isProfileCensored(user)}
               id={`user-${index}`}
               uri={user.details.id}
               username={Utils.minifyText(user.details.name, 20)}
@@ -188,6 +189,7 @@ export default function SearchInputCard({
                         <div key={index}>
                           <SideCard.UserSmall
                             id={`user-${index}`}
+                            isCensored={Utils.isProfileCensored(profileUser)}
                             uri={item.value}
                             username={Utils.minifyText(profileUser?.details?.name, 20)}
                             label={Utils.minifyPubky(profileUser?.details?.id)}

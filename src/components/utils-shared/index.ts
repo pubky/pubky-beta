@@ -30,7 +30,7 @@ import { resizeImageFile } from './lib/Helper/resizeImageFile';
 import { censoredTags } from './lib/Helper/Moderation/censoredTags';
 import isPostCensored from './lib/Helper/Moderation/isPostCensored';
 import isTagCensored from './lib/Helper/Moderation/isTagCensored';
-
+import isProfileCensored from './lib/Helper/Moderation/isProfileCensored';
 export const Utils = {
   base64ToUint8Array,
   svgToPng,
@@ -42,6 +42,7 @@ export const Utils = {
   encodePostUri2,
   isValidContent,
   isPostCensored,
+  isProfileCensored,
   isTagCensored,
   generateRandomColor,
   hexToRgba,

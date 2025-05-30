@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 import Skeletons from '../Skeletons';
 import genJdenticon from '../utils-shared/lib/Helper/genJdenticon';
 import { avatarCache } from '../utils-shared/lib/Helper/avatarCache';
+import { Utils } from '@social/utils-shared';
+import { Icon } from '../ui-shared';
 
 interface ImageByUriProps {
   id: string;
@@ -16,13 +18,47 @@ interface ImageByUriProps {
   style?: React.CSSProperties;
   onClick?: any;
   loading?: boolean;
+  isCensored?: boolean;
 }
 
-const ImageByUri = ({ id, uri, alt, width, height, className, style, loading, onClick }: ImageByUriProps) => {
+const UNBLURRED_IMAGES_KEY = 'unblurred_images';
+
+const ImageByUri = ({
+  id,
+  uri,
+  alt,
+  width,
+  height,
+  className,
+  style,
+  loading,
+  onClick,
+  isCensored
+}: ImageByUriProps) => {
   const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
   const BASE_URL = `${NEXT_PUBLIC_NEXUS}/static/avatar`;
   let objectUrl: string | null = null;
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [isUnblurred, setIsUnblurred] = useState(false);
+  const censored = !isUnblurred && isCensored;
+
+  useEffect(() => {
+    if (id && isCensored) {
+      const unblurredImages = (Utils.storage.get(UNBLURRED_IMAGES_KEY) as string[]) || [];
+      setIsUnblurred(unblurredImages.includes(id));
+    }
+  }, [id, isCensored]);
+
+  const handleUnblur = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+    if (id) {
+      const unblurredImages = (Utils.storage.get(UNBLURRED_IMAGES_KEY) as string[]) || [];
+      if (!unblurredImages.includes(id)) {
+        Utils.storage.set(UNBLURRED_IMAGES_KEY, [...unblurredImages, id]);
+      }
+    }
+    setIsUnblurred(true);
+  };
 
   const generatedImage = async (key: string) => {
     const generatedImage = await genJdenticon(key);
@@ -91,16 +127,28 @@ const ImageByUri = ({ id, uri, alt, width, height, className, style, loading, on
   if (loading && !imageUrl) return <Skeletons.Simple />;
 
   return (
-    <img
-      id={id}
-      src={imageUrl || '/images/webp/Userpic.webp'}
-      alt={alt}
-      width={width}
-      height={height}
-      className={className}
-      style={style}
-      onClick={onClick}
-    />
+    <div className="relative">
+      <img
+        id={id}
+        src={imageUrl || '/images/webp/Userpic.webp'}
+        alt={alt}
+        width={width}
+        height={height}
+        className={`${className} ${censored ? 'blur-sm' : ''}`}
+        style={style}
+        onClick={onClick}
+      />
+      {censored && (
+        <div
+          className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer opacity-50 hover:opacity-100 transition-opacity duration-300 z-10"
+          onClick={handleUnblur}
+        >
+          <div className="flex flex-col items-center justify-center gap-2">
+            <Icon.EyeSlash size={width === 136 ? '32' : '16'} />
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

@@ -267,6 +267,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
         'unread',
         'searchHistory',
         'unblurred_posts',
+        'unblurred_images',
         'emoji-mart.frequently',
         'emoji-mart.last'
       ].forEach(Utils.storage.remove);

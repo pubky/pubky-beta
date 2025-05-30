@@ -125,6 +125,7 @@ export default function MutedUsers() {
                         <Link className="flex gap-2 w-full" href={`/profile/${mutedUser?.details?.id}`}>
                           <ImageByUri
                             id={mutedUser?.details?.id}
+                            isCensored={Utils.isProfileCensored(mutedUser)}
                             width={48}
                             height={48}
                             alt={`profile-pic-${mutedUser?.details?.id}`}
