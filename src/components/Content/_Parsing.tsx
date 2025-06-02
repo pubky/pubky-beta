@@ -317,13 +317,13 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
 
       // Determine full URL
       const fullUrl = url.startsWith('http') ? url : `https://${url}`;
-
+      
       // Remove trailing punctuation for validation and display
       const cleanUrl = fullUrl.replace(/[.,;:!?]+$/, '');
       const punctuation = fullUrl.slice(cleanUrl.length);
-
-      // Clean tracking parameters for protocol URLs
-      const finalUrl = url.startsWith('http') ? removeTrackingParams(cleanUrl) : cleanUrl;
+      
+      // Remove tracking parameters from all URLs
+      const finalUrl = removeTrackingParams(cleanUrl);
 
       // Validate and add URL link
       if (isValidUrl(finalUrl)) {
