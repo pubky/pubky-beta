@@ -338,32 +338,62 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
       return null;
     }
 
-    // Updated regex to handle more URL patterns
-    const domainMatch = part.match(/(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)?/);
-    if (!domainMatch) return null;
+    // Find all domain matches in the part
+    const domainRegex = /(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)*/g;
+    const matches = Array.from(part.matchAll(domainRegex));
 
-    const domain = domainMatch[0];
-    const beforeDomain = part.slice(0, part.indexOf(domain));
-    const afterDomain = part.slice(part.indexOf(domain) + domain.length);
+    if (matches.length === 0) return null;
 
-    // Only add https:// if the URL doesn't already have a protocol
-    const fullUrl = domain.startsWith('http') ? domain : `https://${domain}`;
-    if (!isValidUrl(fullUrl)) return null;
+    // If no matches found, return null
+    if (matches.length === 0) return null;
+
+    // Process the part with all domain matches
+    const elements: JSX.Element[] = [];
+    let lastIndex = 0;
+
+    matches.forEach((match, matchIndex) => {
+      const domain = match[0];
+      const matchStart = match.index!;
+      const matchEnd = matchStart + domain.length;
+
+      // Add text before this domain
+      if (matchStart > lastIndex) {
+        const beforeText = part.slice(lastIndex, matchStart);
+        elements.push(<span key={`before-${partIndex}-${matchIndex}`}>{beforeText}</span>);
+      }
+
+      // Validate and add the domain link (always use https)
+      const fullUrl = `https://${domain}`;
+      if (isValidUrl(fullUrl)) {
+        elements.push(
+          <Link
+            key={`domain-${partIndex}-${matchIndex}`}
+            className="text-[#C8FF00] break-words"
+            href={fullUrl}
+            target="_blank"
+            rel="noreferrer"
+            onClick={(event) => event.stopPropagation()}
+          >
+            {domain}
+          </Link>
+        );
+      } else {
+        // If invalid URL, treat as regular text
+        elements.push(<span key={`invalid-${partIndex}-${matchIndex}`}>{domain}</span>);
+      }
+
+      lastIndex = matchEnd;
+    });
+
+    // Add any remaining text after the last domain
+    if (lastIndex < part.length) {
+      const afterText = part.slice(lastIndex);
+      elements.push(<span key={`after-${partIndex}`}>{afterText}</span>);
+    }
 
     return (
       <React.Fragment key={`domain-link-${partIndex}`}>
-        {beforeDomain && <span key={`before-domain-${partIndex}`}>{beforeDomain}</span>}
-        <Link
-          key={`domain-${partIndex}`}
-          className="text-[#C8FF00] break-words"
-          href={fullUrl}
-          target="_blank"
-          rel="noreferrer"
-          onClick={(event) => event.stopPropagation()}
-        >
-          {domain}
-        </Link>
-        {afterDomain && <span key={`after-domain-${partIndex}`}>{afterDomain}</span>}
+        {elements}
       </React.Fragment>
     );
   };
