@@ -333,41 +333,32 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
   };
 
   const renderDomainLink = (part: string, partIndex: number) => {
-    // Return null if part starts with protocol - let LinkParser handle it
-    if (part.includes('http://') || part.includes('https://')) {
-      return null;
-    }
+    // Return null if part contains protocol - let LinkParser handle it
+    if (part.includes('http://') || part.includes('https://')) return null;
 
-    // Find all domain matches in the part
     const domainRegex = /(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)*/g;
     const matches = Array.from(part.matchAll(domainRegex));
 
+    // return null if no matches
     if (matches.length === 0) return null;
 
-    // If no matches found, return null
-    if (matches.length === 0) return null;
-
-    // Process the part with all domain matches
-    const elements: JSX.Element[] = [];
-    let lastIndex = 0;
-
-    matches.forEach((match, matchIndex) => {
+    // Process all domain matches
+    const elements = matches.reduce<JSX.Element[]>((acc, match, matchIdx) => {
       const domain = match[0];
-      const matchStart = match.index!;
-      const matchEnd = matchStart + domain.length;
+      const start = match.index!;
+      const prevEnd = matchIdx === 0 ? 0 : matches[matchIdx - 1].index! + matches[matchIdx - 1][0].length;
 
-      // Add text before this domain
-      if (matchStart > lastIndex) {
-        const beforeText = part.slice(lastIndex, matchStart);
-        elements.push(<span key={`before-${partIndex}-${matchIndex}`}>{beforeText}</span>);
+      // Add text before domain
+      if (start > prevEnd) {
+        acc.push(<span key={`before-${partIndex}-${matchIdx}`}>{part.slice(prevEnd, start)}</span>);
       }
 
-      // Validate and add the domain link (always use https)
+      // Validate and add domain link (always use https)
       const fullUrl = `https://${domain}`;
-      if (isValidUrl(fullUrl)) {
-        elements.push(
+      acc.push(
+        isValidUrl(fullUrl) ? (
           <Link
-            key={`domain-${partIndex}-${matchIndex}`}
+            key={`domain-${partIndex}-${matchIdx}`}
             className="text-[#C8FF00] break-words"
             href={fullUrl}
             target="_blank"
@@ -376,26 +367,22 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
           >
             {domain}
           </Link>
-        );
-      } else {
-        // If invalid URL, treat as regular text
-        elements.push(<span key={`invalid-${partIndex}-${matchIndex}`}>{domain}</span>);
-      }
+        ) : (
+          <span key={`invalid-${partIndex}-${matchIdx}`}>{domain}</span>
+        )
+      );
 
-      lastIndex = matchEnd;
-    });
+      return acc;
+    }, []);
 
-    // Add any remaining text after the last domain
-    if (lastIndex < part.length) {
-      const afterText = part.slice(lastIndex);
-      elements.push(<span key={`after-${partIndex}`}>{afterText}</span>);
+    // Add remaining text after last domain
+    const lastMatch = matches[matches.length - 1];
+    const lastEnd = lastMatch.index! + lastMatch[0].length;
+    if (lastEnd < part.length) {
+      elements.push(<span key={`after-${partIndex}`}>{part.slice(lastEnd)}</span>);
     }
 
-    return (
-      <React.Fragment key={`domain-link-${partIndex}`}>
-        {elements}
-      </React.Fragment>
-    );
+    return <React.Fragment key={`domain-link-${partIndex}`}>{elements}</React.Fragment>;
   };
 
   const renderQuote = (text: string, level: number = 1): JSX.Element => {
