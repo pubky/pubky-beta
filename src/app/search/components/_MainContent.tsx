@@ -11,6 +11,7 @@ import { Timeline } from './_Timeline';
 import { Utils } from '@social/utils-shared';
 import { searchUsersByUsername } from '@/services/streamService';
 import { UserView } from '@/types/User';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 // interface MainContentProps {
 //   layout: TLayouts;
@@ -19,6 +20,7 @@ import { UserView } from '@/types/User';
 export function MainContent() {
   const { searchTags, setSearchTags } = usePubkyClientContext();
   const searchParams = useSearchParams();
+  const isMobile = useIsMobile();
   const router = useRouter();
   const [inputValue, setInputValue] = useState('');
   const [isOpenCard, setIsOpenCard] = useState(false);
@@ -96,11 +98,9 @@ export function MainContent() {
 
     if (search) {
       const tagsArray = search.split(',').map((tag) => {
-        console.log('tag', tag);
         try {
           // First decode the URL, then convert to lowercase
           const result = decodeURIComponent(tag).toLowerCase();
-          console.log('result', result);
           return result;
         } catch (e) {
           // If decoding fails, return the original tag in lowercase
@@ -124,8 +124,13 @@ export function MainContent() {
         }
       })
       .join(',');
-    const searchUrl = searchTagsString ? `/search?tags=${searchTagsString}` : '/search';
-    router.replace(searchUrl);
+
+    if (searchTags.length === 0 && !isMobile) {
+      router.replace('/home');
+    } else if (searchTags.length > 0) {
+      const searchUrl = `/search?tags=${searchTagsString}`;
+      router.replace(searchUrl);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTags]);
 
