@@ -49,18 +49,52 @@ export default function Content({
     return text?.replace(/\n{3,}/g, '\n\n');
   };
 
+  const isValidUrl = (url: string): boolean => {
+    try {
+      const parsedUrl = new URL(url);
+      return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  };
+
   const text = post?.details?.content;
   const files = post?.details?.attachments;
   const uri = post?.details?.uri;
   const generateFileUrl = (file: FileView, type = 'main') => `${BASE_URL}/${file.owner_id}/${file.id}/${type}`;
 
   async function checkForLink(text: string) {
-    const urlRegex = /(https?:\/\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+)/g;
-    let urls = text.match(urlRegex);
+    // Find all URLs (both protocol and domain-only) with their positions
+    const protocolRegex = /(https?:\/\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+)/g;
+    const domainRegex = /(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)*/g;
 
-    if (urls) {
-      let url = urls[0];
-      url = url.replace(/[^a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+$/, '');
+    const allUrls: Array<{ url: string; index: number }> = [];
+
+    // Find protocol URLs
+    for (const match of text.matchAll(protocolRegex)) {
+      let url = match[0].replace(/[^a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+$/, '');
+      allUrls.push({ url, index: match.index! });
+    }
+
+    // Find domain-only URLs (skip those that are part of protocol URLs)
+    for (const match of text.matchAll(domainRegex)) {
+      const domain = match[0];
+      const start = match.index!;
+
+      // Check if this domain is part of a protocol URL
+      const beforeDomain = text.slice(Math.max(0, start - 8), start);
+      if (!beforeDomain.includes('http://') && !beforeDomain.includes('https://')) {
+        const fullUrl = `https://${domain}`;
+        if (isValidUrl(fullUrl)) {
+          allUrls.push({ url: fullUrl, index: start });
+        }
+      }
+    }
+
+    // Sort by position and take the first one
+    if (allUrls.length > 0) {
+      const firstUrl = allUrls.sort((a, b) => a.index - b.index)[0];
+      const url = firstUrl.url;
 
       const postRegex = new RegExp(`/post/([^/]+)/([^/]+)`);
       if (postRegex.test(url)) return;
@@ -83,8 +117,7 @@ export default function Content({
 
   useEffect(() => {
     const cleanedText = cleanText(text?.toString());
-    const words = cleanedText?.split(/\s+/);
-    words?.forEach((word: string) => checkForLink(word?.trim()));
+    checkForLink(cleanedText); // Check entire text instead of word by word
   }, [text]);
 
   useEffect(() => {

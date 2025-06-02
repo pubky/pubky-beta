@@ -23,7 +23,6 @@ export default function ContentEditArticle({ setShowModalEditArticle, article, s
   const [contentTitle, setContentTitle] = useState(articleContent?.title || '');
   const [contentArticle, setContentArticle] = useState(articleContent?.body || '');
   const [charCountArticle, setCharCountArticle] = useState(articleContent?.body?.length || 0);
-  const [arrayTags, setArrayTags] = useState<string[]>(article?.tags?.map((tag) => tag.label) || []);
   const [sendingArticle, setSendingArticle] = useState(false);
   const [isValidContent, setIsValidContent] = useState(false);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
@@ -45,11 +44,7 @@ export default function ContentEditArticle({ setShowModalEditArticle, article, s
     try {
       setSendingArticle(true);
 
-      const hashtags = Utils.extractHashtags(content);
-      const filteredHashtags = hashtags.filter((tag) => tag.length <= 20);
-      const updatedTags = [...new Set([...arrayTags, ...filteredHashtags])];
-
-      const editArticleUri = await editArticle(article.details.id, contentTitle, content, updatedTags);
+      const editArticleUri = await editArticle(article.details.id, contentTitle, content);
 
       if (editArticleUri) {
         addAlert(
@@ -63,7 +58,6 @@ export default function ContentEditArticle({ setShowModalEditArticle, article, s
       } else {
         addAlert('Something went wrong. Try again', 'warning');
       }
-      setArrayTags([]);
       setContentArticle('');
       setShowModalEditArticle(false);
     } catch (error) {
@@ -200,9 +194,7 @@ export default function ContentEditArticle({ setShowModalEditArticle, article, s
               cursorPosition={cursorPosition}
               setCursorPosition={setCursorPosition}
               setIsValidContent={setIsValidContent}
-              setArrayTags={setArrayTags}
               maxLength={40000}
-              arrayTags={arrayTags}
               showEmojis={showEmojis}
               setShowEmojis={setShowEmojis}
               largeView={!isMobile}
