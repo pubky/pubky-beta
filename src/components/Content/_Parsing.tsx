@@ -204,42 +204,6 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
     },
     {
       type: 'startsWith' as const,
-      watchFor: 'http',
-      render: (url: string) => {
-        const cleanUrl = url.trim();
-        // Remove trailing punctuation marks
-        const urlWithoutPunctuation = cleanUrl.replace(/[.,;:!?]+$/, '');
-        const fullUrl =
-          urlWithoutPunctuation.startsWith('http://') || urlWithoutPunctuation.startsWith('https://')
-            ? urlWithoutPunctuation
-            : `https://${urlWithoutPunctuation}`;
-
-        if (!isValidUrl(fullUrl)) return url;
-
-        // Clean the URL by removing tracking parameters
-        const cleanedUrl = removeTrackingParams(fullUrl);
-
-        // Get the punctuation that was removed (if any)
-        const punctuation = cleanUrl.slice(urlWithoutPunctuation.length);
-
-        return (
-          <>
-            <Link
-              className="text-[#C8FF00] break-words"
-              href={cleanedUrl}
-              target="_blank"
-              rel="noreferrer"
-              onClick={(event) => event.stopPropagation()}
-            >
-              {cleanedUrl}
-            </Link>
-            {punctuation}
-          </>
-        );
-      }
-    },
-    {
-      type: 'startsWith' as const,
       watchFor: 'mailto:',
       render: (url: string) => {
         const email = url.replace('mailto:', '');
@@ -333,49 +297,59 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
   };
 
   const renderDomainLink = (part: string, partIndex: number) => {
-    // Return null if part contains protocol - let LinkParser handle it
-    if (part.includes('http://') || part.includes('https://')) return null;
-
-    const domainRegex = /(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)*/g;
-    const matches = Array.from(part.matchAll(domainRegex));
+    // Combined regex to find both protocol URLs and domain-only URLs
+    const allUrlRegex = /(https?:\/\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+|(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)*)/g;
+    const matches = Array.from(part.matchAll(allUrlRegex));
 
     // return null if no matches
     if (matches.length === 0) return null;
 
-    // Process all domain matches
+    // Process all URL matches
     const elements = matches.reduce<JSX.Element[]>((acc, match, matchIdx) => {
-      const domain = match[0];
+      const url = match[0];
       const start = match.index!;
       const prevEnd = matchIdx === 0 ? 0 : matches[matchIdx - 1].index! + matches[matchIdx - 1][0].length;
 
-      // Add text before domain
+      // Add text before URL
       if (start > prevEnd) {
         acc.push(<span key={`before-${partIndex}-${matchIdx}`}>{part.slice(prevEnd, start)}</span>);
       }
 
-      // Validate and add domain link (always use https)
-      const fullUrl = `https://${domain}`;
-      acc.push(
-        isValidUrl(fullUrl) ? (
-          <Link
-            key={`domain-${partIndex}-${matchIdx}`}
-            className="text-[#C8FF00] break-words"
-            href={fullUrl}
-            target="_blank"
-            rel="noreferrer"
-            onClick={(event) => event.stopPropagation()}
-          >
-            {domain}
-          </Link>
-        ) : (
-          <span key={`invalid-${partIndex}-${matchIdx}`}>{domain}</span>
-        )
-      );
+      // Determine full URL
+      const fullUrl = url.startsWith('http') ? url : `https://${url}`;
+
+      // Remove trailing punctuation for validation and display
+      const cleanUrl = fullUrl.replace(/[.,;:!?]+$/, '');
+      const punctuation = fullUrl.slice(cleanUrl.length);
+
+      // Clean tracking parameters for protocol URLs
+      const finalUrl = url.startsWith('http') ? removeTrackingParams(cleanUrl) : cleanUrl;
+
+      // Validate and add URL link
+      if (isValidUrl(finalUrl)) {
+        acc.push(
+          <React.Fragment key={`url-fragment-${partIndex}-${matchIdx}`}>
+            <Link
+              key={`url-${partIndex}-${matchIdx}`}
+              className="text-[#C8FF00] break-words"
+              href={finalUrl}
+              target="_blank"
+              rel="noreferrer"
+              onClick={(event) => event.stopPropagation()}
+            >
+              {url.replace(/[.,;:!?]+$/, '')}
+            </Link>
+            {punctuation && <span key={`punct-${partIndex}-${matchIdx}`}>{punctuation}</span>}
+          </React.Fragment>
+        );
+      } else {
+        acc.push(<span key={`invalid-${partIndex}-${matchIdx}`}>{url}</span>);
+      }
 
       return acc;
     }, []);
 
-    // Add remaining text after last domain
+    // Add remaining text after last URL
     const lastMatch = matches[matches.length - 1];
     const lastEnd = lastMatch.index! + lastMatch[0].length;
     if (lastEnd < part.length) {
