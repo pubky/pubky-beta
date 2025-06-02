@@ -30,7 +30,7 @@ export async function searchPostsByTags(
     queryParams.append('limit', String(limit));
   }
 
-  const response = await fetch(`${BASE_URL}/search/tags/${label}?${queryParams}`);
+  const response = await fetch(`${BASE_URL}/search/posts/by_tag/${label}?${queryParams}`);
 
   if (!response.ok) throw new Error('Failed to search users');
 
