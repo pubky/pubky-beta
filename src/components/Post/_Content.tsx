@@ -64,13 +64,37 @@ export default function Content({
   const generateFileUrl = (file: FileView, type = 'main') => `${BASE_URL}/${file.owner_id}/${file.id}/${type}`;
 
   async function checkForLink(text: string) {
-    // First check for protocol URLs (higher priority)
-    const urlRegex = /(https?:\/\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+)/g;
-    const protocolUrls = text.match(urlRegex);
+    // Find all URLs (both protocol and domain-only) with their positions
+    const protocolRegex = /(https?:\/\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+)/g;
+    const domainRegex = /(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)*/g;
 
-    if (protocolUrls) {
-      let url = protocolUrls[0]; // Take first protocol URL
-      url = url.replace(/[^a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+$/, '');
+    const allUrls: Array<{url: string, index: number}> = [];
+
+    // Find protocol URLs
+    for (const match of text.matchAll(protocolRegex)) {
+      let url = match[0].replace(/[^a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+$/, '');
+      allUrls.push({ url, index: match.index! });
+    }
+
+    // Find domain-only URLs (skip those that are part of protocol URLs)
+    for (const match of text.matchAll(domainRegex)) {
+      const domain = match[0];
+      const start = match.index!;
+
+      // Check if this domain is part of a protocol URL
+      const beforeDomain = text.slice(Math.max(0, start - 8), start);
+      if (!beforeDomain.includes('http://') && !beforeDomain.includes('https://')) {
+        const fullUrl = `https://${domain}`;
+        if (isValidUrl(fullUrl)) {
+          allUrls.push({ url: fullUrl, index: start });
+        }
+      }
+    }
+
+    // Sort by position and take the first one
+    if (allUrls.length > 0) {
+      const firstUrl = allUrls.sort((a, b) => a.index - b.index)[0];
+      const url = firstUrl.url;
 
       const postRegex = new RegExp(`/post/([^/]+)/([^/]+)`);
       if (postRegex.test(url)) return;
@@ -88,20 +112,6 @@ export default function Content({
 
       const spotifyRegex = /https:\/\/open\.spotify\.com\/track\/\w+/;
       if (spotifyRegex.test(url)) setSpotifyUrl(url);
-
-      return; // Found protocol URL, no need to check domains
-    }
-
-    // If no protocol URLs, check for domain-only URLs
-    const domainRegex = /(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)*/g;
-    const domainMatches = Array.from(text.matchAll(domainRegex));
-
-    if (domainMatches.length > 0) {
-      const domain = domainMatches[0][0]; // Take first domain
-      const fullUrl = `https://${domain}`;
-      if (isValidUrl(fullUrl)) {
-        setPreview(fullUrl);
-      }
     }
   }
 

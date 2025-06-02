@@ -32,23 +32,34 @@ export default function LinkPreviewer({ content, setQuote }: LinkPreviewerProps)
 
     try {
       const timeout = setTimeout(async () => {
-        // First check for protocol URLs (higher priority)
-        const urlRegex = /(https?:\/\/[^\s]+)/g;
-        const protocolUrls = text.match(urlRegex);
+        // Find all URLs (both protocol and domain-only) with their positions
+        const protocolRegex = /(https?:\/\/[^\s]+)/g;
+        const domainRegex = /(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)*/g;
 
-        let url = '';
+        const allUrls: Array<{url: string, index: number}> = [];
 
-        if (protocolUrls) {
-          url = protocolUrls[0]; // Take first protocol URL
-        } else {
-          // If no protocol URLs, check for domain-only URLs
-          const domainRegex = /(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)*/g;
-          const domainMatches = Array.from(text.matchAll(domainRegex));
+        // Find protocol URLs
+        for (const match of text.matchAll(protocolRegex)) {
+          allUrls.push({ url: match[0], index: match.index! });
+        }
 
-          if (domainMatches.length > 0) {
-            const domain = domainMatches[0][0]; // Take first domain
-            url = `https://${domain}`;
+        // Find domain-only URLs (skip those that are part of protocol URLs)
+        for (const match of text.matchAll(domainRegex)) {
+          const domain = match[0];
+          const start = match.index!;
+
+          // Check if this domain is part of a protocol URL
+          const beforeDomain = text.slice(Math.max(0, start - 8), start);
+          if (!beforeDomain.includes('http://') && !beforeDomain.includes('https://')) {
+            allUrls.push({ url: `https://${domain}`, index: start });
           }
+        }
+
+        // Sort by position and take the first one
+        let url = '';
+        if (allUrls.length > 0) {
+          const firstUrl = allUrls.sort((a, b) => a.index - b.index)[0];
+          url = firstUrl.url;
         }
 
         if (url) {
