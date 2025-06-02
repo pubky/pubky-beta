@@ -32,11 +32,26 @@ export default function LinkPreviewer({ content, setQuote }: LinkPreviewerProps)
 
     try {
       const timeout = setTimeout(async () => {
+        // First check for protocol URLs (higher priority)
         const urlRegex = /(https?:\/\/[^\s]+)/g;
-        const urls = text.match(urlRegex);
-        if (urls) {
-          const url = urls[0];
+        const protocolUrls = text.match(urlRegex);
 
+        let url = '';
+
+        if (protocolUrls) {
+          url = protocolUrls[0]; // Take first protocol URL
+        } else {
+          // If no protocol URLs, check for domain-only URLs
+          const domainRegex = /(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)*/g;
+          const domainMatches = Array.from(text.matchAll(domainRegex));
+
+          if (domainMatches.length > 0) {
+            const domain = domainMatches[0][0]; // Take first domain
+            url = `https://${domain}`;
+          }
+        }
+
+        if (url) {
           const postRegex = new RegExp(`/post/([^/]+)/([^/]+)`);
           const postMatch = url.match(postRegex);
 

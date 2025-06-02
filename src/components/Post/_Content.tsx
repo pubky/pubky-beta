@@ -64,13 +64,12 @@ export default function Content({
   const generateFileUrl = (file: FileView, type = 'main') => `${BASE_URL}/${file.owner_id}/${file.id}/${type}`;
 
   async function checkForLink(text: string) {
+    // First check for protocol URLs (higher priority)
     const urlRegex = /(https?:\/\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+)/g;
-    const domainRegex = /^(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)?$/;
-    let urls = text.match(urlRegex);
-    let domains = text.match(domainRegex);
+    const protocolUrls = text.match(urlRegex);
 
-    if (urls) {
-      let url = urls[0];
+    if (protocolUrls) {
+      let url = protocolUrls[0]; // Take first protocol URL
       url = url.replace(/[^a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+$/, '');
 
       const postRegex = new RegExp(`/post/([^/]+)/([^/]+)`);
@@ -89,9 +88,17 @@ export default function Content({
 
       const spotifyRegex = /https:\/\/open\.spotify\.com\/track\/\w+/;
       if (spotifyRegex.test(url)) setSpotifyUrl(url);
-    } else if (domains) {
-      const domain = domains[0];
-      const fullUrl = domain.startsWith('http') ? domain : `https://${domain}`;
+
+      return; // Found protocol URL, no need to check domains
+    }
+
+    // If no protocol URLs, check for domain-only URLs
+    const domainRegex = /(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)*/g;
+    const domainMatches = Array.from(text.matchAll(domainRegex));
+
+    if (domainMatches.length > 0) {
+      const domain = domainMatches[0][0]; // Take first domain
+      const fullUrl = `https://${domain}`;
       if (isValidUrl(fullUrl)) {
         setPreview(fullUrl);
       }
@@ -100,8 +107,7 @@ export default function Content({
 
   useEffect(() => {
     const cleanedText = cleanText(text?.toString());
-    const words = cleanedText?.split(/\s+/);
-    words?.forEach((word: string) => checkForLink(word?.trim()));
+    checkForLink(cleanedText); // Check entire text instead of word by word
   }, [text]);
 
   useEffect(() => {
