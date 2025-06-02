@@ -68,7 +68,7 @@ export default function Content({
     const protocolRegex = /(https?:\/\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+)/g;
     const domainRegex = /(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)*/g;
 
-    const allUrls: Array<{url: string, index: number}> = [];
+    const allUrls: Array<{ url: string; index: number }> = [];
 
     // Find protocol URLs
     for (const match of text.matchAll(protocolRegex)) {

@@ -298,7 +298,8 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
 
   const renderDomainLink = (part: string, partIndex: number) => {
     // Combined regex to find both protocol URLs and domain-only URLs
-    const allUrlRegex = /(https?:\/\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+|(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)*)/g;
+    const allUrlRegex =
+      /(https?:\/\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+|(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)*)/g;
     const matches = Array.from(part.matchAll(allUrlRegex));
 
     // return null if no matches
@@ -317,11 +318,11 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
 
       // Determine full URL
       const fullUrl = url.startsWith('http') ? url : `https://${url}`;
-      
+
       // Remove trailing punctuation for validation and display
       const cleanUrl = fullUrl.replace(/[.,;:!?]+$/, '');
       const punctuation = fullUrl.slice(cleanUrl.length);
-      
+
       // Remove tracking parameters from all URLs
       const finalUrl = removeTrackingParams(cleanUrl);
 

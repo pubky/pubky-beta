@@ -36,7 +36,7 @@ export default function LinkPreviewer({ content, setQuote }: LinkPreviewerProps)
         const protocolRegex = /(https?:\/\/[^\s]+)/g;
         const domainRegex = /(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)*/g;
 
-        const allUrls: Array<{url: string, index: number}> = [];
+        const allUrls: Array<{ url: string; index: number }> = [];
 
         // Find protocol URLs
         for (const match of text.matchAll(protocolRegex)) {
