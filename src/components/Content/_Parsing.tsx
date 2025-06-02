@@ -333,26 +333,38 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
   };
 
   const renderDomainLink = (part: string, partIndex: number) => {
+    // Return null if part starts with protocol - let LinkParser handle it
+    if (part.includes('http://') || part.includes('https://')) {
+      return null;
+    }
+
     // Updated regex to handle more URL patterns
-    const domainMatch = part.match(/^(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)?$/);
+    const domainMatch = part.match(/(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)?/);
     if (!domainMatch) return null;
 
     const domain = domainMatch[0];
+    const beforeDomain = part.slice(0, part.indexOf(domain));
+    const afterDomain = part.slice(part.indexOf(domain) + domain.length);
+
     // Only add https:// if the URL doesn't already have a protocol
     const fullUrl = domain.startsWith('http') ? domain : `https://${domain}`;
     if (!isValidUrl(fullUrl)) return null;
 
     return (
-      <Link
-        key={`domain-${partIndex}`}
-        className="text-[#C8FF00] break-words"
-        href={fullUrl}
-        target="_blank"
-        rel="noreferrer"
-        onClick={(event) => event.stopPropagation()}
-      >
-        {domain}
-      </Link>
+      <React.Fragment key={`domain-link-${partIndex}`}>
+        {beforeDomain && <span key={`before-domain-${partIndex}`}>{beforeDomain}</span>}
+        <Link
+          key={`domain-${partIndex}`}
+          className="text-[#C8FF00] break-words"
+          href={fullUrl}
+          target="_blank"
+          rel="noreferrer"
+          onClick={(event) => event.stopPropagation()}
+        >
+          {domain}
+        </Link>
+        {afterDomain && <span key={`after-domain-${partIndex}`}>{afterDomain}</span>}
+      </React.Fragment>
     );
   };
 
