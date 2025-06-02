@@ -34,6 +34,7 @@ const tagsIcons: TagIcon = {
 };
 
 const Parsing = ({ children, fullContent = false, largeView, repostView }: ParsingProps) => {
+  console.log('children', children);
   const [copy, setCopy] = useState(false);
 
   const highlightInlineCode = (text: string): JSX.Element[] => {
@@ -52,73 +53,67 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
   };
 
   const highlightBoldText = (text: string): JSX.Element => {
-    const boldMatch = text.match(/\*\*[^*]+\*\*/);
-    if (!boldMatch)
-      return (
-        <span>
-          <LinkParser watchers={watchers as []}>{text}</LinkParser>
-        </span>
-      );
-
-    const boldText = boldMatch[0];
-    const beforeBold = text.slice(0, text.indexOf(boldText));
-    const afterBold = text.slice(text.indexOf(boldText) + boldText.length);
-
+    const parts = text.split(/(\*\*[^*]+\*\*)/g);
     return (
       <>
-        {beforeBold && <span>{beforeBold}</span>}
-        <strong className="font-bold">
-          <LinkParser watchers={watchers as []}>{boldText.slice(2, -2)}</LinkParser>
-        </strong>
-        {afterBold && <span>{afterBold}</span>}
+        {parts.map((part, index) => {
+          if (part.startsWith('**') && part.endsWith('**')) {
+            return (
+              <strong key={index} className="font-bold">
+                <LinkParser watchers={watchers as []}>{part.slice(2, -2)}</LinkParser>
+              </strong>
+            );
+          }
+          return (
+            <span key={index}>
+              <LinkParser watchers={watchers as []}>{part}</LinkParser>
+            </span>
+          );
+        })}
       </>
     );
   };
 
   const highlightItalicText = (text: string): JSX.Element => {
-    const italicMatch = text.match(/_[^_]+_/);
-    if (!italicMatch)
-      return (
-        <span>
-          <LinkParser watchers={watchers as []}>{text}</LinkParser>
-        </span>
-      );
-
-    const italicText = italicMatch[0];
-    const beforeItalic = text.slice(0, text.indexOf(italicText));
-    const afterItalic = text.slice(text.indexOf(italicText) + italicText.length);
-
+    const parts = text.split(/(_[^_]+_)/g);
     return (
       <>
-        {beforeItalic && <span>{beforeItalic}</span>}
-        <em className="italic">
-          <LinkParser watchers={watchers as []}>{italicText.slice(1, -1)}</LinkParser>
-        </em>
-        {afterItalic && <span>{afterItalic}</span>}
+        {parts.map((part, index) => {
+          if (part.startsWith('_') && part.endsWith('_')) {
+            return (
+              <em key={index} className="italic">
+                <LinkParser watchers={watchers as []}>{part.slice(1, -1)}</LinkParser>
+              </em>
+            );
+          }
+          return (
+            <span key={index}>
+              <LinkParser watchers={watchers as []}>{part}</LinkParser>
+            </span>
+          );
+        })}
       </>
     );
   };
 
   const highlightUnderlinedText = (text: string): JSX.Element => {
-    const underlineMatch = text.match(/__[^_]+__/);
-    if (!underlineMatch)
-      return (
-        <span>
-          <LinkParser watchers={watchers as []}>{text}</LinkParser>
-        </span>
-      );
-
-    const underlineText = underlineMatch[0];
-    const beforeUnderline = text.slice(0, text.indexOf(underlineText));
-    const afterUnderline = text.slice(text.indexOf(underlineText) + underlineText.length);
-
+    const parts = text.split(/(__[^_]+__)/g);
     return (
       <>
-        {beforeUnderline && <span>{beforeUnderline}</span>}
-        <span className="underline">
-          <LinkParser watchers={watchers as []}>{underlineText.slice(2, -2)}</LinkParser>
-        </span>
-        {afterUnderline && <span>{afterUnderline}</span>}
+        {parts.map((part, index) => {
+          if (part.startsWith('__') && part.endsWith('__')) {
+            return (
+              <span key={index} className="underline">
+                <LinkParser watchers={watchers as []}>{part.slice(2, -2)}</LinkParser>
+              </span>
+            );
+          }
+          return (
+            <span key={index}>
+              <LinkParser watchers={watchers as []}>{part}</LinkParser>
+            </span>
+          );
+        })}
       </>
     );
   };
@@ -408,6 +403,71 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
     return renderQuote(content, level);
   };
 
+  const processFormattedText = (text: string): JSX.Element => {
+    // Split the text into parts based on formatting markers
+    const parts = text.split(/(\*\*[^*]+\*\*|__[^_]+__|~~[^~]+~~|_[^_]+_|`[^`]+`)/g);
+
+    return (
+      <>
+        {parts.map((part, index) => {
+          if (!part) return null;
+
+          // Handle bold text
+          if (part.startsWith('**') && part.endsWith('**')) {
+            return (
+              <strong key={index} className="font-bold">
+                <LinkParser watchers={watchers as []}>{part.slice(2, -2)}</LinkParser>
+              </strong>
+            );
+          }
+
+          // Handle underlined text
+          if (part.startsWith('__') && part.endsWith('__')) {
+            return (
+              <span key={index} className="underline">
+                <LinkParser watchers={watchers as []}>{part.slice(2, -2)}</LinkParser>
+              </span>
+            );
+          }
+
+          // Handle strikethrough text
+          if (part.startsWith('~~') && part.endsWith('~~')) {
+            return (
+              <span key={index} className="line-through">
+                <LinkParser watchers={watchers as []}>{part.slice(2, -2)}</LinkParser>
+              </span>
+            );
+          }
+
+          // Handle italic text
+          if (part.startsWith('_') && part.endsWith('_')) {
+            return (
+              <em key={index} className="italic">
+                <LinkParser watchers={watchers as []}>{part.slice(1, -1)}</LinkParser>
+              </em>
+            );
+          }
+
+          // Handle inline code
+          if (part.startsWith('`') && part.endsWith('`')) {
+            return (
+              <span key={index} className="border border-white/10 px-1.5 py-0.5 rounded bg-[#2A2D30] text-[#E8902C]">
+                <LinkParser watchers={watchers as []}>{part.slice(1, -1)}</LinkParser>
+              </span>
+            );
+          }
+
+          // Handle regular text
+          return (
+            <span key={index}>
+              <LinkParser watchers={watchers as []}>{part}</LinkParser>
+            </span>
+          );
+        })}
+      </>
+    );
+  };
+
   const renderContent = () => {
     const cssText = largeView ? 'text-2xl leading-[30px]' : 'text-[17px] leading-snug';
     const elements: JSX.Element[] = [];
@@ -447,22 +507,15 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
 
               return (
                 <span key={`text-${partIndex}`}>
-                  {part.includes('**') ? (
-                    highlightBoldText(part)
-                  ) : part.includes('__') ? (
-                    highlightUnderlinedText(part)
-                  ) : part.includes('~~') ? (
-                    highlightStrikethroughText(part)
-                  ) : part.includes('_') ? (
-                    highlightItalicText(part)
-                  ) : part.includes('`') ? (
-                    highlightInlineCode(part)
-                  ) : // Handle special symbols before LinkParser
-                  /^[^a-zA-Z0-9\s]+$/.test(part) ? (
-                    <>{part}</>
-                  ) : (
-                    <LinkParser watchers={watchers}>{part}</LinkParser>
-                  )}
+                  {(() => {
+                    // Handle special symbols first
+                    if (/^[^a-zA-Z0-9\s]+$/.test(part)) {
+                      return <>{part}</>;
+                    }
+
+                    // Process all formatting in the text
+                    return processFormattedText(part);
+                  })()}
                 </span>
               );
             })
