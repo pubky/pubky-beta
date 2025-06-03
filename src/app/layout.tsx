@@ -19,7 +19,10 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <head>{HeaderSEO.getHeaderMetaTags()}</head>
+      <head>
+        {HeaderSEO.getHeaderMetaTags()}
+        <script defer data-domain="pubky.app" src="https://synonym.to/js/script.js" />
+      </head>
       <body className="overflow-x-hidden max-w-full min-w-[420px]">
         <PubkyClientWrapper>
           <FilterWrapper>
