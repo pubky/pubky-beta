@@ -19,7 +19,10 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <head>{HeaderSEO.getHeaderMetaTags()}</head>
+      <head>
+        {HeaderSEO.getHeaderMetaTags()}
+        {HeaderSEO.getPlausibleScript()}
+      </head>
       <body className="overflow-x-hidden max-w-full min-w-[420px]">
         <PubkyClientWrapper>
           <FilterWrapper>
