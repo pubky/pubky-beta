@@ -21,7 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <head>
         {HeaderSEO.getHeaderMetaTags()}
-        <script defer data-domain="pubky.app" src="https://synonym.to/js/script.js" />
+        {HeaderSEO.getPlausibleScript()}
       </head>
       <body className="overflow-x-hidden max-w-full min-w-[420px]">
         <PubkyClientWrapper>

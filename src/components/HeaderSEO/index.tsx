@@ -91,10 +91,17 @@ export function getSeoMetadata(params: SeoMetadataParams = {}) {
   };
 }
 
+export function getPlausibleScript() {
+  return (
+    <script defer data-domain="pubky.app" src="https://synonym.to/js/script.js" />
+  );
+}
+
 const HeaderSEO = {
   getPWAConfig,
   getHeaderMetaTags,
-  getSeoMetadata
+  getSeoMetadata,
+  getPlausibleScript
 };
 
 export default HeaderSEO;
