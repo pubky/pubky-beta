@@ -169,6 +169,7 @@ export const Timeline = () => {
       // After loading, scroll to the saved position
       setTimeout(() => {
         window.scrollTo(0, timelineScroll);
+        setTimelineScroll(0); // Reset scroll position after restoring
       }, 100); // Increased timeout to ensure DOM is ready
     }
   };
