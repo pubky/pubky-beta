@@ -92,9 +92,7 @@ export function getSeoMetadata(params: SeoMetadataParams = {}) {
 }
 
 export function getPlausibleScript() {
-  return (
-    <script defer data-domain="pubky.app" src="https://synonym.to/js/script.js" />
-  );
+  return <script defer data-domain="pubky.app" src="https://synonym.to/js/script.js" />;
 }
 
 const HeaderSEO = {
