@@ -82,8 +82,8 @@ export default function ContentPrivacyPolicy({ setShowModal }: ContentPrivacyPol
             <ul className="list-disc ml-6 text-opacity-80 space-y-2">
               <li>
                 {' '}
-                The Platform is intended for users aged 13 and older. We do not knowingly collect data from children
-                under 13.
+                The Platform is intended for users aged 18 and older. We do not knowingly collect data from children
+                under 18.
               </li>
             </ul>
           </li>
@@ -277,10 +277,13 @@ export default function ContentPrivacyPolicy({ setShowModal }: ContentPrivacyPol
       <Typography.Body className="text-opacity-80" variant="medium-light">
         The Platform where this Policy is located is meant for adults. We do not knowingly collect personally
         identifiable data from persons under the age of 18, and strive to comply with the provisions of COPPA (The
-        Children’s Online Privacy Protection Act). If you are a parent or legal guardian and think your child under 13
-        has provided us with information, please contact us at privacy@synonym.to. You can also write to us at the
-        address listed at the end of this website Policy. Please mark your inquiries “COPPA Information Request.”
-        Parents, you can learn more about how to protect children’s privacy on-line{' '}
+        Children’s Online Privacy Protection Act). If you are a parent or legal guardian and think your child under 18
+        has provided us with information, please contact us at{' '}
+        <a className="cursor-pointer text-[#C8FF00]" href="mailto:privacy@synonym.to">
+          privacy@synonym.to
+        </a>
+        . You can also write to us at the address listed at the end of this website Policy. Please mark your inquiries
+        “COPPA Information Request.” Parents, you can learn more about how to protect children’s privacy on-line{' '}
         <a
           target="_blank"
           className="cursor-pointer text-[#C8FF00]"
