@@ -253,11 +253,13 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
     }
   };
 
+  const visibleTags = profileTags?.filter((tag) => !Utils.isTagCensored(tag));
+
   return (
     <div className={`${bgCard} w-full p-6 rounded-lg`}>
-      {name && profileTags?.length > 0 && (
+      {name && visibleTags?.length > 0 && (
         <Typography.Body variant="medium-bold">
-          {name} {profileTags?.length > 0 ? 'was tagged as' : 'was not tagged yet'}:
+          {name} {visibleTags?.length > 0 ? 'was tagged as' : 'was not tagged yet'}:
         </Typography.Body>
       )}
       {loading ? (
@@ -265,7 +267,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
       ) : (
         <>
           <div className="mt-3 justify-start items-start gap-2 flex flex-col">
-            {profileTags && profileTags.length > 0 ? (
+            {visibleTags && visibleTags.length > 0 ? (
               <>
                 <div className="relative">
                   {showEmojis && (
@@ -291,7 +293,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                 </div>
                 {!selectedTag ? (
                   <>
-                    {profileTags.map((tag, index) => {
+                    {visibleTags.map((tag, index) => {
                       const isTagFound = tag?.relationship || false;
                       const displayedImages = tag.taggers?.slice(0, 5);
                       const extraImagesCount = tag.taggers_count - displayedImages?.length;
