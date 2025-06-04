@@ -9,7 +9,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 // import { TLayouts } from '@/types';
 import { Timeline } from './_Timeline';
 import { Utils } from '@social/utils-shared';
-import { searchUsersByUsername } from '@/services/streamService';
+import { searchUsersByUsername, searchTagsByPrefix } from '@/services/streamService';
 import { UserView } from '@/types/User';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
@@ -30,6 +30,7 @@ export function MainContent() {
   const [isSearchBarVisible, setIsSearchBarVisible] = useState(true);
   const lastScrollY = useRef(0);
   const [searchedUsers, setSearchedUsers] = useState<UserView[]>([]);
+  const [searchedTags, setSearchedTags] = useState<string[]>([]);
   const [selectedUserIndex, setSelectedUserIndex] = useState<number | null>(null);
 
   const handleRemoveTag = (indexToRemove: number) => {
@@ -183,22 +184,45 @@ export function MainContent() {
   useEffect(() => {
     if (!isOpenCard || !inputValue.trim()) {
       setSearchedUsers([]);
+      setSearchedTags([]);
       setSelectedUserIndex(null);
       return;
     }
     let isActive = true;
-    const fetchUsers = async () => {
+    const fetchUsersAndTags = async () => {
       try {
-        const users = await searchUsersByUsername(inputValue.trim(), undefined); // pass pubky if needed
+        const [users, tags] = await Promise.all([
+          searchUsersByUsername(inputValue.trim(), undefined),
+          searchTagsByPrefix(inputValue.trim(), 0, 3)
+        ]);
         if (isActive) {
-          const uniqueUsers = users ? Array.from(new Map(users.map((user) => [user.details.id, user])).values()) : [];
-          setSearchedUsers(uniqueUsers);
+          // Handle users independently
+          if (users) {
+            const uniqueUsers = Array.from(new Map(users.map((user) => [user.details.id, user])).values());
+            setSearchedUsers(uniqueUsers);
+          } else {
+            setSearchedUsers([]);
+          }
+          
+          // Handle tags independently
+          setSearchedTags(tags || []);
         }
-      } catch {
-        if (isActive) setSearchedUsers([]);
+      } catch (error) {
+        if (isActive) {
+          // In case of error, only reset the specific array that failed
+          if (error instanceof Error && error.message.includes('users')) {
+            setSearchedUsers([]);
+          } else if (error instanceof Error && error.message.includes('tags')) {
+            setSearchedTags([]);
+          } else {
+            // If we can't determine which one failed, reset both
+            setSearchedUsers([]);
+            setSearchedTags([]);
+          }
+        }
       }
     };
-    const timeout = setTimeout(fetchUsers, 500);
+    const timeout = setTimeout(fetchUsersAndTags, 500);
     return () => {
       isActive = false;
       clearTimeout(timeout);
@@ -250,8 +274,10 @@ export function MainContent() {
             className={isOpenCard ? 'block lg:hidden' : 'hidden'}
             refCard={refSearchInputCard}
             inputValue={inputValue}
+            setInputValue={setInputValue}
             isOpenCard={isOpenCard}
             searchedUsers={searchedUsers}
+            searchedTags={searchedTags}
             selectedUserIndex={selectedUserIndex}
             setSelectedUserIndex={setSelectedUserIndex}
             onUserClick={(user) => {
