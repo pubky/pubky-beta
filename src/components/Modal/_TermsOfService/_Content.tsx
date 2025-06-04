@@ -339,11 +339,11 @@ export default function ContentTermsOfService({ setShowModal }: ContentTermsOfSe
       <br />
       <Typography.Body className="text-opacity-80" variant="medium-light">
         If you believe your copyright has been infringed on the Platform, please send us a{' '}
-        <a className="cursor-pointer text-[#C8FF00]" href="/settings/copyright">
+        <a className="cursor-pointer text-[#C8FF00]" href="/copyright">
           Takedown Notice
         </a>
         . We respond to notices of alleged copyright infringement according to the process laid out in the{' '}
-        <a className="cursor-pointer text-[#C8FF00]" href="/settings/copyright">
+        <a className="cursor-pointer text-[#C8FF00]" href="/copyright">
           Takedown Notice
         </a>
         .
