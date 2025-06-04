@@ -39,7 +39,7 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
     '/onboarding/sign-up',
     '/logout',
     '/sign-in',
-    '/copyright',
+    '/copyright'
   ];
 
   const onboardingImages = [
