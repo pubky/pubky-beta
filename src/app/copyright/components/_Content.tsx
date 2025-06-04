@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { Button, Card, Content, Input, Typography } from '@social/ui-shared';
+import { Button, Card, Content as ContentUI, Input, Typography } from '@social/ui-shared';
 import axios from 'axios';
 import { useAlertContext } from '@/contexts';
 
-export default function Copyright() {
+export default function Content() {
   const { addAlert } = useAlertContext();
   const [isChecked, setIsChecked] = useState(true);
   const [isChecked2, setIsChecked2] = useState(false);
@@ -120,7 +120,7 @@ export default function Copyright() {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full max-w-[800px] mx-auto">
       <div className="p-8 md:p-12 bg-white bg-opacity-10 rounded-t-lg flex-col justify-start items-start gap-12 inline-flex">
         <div className="w-full flex-col justify-start items-start gap-6 flex">
           <Typography.H1>Copyright Removal Request</Typography.H1>
@@ -138,7 +138,7 @@ export default function Copyright() {
               copyright@synonym.to
             </a>
           </Typography.Body>
-          <Content.Divider className="my-3" />
+          <ContentUI.Divider className="my-3" />
           <div className="w-full p-4 bg-white/10 rounded-lg inline-flex flex-col gap-6">
             <Typography.Body variant="small" className="text-opacity-80">
               Dear Synonym:
@@ -175,7 +175,7 @@ export default function Copyright() {
               className="mt-1"
             />
           </div>
-          <Content.Divider className="my-3" />
+          <ContentUI.Divider className="my-3" />
           <div className="w-full p-4 bg-white/10 rounded-lg inline-flex flex-col gap-6">
             <Typography.Body variant="small" className="text-opacity-80">
               We hereby provide notice of copyright infringements pursuant to the terms of the Digital Millennium
@@ -215,7 +215,7 @@ export default function Copyright() {
               </Card.Primary>
             </div>
           </div>
-          <Content.Divider className="my-3" />
+          <ContentUI.Divider className="my-3" />
           <div className="w-full p-4 bg-white/10 rounded-lg inline-flex flex-col gap-6">
             <Typography.Body variant="small" className="text-opacity-80">
               It has come to Copyright Owner's attention that your platform (the “Platform”) displays, provides access
@@ -240,7 +240,7 @@ export default function Copyright() {
               />
             </Card.Primary>
           </div>
-          <Content.Divider className="my-1" />
+          <ContentUI.Divider className="my-1" />
           <div className="w-full p-4 bg-white/10 rounded-lg inline-flex flex-col gap-6">
             <Typography.Body variant="small" className="text-opacity-80">
               We have a good faith belief that the use of the Works described in this letter are not authorized by
@@ -357,7 +357,7 @@ export default function Copyright() {
               className="mt-1"
             />
           </div>
-          <Content.Divider className="my-1" />
+          <ContentUI.Divider className="my-1" />
           <Typography.H2>Signature</Typography.H2>
           <div className="w-full xl:w-[350px]">
             <Input.Label value="FULL NAME AS Signature" />

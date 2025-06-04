@@ -38,7 +38,8 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
     '/onboarding/sign-in',
     '/onboarding/sign-up',
     '/logout',
-    '/sign-in'
+    '/sign-in',
+    '/copyright',
   ];
 
   const onboardingImages = [
@@ -157,7 +158,7 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
       }
 
       // Check if the user is trying to access a public route
-      if (pathname === '/onboarding/register' || publicRoutes.includes(pathname)) {
+      if (pathname === '/onboarding/register' || (publicRoutes.includes(pathname) && pathname !== '/copyright')) {
         router.push('/home');
         return;
       }
