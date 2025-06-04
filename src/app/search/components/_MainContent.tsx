@@ -203,7 +203,7 @@ export function MainContent() {
           } else {
             setSearchedUsers([]);
           }
-          
+
           // Handle tags independently
           setSearchedTags(tags || []);
         }
