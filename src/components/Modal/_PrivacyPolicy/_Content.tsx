@@ -96,7 +96,7 @@ export default function ContentPrivacyPolicy({ setShowModal }: ContentPrivacyPol
           <li>We may update this Policy; material changes will be communicated as required by law.</li>
           <li>
             For questions or to exercise your rights, email{' '}
-            <a className="cursor-pointer text-[#C8FF00]" href="mailto:info@synonym.to">
+            <a className="cursor-pointer text-[#C8FF00]" href="mailto:privacy@synonym.to">
               privacy@synonym.to
             </a>
             .
@@ -416,13 +416,13 @@ export default function ContentPrivacyPolicy({ setShowModal }: ContentPrivacyPol
       <br />
       <br />
       <Typography.Body className="text-opacity-80" variant="medium-light">
-        Individuals who wish to exercise their rights under this section can contact us at [{' '}
-        <a className="cursor-pointer text-[#C8FF00]" href="mailto:info@synonym.to">
+        Individuals who wish to exercise their rights under this section can contact us at{' '}
+        <a className="cursor-pointer text-[#C8FF00]" href="mailto:privacy@synonym.to">
           privacy@synonym.to
         </a>
         . Please include your name, public key, and email address, and indicate you are making a “Privacy Rights”
         request. If we deny your rights request and you would like to appeal, you may contact us at{' '}
-        <a className="cursor-pointer text-[#C8FF00]" href="mailto:info@synonym.to">
+        <a className="cursor-pointer text-[#C8FF00]" href="mailto:privacy@synonym.to">
           privacy@synonym.to
         </a>
         .
@@ -480,7 +480,7 @@ export default function ContentPrivacyPolicy({ setShowModal }: ContentPrivacyPol
       <Typography.Body className="text-opacity-80" variant="medium-light">
         If you have any questions, comments or concerns with respect to our privacy practices or this Policy, or wish to
         update your information, please feel free to contact us at{' '}
-        <a className="cursor-pointer text-[#C8FF00]" href="mailto:info@synonym.to">
+        <a className="cursor-pointer text-[#C8FF00]" href="mailto:privacy@synonym.to">
           privacy@synonym.to
         </a>
         .
