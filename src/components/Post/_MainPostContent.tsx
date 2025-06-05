@@ -5,6 +5,7 @@ import Content from './_Content';
 import Actions from './_Actions';
 import { PostType, PostView } from '@/types/Post';
 import Tags from './Tags';
+import { Utils } from '../utils-shared';
 
 interface MainPostContentProps {
   post: PostView;
@@ -34,6 +35,7 @@ export default function MainPostContent({
   setShowTags
 }: MainPostContentProps) {
   const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-full border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[0.8px]`;
+  const isCensored = Utils.isPostCensored(post);
 
   return (
     <div className="flex items-center relative">
@@ -46,6 +48,8 @@ export default function MainPostContent({
         </>
       )}
       <PostUI.MainCard
+        postId={post?.details?.id}
+        isCensored={isCensored}
         className={twMerge(line && 'ml-6', largeView && 'p-12 inline-flex flex-row gap-6 xl:gap-12', restClassName)}
       >
         <div className="w-full flex-col justify-between inline-flex">

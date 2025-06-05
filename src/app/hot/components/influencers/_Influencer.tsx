@@ -15,6 +15,7 @@ export function Influencer({ influencer }: InfluencerProps) {
     <Link className="flex gap-2 w-full" href={`/profile/${influencer?.details?.id}`}>
       <ImageByUri
         id={influencer?.details?.id}
+        isCensored={Utils.isProfileCensored(influencer)}
         width={48}
         height={48}
         alt={`profile-pic-${influencer?.details?.id}`}

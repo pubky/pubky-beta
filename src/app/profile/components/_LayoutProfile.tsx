@@ -16,6 +16,7 @@ export default function LayoutProfile({ children }: { children: React.ReactNode 
   const [activeTab, setActiveTab] = useState(0);
   const [loading, setLoading] = useState(true);
   const { data: userData } = useUserProfile(pubky ?? '', pubky ?? '');
+
   const loader = useRef(null);
   const pathname = usePathname();
   const [isAvatarOpen, setIsAvatarOpen] = useState(false);

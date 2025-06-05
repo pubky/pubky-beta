@@ -15,6 +15,7 @@ interface UserProps extends React.HTMLAttributes<HTMLDivElement> {
   image?: string;
   children?: React.ReactNode;
   uri: string;
+  isCensored?: boolean;
 }
 export const User = ({
   width = 40,
@@ -27,6 +28,7 @@ export const User = ({
   uri,
   tagsCount,
   postsCount,
+  isCensored,
   ...rest
 }: UserProps) => {
   return (
@@ -39,6 +41,7 @@ export const User = ({
           className="rounded-full max-w-none h-none"
           style={{ width: `${width}px`, height: `${height}px` }}
           alt={alt}
+          isCensored={isCensored}
         />
         <div className="flex-col justify-start items-start inline-flex">
           <Typography.Body variant="medium-bold">{username}</Typography.Body>

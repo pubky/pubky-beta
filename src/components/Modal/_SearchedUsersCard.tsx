@@ -111,6 +111,7 @@ export default function SearchedUsersCard({ searchedUsers, handleUserClick, clas
             >
               <ImageByUri
                 id={data?.details?.id}
+                isCensored={Utils.isProfileCensored(data)}
                 width={40}
                 height={40}
                 className="rounded-full max-w-none h-none"

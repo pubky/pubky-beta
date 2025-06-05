@@ -15,6 +15,7 @@ interface UserSmallProps extends React.HTMLAttributes<HTMLDivElement> {
   image?: string;
   children?: React.ReactNode;
   uri: string;
+  isCensored?: boolean;
 }
 export const UserSmall = ({
   width = 32,
@@ -27,6 +28,7 @@ export const UserSmall = ({
   uri,
   tagsCount,
   postsCount,
+  isCensored,
   ...rest
 }: UserSmallProps) => {
   return (
@@ -39,6 +41,7 @@ export const UserSmall = ({
           className="rounded-full max-w-none h-none"
           style={{ width: `${width}px`, height: `${height}px` }}
           alt={alt}
+          isCensored={isCensored}
         />
         <div className="flex-col justify-start items-start inline-flex">
           <Typography.Body variant="small-bold">{username}</Typography.Body>

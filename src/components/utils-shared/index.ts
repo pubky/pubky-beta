@@ -27,15 +27,23 @@ import truncateTag from './lib/Text/truncateTag';
 import genJdenticon from './lib/Helper/genJdenticon';
 import sanitizeUrlsArticle from './lib/Helper/sanitizeUrlsArticle';
 import { resizeImageFile } from './lib/Helper/resizeImageFile';
+import { censoredTags } from './lib/Helper/Moderation/censoredTags';
+import isPostCensored from './lib/Helper/Moderation/isPostCensored';
+import isTagCensored from './lib/Helper/Moderation/isTagCensored';
+import isProfileCensored from './lib/Helper/Moderation/isProfileCensored';
 export const Utils = {
   base64ToUint8Array,
   svgToPng,
   cleanText,
+  censoredTags,
   decodePostUri,
   encodeImageId,
   encodePostUri,
   encodePostUri2,
   isValidContent,
+  isPostCensored,
+  isProfileCensored,
+  isTagCensored,
   generateRandomColor,
   hexToRgba,
   minifyContent,
