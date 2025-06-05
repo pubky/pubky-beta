@@ -213,3 +213,21 @@ export async function searchUsersByUsername(
     return [];
   }
 }
+
+// Search tags by prefix
+export async function searchTagsByPrefix(prefix: string, skip?: number, limit?: number): Promise<string[]> {
+  const queryParams = new URLSearchParams();
+
+  if (skip !== undefined) {
+    queryParams.append('skip', String(skip));
+  }
+  if (limit !== undefined) {
+    queryParams.append('limit', String(limit));
+  }
+
+  const response = await fetch(`${BASE_URL}/search/tags/by_prefix/${prefix}?${queryParams}`);
+
+  if (!response.ok) throw new Error('Failed to search tags');
+
+  return response.json();
+}

@@ -9,7 +9,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 // import { TLayouts } from '@/types';
 import { Timeline } from './_Timeline';
 import { Utils } from '@social/utils-shared';
-import { searchUsersByUsername } from '@/services/streamService';
+import { searchUsersByUsername, searchTagsByPrefix } from '@/services/streamService';
 import { UserView } from '@/types/User';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
@@ -30,6 +30,7 @@ export function MainContent() {
   const [isSearchBarVisible, setIsSearchBarVisible] = useState(true);
   const lastScrollY = useRef(0);
   const [searchedUsers, setSearchedUsers] = useState<UserView[]>([]);
+  const [searchedTags, setSearchedTags] = useState<string[]>([]);
   const [selectedUserIndex, setSelectedUserIndex] = useState<number | null>(null);
 
   const handleRemoveTag = (indexToRemove: number) => {
@@ -183,25 +184,52 @@ export function MainContent() {
   useEffect(() => {
     if (!isOpenCard || !inputValue.trim()) {
       setSearchedUsers([]);
+      setSearchedTags([]);
       setSelectedUserIndex(null);
       return;
     }
     let isActive = true;
+
+    // Fetch users independently
     const fetchUsers = async () => {
       try {
-        const users = await searchUsersByUsername(inputValue.trim(), undefined); // pass pubky if needed
+        const users = await searchUsersByUsername(inputValue.trim(), undefined);
         if (isActive) {
-          const uniqueUsers = users ? Array.from(new Map(users.map((user) => [user.details.id, user])).values()) : [];
-          setSearchedUsers(uniqueUsers);
+          if (users) {
+            const uniqueUsers = Array.from(new Map(users.map((user) => [user.details.id, user])).values());
+            setSearchedUsers(uniqueUsers);
+          } else {
+            setSearchedUsers([]);
+          }
         }
-      } catch {
-        if (isActive) setSearchedUsers([]);
+      } catch (error) {
+        if (isActive) {
+          setSearchedUsers([]);
+        }
       }
     };
-    const timeout = setTimeout(fetchUsers, 500);
+
+    // Fetch tags independently
+    const fetchTags = async () => {
+      try {
+        const tags = await searchTagsByPrefix(inputValue.trim(), 0, 3);
+        if (isActive) {
+          setSearchedTags(tags || []);
+        }
+      } catch (error) {
+        if (isActive) {
+          setSearchedTags([]);
+        }
+      }
+    };
+
+    const timeoutUsers = setTimeout(fetchUsers, 500);
+    const timeoutTags = setTimeout(fetchTags, 500);
+
     return () => {
       isActive = false;
-      clearTimeout(timeout);
+      clearTimeout(timeoutUsers);
+      clearTimeout(timeoutTags);
     };
   }, [inputValue, isOpenCard]);
 
@@ -250,8 +278,10 @@ export function MainContent() {
             className={isOpenCard ? 'block lg:hidden' : 'hidden'}
             refCard={refSearchInputCard}
             inputValue={inputValue}
+            setInputValue={setInputValue}
             isOpenCard={isOpenCard}
             searchedUsers={searchedUsers}
+            searchedTags={searchedTags}
             selectedUserIndex={selectedUserIndex}
             setSelectedUserIndex={setSelectedUserIndex}
             onUserClick={(user) => {

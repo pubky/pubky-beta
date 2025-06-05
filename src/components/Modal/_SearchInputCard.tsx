@@ -12,8 +12,10 @@ import { getHotTags } from '@/services/tagService';
 interface SearchInputCardProps extends React.HTMLAttributes<HTMLDivElement> {
   refCard?: React.RefObject<HTMLDivElement>;
   inputValue?: string;
+  setInputValue?: (value: string) => void;
   isOpenCard?: boolean;
   searchedUsers: UserView[];
+  searchedTags?: string[];
   selectedUserIndex: number | null;
   setSelectedUserIndex: React.Dispatch<React.SetStateAction<number | null>>;
   onUserClick: (user: UserView) => void;
@@ -22,8 +24,10 @@ interface SearchInputCardProps extends React.HTMLAttributes<HTMLDivElement> {
 export default function SearchInputCard({
   refCard,
   inputValue,
+  setInputValue,
   isOpenCard,
   searchedUsers,
+  searchedTags = [],
   selectedUserIndex,
   setSelectedUserIndex,
   onUserClick,
@@ -67,6 +71,7 @@ export default function SearchInputCard({
       Utils.storage.set('searchHistory', JSON.stringify(updatedHistory));
       router.push('/search');
     }
+    if (setInputValue) setInputValue('');
   };
 
   const handleUserClick = (user: UserView) => {
@@ -144,7 +149,7 @@ export default function SearchInputCard({
       className={twMerge('outline-none absolute top-12 rounded-b-2xl rounded-t-none p-6 pt-2', rest.className)}
       background="bg-gradient-to-b from-[#05050A] to-transparent backdrop-blur-[25px] shadow-[0px_50px_100px_rgba(0,0,0,1)] border border-t-0 border-white border-opacity-20 z-20"
     >
-      {inputValue && searchedUsers.length > 0 ? (
+      {inputValue && (searchedTags.length > 0 || searchedUsers.length > 0) ? (
         <div
           ref={scrollContainerRef}
           className="overflow-y-auto max-h-[200px] scrollbar-thin scrollbar-webkit flex flex-col"
@@ -156,6 +161,22 @@ export default function SearchInputCard({
             <Icon.MagnifyingGlass size="20" />
             <Typography.Body variant="medium">Search &apos;{inputValue}&apos; as tag</Typography.Body>
           </Link>
+          {searchedTags.length > 0 && (
+            <div className="mb-2 flex flex-wrap gap-2">
+              {searchedTags.map((tag, idx) => (
+                <PostUtil.Tag
+                  key={tag}
+                  clicked={false}
+                  onClick={() => handleTagSearch(tag)}
+                  color={Utils.generateRandomColor(tag)}
+                  className="my-1 cursor-pointer"
+                  boxShadow={false}
+                >
+                  {Utils.truncateTag(tag, 20)}
+                </PostUtil.Tag>
+              ))}
+            </div>
+          )}
           {searchedUsers.map((user, index) => (
             <SideCard.User
               key={user.details.id}
