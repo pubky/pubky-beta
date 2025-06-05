@@ -41,7 +41,7 @@ export const MainCard = ({ background = '', borderRadius = '', children, isCenso
   };
 
   return (
-    <div className="w-full relative">
+    <>
       <Card.Primary
         {...rest}
         borderRadius={borderRadius}
@@ -63,6 +63,6 @@ export const MainCard = ({ background = '', borderRadius = '', children, isCenso
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
