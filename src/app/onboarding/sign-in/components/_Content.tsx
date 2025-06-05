@@ -29,6 +29,7 @@ export default function Index() {
         <span className="cursor-pointer text-[#C8FF00]" onClick={() => openModal('minimumAge')}>
           over 18 years old
         </span>
+        .
       </Typography.Body>
       <div className="w-full flex-col inline-flex xl:grid sm:grid-cols-2 xl:grid-cols-8 gap-6 mt-6">
         <Card.Join />
