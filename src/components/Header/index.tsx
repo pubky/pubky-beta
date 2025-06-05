@@ -81,12 +81,11 @@ export default function Header({ title }: HeaderProps) {
       return;
     }
     let isActive = true;
-    const fetchUsersAndTags = async () => {
+
+    // Fetch users independently
+    const fetchUsers = async () => {
       try {
-        const [users, tags] = await Promise.all([
-          searchUsersByUsername(inputValue.trim(), pubky),
-          searchTagsByPrefix(inputValue.trim(), 0, 3)
-        ]);
+        const users = await searchUsersByUsername(inputValue.trim(), pubky);
         if (isActive) {
           if (users) {
             const uniqueUsers = Array.from(new Map(users.map((user) => [user.details.id, user])).values());
@@ -94,25 +93,35 @@ export default function Header({ title }: HeaderProps) {
           } else {
             setSearchedUsers([]);
           }
+        }
+      } catch (error) {
+        if (isActive) {
+          setSearchedUsers([]);
+        }
+      }
+    };
+
+    // Fetch tags independently
+    const fetchTags = async () => {
+      try {
+        const tags = await searchTagsByPrefix(inputValue.trim(), 0, 3);
+        if (isActive) {
           setSearchedTags(tags || []);
         }
       } catch (error) {
         if (isActive) {
-          if (error instanceof Error && error.message.includes('users')) {
-            setSearchedUsers([]);
-          } else if (error instanceof Error && error.message.includes('tags')) {
-            setSearchedTags([]);
-          } else {
-            setSearchedUsers([]);
-            setSearchedTags([]);
-          }
+          setSearchedTags([]);
         }
       }
     };
-    const timeout = setTimeout(fetchUsersAndTags, 500);
+
+    const timeoutUsers = setTimeout(fetchUsers, 500);
+    const timeoutTags = setTimeout(fetchTags, 500);
+
     return () => {
       isActive = false;
-      clearTimeout(timeout);
+      clearTimeout(timeoutUsers);
+      clearTimeout(timeoutTags);
     };
   }, [inputValue, isOpenCard, pubky]);
 

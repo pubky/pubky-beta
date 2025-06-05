@@ -189,43 +189,47 @@ export function MainContent() {
       return;
     }
     let isActive = true;
-    const fetchUsersAndTags = async () => {
+
+    // Fetch users independently
+    const fetchUsers = async () => {
       try {
-        const [users, tags] = await Promise.all([
-          searchUsersByUsername(inputValue.trim(), undefined),
-          searchTagsByPrefix(inputValue.trim(), 0, 3)
-        ]);
+        const users = await searchUsersByUsername(inputValue.trim(), undefined);
         if (isActive) {
-          // Handle users independently
           if (users) {
             const uniqueUsers = Array.from(new Map(users.map((user) => [user.details.id, user])).values());
             setSearchedUsers(uniqueUsers);
           } else {
             setSearchedUsers([]);
           }
+        }
+      } catch (error) {
+        if (isActive) {
+          setSearchedUsers([]);
+        }
+      }
+    };
 
-          // Handle tags independently
+    // Fetch tags independently
+    const fetchTags = async () => {
+      try {
+        const tags = await searchTagsByPrefix(inputValue.trim(), 0, 3);
+        if (isActive) {
           setSearchedTags(tags || []);
         }
       } catch (error) {
         if (isActive) {
-          // In case of error, only reset the specific array that failed
-          if (error instanceof Error && error.message.includes('users')) {
-            setSearchedUsers([]);
-          } else if (error instanceof Error && error.message.includes('tags')) {
-            setSearchedTags([]);
-          } else {
-            // If we can't determine which one failed, reset both
-            setSearchedUsers([]);
-            setSearchedTags([]);
-          }
+          setSearchedTags([]);
         }
       }
     };
-    const timeout = setTimeout(fetchUsersAndTags, 500);
+
+    const timeoutUsers = setTimeout(fetchUsers, 500);
+    const timeoutTags = setTimeout(fetchTags, 500);
+
     return () => {
       isActive = false;
-      clearTimeout(timeout);
+      clearTimeout(timeoutUsers);
+      clearTimeout(timeoutTags);
     };
   }, [inputValue, isOpenCard]);
 
