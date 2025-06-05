@@ -26,23 +26,32 @@ export default function Index() {
   }, [pubky, isLoggedIn]);
 
   return (
-    <Content.Main shadowBottom>
-      <Header.Root className="backdrop-blur-[0px]">
+    <Content.Main>
+      <Header.Root className="bg-gradient-to-b from-transparent via-transparent backdrop-blur-[0px]">
         <Header.Logo link={logoLink} />
         <div className="flex gap-6 items-center">
-          <SocialLinks className="hidden sm:inline-flex" />
-          <Header.Action icon={<Icon.SignIn size="16" />} link="/sign-in" id="onboarding-sign-in-btn">
+          <SocialLinks
+            colorIcon={!isMobile ? '#000000' : 'white'}
+            classNameIcon={!isMobile && 'opacity-100 hover:opacity-90'}
+            className="hidden sm:inline-flex"
+          />
+          <Header.Action
+            className="lg:bg-black lg:bg-opacity-100 lg:hover:bg-opacity-90"
+            icon={<Icon.SignIn size="16" />}
+            link="/sign-in"
+            id="onboarding-sign-in-btn"
+          >
             Sign in
           </Header.Action>
         </div>
       </Header.Root>
       <Content.Grid className="relative z-20 xl:mt-14">
         <Typography.Display className="text-5xl sm:text-7xl xl:text-9xl xl:leading-[128px]">
-          Unlock <br />
+          <span className="text-[#c8ff00]">Unlock</span> <br />
           the web.
         </Typography.Display>
         <Typography.Body variant="large" className="text-[22px] sm:text-2xl leading-tight text-opacity-50 mt-2 sm:mt-4">
-          Your keys, your content, your rules.
+          Grab your invite at our booth! (BTC Prague)
         </Typography.Body>
         <div className="relative flex gap-3 mt-6 sm:mt-12">
           <Link href="/onboarding/intro">
@@ -76,8 +85,15 @@ export default function Index() {
           </Link>
         </div>
         <div className="fixed bottom-12">
-          <SocialLinks className="sm:hidden inline-flex" />
-          <Typography.Body variant="small" className="text-[13.5px] text-opacity-30 font-normal">
+          <SocialLinks
+            colorIcon="#000000"
+            classNameIcon="opacity-100 hover:opacity-90"
+            className="sm:hidden inline-flex"
+          />
+          <Typography.Body
+            variant="small"
+            className="text-[13.5px] text-black lg:text-white lg:text-opacity-50 font-normal"
+          >
             Synonym Software Ltd. ©{currentYear}.
           </Typography.Body>
         </div>

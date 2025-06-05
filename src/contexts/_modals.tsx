@@ -70,10 +70,13 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     join: 'Join',
     link: 'Link',
     logout: 'Logout',
+    minimumAge: 'MinimumAge',
+    privacyPolicy: 'PrivacyPolicy',
     reportPost: 'ReportPost',
     reportProfile: 'ReportProfile',
     sessionExpired: 'SessionExpired',
     tagCreatePost: 'TagCreatePost',
+    termsOfService: 'TermsOfService',
     menuPost: 'Menu',
     menuProfile: 'MenuProfile'
   };

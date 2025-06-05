@@ -34,6 +34,7 @@ export default function SignIn() {
     } else {
       const abortController = new AbortController();
       handleGenerateAuthUrl(abortController.signal);
+      setLoginError('');
       return () => abortController.abort();
     }
   }, [isOnline]);
