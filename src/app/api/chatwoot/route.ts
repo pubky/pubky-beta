@@ -20,12 +20,13 @@ async function createContactIfNotExists(email: string, name: string, source: str
     });
 
     let contact = contactResponse.data.payload.find((c: any) => c.email === email.toLowerCase().trim());
+    const inboxId = source === 'Feedback' ? 26 : source === 'Copyright Removal Request' ? 28 : 27;
 
     if (!contact) {
       const createContactResponse = await axios.post(
         `${BaseUrl}/api/v1/accounts/${AccountId}/contacts`,
         {
-          inbox_id: source === 'Feedback' ? 26 : 27,
+          inbox_id: inboxId,
           name,
           email
         },
@@ -44,11 +45,13 @@ async function createContactIfNotExists(email: string, name: string, source: str
 async function createConversation(sourceId: string, contactId: number, message: string, source: string) {
   try {
     const content = `${source}\n\n${message}`;
+    const inboxId = source === 'Feedback' ? 26 : source === 'Copyright Removal Request' ? 28 : 27;
+
     await axios.post(
       `${BaseUrl}/api/v1/accounts/${AccountId}/conversations`,
       {
         source_id: sourceId,
-        inbox_id: source === 'Feedback' ? 26 : 27,
+        inbox_id: inboxId,
         contact_id: contactId,
         message: { content, message_type: 'incoming' }
       },

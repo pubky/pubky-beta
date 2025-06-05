@@ -2,15 +2,17 @@ import React from 'react';
 import { CheckboxIcon } from './_CheckboxIcon';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../Typography';
+import { Check } from '../../Icon/_System';
 
 interface CheckboxProps extends React.HTMLAttributes<HTMLInputElement> {
   checked: boolean;
   disabled?: boolean;
   onCheckChange?: (checked: boolean) => void;
+  cssCheckbox?: string;
   text?: string;
 }
 
-export const Checkbox = ({ checked, disabled = false, onCheckChange, text, ...rest }: CheckboxProps) => {
+export const Checkbox = ({ checked, disabled = false, onCheckChange, text, cssCheckbox, ...rest }: CheckboxProps) => {
   const cssStyles = twMerge(
     'grid w-6 h-6 rounded-md border',
     disabled
@@ -27,8 +29,10 @@ export const Checkbox = ({ checked, disabled = false, onCheckChange, text, ...re
   };
 
   return (
-    <label className={twMerge('flex gap-2', disabled ? 'cursor-default' : 'cursor-pointer')}>
-      <span className={cssStyles}>{checked && <CheckboxIcon />}</span>
+    <label className={twMerge('flex gap-2 items-center', disabled ? 'cursor-default' : 'cursor-pointer')}>
+      <span className={twMerge(cssStyles, cssCheckbox)}>
+        {checked && <CheckboxIcon icon={cssCheckbox ? <Check size="24" /> : <Check size="16" />} />}
+      </span>
       <input
         {...rest}
         type="checkbox"
