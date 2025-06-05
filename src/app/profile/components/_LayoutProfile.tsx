@@ -17,20 +17,6 @@ export default function LayoutProfile({ children }: { children: React.ReactNode 
   const [loading, setLoading] = useState(true);
   const { data: userData } = useUserProfile(pubky ?? '', pubky ?? '');
 
-  // Adjust unique_tags if there are censored tags
-  let userDataWithCensoredCount = userData;
-  if (userData?.tags && userData?.counts) {
-    const censoredCount = userData.tags.filter((tag: any) => Utils.isTagCensored(tag)).length;
-    if (censoredCount > 0) {
-      userDataWithCensoredCount = {
-        ...userData,
-        counts: {
-          ...userData.counts,
-          unique_tags: Math.max(0, userData.counts.unique_tags - censoredCount)
-        }
-      };
-    }
-  }
   const loader = useRef(null);
   const pathname = usePathname();
   const [isAvatarOpen, setIsAvatarOpen] = useState(false);
@@ -52,7 +38,7 @@ export default function LayoutProfile({ children }: { children: React.ReactNode 
           <Profile.FilterTabsMobile
             activeTab={activeTab}
             setActiveTab={setActiveTab}
-            userCounts={userDataWithCensoredCount?.counts}
+            userCounts={userData?.counts}
             loading={loading}
             setLoading={setLoading}
           />
@@ -74,7 +60,7 @@ export default function LayoutProfile({ children }: { children: React.ReactNode 
             setActiveTab={setActiveTab}
             loading={loading}
             setLoading={setLoading}
-            userCounts={userDataWithCensoredCount?.counts}
+            userCounts={userData?.counts}
           >
             {children}
           </Profile.FilterTabs>

@@ -39,21 +39,6 @@ export default function CreatorpubkyLayout({
   const loader = useRef(null);
   let content;
 
-  // Adjust unique_tags if there are censored tags
-  let profileWithCensoredCount = profile;
-  if (profile?.tags && profile?.counts) {
-    const censoredCount = profile.tags.filter((tag: any) => Utils.isTagCensored(tag)).length;
-    if (censoredCount > 0) {
-      profileWithCensoredCount = {
-        ...profile,
-        counts: {
-          ...profile.counts,
-          unique_tags: Math.max(0, profile.counts.unique_tags - censoredCount)
-        }
-      };
-    }
-  }
-
   useEffect(() => {
     setLoading(true);
     const pathSegments = pathname?.split('/');
@@ -87,7 +72,7 @@ export default function CreatorpubkyLayout({
             <Profile.FilterTabsMobile
               activeTab={activeTab}
               setActiveTab={setActiveTab}
-              userCounts={profileWithCensoredCount?.counts}
+              userCounts={profile?.counts}
               loading={loading}
               setLoading={setLoading}
               creatorPubky={creatorPubky}
@@ -118,7 +103,7 @@ export default function CreatorpubkyLayout({
               setActiveTab={setActiveTab}
               loading={loading}
               setLoading={setLoading}
-              userCounts={profileWithCensoredCount?.counts}
+              userCounts={profile?.counts}
               creatorPubky={creatorPubky}
             >
               {children}

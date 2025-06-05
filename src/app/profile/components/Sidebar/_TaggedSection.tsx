@@ -34,8 +34,6 @@ export default function TaggedSection({
     user
   });
 
-  const visibleTags = profileTags.filter((tag) => !Utils.isTagCensored(tag));
-
   return (
     <div id="profile-tagged-section" className="w-full">
       <SideCard.Header title="Tagged as" />
@@ -43,9 +41,9 @@ export default function TaggedSection({
         <Skeleton.Simple />
       ) : (
         <div className="mt-4 justify-start items-start gap-2 flex flex-col">
-          {visibleTags.length > 0 ? (
+          {profileTags.length > 0 ? (
             <>
-              {visibleTags.map((tag, index) => {
+              {profileTags.map((tag, index) => {
                 const isTagFound = tag?.relationship || false;
 
                 return (

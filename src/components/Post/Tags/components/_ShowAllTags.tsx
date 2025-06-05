@@ -293,8 +293,6 @@ export default function ShowAllTags({ post, postType, onTagClick }: ShowAllTagsP
 
   // Render functions
   const renderTag = (tagObj: (typeof tags)[0], index: number) => {
-    if (Utils.isTagCensored(tagObj)) return null;
-
     const isTagFound = tagObj?.relationship || false;
     const displayedImages = tagObj?.taggers || [];
     const extraImagesCount = tagObj.taggers_count - 4;
@@ -475,7 +473,7 @@ export default function ShowAllTags({ post, postType, onTagClick }: ShowAllTagsP
         <>
           {renderTagInput()}
           <div className="flex flex-col gap-2 max-h-[200px] overflow-y-auto scrollbar-thin scrollbar-webkit pr-4">
-            {allTags.map((tagObj, index) => renderTag(tagObj, index)).filter(Boolean)}
+            {allTags.map((tagObj, index) => renderTag(tagObj, index))}
             {hasMore && (
               <div ref={loaderRef} className="flex justify-center py-2">
                 {isLoading && <Icon.LoadingSpin size="24" />}

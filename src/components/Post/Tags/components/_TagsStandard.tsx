@@ -24,8 +24,6 @@ export default function TagsStandard({ post, largeView, postType, showTags }: Ta
   const { pubky } = usePubkyClientContext();
 
   const renderTag = (tagObj: (typeof tags)[0], index: number) => {
-    if (Utils.isTagCensored(tagObj)) return null;
-
     const isTagFound = tagObj?.relationship || false;
 
     return (
@@ -65,10 +63,7 @@ export default function TagsStandard({ post, largeView, postType, showTags }: Ta
           {showTags ? (
             <ShowAllTags post={post} postType={postType} />
           ) : (
-            tags
-              .slice(0, 3)
-              .map((tagObj, index) => renderTag(tagObj, index))
-              .filter(Boolean)
+            tags.slice(0, 3).map((tagObj, index) => renderTag(tagObj, index))
           )}
         </>
       )}
