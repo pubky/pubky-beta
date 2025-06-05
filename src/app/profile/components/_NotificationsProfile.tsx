@@ -21,14 +21,13 @@ export default function NotificationsProfile() {
   useEffect(() => {
     if (unReadNotification > 0) {
       setTempUnReadNotification(unReadNotification);
+      setUnReadNotification(0);
+      const updateTimestamp = async () => {
+        await putTimestampNotification();
+      };
+      updateTimestamp();
     }
-
-    setUnReadNotification(0);
-    const updateTimestamp = async () => {
-      await putTimestampNotification();
-    };
-    updateTimestamp();
-  }, []);
+  }, [unReadNotification, setUnReadNotification, putTimestampNotification]);
 
   return (
     <>
