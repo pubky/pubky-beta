@@ -46,7 +46,7 @@ export default function Index() {
         </div>
       </Header.Root>
       <Content.Grid className="relative z-20 xl:mt-14">
-        <Typography.Display className="text-5xl sm:text-7xl xl:text-9xl xl:leading-[128px]">
+        <Typography.Display className="text-5xl sm:text-7xl md:text-9xl md:leading-[128px] xl:text-[128px] xl:leading-[128px]">
           <span className="text-[#c8ff00]">Unlock</span> <br />
           the web.
         </Typography.Display>

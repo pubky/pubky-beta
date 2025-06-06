@@ -25,32 +25,88 @@ export default function Content() {
   const [signature, setSignature] = useState<string>('');
   const [loading, setLoading] = useState(false);
 
+  // Add validation state
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
   const isValidEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
-  const isFormValid = () => {
-    return (
-      (isChecked || isChecked2) &&
-      nameOwner.trim() !== '' &&
-      originalContentUrls.trim() !== '' &&
-      briefDescription.trim() !== '' &&
-      infringingContentUrl.trim() !== '' &&
-      firstName.trim() !== '' &&
-      lastName.trim() !== '' &&
-      isValidEmail(email) &&
-      phoneNumber.trim() !== '' &&
-      streetAddress.trim() !== '' &&
-      country.trim() !== '' &&
-      city.trim() !== '' &&
-      stateProvince.trim() !== '' &&
-      zipCode.trim() !== '' &&
-      signature.trim() !== ''
-    );
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!isChecked && !isChecked2) {
+      newErrors.role = 'Please select if you are the rights owner or reporting on behalf';
+    }
+
+    if (!nameOwner.trim()) {
+      newErrors.nameOwner = 'Name of rights owner is required';
+    }
+
+    if (!originalContentUrls.trim()) {
+      newErrors.originalContentUrls = 'Original content URLs are required';
+    }
+
+    if (!briefDescription.trim()) {
+      newErrors.briefDescription = 'Brief description is required';
+    }
+
+    if (!infringingContentUrl.trim()) {
+      newErrors.infringingContentUrl = 'Infringing content URL is required';
+    }
+
+    if (!firstName.trim()) {
+      newErrors.firstName = 'First name is required';
+    }
+
+    if (!lastName.trim()) {
+      newErrors.lastName = 'Last name is required';
+    }
+
+    if (!email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!isValidEmail(email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
+
+    if (!phoneNumber.trim()) {
+      newErrors.phoneNumber = 'Phone number is required';
+    }
+
+    if (!streetAddress.trim()) {
+      newErrors.streetAddress = 'Street address is required';
+    }
+
+    if (!country.trim()) {
+      newErrors.country = 'Country is required';
+    }
+
+    if (!city.trim()) {
+      newErrors.city = 'City is required';
+    }
+
+    if (!stateProvince.trim()) {
+      newErrors.stateProvince = 'State/Province is required';
+    }
+
+    if (!zipCode.trim()) {
+      newErrors.zipCode = 'Zip code is required';
+    }
+
+    if (!signature.trim()) {
+      newErrors.signature = 'Signature is required';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
     try {
       setLoading(true);
       const formData = {
@@ -97,6 +153,7 @@ export default function Content() {
       setSignature('');
       setIsChecked(true);
       setIsChecked2(false);
+      setErrors({});
       addAlert('Request sent successfully', 'default');
     } catch (error) {
       addAlert('Error sending request', 'warning');
@@ -106,6 +163,9 @@ export default function Content() {
   };
 
   const handleCheckboxChange = (newCheckedState: boolean) => {
+    if (!newCheckedState && !isChecked2) {
+      return;
+    }
     setIsChecked(newCheckedState);
     if (newCheckedState) {
       setIsChecked2(false);
@@ -113,6 +173,9 @@ export default function Content() {
   };
 
   const handleCheckboxChange2 = (newCheckedState: boolean) => {
+    if (!newCheckedState && !isChecked) {
+      return;
+    }
     setIsChecked2(newCheckedState);
     if (newCheckedState) {
       setIsChecked(false);
@@ -162,6 +225,11 @@ export default function Content() {
               text="I am reporting on behalf of my organization or client"
             />
           </div>
+          {errors.role && (
+            <Typography.Body variant="small" className="text-red-600">
+              {errors.role}
+            </Typography.Body>
+          )}
           <div className="w-full">
             <Typography.Label className="text-uppercase text-white/30">
               Name of the rights owner{' '}
@@ -173,6 +241,7 @@ export default function Content() {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNameOwner(e.target.value)}
               placeholder="Name of the rights owner"
               className="mt-1"
+              error={errors.nameOwner}
             />
           </div>
           <ContentUI.Divider className="my-3" />
@@ -188,7 +257,7 @@ export default function Content() {
               <Input.Label value="original Content URls" />
               <Card.Primary
                 background="bg-transparent"
-                className="relative border border-white border-opacity-30 border-dashed mt-1"
+                className={`relative border ${errors.originalContentUrls ? 'border-red-600' : 'border-white border-opacity-30'} border-dashed mt-1`}
               >
                 <Input.TextArea
                   className="h-[50px]"
@@ -198,12 +267,17 @@ export default function Content() {
                   }
                 />
               </Card.Primary>
+              {errors.originalContentUrls && (
+                <Typography.Body variant="small" className="text-red-600 mt-1">
+                  {errors.originalContentUrls}
+                </Typography.Body>
+              )}
             </div>
             <div className="w-full">
               <Input.Label value="Brief description of your original content" />
               <Card.Primary
                 background="bg-transparent"
-                className="relative border border-white border-opacity-30 border-dashed mt-1"
+                className={`relative border ${errors.briefDescription ? 'border-red-600' : 'border-white border-opacity-30'} border-dashed mt-1`}
               >
                 <Input.TextArea
                   className="h-[50px]"
@@ -213,6 +287,11 @@ export default function Content() {
                   }
                 />
               </Card.Primary>
+              {errors.briefDescription && (
+                <Typography.Body variant="small" className="text-red-600 mt-1">
+                  {errors.briefDescription}
+                </Typography.Body>
+              )}
             </div>
           </div>
           <ContentUI.Divider className="my-3" />
@@ -229,7 +308,7 @@ export default function Content() {
             <Input.Label value="Infringing Content URls" />
             <Card.Primary
               background="bg-transparent"
-              className="relative border border-white border-opacity-30 border-dashed mt-1"
+              className={`relative border ${errors.infringingContentUrl ? 'border-red-600' : 'border-white border-opacity-30'} border-dashed mt-1`}
             >
               <Input.TextArea
                 className="h-[50px]"
@@ -239,6 +318,11 @@ export default function Content() {
                 }
               />
             </Card.Primary>
+            {errors.infringingContentUrl && (
+              <Typography.Body variant="small" className="text-red-600 mt-1">
+                {errors.infringingContentUrl}
+              </Typography.Body>
+            )}
           </div>
           <ContentUI.Divider className="my-1" />
           <div className="w-full p-4 bg-white/10 rounded-lg inline-flex flex-col gap-6">
@@ -267,6 +351,7 @@ export default function Content() {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFirstName(e.target.value)}
                 placeholder="Satoshi"
                 className="mt-1"
+                error={errors.firstName}
               />
             </div>
             <div className="w-full">
@@ -277,6 +362,7 @@ export default function Content() {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLastName(e.target.value)}
                 placeholder="Nakamoto"
                 className="mt-1"
+                error={errors.lastName}
               />
             </div>
           </div>
@@ -289,6 +375,7 @@ export default function Content() {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                 placeholder="email@example.com"
                 className="mt-1"
+                error={errors.email}
               />
             </div>
             <div className="w-full">
@@ -299,6 +386,7 @@ export default function Content() {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPhoneNumber(e.target.value)}
                 placeholder="000-000-0000"
                 className="mt-1"
+                error={errors.phoneNumber}
               />
             </div>
           </div>
@@ -312,6 +400,7 @@ export default function Content() {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setStreetAddress(e.target.value)}
                 placeholder="Street number and name"
                 className="mt-1"
+                error={errors.streetAddress}
               />
             </div>
             <div className="w-full">
@@ -322,6 +411,7 @@ export default function Content() {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCountry(e.target.value)}
                 placeholder="United States"
                 className="mt-1"
+                error={errors.country}
               />
             </div>
           </div>
@@ -334,6 +424,7 @@ export default function Content() {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCity(e.target.value)}
                 placeholder="City name"
                 className="mt-1"
+                error={errors.city}
               />
             </div>
             <div className="w-full">
@@ -344,6 +435,7 @@ export default function Content() {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setStateProvince(e.target.value)}
                 placeholder="State name"
                 className="mt-1"
+                error={errors.stateProvince}
               />
             </div>
           </div>
@@ -355,6 +447,7 @@ export default function Content() {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setZipCode(e.target.value)}
               placeholder="000000"
               className="mt-1"
+              error={errors.zipCode}
             />
           </div>
           <ContentUI.Divider className="my-1" />
@@ -367,6 +460,7 @@ export default function Content() {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSignature(e.target.value)}
               placeholder="Full name"
               className="mt-1"
+              error={errors.signature}
             />
           </div>
         </div>
@@ -374,11 +468,11 @@ export default function Content() {
       <div className="w-full p-8 bg-white bg-opacity-5 rounded-b-lg flex-col justify-start items-start gap-12 inline-flex">
         <div className="w-full flex justify-end">
           <Button.Large
-            disabled={!isFormValid()}
+            disabled={loading}
             loading={loading}
             className="w-auto bg-[#c8ff00] border-[#c8ff00]"
             colorText="text-[#c8ff00]"
-            onClick={!isFormValid() || loading ? undefined : handleSubmit}
+            onClick={loading ? undefined : handleSubmit}
           >
             Submit Form
           </Button.Large>
