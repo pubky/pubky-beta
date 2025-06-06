@@ -29,6 +29,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [prevPubky, setPrevPubky] = useState<string | null>(null);
+  const [lastViewedTimestamp, setLastViewedTimestamp] = useState<number>(0);
   const { data: initNotifications, isLoading } = useUserNotifications(pubky ?? '', undefined, undefined, skip, limit);
 
   useEffect(() => {
@@ -85,6 +86,14 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
       }
     }
   }, [initNotifications, timestamp, pubky, setUnReadNotification]);
+
+  // Add effect to update lastViewedTimestamp when notifications are viewed
+  useEffect(() => {
+    if (notifications.length > 0) {
+      const mostRecentTimestamp = Math.max(...notifications.map((n) => n.timestamp));
+      setLastViewedTimestamp(mostRecentTimestamp);
+    }
+  }, [notifications]);
 
   const updateNotifications = (newNotifications: NotificationView[]) => {
     setNotifications((prev) => {
@@ -173,11 +182,22 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     try {
       if (initNotifications) {
         const filteredNotifications = filterNotifications(initNotifications);
-
         updateNotifications(filteredNotifications);
 
-        // Ensure timestamp is valid before calculating unread count
-        if (timestamp > 0) {
+        // Use lastViewedTimestamp instead of timestamp for unread count
+        if (lastViewedTimestamp > 0) {
+          const unreadCount = filteredNotifications.reduce(
+            (count, notification) => (notification.timestamp > lastViewedTimestamp ? count + 1 : count),
+            0
+          );
+
+          if (unreadCount > 0) {
+            setUnReadNotification(unreadCount);
+          } else {
+            setUnReadNotification(0);
+          }
+        } else if (timestamp > 0) {
+          // Fallback to timestamp if lastViewedTimestamp is not set
           const unreadCount = filteredNotifications.reduce(
             (count, notification) => (notification.timestamp > timestamp ? count + 1 : count),
             0
@@ -185,9 +205,11 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
 
           if (unreadCount > 0) {
             setUnReadNotification(unreadCount);
+          } else {
+            setUnReadNotification(0);
           }
         } else {
-          // If timestamp is invalid, try to fetch it
+          // If both timestamps are invalid, try to fetch timestamp
           const lastTimestamp = await getTimestampNotification();
           setTimestamp(lastTimestamp);
         }
