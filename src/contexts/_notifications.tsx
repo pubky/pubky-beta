@@ -76,7 +76,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     updateNotifications(filtered);
 
     // Calculate unread count with proper timestamp comparison
-    if (timestamp >= 0) {
+    if (timestamp > 0) {
       const unreadCount = filtered.reduce(
         (count, notification) => (notification.timestamp > timestamp ? count + 1 : count),
         0
