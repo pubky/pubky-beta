@@ -96,10 +96,8 @@ export const Timeline = () => {
         // Request was aborted, do nothing
         return;
       }
-      // Only set finishedLoading to true if we have no posts yet
-      if (timelineValue.length === 0) {
-        setFinishedLoading(true);
-      }
+
+      setFinishedLoading(true);
     } finally {
       if (!signal.aborted) {
         setIsLoading(false);
