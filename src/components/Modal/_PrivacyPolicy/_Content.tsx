@@ -8,7 +8,7 @@ export default function ContentPrivacyPolicy({ setShowModal }: ContentPrivacyPol
   return (
     <div className="my-4 pr-8 overflow-y-auto max-h-[500px] scrollbar-thin scrollbar-webkit">
       <Typography.Body className="text-opacity-80" variant="medium-light">
-        Effective Date: 2 June 2025
+        Effective Date: June 19,2025
       </Typography.Body>
       <br />
       <Typography.Body className="text-opacity-80" variant="medium-bold">
@@ -425,8 +425,8 @@ export default function ContentPrivacyPolicy({ setShowModal }: ContentPrivacyPol
         </a>
         . Please include your name, public key, and email address, and indicate you are making a “Privacy Rights”
         request. If we deny your rights request and you would like to appeal, you may contact us at{' '}
-        <a className="cursor-pointer text-[#C8FF00]" href="mailto:privacy@synonym.to">
-          privacy@synonym.to
+        <a className="cursor-pointer text-[#C8FF00]" href="mailto:info@synonym.to">
+          info@synonym.to
         </a>
         .
       </Typography.Body>

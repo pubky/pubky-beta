@@ -11,7 +11,7 @@ export default function ContentTermsOfService({ setShowModal }: ContentTermsOfSe
         TERMS AND CONDITIONS
       </Typography.Body>
       <Typography.Body className="text-opacity-80" variant="medium-light">
-        Effective Date: 2 June 2025
+        Effective Date: June 19,2025
       </Typography.Body>
       <br />
       <Typography.Body className="text-opacity-80" variant="medium-light">
