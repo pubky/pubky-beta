@@ -30,6 +30,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
   const [hasMore, setHasMore] = useState(true);
   const [prevPubky, setPrevPubky] = useState<string | null>(null);
   const [lastViewedTimestamp, setLastViewedTimestamp] = useState<number>(0);
+  const [timestampLoaded, setTimestampLoaded] = useState(false);
   const { data: initNotifications, isLoading } = useUserNotifications(pubky ?? '', undefined, undefined, skip, limit);
 
   useEffect(() => {
@@ -42,8 +43,10 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
         try {
           const lastTimestamp = await getTimestampNotification();
           setTimestamp(lastTimestamp);
+          setTimestampLoaded(true);
         } catch (error) {
           console.warn('Error loading timestamp:', error);
+          setTimestampLoaded(true); // Set to true even on error to prevent infinite loading
         }
       }
     };
@@ -75,17 +78,15 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     const filtered = filterNotifications(initNotifications);
     updateNotifications(filtered);
 
-    // Calculate unread count with proper timestamp comparison
-    if (timestamp >= 0) {
+    // Calculate unread count only when timestamp is actually loaded
+    if (timestampLoaded) {
       const unreadCount = filtered.reduce(
         (count, notification) => (notification.timestamp > timestamp ? count + 1 : count),
         0
       );
-      if (unreadCount > 0) {
-        setUnReadNotification(unreadCount);
-      }
+      setUnReadNotification(unreadCount);
     }
-  }, [initNotifications, timestamp, pubky, setUnReadNotification]);
+  }, [initNotifications, timestamp, pubky, timestampLoaded, setUnReadNotification]);
 
   // Add effect to update lastViewedTimestamp when notifications are viewed
   useEffect(() => {
@@ -244,6 +245,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
       setUnReadNotification(0);
       setSkip(0);
       setHasMore(true);
+      setTimestampLoaded(false);
 
       // Fetch notifications only when pubky changes
       if (notificationPreferences && pubky) {
