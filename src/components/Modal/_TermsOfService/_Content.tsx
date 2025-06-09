@@ -178,7 +178,7 @@ export default function ContentTermsOfService({ setShowModal }: ContentTermsOfSe
             Content which displays the trademarks of another person without that person's authorization, subject to
             applicable Laws concerning fair use;
           </li>
-          <li>Content that is pornographic, obscene, or of an adult or sexual nature;</li>
+          <li>Content that is pornographic, obscene.</li>
           <li>Content that is offensive, including harassment and discrimination;</li>
           <li>
             Content that:
