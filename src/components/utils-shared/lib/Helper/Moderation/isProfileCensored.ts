@@ -6,7 +6,7 @@ const censoredTagsList = process.env.NEXT_PUBLIC_MODERATED_TAGS
   : censoredTags;
 
 const isCensored = (profileToCheck: UserView) => {
-  return profileToCheck?.tags.some(
+  return profileToCheck?.tags?.some(
     (tag) => censoredTagsList.includes(tag.label) && tag.taggers[0] === process.env.NEXT_PUBLIC_MODERATION_ID
   );
 };
