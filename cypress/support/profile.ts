@@ -92,7 +92,7 @@ export const waitForNotificationsToLoad = (attempts: number = 5) => {
 };
 
 // wait for notification dot to disappear from all listed notifications (useful to prevent 'no longer attached to the DOM' error when checking list of notifications)
-export const waitForNotificationDotToDisappear = (t: number = 25) => {
+export const waitForNotificationDotToDisappear = (t: number = 10) => {
   if (t === 0) assert(false, `waitForNotificationDotToDisappear: Notification dot id not disappear`);
   cy.get('#notifications-list').then(($notifs) => {
     if ($notifs.find('#notification-unread-dot').length > 0) {
@@ -124,9 +124,17 @@ export const checkLatestNotification = (expectedContent: string[], profileToNavi
       .children()
       .should('have.length.at.least', 1)
       .first()
-      .within(($firstNotif) => {
-        cy.wrap($firstNotif).get('a').should('have.text', profileToNavigateTo).click();
+      .within(() => {
+        // Wait for the profile link to be stable before clicking
+        cy.get('a')
+          .should('have.text', profileToNavigateTo)
+          .should('be.visible')
+          .wait(100)
+          .click({ force: true });
       });
+
+    // Verify navigation actually occurred
+    cy.location('pathname').should('contain', '/profile');
   }
 };
 

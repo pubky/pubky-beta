@@ -93,7 +93,7 @@ describe('notifications', () => {
     checkLatestNotification([profile2.username, 'is your friend now']);
 
     // * check that toggling profile page tabs clears notification counter for new notification
-    cy.get('#profile-tab-posts').click();
+    cy.get('#profile-tab-posts').click().wait(100);
     cy.get('#profile-tab-notifications').click();
     waitForNotificationDotToDisappear();
 
@@ -143,7 +143,7 @@ describe('notifications', () => {
     checkLatestNotification([profile1.username, 'tagged your profile', profileTag]);
 
     // * check that toggling profile page tabs clears notification counter for new notification
-    cy.get('#profile-tab-posts').click();
+    cy.get('#profile-tab-posts').click().wait(100);
     cy.get('#profile-tab-notifications').click();
     waitForNotificationDotToDisappear();
 
