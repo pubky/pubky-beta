@@ -96,7 +96,6 @@ describe('settings', () => {
     });
     cy.get('#sign-in-recovery-phrase-btn').click();
 
-
     cy.location('pathname').should('eq', '/onboarding/register');
     cy.get('#message-alert').should('be.visible').should('contain', 'your profile is empty');
   });
