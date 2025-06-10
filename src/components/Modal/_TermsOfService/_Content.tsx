@@ -98,7 +98,7 @@ export default function ContentTermsOfService({ setShowModal }: ContentTermsOfSe
       </Typography.Body>
       <Typography.Body className="text-opacity-80" variant="medium-light">
         You acknowledge and agree that in order to use the Platform:
-        <ol className="list-decimal ml-6 text-opacity-80 space-y-2">
+        <ul className="list-disc ml-6 text-opacity-80 space-y-2">
           <li>You must be at least eighteen (18) years old;</li>
           <li>
             We must not have previously disabled your account for violation of Law or any of our policies referenced
@@ -116,7 +116,7 @@ export default function ContentTermsOfService({ setShowModal }: ContentTermsOfSe
             If you are using the Platform on behalf of a company or organization, you represent that you have authority
             to act on behalf of that company or organization, and that such entity accepts these Terms.
           </li>
-        </ol>
+        </ul>
       </Typography.Body>
       <br />
       <Typography.Body className="text-opacity-80" variant="medium-bold">
@@ -164,7 +164,7 @@ export default function ContentTermsOfService({ setShowModal }: ContentTermsOfSe
         safely participate in public conversation, you agree to comply with all applicable Laws when submitting Content
         to the Platform. In addition, you agree that under no circumstances shall the following be submitted to the
         Platform:
-        <ol className="list-decimal ml-6 text-opacity-80 space-y-2 mt-2">
+        <ul className="list-disc ml-6 text-opacity-80 space-y-2 mt-2">
           <li>
             Content which includes, in whole or in part, audio, video, text, or images that are subject to copyright by
             another person unless such inclusion is subject to applicable Laws concerning fair use or is otherwise
@@ -211,7 +211,7 @@ export default function ContentTermsOfService({ setShowModal }: ContentTermsOfSe
             Any other Content or material that we in our sole, unfettered, and arbitrary discretion, determine
             undesirable on the Platform.
           </li>
-        </ol>
+        </ul>
       </Typography.Body>
       <br />
       <Typography.Body className="text-opacity-80" variant="medium-light">
@@ -241,7 +241,7 @@ export default function ContentTermsOfService({ setShowModal }: ContentTermsOfSe
           report@synonym.to
         </a>
         . Please use the word “Complaint” in the subject line, and include the following information in your email:
-        <ol className="list-decimal ml-6 text-opacity-80 space-y-2">
+        <ul className="list-disc ml-6 text-opacity-80 space-y-2">
           <li>Your name and, if you are a registered user of the Platform, your user ID; </li>
           <li>The basis of your complaint (provide as much detail as possible); </li>
           <li>
@@ -254,7 +254,7 @@ export default function ContentTermsOfService({ setShowModal }: ContentTermsOfSe
             your complaint, timestamps within the video where the alleged violative Content appears, and the reason for
             your Complaint.
           </li>
-        </ol>
+        </ul>
       </Typography.Body>
       <br />
       <Typography.Body className="text-opacity-80" variant="medium-light">
@@ -379,7 +379,7 @@ export default function ContentTermsOfService({ setShowModal }: ContentTermsOfSe
         Materials may contain information or content that some people may find inappropriate or offensive. You will need
         to make your own independent judgement regarding your interaction with Third-Party Materials. Synonym makes no
         representations or warranties whatsoever concerning:
-        <ol className="list-decimal ml-6 text-opacity-80 space-y-2 mt-2">
+        <ul className="list-disc ml-6 text-opacity-80 space-y-2 mt-2">
           <li>
             the information, software or other material appearing on, or accessible through, any Third-Party Materials,
             including any advertisement for products or services;{' '}
@@ -399,7 +399,7 @@ export default function ContentTermsOfService({ setShowModal }: ContentTermsOfSe
             the accuracy, copyright compliance, legality, decency, or any other aspect of the content of any Third-Party
             Material.{' '}
           </li>
-        </ol>
+        </ul>
       </Typography.Body>
       <br />
       <Typography.Body className="text-opacity-80" variant="medium-light">
@@ -695,7 +695,7 @@ export default function ContentTermsOfService({ setShowModal }: ContentTermsOfSe
       <br />
       <Typography.Body className="text-opacity-80" variant="medium-light">
         In these Terms, the following words have the following meanings, unless otherwise indicated:
-        <ol className="list-decimal ml-6 text-opacity-80 space-y-2 mt-2">
+        <ul className="list-disc ml-6 text-opacity-80 space-y-2 mt-2">
           <li>
             “Associates” means Synonym, its subsidiaries and affiliates and their respective officers, directors,
             agents, co-branders and other partners, contractors, and employees;
@@ -739,7 +739,7 @@ export default function ContentTermsOfService({ setShowModal }: ContentTermsOfSe
             and{' '}
           </li>
           <li>“Users” means all users and others who access the Platform.</li>
-        </ol>
+        </ul>
       </Typography.Body>
       <br />
       <Typography.Body className="text-opacity-80" variant="medium-bold">
