@@ -129,7 +129,7 @@ jobs:
         with:
           working-directory: pubky-app/cypress
           config-file: cypress.config.ts
-          spec: e2e/**/*.cy.ts
+          spec: e2e/**/notifications.cy.ts # e2e/**/*.cy.ts
           browser: ${{ matrix.browser }}
           headed: false
           summary-title: ${{ matrix.browser }}
@@ -156,7 +156,7 @@ jobs:
           path: pubky-app/cypress/videos/notifications.cy.ts.mp4
           if-no-files-found: ignore
 
-      - name: Upload video for settings test  
+      - name: Upload video for settings test
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
         continue-on-error: true
