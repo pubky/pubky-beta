@@ -13,15 +13,6 @@ function LinkPreview({ url }: { url: string }) {
   const [previewData, setPreviewData] = useState<PreviewData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const getMainDomain = (url: string): string => {
-    try {
-      const urlObj = new URL(url);
-      return `https://${urlObj.hostname}`;
-    } catch {
-      return url;
-    }
-  };
-
   const decodeHtmlEntities = (text: string): string => {
     const textarea = document.createElement('textarea');
     textarea.innerHTML = text;
@@ -40,8 +31,7 @@ function LinkPreview({ url }: { url: string }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const mainDomain = getMainDomain(url);
-        const response = await fetch(`/api/preview?url=${encodeURIComponent(mainDomain)}`);
+        const response = await fetch(`/api/preview?url=${encodeURIComponent(url)}`);
         const data = await response.json();
 
         if (data.error) {
@@ -101,7 +91,7 @@ function LinkPreview({ url }: { url: string }) {
             </Typography.Body>
           ) : (
             <Typography.Body variant="small" className="break-words text-opacity-80 leading-5">
-              {getMainDomain(url).length > 60 ? getMainDomain(url).slice(0, 60) + '...' : getMainDomain(url)}
+              {url.length > 60 ? url.slice(0, 60) + '...' : url}
             </Typography.Body>
           )}
         </div>
