@@ -82,6 +82,12 @@ describe('settings', () => {
     cy.location('pathname').should('eq', '/logout');
     // sign back in with recovery phrase saved earlier
     cy.get('#sign-back-in-btn').should('be.visible').click();
+
+    cy.location('pathname').should('eq', '/sign-in');
+
+    // TODO: remove reload workaround for bug, https://github.com/pubky/pubky-app/issues/1593
+    cy.reload();
+
     cy.get('@recoveryPhrase').then((rp) => {
       const words = `${rp}`.split(' ');
       words.forEach((word, idx) => {
@@ -89,6 +95,7 @@ describe('settings', () => {
       });
     });
     cy.get('#sign-in-recovery-phrase-btn').click();
+
 
     cy.location('pathname').should('eq', '/onboarding/register');
     cy.get('#message-alert').should('be.visible').should('contain', 'your profile is empty');
