@@ -143,7 +143,7 @@ describe('notifications', () => {
     checkLatestNotification([profile1.username, 'tagged your profile', profileTag]);
 
     // * check that toggling profile page tabs clears notification counter for new notification
-    cy.get('#profile-tab-posts').click().wait(500);
+    cy.get('#profile-tab-posts').click().wait(Cypress.env('ci') ? 1000 : 200);
     cy.get('#profile-tab-notifications').click();
     waitForNotificationDotToDisappear();
 

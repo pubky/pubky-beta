@@ -127,9 +127,9 @@ export const checkLatestNotification = (expectedContent: string[], profileToNavi
       .within(() => {
         // Wait for the profile link to be stable before clicking
         cy.get('a')
-          .children()
-          .first() // Click on the first child element instead of the parent 'a' link
           .should('have.text', profileToNavigateTo)
+          .find('div')
+          .first() // Click on the 'dev' child element instead of the parent 'a' link
           .should('be.visible')
           .click({ force: true });
       });
