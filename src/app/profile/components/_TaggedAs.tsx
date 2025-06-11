@@ -20,6 +20,7 @@ import { useAlertContext } from '@/contexts';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 import EmojiPicker from '@/components/EmojiPicker';
 import { searchTagsByPrefix } from '@/services/streamService';
+import { useSuggestedTags } from '@/hooks/useSuggestedTags';
 
 type TaggedAsProps = {
   creatorPubky?: string | undefined;
@@ -72,6 +73,16 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
     skipTaggers,
     limitTaggers
   );
+
+  const {
+    suggestedTags: suggestedTagsFromHook,
+    selectedTagIndex,
+    handleKeyDown,
+    handleTagClick
+  } = useSuggestedTags({
+    tagInput,
+    onTagSelect: (tag) => setTagInput(tag)
+  });
 
   useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
 
@@ -240,13 +251,18 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
     }
   };
 
-  const handleAddTag = async (tag: string) => {
+  const handleAddTagWithCheck = async (tag: string) => {
     if (!tag || !pubky) return;
 
     setLoadingTag(true);
     try {
-      await addProfileTag(tag);
-      setTagInput('');
+      if (selectedTagIndex > -1) {
+        const selectedTag = suggestedTagsFromHook[selectedTagIndex];
+        setTagInput(selectedTag);
+      } else {
+        await addProfileTag(tag);
+        setTagInput('');
+      }
     } catch (error) {
       console.error('Error adding tag:', error);
       addAlert('Failed to add tag', 'warning');
@@ -308,13 +324,14 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                       />
                     </div>
                   )}
-                  <div className="relative">
+                  <div className="relative" onKeyDown={handleKeyDown} tabIndex={0}>
                     <Input.Tag
                       value={tagInput}
                       onChange={setTagInput}
-                      onAddTag={handleAddTag}
+                      onAddTag={handleAddTagWithCheck}
                       onEmojiPickerClick={() => setShowEmojis(true)}
                       loading={loadingTag}
+                      className="w-fit"
                       variant="small"
                       autoComplete={false}
                     />
@@ -323,11 +340,10 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                         {suggestedTags.map((tag, index) => (
                           <div
                             key={index}
-                            onClick={() => {
-                              setTagInput(tag);
-                              setSuggestedTags([]);
-                            }}
-                            className="cursor-pointer hover:bg-white hover:bg-opacity-10 rounded px-4 py-2"
+                            onClick={() => handleTagClick(tag)}
+                            className={`cursor-pointer hover:bg-white hover:bg-opacity-10 rounded px-4 py-2 ${
+                              index === selectedTagIndex ? 'bg-white bg-opacity-10' : ''
+                            }`}
                           >
                             <Typography.Body variant="small" className="text-opacity-80 hover:text-opacity-100">
                               {tag}
@@ -524,13 +540,14 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                       />
                     </div>
                   )}
-                  <div className="relative">
+                  <div className="relative" onKeyDown={handleKeyDown} tabIndex={0}>
                     <Input.Tag
                       value={tagInput}
                       onChange={setTagInput}
-                      onAddTag={handleAddTag}
+                      onAddTag={handleAddTagWithCheck}
                       onEmojiPickerClick={() => setShowEmojis(true)}
                       loading={loadingTag}
+                      className="w-fit"
                       variant="small"
                       autoComplete={false}
                     />
@@ -539,11 +556,10 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                         {suggestedTags.map((tag, index) => (
                           <div
                             key={index}
-                            onClick={() => {
-                              setTagInput(tag);
-                              setSuggestedTags([]);
-                            }}
-                            className="cursor-pointer hover:bg-white hover:bg-opacity-10 rounded px-4 py-2"
+                            onClick={() => handleTagClick(tag)}
+                            className={`cursor-pointer hover:bg-white hover:bg-opacity-10 rounded px-4 py-2 ${
+                              index === selectedTagIndex ? 'bg-white bg-opacity-10' : ''
+                            }`}
                           >
                             <Typography.Body variant="small" className="text-opacity-80 hover:text-opacity-100">
                               {tag}

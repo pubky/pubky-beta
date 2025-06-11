@@ -4,7 +4,7 @@ import { usePubkyClientContext } from '@/contexts';
 import EmojiPicker from '@/components/EmojiPicker';
 import { Icon, Input, Typography } from '@social/ui-shared';
 import { useEffect, useState } from 'react';
-import { searchTagsByPrefix } from '@/services/streamService';
+import { useSuggestedTags } from '@/hooks/useSuggestedTags';
 
 interface InputTagProps {
   post: PostView;
@@ -25,33 +25,25 @@ export default function InputTag({ post, postType }: InputTagProps) {
     setAddTagInput
   } = useTagsLogic(post, postType);
   const { pubky } = usePubkyClientContext();
-  const [suggestedTags, setSuggestedTags] = useState<string[]>([]);
 
-  useEffect(() => {
-    if (!tagInput.trim()) {
-      setSuggestedTags([]);
-      return;
+  const {
+    suggestedTags,
+    selectedTagIndex,
+    handleKeyDown,
+    handleTagClick
+  } = useSuggestedTags({
+    tagInput,
+    onTagSelect: (tag) => setTagInput(tag)
+  });
+
+  const handleAddTagWithCheck = (tag: string) => {
+    if (selectedTagIndex > -1) {
+      const selectedTag = suggestedTags[selectedTagIndex];
+      setTagInput(selectedTag);
+    } else {
+      handleAddTag(tag);
     }
-
-    let isActive = true;
-    const timeoutId = setTimeout(async () => {
-      try {
-        const tags = await searchTagsByPrefix(tagInput.trim(), 0, 3);
-        if (isActive) {
-          setSuggestedTags(tags || []);
-        }
-      } catch (error) {
-        if (isActive) {
-          setSuggestedTags([]);
-        }
-      }
-    }, 500);
-
-    return () => {
-      isActive = false;
-      clearTimeout(timeoutId);
-    };
-  }, [tagInput]);
+  };
 
   return (
     <>
@@ -69,11 +61,11 @@ export default function InputTag({ post, postType }: InputTagProps) {
               />
             </div>
           )}
-          <div className="relative">
+          <div className="relative" onKeyDown={handleKeyDown} tabIndex={0}>
             <Input.Tag
               value={tagInput}
               onChange={setTagInput}
-              onAddTag={handleAddTag}
+              onAddTag={handleAddTagWithCheck}
               onEmojiPickerClick={() => setShowEmojis(true)}
               showCloseButton={true}
               onClose={() => setAddTagInput(false)}
@@ -88,11 +80,10 @@ export default function InputTag({ post, postType }: InputTagProps) {
                 {suggestedTags.map((tag, index) => (
                   <div
                     key={index}
-                    onClick={() => {
-                      setTagInput(tag);
-                      setSuggestedTags([]);
-                    }}
-                    className="cursor-pointer hover:bg-white hover:bg-opacity-10 rounded px-4 py-2"
+                    onClick={() => handleTagClick(tag)}
+                    className={`cursor-pointer hover:bg-white hover:bg-opacity-10 rounded px-4 py-2 ${
+                      index === selectedTagIndex ? 'bg-white bg-opacity-10' : ''
+                    }`}
                   >
                     <Typography.Body variant="small" className="text-opacity-80 hover:text-opacity-100">
                       {tag}

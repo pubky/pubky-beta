@@ -15,6 +15,7 @@ import { UserView } from '@/types/User';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 import EmojiPicker from '@/components/EmojiPicker';
 import { searchTagsByPrefix } from '@/services/streamService';
+import { useSuggestedTags } from '@/hooks/useSuggestedTags';
 
 interface ShowAllTagsProps {
   post: PostView;
@@ -64,6 +65,16 @@ export default function ShowAllTags({ post, postType, onTagClick }: ShowAllTagsP
     skipTaggers,
     TAGGER_LIMIT
   );
+
+  const {
+    suggestedTags: suggestedTagsFromHook,
+    selectedTagIndex,
+    handleKeyDown,
+    handleTagClick: handleSuggestedTagClick
+  } = useSuggestedTags({
+    tagInput,
+    onTagSelect: (tag) => setTagInput(tag)
+  });
 
   // Effects for tag management
   useEffect(() => {
@@ -221,18 +232,23 @@ export default function ShowAllTags({ post, postType, onTagClick }: ShowAllTagsP
     if (!tag.trim()) return;
     setLoadingTag(true);
     try {
-      const optimisticTag: PostTag = {
-        label: tag,
-        taggers_count: 1,
-        taggers: [pubky ?? ''],
-        relationship: true
-      };
+      if (selectedTagIndex > -1) {
+        const selectedTag = suggestedTagsFromHook[selectedTagIndex];
+        setTagInput(selectedTag);
+      } else {
+        const optimisticTag: PostTag = {
+          label: tag,
+          taggers_count: 1,
+          taggers: [pubky ?? ''],
+          relationship: true
+        };
 
-      setAllTags((prev) => [optimisticTag, ...prev]);
-      await handleAddTag(tag);
-      setTagInput('');
-      setSkip(TAG_LIMIT);
-      setHasMore(true);
+        setAllTags((prev) => [optimisticTag, ...prev]);
+        await handleAddTag(tag);
+        setTagInput('');
+        setSkip(TAG_LIMIT);
+        setHasMore(true);
+      }
     } catch (error) {
       setAllTags((prev) => prev.filter((t) => t.label !== tag));
       console.error('Error adding tag', error);
@@ -481,34 +497,35 @@ export default function ShowAllTags({ post, postType, onTagClick }: ShowAllTagsP
           />
         </div>
       )}
-      <Input.Tag
-        value={tagInput}
-        onChange={setTagInput}
-        onAddTag={handleAddTagInput}
-        onEmojiPickerClick={() => setShowEmojis(true)}
-        loading={loadingTag}
-        className="w-fit"
-        variant="small"
-        autoComplete={false}
-      />
-      {suggestedTags.length > 0 && (
-        <div className="absolute top-full left-0 mt-1 bg-[#05050A] border border-white border-opacity-20 rounded-lg z-20 w-[200px] max-h-[150px] overflow-y-auto scrollbar-thin scrollbar-webkit">
-          {suggestedTags.map((tag, index) => (
-            <div
-              key={index}
-              onClick={() => {
-                setTagInput(tag);
-                setSuggestedTags([]);
-              }}
-              className="cursor-pointer hover:bg-white hover:bg-opacity-10 rounded px-4 py-2"
-            >
-              <Typography.Body variant="small" className="text-opacity-80 hover:text-opacity-100">
-                {tag}
-              </Typography.Body>
-            </div>
-          ))}
-        </div>
-      )}
+      <div className="relative" onKeyDown={handleKeyDown} tabIndex={0}>
+        <Input.Tag
+          value={tagInput}
+          onChange={setTagInput}
+          onAddTag={handleAddTagInput}
+          onEmojiPickerClick={() => setShowEmojis(true)}
+          loading={loadingTag}
+          className="w-fit"
+          variant="small"
+          autoComplete={false}
+        />
+        {suggestedTags.length > 0 && (
+          <div className="absolute top-full left-0 mt-1 bg-[#05050A] border border-white border-opacity-20 rounded-lg z-20 w-[200px] max-h-[150px] overflow-y-auto scrollbar-thin scrollbar-webkit">
+            {suggestedTags.map((tag, index) => (
+              <div
+                key={index}
+                onClick={() => handleSuggestedTagClick(tag)}
+                className={`cursor-pointer hover:bg-white hover:bg-opacity-10 rounded px-4 py-2 ${
+                  index === selectedTagIndex ? 'bg-white bg-opacity-10' : ''
+                }`}
+              >
+                <Typography.Body variant="small" className="text-opacity-80 hover:text-opacity-100">
+                  {tag}
+                </Typography.Body>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 
