@@ -55,7 +55,20 @@ export default function Root({
 
   const handleTouchStart = (e: React.TouchEvent) => {
     if (fixed) return;
-    setStartY(e.touches[0].clientY);
+
+    const touchY = e.touches[0].clientY;
+    const sheet = document.getElementById('bottom-sheet-content');
+    if (!sheet) return;
+
+    const sheetRect = sheet.getBoundingClientRect();
+    const homeIndicatorHeight = 20; // Approximate height of home indicator area
+
+    // Only allow swipe down if touch started from home indicator area or outside the sheet
+    if (touchY <= sheetRect.top + homeIndicatorHeight) {
+      setStartY(touchY);
+    } else {
+      setStartY(null);
+    }
   };
 
   const handleTouchMove = (e: TouchEvent) => {
@@ -92,6 +105,7 @@ export default function Root({
       onTouchStart={handleTouchStart}
     >
       <div
+        id="bottom-sheet-content"
         className={twMerge(baseCSS, animateIn ? 'translate-y-none' : 'translate-y-full', rest.className)}
         onClick={(e) => e.stopPropagation()}
       >
