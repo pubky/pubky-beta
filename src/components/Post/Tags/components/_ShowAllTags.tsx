@@ -492,7 +492,7 @@ export default function ShowAllTags({ post, postType, onTagClick }: ShowAllTagsP
         autoComplete={false}
       />
       {suggestedTags.length > 0 && (
-        <div className="absolute top-full left-0 mt-1 bg-[#05050A] border border-white border-opacity-20 rounded-lg z-20 w-[200px] max-h-[150px] overflow-y-auto scrollbar-thin scrollbar-thumb-white scrollbar-thumb-opacity-20">
+        <div className="absolute top-full left-0 mt-1 bg-[#05050A] border border-white border-opacity-20 rounded-lg z-20 w-[200px] max-h-[150px] overflow-y-auto scrollbar-thin scrollbar-webkit">
           {suggestedTags.map((tag, index) => (
             <div
               key={index}
