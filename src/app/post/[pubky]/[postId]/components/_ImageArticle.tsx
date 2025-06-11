@@ -26,7 +26,7 @@ const ImageArticle = ({ uri, alt, width, height, className, style, onClick }: Im
     const fetchImageUrl = async () => {
       try {
         const fetchedFile = await getFile(uri);
-        setImageUrl(generateFileUrl(fetchedFile, fetchedFile.content_type !== 'image/gif' ? 'feed' : 'main'));
+        setImageUrl(generateFileUrl(fetchedFile, 'main'));
       } catch (error) {
         console.warn('Error Image Article:', error);
       }
