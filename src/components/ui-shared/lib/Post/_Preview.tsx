@@ -16,7 +16,15 @@ function LinkPreview({ url }: { url: string }) {
   const decodeHtmlEntities = (text: string): string => {
     const textarea = document.createElement('textarea');
     textarea.innerHTML = text;
-    return textarea.value;
+    const decoded = textarea.value;
+    // Decode both named and numeric HTML entities
+    return decoded
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&amp;/g, '&')
+      .replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec));
   };
 
   const isValidImage = (url: string): Promise<boolean> => {
