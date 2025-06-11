@@ -77,6 +77,11 @@ export interface InputTagProps {
    * ref of the input
    */
   ref?: any;
+  /**
+   * Whether to auto complete the input
+   * @default false
+   */
+  autoComplete?: boolean;
 }
 
 export const Tag = ({
@@ -96,7 +101,8 @@ export const Tag = ({
   className = '',
   inputClassName = '',
   autoFocus = false,
-  ref
+  ref,
+  autoComplete = false
 }: InputTagProps) => {
   // Container size classes
   const containerSizeClasses = variant === 'small' ? 'h-[32px] rounded-lg' : 'h-[70px] rounded-2xl';
@@ -136,6 +142,7 @@ export const Tag = ({
         onKeyDown={handleKeyDown}
         disabled={disabled || loading}
         autoFocus={autoFocus}
+        autoComplete={autoComplete ? 'on' : 'off'}
       />
       <div className={`flex ${variant === 'small' ? 'gap-1 px-2' : 'pr-4'} h-full items-center`}>
         {showAddButton && value && (

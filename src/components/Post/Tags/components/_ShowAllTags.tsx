@@ -14,6 +14,7 @@ import { getUserProfile } from '@/services/userService';
 import { UserView } from '@/types/User';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 import EmojiPicker from '@/components/EmojiPicker';
+import { searchTagsByPrefix } from '@/services/streamService';
 
 interface ShowAllTagsProps {
   post: PostView;
@@ -32,6 +33,7 @@ export default function ShowAllTags({ post, postType, onTagClick }: ShowAllTagsP
   const [tagInput, setTagInput] = useState('');
   const [showEmojis, setShowEmojis] = useState(false);
   const [loadingTag, setLoadingTag] = useState(false);
+  const [suggestedTags, setSuggestedTags] = useState<string[]>([]);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
 
@@ -187,6 +189,32 @@ export default function ShowAllTags({ post, postType, onTagClick }: ShowAllTagsP
 
     fetchProfiles();
   }, [taggers, pubky]);
+
+  useEffect(() => {
+    if (!tagInput.trim()) {
+      setSuggestedTags([]);
+      return;
+    }
+
+    let isActive = true;
+    const timeoutId = setTimeout(async () => {
+      try {
+        const tags = await searchTagsByPrefix(tagInput.trim(), 0, 3);
+        if (isActive) {
+          setSuggestedTags(tags || []);
+        }
+      } catch (error) {
+        if (isActive) {
+          setSuggestedTags([]);
+        }
+      }
+    }, 500);
+
+    return () => {
+      isActive = false;
+      clearTimeout(timeoutId);
+    };
+  }, [tagInput]);
 
   // Event handlers
   const handleAddTagInput = async (tag: string) => {
@@ -461,7 +489,26 @@ export default function ShowAllTags({ post, postType, onTagClick }: ShowAllTagsP
         loading={loadingTag}
         className="w-fit"
         variant="small"
+        autoComplete={false}
       />
+      {suggestedTags.length > 0 && (
+        <div className="absolute top-full left-0 mt-1 bg-[#05050A] border border-white border-opacity-20 rounded-lg z-20 w-[200px] max-h-[150px] overflow-y-auto scrollbar-thin scrollbar-thumb-white scrollbar-thumb-opacity-20">
+          {suggestedTags.map((tag, index) => (
+            <div
+              key={index}
+              onClick={() => {
+                setTagInput(tag);
+                setSuggestedTags([]);
+              }}
+              className="cursor-pointer hover:bg-white hover:bg-opacity-10 rounded px-4 py-2"
+            >
+              <Typography.Body variant="small" className="text-opacity-80 hover:text-opacity-100">
+                {tag}
+              </Typography.Body>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 
