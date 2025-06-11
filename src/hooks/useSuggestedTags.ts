@@ -45,9 +45,7 @@ export const useSuggestedTags = ({ tagInput, onTagSelect }: UseSuggestedTagsProp
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
-        setSelectedTagIndex((prev) => 
-          prev < suggestedTags.length - 1 ? prev + 1 : prev
-        );
+        setSelectedTagIndex((prev) => (prev < suggestedTags.length - 1 ? prev + 1 : prev));
         break;
       case 'ArrowUp':
         e.preventDefault();
@@ -84,4 +82,4 @@ export const useSuggestedTags = ({ tagInput, onTagSelect }: UseSuggestedTagsProp
     setSuggestedTags,
     setSelectedTagIndex
   };
-}; 
+};

@@ -26,12 +26,7 @@ export default function InputTag({ post, postType }: InputTagProps) {
   } = useTagsLogic(post, postType);
   const { pubky } = usePubkyClientContext();
 
-  const {
-    suggestedTags,
-    selectedTagIndex,
-    handleKeyDown,
-    handleTagClick
-  } = useSuggestedTags({
+  const { suggestedTags, selectedTagIndex, handleKeyDown, handleTagClick } = useSuggestedTags({
     tagInput,
     onTagSelect: (tag) => setTagInput(tag)
   });
