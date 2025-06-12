@@ -28,7 +28,7 @@ export const Primary = ({
     <div ref={refCard} {...rest} className={twMerge(baseCSS, background, borderRadius, rest.className)}>
       {(title || text) && (
         <div className={twMerge(`flex-col justify-start inline-flex`, text && 'gap-3')}>
-          <div className="flex gap-1">
+          <div className="flex gap-1 items-center">
             <Typography.Body className="tracking-normal" variant="large-bold">
               {title}
             </Typography.Body>
