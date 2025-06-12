@@ -32,4 +32,4 @@ export default function ViewportHandler() {
   }, [pathname]); // Re-run effect when pathname changes
 
   return null;
-} 
+}

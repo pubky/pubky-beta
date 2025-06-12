@@ -9,8 +9,7 @@ import {
   ModalProvider
 } from '@/contexts';
 
-import { Analytics, ProtectedRoutes, HeaderSEO, DynamicTitle, DynamicFavicon } from '@/components';
-import ViewportHandler from '@/components/ViewportHandler';
+import { Analytics, ProtectedRoutes, HeaderSEO, DynamicTitle, DynamicFavicon, ViewportHandler } from '@/components';
 
 export const metadata = {
   ...HeaderSEO.getSeoMetadata(),
