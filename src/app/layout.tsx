@@ -24,9 +24,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {HeaderSEO.getHeaderMetaTags()}
         {HeaderSEO.getPlausibleScript()}
       </head>
-      <body className="overflow-x-hidden max-w-full min-w-[420px]">
+      <body className="overflow-x-hidden max-w-full">
         <PubkyClientWrapper>
-        <ViewportHandler />
+          <ViewportHandler />
           <FilterWrapper>
             <AlertWrapper>
               <NotificationsWrapper>
