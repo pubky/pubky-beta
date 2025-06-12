@@ -25,6 +25,7 @@ import Analytics from './Analytics';
 import HeaderSEO from './HeaderSEO';
 import { DynamicTitle } from './DynamicTitle';
 import DynamicFavicon from './DynamicFavicon';
+import ViewportHandler from './ViewportHandler';
 
 export {
   Analytics,
@@ -53,5 +54,6 @@ export {
   ProtectedRoutes,
   RemindBackup,
   DynamicTitle,
-  DynamicFavicon
+  DynamicFavicon,
+  ViewportHandler
 };

@@ -26,7 +26,7 @@ const FooterMobile = ({ title }: FooterMobileProps) => {
 
   return (
     <div className={`flex justify-center lg:hidden ${isVisible ? 'opacity-100' : 'opacity-20'}`}>
-      <div className="w-full max-w-[380px] sm:max-w-[600px] md:max-w-[720px] py-6 bg-[linear-gradient(0deg,#05050A_51%,rgba(5,5,10,0)_100%)] flex gap-2 justify-between justify-center fixed bottom-0 z-40">
+      <div className="overflow-x-auto w-full max-w-[380px] sm:max-w-[600px] md:max-w-[720px] py-4 bg-[linear-gradient(0deg,#05050A_51%,rgba(5,5,10,0)_100%)] flex items-center justify-between fixed bottom-0 z-40 px-3">
         <Link href="/home" className={twMerge(buttonCSS, title === 'Home' && activeCSS)}>
           <Icon.House size="24" />
         </Link>
@@ -42,7 +42,7 @@ const FooterMobile = ({ title }: FooterMobileProps) => {
         <Link href="/settings" className={twMerge(buttonCSS, title === 'Settings' && activeCSS)}>
           <Icon.GearSix size="24" />
         </Link>
-        <Link href="/profile" className="w-[48px] relative">
+        <Link href="/profile" className="flex-shrink-0 relative">
           {unReadNotification !== 0 && (
             <PostUtil.Counter
               textCSS="tracking-tight text-black font-semibold text-[13px]"
@@ -51,7 +51,15 @@ const FooterMobile = ({ title }: FooterMobileProps) => {
               {unReadNotification > 21 ? '+21' : unReadNotification}
             </PostUtil.Counter>
           )}
-          <ImageByUri id={pubky} width={48} height={48} className={`rounded-full w-[48px] h-[48px]`} alt="user-pic" />
+          <div className="w-12 h-12 flex-shrink-0">
+            <ImageByUri
+              id={pubky}
+              width={48}
+              height={48}
+              className="rounded-full w-12 h-12 object-cover"
+              alt="user-pic"
+            />
+          </div>
         </Link>
       </div>
     </div>

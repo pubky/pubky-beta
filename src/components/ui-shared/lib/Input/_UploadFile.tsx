@@ -30,7 +30,9 @@ export const UploadFile = ({ error, required = false, fileName, accept, disabled
             }
           }}
         >
-          <Icon.File size="16" />
+          <div className="hidden sm:block">
+            <Icon.File size="16" />
+          </div>
           <Typography.Label id="import-select-file" className="flex gap-1 cursor-pointer normal-case">
             Select file
           </Typography.Label>
