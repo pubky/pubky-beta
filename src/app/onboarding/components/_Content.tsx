@@ -79,20 +79,20 @@ export default function Index() {
           </Button.Large>
           */}
           <Link href="/sign-in">
-            <Button.Large variant="secondary" className="w-[156px]">
+            <Button.Large variant="secondary" className="md:w-[156px]">
               Sign In
             </Button.Large>
           </Link>
         </div>
         <div className="fixed bottom-4">
           <SocialLinks
-            colorIcon="#000000"
+            colorIcon="#C8FF00"
             classNameIcon="opacity-100 hover:opacity-90"
             className="sm:hidden inline-flex"
           />
           <Typography.Body
             variant="small"
-            className="text-[13.5px] text-black lg:text-white lg:text-opacity-50 font-normal"
+            className="text-[13.5px] text-[#C8FF00] md:text-white md:text-opacity-50 font-normal"
           >
             Synonym Software Ltd. ©{currentYear}.
           </Typography.Body>
