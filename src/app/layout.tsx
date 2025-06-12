@@ -10,6 +10,7 @@ import {
 } from '@/contexts';
 
 import { Analytics, ProtectedRoutes, HeaderSEO, DynamicTitle, DynamicFavicon } from '@/components';
+import ViewportHandler from '@/components/ViewportHandler';
 
 export const metadata = {
   ...HeaderSEO.getSeoMetadata(),
@@ -25,6 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="overflow-x-hidden max-w-full min-w-[420px]">
         <PubkyClientWrapper>
+        <ViewportHandler />
           <FilterWrapper>
             <AlertWrapper>
               <NotificationsWrapper>
