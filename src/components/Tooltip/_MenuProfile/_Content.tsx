@@ -19,9 +19,9 @@ export default function ContentProfileMenu({ setShowProfileMenu, creatorPubky, n
       <ButtonTooltip.CopyUserPubky pk={creatorPubky} setShowMenu={setShowProfileMenu} />
       <ButtonTooltip.CopyLinkProfile creatorPubky={creatorPubky} />
       {pubky !== creatorPubky && <ButtonTooltip.Mute pk={creatorPubky} />}
-      {pubky !== creatorPubky && (
+      {/**pubky !== creatorPubky && (
         <ButtonTooltip.ReportProfile creatorPubky={creatorPubky} name={name} setShowMenu={setShowProfileMenu} />
-      )}
+      )*/}
     </>
   );
 }

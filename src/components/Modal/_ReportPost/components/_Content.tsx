@@ -15,7 +15,7 @@ interface ReportPostProps {
 
 export default function ContentReportPost({ setShowModal, post, setShowMenu }: ReportPostProps) {
   const { profile, pubky } = usePubkyClientContext();
-  const [selectedItem, setSelectedItem] = useState<string>('Privacy');
+  const [selectedItem, setSelectedItem] = useState<string>('Personal Info Leak');
   const [showInput, setShowInput] = useState(false);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -23,14 +23,14 @@ export default function ContentReportPost({ setShowModal, post, setShowMenu }: R
   const [error, setError] = useState(false);
 
   const items = [
-    { icon: <Icon.Lock size="24" />, title: 'Privacy' },
-    { icon: <Icon.SmileySad size="24" />, title: 'Hate or Threat' },
-    { icon: <Icon.Trash size="24" />, title: 'Spam or Scam' },
-    { icon: <Icon.ImageSquare size="24" />, title: 'Sensitive Content' },
-    { icon: <Icon.Copy size="24" />, title: 'Copyright Infringement' },
-    { icon: <Icon.User size="24" />, title: 'Impersonation' },
-    { icon: <Icon.Shield size="24" />, title: 'Child Safety' },
-    { icon: <Icon.WarningOctagon size="24" />, title: 'Suicide or Self-harm' }
+    { icon: <Icon.UserRectangle size="24" />, title: 'Personal Info Leak' },
+    { icon: <Icon.SmileySad size="24" />, title: 'Hate or Threatening Speech' },
+    { icon: <Icon.Hand size="24" />, title: 'Harassment or Targeted' },
+    { icon: <Icon.Pedestrian size="24" />, title: 'Child Sexual Abuse or Exploitation' },
+    { icon: <Icon.Megaphone size="24" />, title: 'Promotion of Terrorist' },
+    { icon: <Icon.ShieldWarning size="24" />, title: 'Graphic or Criminal Violence' },
+    { icon: <Icon.Handbag size="24" />, title: 'Illegal Sales or Criminal' },
+    { icon: <Icon.Fire size="24" />, title: 'Non-consensual or Criminal Sexual Content' }
   ];
 
   const handleSubmit = async () => {
