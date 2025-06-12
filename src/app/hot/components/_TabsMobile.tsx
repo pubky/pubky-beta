@@ -49,7 +49,7 @@ export default function TabsMobile({
 
   return (
     <div className="lg:hidden">
-      <div className="overflow-x-auto max-w-[380px] sm:max-w-[600px] md:max-w-[720px] flex w-full gap-4 justify-between px-5">
+      <div className="overflow-x-auto max-w-[380px] sm:max-w-[600px] md:max-w-[720px] flex w-full gap-4 justify-between">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
