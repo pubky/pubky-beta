@@ -26,7 +26,7 @@ export default function Index() {
   }, [pubky, isLoggedIn]);
 
   return (
-    <Content.Main>
+    <Content.Main className="overflow-hidden h-screen">
       <Header.Root className="bg-gradient-to-b from-transparent via-transparent backdrop-blur-[0px]">
         <Header.Logo link={logoLink} />
         <div className="flex gap-6 items-center">
@@ -45,7 +45,7 @@ export default function Index() {
           </Header.Action>
         </div>
       </Header.Root>
-      <Content.Grid className="relative z-20 xl:mt-14">
+      <Content.Grid className="relative z-20 xl:mt-14 h-[calc(100vh-80px)]">
         <Typography.Display className="text-[64px] leading-[64px] sm:text-7xl md:text-9xl md:leading-[128px] xl:text-[128px] xl:leading-[128px]">
           <span className="text-[#c8ff00]">Unlock</span> <br />
           the web.
