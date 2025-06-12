@@ -26,7 +26,7 @@ const FooterMobile = ({ title }: FooterMobileProps) => {
 
   return (
     <div className={`flex justify-center lg:hidden ${isVisible ? 'opacity-100' : 'opacity-20'}`}>
-      <div className="w-full max-w-[380px] sm:max-w-[600px] md:max-w-[720px] py-6 bg-[linear-gradient(0deg,#05050A_51%,rgba(5,5,10,0)_100%)] flex gap-2 justify-between justify-center fixed bottom-0 z-40">
+      <div className="w-full max-w-[380px] sm:max-w-[600px] md:max-w-[720px] py-6 bg-[linear-gradient(0deg,#05050A_51%,rgba(5,5,10,0)_100%)] flex gap-2 justify-between justify-center fixed bottom-0 z-40 px-5">
         <Link href="/home" className={twMerge(buttonCSS, title === 'Home' && activeCSS)}>
           <Icon.House size="24" />
         </Link>

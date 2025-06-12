@@ -118,7 +118,7 @@ export default function FilterTabsMobile({
 
   return (
     <div className="w-full lg:hidden">
-      <div className="overflow-x-auto max-w-[380px] sm:max-w-[600px] md:max-w-[720px] flex w-full gap-3 justify-between">
+      <div className="overflow-x-auto max-w-[380px] sm:max-w-[600px] md:max-w-[720px] flex w-full gap-3 justify-between px-5">
         {tabs.map((tab) => {
           if (creatorPubky && creatorPubky !== pubky && (tab.key === 'notifications' || tab.key === 'bookmarks')) {
             return null;
