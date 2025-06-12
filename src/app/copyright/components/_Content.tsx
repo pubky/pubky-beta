@@ -195,11 +195,6 @@ export default function Content() {
             <br />
             87 avenida norte, calle El Mirador, edificio Torre Futura, oficina 06, nivel 11, colonia Escalón, del
             municipio de San Salvador, departamento de San Salvador. Código postal 01101, República de El Salvador.
-            <br />
-            Email:{' '}
-            <a href="mailto:copyright@synonym.to" className="cursor-pointer text-[#C8FF00]">
-              copyright@synonym.to
-            </a>
           </Typography.Body>
           <ContentUI.Divider className="my-3" />
           <div className="w-full p-4 bg-white/10 rounded-lg inline-flex flex-col gap-6">
