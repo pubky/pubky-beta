@@ -92,6 +92,11 @@ export function getSeoMetadata(params: SeoMetadataParams = {}) {
 }
 
 export function getPlausibleScript() {
+  // Don't load Plausible script when explicitly disabled
+  if (process.env.NEXT_ENABLE_PLAUSIBLE === 'false') {
+    return null;
+  }
+  
   return <script defer data-domain="pubky.app" src="https://synonym.to/js/script.js" />;
 }
 
