@@ -281,7 +281,7 @@ export default function Intro() {
       <Content.Grid className="z-10 relative flex flex-col justify-between min-w-screen min-h-[80vh]">
         {introContent[currentIntro].content}
         <div className="grow" />
-        <div className="absolute bottom-0 sm:bottom-5 xl:bottom-10 w-full flex justify-between items-center mx-auto mt-6">
+        <div className="bottom-0 sm:bottom-5 xl:bottom-10 w-full flex justify-between items-center mx-auto mt-6">
           <div className="flex gap-4">
             <Button.Large
               icon={<Icon.ArrowLeft />}
