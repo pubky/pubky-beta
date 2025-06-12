@@ -108,7 +108,7 @@ export default function Join() {
 
   return (
     <Card.Primary
-      title={isMobile ? 'Join with' : 'Use'}
+      title={isMobile ? 'Join\u00A0with' : 'Use'}
       text={`${isMobile ? 'Use' : 'Scan the QR with'} Pubky Ring or any other Pubky Core powered wallet.`}
       imageTitle={
         <Link className="ml-2" href="https://github.com/pubky" target="_blank">
