@@ -36,7 +36,7 @@ const modules = {
       [{ align: [] }],
       [{ list: 'ordered' }, { list: 'bullet' }],
       ['blockquote', 'code-block'],
-      ['link', 'image'],
+      ['link'],
       ['emoji']
     ],
     handlers: {
@@ -75,8 +75,7 @@ const formats = [
   'list',
   'blockquote',
   'code-block',
-  'link',
-  'image'
+  'link'
 ];
 
 interface MarkdownEditorComponentProps {
