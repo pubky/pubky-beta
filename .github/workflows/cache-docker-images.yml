@@ -7,7 +7,7 @@ jobs:
   cache-docker:
     runs-on: ubuntu-latest
     env:
-      PUBKY_STACK_REF: 84e995038e71446b73e4b48901fd0be432112190
+      PUBKY_STACK_REF: 5ff570f356a1a2e3049e46f5df06a98c83cc9076
 
     steps:
       - name: Checkout pubky-stack

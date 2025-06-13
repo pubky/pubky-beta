@@ -80,8 +80,8 @@ describe('notifications', () => {
     cy.signOut(HasBackedUp.Yes);
 
     cy.signIn(backupDownloadFilePath(profile1.username));
-    // todo: remove wait - Franky needs this
-    waitForFeedToLoad();
+    // todo: remove wait for home page to load (cannot use waitForFeedToLoad if no posts exist yet)
+    cy.wait(Cypress.env('ci') ? 1000 : 200);
     // wait and reload if notification counter doesn't show
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
     // check notification counter on profile picture is 1
@@ -130,8 +130,8 @@ describe('notifications', () => {
     cy.signOut(HasBackedUp.Yes);
 
     cy.signIn(backupDownloadFilePath(profile2.username));
-    // todo: remove wait - Franky needs this
-    waitForFeedToLoad();
+    // todo: remove wait for home page to load (cannot use waitForFeedToLoad if no posts exist yet)
+    cy.wait(Cypress.env('ci') ? 1000 : 200);
     // wait and reload if notification counter doesn't show
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
     // check notification counter on profile picture is 1
@@ -167,8 +167,8 @@ describe('notifications', () => {
     cy.signOut(HasBackedUp.Yes);
 
     cy.signIn(backupDownloadFilePath(profile1.username));
-    // todo: remove wait - Franky needs this
-    waitForFeedToLoad();
+    // todo: remove wait for home page to load (cannot use waitForFeedToLoad if no posts exist yet)
+    cy.wait(Cypress.env('ci') ? 1000 : 200);
     // wait and reload if notification counter doesn't show
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
     cy.get('#header-notification-counter').should('have.text', '1');
@@ -196,8 +196,8 @@ describe('notifications', () => {
     cy.signOut(HasBackedUp.Yes);
 
     cy.signIn(backupDownloadFilePath(profile2.username));
-    // todo: remove wait - Franky needs this
-    waitForFeedToLoad();
+    // todo: remove wait for home page to load (cannot use waitForFeedToLoad if no posts exist yet)
+    cy.wait(Cypress.env('ci') ? 1000 : 200);
     // wait and reload if notification counter doesn't show
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
     // check notification counter on profile picture is 1
@@ -228,8 +228,8 @@ describe('notifications', () => {
     // * profile 1 checks for notification for being replied to
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(backupDownloadFilePath(profile1.username));
-    // todo: remove wait - Franky needs this
-    waitForFeedToLoad();
+    // todo: remove wait for home page to load (cannot use waitForFeedToLoad if no posts exist yet)
+    cy.wait(Cypress.env('ci') ? 1000 : 200);
     // wait and reload if notification counter doesn't show
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
     cy.get('#header-notification-counter').should('have.text', '1');
@@ -256,8 +256,8 @@ describe('notifications', () => {
     // * profile 1 checks for notification for being reposted
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(backupDownloadFilePath(profile1.username));
-    // todo: remove wait - Franky needs this
-    waitForFeedToLoad();
+    // todo: remove wait for home page to load (cannot use waitForFeedToLoad if no posts exist yet)
+    cy.wait(Cypress.env('ci') ? 1000 : 200);
     // wait and reload if notification counter doesn't show
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
     cy.get('#header-notification-counter').should('have.text', '1');
@@ -291,8 +291,8 @@ describe('notifications', () => {
     // * profile 2 checks for notification for post (1) being deleted
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(backupDownloadFilePath(profile2.username));
-    // todo: remove wait - Franky needs this
-    waitForFeedToLoad();
+    // todo: remove wait for home page to load (cannot use waitForFeedToLoad if no posts exist yet)
+    cy.wait(Cypress.env('ci') ? 1000 : 200);
     // wait and reload if notification counter doesn't show
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
     cy.get('#header-notification-counter').should('have.text', '1');
@@ -327,8 +327,8 @@ describe('notifications', () => {
     // * profile 2 checks for notification for post being deleted
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(backupDownloadFilePath(profile2.username));
-    // todo: remove wait - Franky needs this
-    waitForFeedToLoad();
+    // todo: remove wait for home page to load (cannot use waitForFeedToLoad if no posts exist yet)
+    cy.wait(Cypress.env('ci') ? 1000 : 200);
     // wait and reload if notification counter doesn't show
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
     cy.get('#header-notification-counter').should('have.text', '1');
@@ -362,8 +362,8 @@ describe('notifications', () => {
     // * profile 2 checks for notification for post (1) being edited
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(backupDownloadFilePath(profile2.username));
-    // todo: remove wait - Franky needs this
-    waitForFeedToLoad();
+    // todo: remove wait for home page to load (cannot use waitForFeedToLoad if no posts exist yet)
+    cy.wait(Cypress.env('ci') ? 1000 : 200);
     // wait and reload if notification counter doesn't show
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
     cy.get('#header-notification-counter').should('have.text', '1');
@@ -399,8 +399,8 @@ describe('notifications', () => {
     // * profile 2 checks for notification for post (1) being edited
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(backupDownloadFilePath(profile2.username));
-    // todo: remove wait - Franky needs this
-    waitForFeedToLoad();
+    // todo: remove wait for home page to load (cannot use waitForFeedToLoad if no posts exist yet)
+    cy.wait(Cypress.env('ci') ? 1000 : 200);
     // wait and reload if notification counter doesn't show
     cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
     cy.get('#header-notification-counter').should('have.text', '1');

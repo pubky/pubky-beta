@@ -96,7 +96,7 @@ export function getPlausibleScript() {
   if (process.env.NEXT_ENABLE_PLAUSIBLE === 'false') {
     return null;
   }
-  
+
   return <script defer data-domain="pubky.app" src="https://synonym.to/js/script.js" />;
 }
 
