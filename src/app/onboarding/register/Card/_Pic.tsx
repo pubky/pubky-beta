@@ -24,7 +24,7 @@ export default function Pic({ image, setImage }: PicProps) {
   };
 
   const UploadPic = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const maxSizeInMB =5;
+    const maxSizeInMB = 5;
     const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
     const file = event.target.files?.[0];
 
