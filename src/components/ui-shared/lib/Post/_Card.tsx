@@ -46,7 +46,7 @@ export const MainCard = ({ background = '', borderRadius = '', children, isCenso
         {...rest}
         borderRadius={borderRadius}
         background={background}
-        className={twMerge(baseCSS, censored && 'blur-sm', rest.className)}
+        className={twMerge(baseCSS, censored && 'blur-lg', rest.className)}
       >
         {children}
       </Card.Primary>
