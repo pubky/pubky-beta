@@ -3,7 +3,6 @@ import { useTagsLogic } from './TagsUtils';
 import { usePubkyClientContext } from '@/contexts';
 import EmojiPicker from '@/components/EmojiPicker';
 import { Icon, Input, Typography } from '@social/ui-shared';
-import { useEffect, useState } from 'react';
 import { useSuggestedTags } from '@/hooks/useSuggestedTags';
 
 interface InputTagProps {

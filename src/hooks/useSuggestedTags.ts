@@ -1,4 +1,4 @@
-import { useState, useEffect, KeyboardEvent } from 'react';
+import { useState, useEffect, KeyboardEvent, useRef } from 'react';
 import { searchTagsByPrefix } from '@/services/streamService';
 
 interface UseSuggestedTagsProps {
@@ -9,9 +9,24 @@ interface UseSuggestedTagsProps {
 export const useSuggestedTags = ({ tagInput, onTagSelect }: UseSuggestedTagsProps) => {
   const [suggestedTags, setSuggestedTags] = useState<string[]>([]);
   const [selectedTagIndex, setSelectedTagIndex] = useState<number>(-1);
+  const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [searchLocked, setSearchLocked] = useState<boolean>(false);
+  const lastSelectedTag = useRef<string>('');
 
   useEffect(() => {
-    if (!tagInput.trim()) {
+    // Unlock search if input changes from last selected tag
+    if (searchLocked && tagInput !== lastSelectedTag.current) {
+      setSearchLocked(false);
+    }
+  }, [tagInput, searchLocked]);
+
+  useEffect(() => {
+    if (searchLocked) {
+      setSuggestedTags([]);
+      setSelectedTagIndex(-1);
+      return;
+    }
+    if (!tagInput.trim() || isSearching) {
       setSuggestedTags([]);
       setSelectedTagIndex(-1);
       return;
@@ -31,13 +46,13 @@ export const useSuggestedTags = ({ tagInput, onTagSelect }: UseSuggestedTagsProp
           setSelectedTagIndex(-1);
         }
       }
-    }, 500);
+    }, 1000);
 
     return () => {
       isActive = false;
       clearTimeout(timeoutId);
     };
-  }, [tagInput]);
+  }, [tagInput, isSearching, searchLocked]);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (suggestedTags.length === 0) return;
@@ -56,9 +71,13 @@ export const useSuggestedTags = ({ tagInput, onTagSelect }: UseSuggestedTagsProp
           e.preventDefault();
           e.stopPropagation();
           const selectedTag = suggestedTags[selectedTagIndex];
+          setIsSearching(true);
+          setSearchLocked(true);
+          lastSelectedTag.current = selectedTag;
           onTagSelect?.(selectedTag);
           setSuggestedTags([]);
           setSelectedTagIndex(-1);
+          setTimeout(() => setIsSearching(false), 100);
         }
         break;
       case 'Escape':
@@ -69,9 +88,13 @@ export const useSuggestedTags = ({ tagInput, onTagSelect }: UseSuggestedTagsProp
   };
 
   const handleTagClick = (tag: string) => {
+    setIsSearching(true);
+    setSearchLocked(true);
+    lastSelectedTag.current = tag;
     onTagSelect?.(tag);
     setSuggestedTags([]);
     setSelectedTagIndex(-1);
+    setTimeout(() => setIsSearching(false), 100);
   };
 
   return {
