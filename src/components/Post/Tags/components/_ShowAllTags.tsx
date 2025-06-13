@@ -318,7 +318,7 @@ export default function ShowAllTags({ post, postType, onTagClick }: ShowAllTagsP
             </div>
           </PostUtil.Tag>
         )}
-        <Link href={`/search?tags=${tagObj?.label}`}>
+        <Link href={pubky ? `/search?tags=${tagObj?.label}` : ''}>
           <Button.Action
             variant="custom"
             size="small"
@@ -329,8 +329,12 @@ export default function ShowAllTags({ post, postType, onTagClick }: ShowAllTagsP
         <div
           className="cursor-pointer flex items-center"
           onClick={() => {
-            setSelectedTag(tagObj);
-            onTagClick?.(tagObj);
+            if (pubky) {
+              setSelectedTag(tagObj);
+              onTagClick?.(tagObj);
+            } else {
+              openModal('join');
+            }
           }}
         >
           {displayedImages.slice(0, 4).map((image, imageIndex) => (
@@ -456,8 +460,12 @@ export default function ShowAllTags({ post, postType, onTagClick }: ShowAllTagsP
       <Input.Tag
         value={tagInput}
         onChange={setTagInput}
+        onClick={(event) => {
+          event.stopPropagation();
+          pubky ? undefined : openModal('join');
+        }}
         onAddTag={handleAddTagInput}
-        onEmojiPickerClick={() => setShowEmojis(true)}
+        onEmojiPickerClick={pubky ? () => setShowEmojis(true) : () => openModal('join')}
         loading={loadingTag}
         className="w-fit"
         variant="small"
