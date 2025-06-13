@@ -49,13 +49,18 @@ export default function MainPostContent({
       )}
       <PostUI.MainCard
         postId={post?.details?.id}
-        isCensored={isCensored}
         className={twMerge(line && 'ml-6', largeView && 'p-12 inline-flex flex-row gap-6 xl:gap-12', restClassName)}
       >
         <div className="w-full flex-col justify-between inline-flex">
           <div>
             <Header post={post} largeView={largeView} repostView={repostView} />
-            <Content replyView={replyView} largeView={largeView} post={post} fullContent={fullContent} />
+            <Content
+              isCensored={isCensored}
+              replyView={replyView}
+              largeView={largeView}
+              post={post}
+              fullContent={fullContent}
+            />
           </div>
           <div>
             <div className={`flex flex-col md:flex-row ${largeView ? '' : 'justify-between'}`}>
