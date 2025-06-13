@@ -29,7 +29,6 @@ import sanitizeUrlsArticle from './lib/Helper/sanitizeUrlsArticle';
 import { resizeImageFile } from './lib/Helper/resizeImageFile';
 import { censoredTags } from './lib/Helper/Moderation/censoredTags';
 import isPostCensored from './lib/Helper/Moderation/isPostCensored';
-import isTagCensored from './lib/Helper/Moderation/isTagCensored';
 import isProfileCensored from './lib/Helper/Moderation/isProfileCensored';
 export const Utils = {
   base64ToUint8Array,
@@ -43,7 +42,6 @@ export const Utils = {
   isValidContent,
   isPostCensored,
   isProfileCensored,
-  isTagCensored,
   generateRandomColor,
   hexToRgba,
   minifyContent,
