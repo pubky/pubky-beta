@@ -40,7 +40,8 @@ const ImageByUri = ({
   let objectUrl: string | null = null;
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [isUnblurred, setIsUnblurred] = useState(false);
-  const censored = !isUnblurred && isCensored;
+  const blurCensored = Utils.storage.get('blurCensored') as boolean;
+  const censored = !isUnblurred && isCensored && blurCensored;
 
   useEffect(() => {
     if (id && isCensored) {
@@ -134,7 +135,7 @@ const ImageByUri = ({
         alt={alt}
         width={width}
         height={height}
-        className={`${className} ${censored ? 'blur-sm' : ''}`}
+        className={`${className} ${censored ? 'blur-lg' : ''}`}
         style={style}
         onClick={onClick}
       />

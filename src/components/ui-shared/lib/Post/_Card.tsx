@@ -19,7 +19,8 @@ const UNBLURRED_POSTS_KEY = 'unblurred_posts';
 
 export const MainCard = ({ background = '', borderRadius = '', children, isCensored, postId, ...rest }: CardProps) => {
   const [isUnblurred, setIsUnblurred] = useState(false);
-  const censored = !isUnblurred && isCensored;
+  const blurCensored = Utils.storage.get('blurCensored') as boolean;
+  const censored = !isUnblurred && isCensored && blurCensored;
   const baseCSS = `relative w-full p-6 shadow bg-white bg-opacity-10 rounded-lg flex-col justify-between inline-flex`;
 
   useEffect(() => {

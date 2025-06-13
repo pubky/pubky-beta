@@ -81,9 +81,10 @@ const NormalPost = ({ data }) => {
 
 const LongPost = ({ data, user }) => {
   const [isUnblurred, setIsUnblurred] = useState(false);
+  const blurCensored = Utils.storage.get('blurCensored') as boolean;
   const content = JSON.parse(data?.details?.content);
   const isCensored = Utils.isPostCensored(data);
-  const censored = !isUnblurred && isCensored;
+  const censored = !isUnblurred && isCensored && blurCensored;
 
   useEffect(() => {
     if (data?.details?.id && isCensored) {
@@ -105,7 +106,7 @@ const LongPost = ({ data, user }) => {
 
   return (
     <div className="w-full relative">
-      <div className={`${censored && 'blur-sm'} flex flex-col lg:flex-row gap-6`}>
+      <div className={`${censored && 'blur-lg'} flex flex-col lg:flex-row gap-6`}>
         <div className="w-auto lg:w-[1200px] flex flex-col gap-4">
           <Typography.Display className="sm:leading-[64px] break-words">{content.title}</Typography.Display>
           <div className="flex w-full gap-4 justify-between items-center">
