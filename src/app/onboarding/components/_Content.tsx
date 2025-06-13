@@ -25,8 +25,17 @@ export default function Index() {
     fetchData();
   }, [pubky, isLoggedIn]);
 
+  useEffect(() => {
+    // Disable vertical scroll on body
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, []);
+
   return (
-    <Content.Main className="overflow-hidden h-screen">
+    <Content.Main className="overflow-hidden overflow-y-hidden h-screen">
       <Header.Root className="bg-gradient-to-b from-transparent via-transparent backdrop-blur-[0px]">
         <Header.Logo link={logoLink} />
         <div className="flex gap-6 items-center">
