@@ -88,7 +88,7 @@ export default function InputArea({
     setIsDragging(false);
 
     const files = event.dataTransfer.files;
-    const maxSizeInMB = 20;
+    const maxSizeInMB = 5;
     const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
 
     if (files) {
@@ -109,7 +109,7 @@ export default function InputArea({
         }
 
         if (file.size > maxSizeInBytes) {
-          addAlert('The maximum allowed size is 20 MB.', 'warning');
+          addAlert('The maximum allowed size is 5 MB.', 'warning');
           return false;
         }
 

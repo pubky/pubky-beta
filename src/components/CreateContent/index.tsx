@@ -205,7 +205,7 @@ export default function CreateContent({
 
   const handlePaste = (event: ClipboardEvent) => {
     const items = event.clipboardData?.items;
-    const maxSizeInMB = 20;
+    const maxSizeInMB = 5;
     const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
 
     if (items) {
@@ -227,7 +227,7 @@ export default function CreateContent({
             }
 
             if (file.size > maxSizeInBytes) {
-              addAlert('The maximum allowed size is 20 MB', 'warning');
+              addAlert('The maximum allowed size is 5 MB', 'warning');
               continue;
             }
 

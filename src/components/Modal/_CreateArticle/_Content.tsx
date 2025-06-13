@@ -186,7 +186,7 @@ export default function ContentCreateArticle({
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    const maxSizeInMB = 20;
+    const maxSizeInMB = 5;
     const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
 
     if (file) {
@@ -205,7 +205,7 @@ export default function ContentCreateArticle({
       }
 
       if (file.size > maxSizeInBytes) {
-        setErrorFile('The maximum allowed size is 20 MB');
+        setErrorFile('The maximum allowed size is 5 MB');
         return;
       }
       setSelectedFile([file]);
@@ -249,7 +249,7 @@ export default function ContentCreateArticle({
     setIsDragging(false);
 
     const files = event.dataTransfer.files;
-    const maxSizeInMB = 20;
+    const maxSizeInMB = 5;
     const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
 
     if (files) {
@@ -268,7 +268,7 @@ export default function ContentCreateArticle({
           return false;
         }
         if (file.size > maxSizeInBytes) {
-          addAlert('The maximum allowed size is 20 MB', 'warning');
+          addAlert('The maximum allowed size is 5 MB', 'warning');
           return false;
         }
         return true;
