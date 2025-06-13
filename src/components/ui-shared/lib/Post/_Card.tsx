@@ -46,13 +46,13 @@ export const MainCard = ({ background = '', borderRadius = '', children, isCenso
         {...rest}
         borderRadius={borderRadius}
         background={background}
-        className={twMerge(baseCSS, censored && 'blur-sm', rest.className)}
+        className={twMerge(baseCSS, censored && 'blur-lg', rest.className)}
       >
         {children}
       </Card.Primary>
       {censored && (
         <div
-          className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer opacity-50 hover:opacity-100 transition-opacity duration-300 z-10 rounded-lg"
+          className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer opacity-50 hover:opacity-100 transition-opacity duration-300 rounded-lg"
           onClick={handleUnblur}
         >
           <div className="flex flex-col items-center justify-center gap-2">
