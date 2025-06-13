@@ -56,7 +56,7 @@ export default function RemindBackup() {
 
   return (
     <div
-      className={`max-w-[380px] sm:max-w-[600px] md:max-w-[720px] lg:max-w-[900px] xl:max-w-[1200px] w-full m-auto px-5`}
+      className={`max-w-[380px] sm:max-w-[600px] md:max-w-[720px] lg:max-w-[900px] xl:max-w-[1200px] w-full m-auto px-2`}
     >
       {disposableAccount ? (
         <div
