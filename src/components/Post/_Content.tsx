@@ -23,6 +23,7 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
   repostView?: boolean;
   replyView?: boolean;
+  isCensored?: boolean;
 }
 
 export default function Content({
@@ -31,7 +32,8 @@ export default function Content({
   largeView = false,
   children,
   repostView,
-  replyView
+  replyView,
+  isCensored
 }: PostProps) {
   const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
   const BASE_URL = `${NEXT_PUBLIC_NEXUS}/static/files`;
@@ -44,6 +46,27 @@ export default function Content({
   const [spotifyUrl, setSpotifyUrl] = useState('');
   const [fileContents, setFileContents] = useState<FileView[]>([]);
   const [loading, setLoading] = useState(true);
+  const blurCensored = Utils.storage.get('blurCensored') as boolean | undefined;
+  const [isUnblurred, setIsUnblurred] = useState(false);
+  const censored = !isUnblurred && isCensored && (blurCensored === false ? false : true);
+
+  useEffect(() => {
+    if (post?.details?.uri && isCensored) {
+      const unblurredPosts = (Utils.storage.get('unblurred_posts') as string[]) || [];
+      setIsUnblurred(unblurredPosts.includes(post.details.uri));
+    }
+  }, [post?.details?.uri, isCensored]);
+
+  const handleUnblur = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+    if (post?.details?.uri) {
+      const unblurredPosts = (Utils.storage.get('unblurred_posts') as string[]) || [];
+      if (!unblurredPosts.includes(post.details.uri)) {
+        Utils.storage.set('unblurred_posts', [...unblurredPosts, post.details.uri]);
+      }
+    }
+    setIsUnblurred(true);
+  };
 
   const cleanText = (text: string) => {
     return text?.replace(/\n{3,}/g, '\n\n');
@@ -208,8 +231,11 @@ export default function Content({
   const showMore = !fullContent && textToMinified !== minifiedContent;
 
   return (
-    <div className="w-full">
-      <div id="post-content-text" className={`text-white break-words ${largeView && 'text-2xl'}`}>
+    <div className="w-full relative">
+      <div
+        id="post-content-text"
+        className={`text-white break-words ${largeView && 'text-2xl'} ${censored && 'blur-lg'}`}
+      >
         {(() => {
           try {
             if (
@@ -473,6 +499,19 @@ export default function Content({
           <div onClick={(event) => event.stopPropagation()}>{children}</div>
         </div>
       </div>
+      {censored && (
+        <div
+          className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer opacity-50 hover:opacity-100 transition-opacity duration-300 rounded-lg"
+          onClick={handleUnblur}
+        >
+          <div className="flex flex-col items-center justify-center gap-2">
+            <Icon.EyeSlash size="32px" color="white" />
+            <Typography.Body variant="small" className="text-center text-white">
+              This post may contain sexually explicit content
+            </Typography.Body>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

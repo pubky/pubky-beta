@@ -84,7 +84,7 @@ const LongPost = ({ data, user }) => {
   const blurCensored = Utils.storage.get('blurCensored') as boolean;
   const content = JSON.parse(data?.details?.content);
   const isCensored = Utils.isPostCensored(data);
-  const censored = !isUnblurred && isCensored && blurCensored;
+  const censored = !isUnblurred && isCensored && (blurCensored === false ? false : true);
 
   useEffect(() => {
     if (data?.details?.id && isCensored) {
@@ -105,9 +105,9 @@ const LongPost = ({ data, user }) => {
   };
 
   return (
-    <div className="w-full relative">
-      <div className={`${censored && 'blur-lg'} flex flex-col lg:flex-row gap-6`}>
-        <div className="w-auto lg:w-[1200px] flex flex-col gap-4">
+    <div className="w-full">
+      <div className="flex flex-col lg:flex-row gap-6 relative">
+        <div className={`${censored && 'blur-lg'} w-auto lg:w-[1200px] flex flex-col gap-4`}>
           <Typography.Display className="sm:leading-[64px] break-words">{content.title}</Typography.Display>
           <div className="flex w-full gap-4 justify-between items-center">
             <div className="justify-start gap-3 flex items-center mt-4 mb-2">
@@ -153,21 +153,21 @@ const LongPost = ({ data, user }) => {
             }}
           />
         </div>
+        {censored && (
+          <div
+            className="absolute top-4 left-0 right-0 lg:right-auto lg:left-[100px] xl:left-[250px] flex flex-col items-center justify-center cursor-pointer opacity-50 hover:opacity-100 transition-opacity duration-300 z-10 rounded-lg"
+            onClick={handleUnblur}
+          >
+            <div className="flex flex-col items-center justify-center gap-2">
+              <Icon.EyeSlash size="32px" color="white" />
+              <Typography.Body variant="small" className="text-center text-white">
+                This article may contain sexually explicit content
+              </Typography.Body>
+            </div>
+          </div>
+        )}
         <Tags.LargeView post={data} postType="single" articleView />
       </div>
-      {censored && (
-        <div
-          className="absolute top-4 left-0 right-0 flex flex-col items-center justify-center cursor-pointer opacity-50 hover:opacity-100 transition-opacity duration-300 z-10 rounded-lg"
-          onClick={handleUnblur}
-        >
-          <div className="flex flex-col items-center justify-center gap-2">
-            <Icon.EyeSlash size="32px" color="white" />
-            <Typography.Body variant="small" className="text-center text-white">
-              This article may contain sexually explicit content
-            </Typography.Body>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
