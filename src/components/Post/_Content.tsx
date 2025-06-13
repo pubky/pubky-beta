@@ -46,9 +46,9 @@ export default function Content({
   const [spotifyUrl, setSpotifyUrl] = useState('');
   const [fileContents, setFileContents] = useState<FileView[]>([]);
   const [loading, setLoading] = useState(true);
-  const blurCensored = Utils.storage.get('blurCensored') as boolean;
+  const blurCensored = Utils.storage.get('blurCensored') as boolean | undefined;
   const [isUnblurred, setIsUnblurred] = useState(false);
-  const censored = !isUnblurred && isCensored && blurCensored;
+  const censored = !isUnblurred && isCensored && (blurCensored === false ? false : true);
 
   useEffect(() => {
     if (post?.details?.uri && isCensored) {

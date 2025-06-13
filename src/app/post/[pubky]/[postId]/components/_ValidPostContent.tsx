@@ -84,7 +84,7 @@ const LongPost = ({ data, user }) => {
   const blurCensored = Utils.storage.get('blurCensored') as boolean;
   const content = JSON.parse(data?.details?.content);
   const isCensored = Utils.isPostCensored(data);
-  const censored = !isUnblurred && isCensored && blurCensored;
+  const censored = !isUnblurred && isCensored && (blurCensored === false ? false : true);
 
   useEffect(() => {
     if (data?.details?.id && isCensored) {

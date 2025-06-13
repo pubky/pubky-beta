@@ -41,7 +41,7 @@ const ImageByUri = ({
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [isUnblurred, setIsUnblurred] = useState(false);
   const blurCensored = Utils.storage.get('blurCensored') as boolean;
-  const censored = !isUnblurred && isCensored && blurCensored;
+  const censored = !isUnblurred && isCensored && (blurCensored === false ? false : true);
 
   useEffect(() => {
     if (id && isCensored) {
