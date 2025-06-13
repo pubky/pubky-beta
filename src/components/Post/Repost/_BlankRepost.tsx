@@ -55,7 +55,6 @@ export default function Blank({
       )}
       <PostUI.MainCard
         postId={post?.details?.id}
-        isCensored={isCensoredPost}
         className={twMerge(
           line && 'ml-6',
           largeView && 'p-12 inline-flex flex-row gap-6 xl:gap-12',
@@ -66,7 +65,7 @@ export default function Blank({
         <div className="w-full flex-col justify-between inline-flex">
           <div>
             <Header post={post} largeView={largeView} />
-            <Content largeView={largeView} post={post} fullContent={fullContent} />
+            <Content isCensored={isCensoredPost} largeView={largeView} post={post} fullContent={fullContent} />
           </div>
           <Post
             isCensored={isCensoredRepostedPost}
