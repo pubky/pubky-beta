@@ -14,6 +14,10 @@ export interface InputTagProps {
    */
   onChange: (value: string) => void;
   /**
+   * Called when the input is clicked
+   */
+  onClick?: (event: any) => void;
+  /**
    * Called when a tag should be added (on Enter key or add button click)
    */
   onAddTag: (tag: string) => void;
@@ -88,6 +92,7 @@ export const Tag = ({
   idPrefix,
   value,
   onChange,
+  onClick,
   onAddTag,
   showEmojiPicker = true,
   onEmojiPickerClick,
@@ -139,6 +144,7 @@ export const Tag = ({
         value={value}
         maxLength={maxLength}
         onChange={handleChange}
+        onClick={onClick}
         onKeyDown={handleKeyDown}
         disabled={disabled || loading}
         autoFocus={autoFocus}

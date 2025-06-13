@@ -5,6 +5,7 @@ import { UserTags, UserView } from '@/types/User';
 import { Button, Icon, PostUtil, SideCard, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface TaggedSectionProps {
   profileTags: UserTags[];
@@ -27,6 +28,7 @@ export default function TaggedSection({
 }: TaggedSectionProps) {
   const { pubky } = usePubkyClientContext();
   const { openModal } = useModal();
+  const router = useRouter();
   const { addProfileTag, deleteProfileTag, loadingTags } = useUtilsTag({
     profileTags,
     setProfileTags,
@@ -84,15 +86,19 @@ export default function TaggedSection({
               No tags yet
             </Typography.Body>
           )}
-          <Link href={creatorPubky ? `/profile/${creatorPubky}/tagged` : '/profile/tagged'}>
-            <Button.Medium
-              id="profile-tag-btn"
-              className="whitespace-nowrap mt-2 w-auto h-8 inline-flex items-center"
-              icon={<Icon.Tag size="16" />}
-            >
-              Tag {!creatorPubky || creatorPubky === pubky ? 'yourself' : Utils.minifyText(name, 9)}
-            </Button.Medium>
-          </Link>
+
+          <Button.Medium
+            id="profile-tag-btn"
+            className="whitespace-nowrap mt-2 w-auto h-8 inline-flex items-center"
+            icon={<Icon.Tag size="16" />}
+            onClick={() => {
+              pubky
+                ? router.push(creatorPubky ? `/profile/${creatorPubky}/tagged` : '/profile/tagged')
+                : openModal('join');
+            }}
+          >
+            Tag {!creatorPubky || creatorPubky === pubky ? 'yourself' : Utils.minifyText(name, 9)}
+          </Button.Medium>
         </div>
       )}
     </div>

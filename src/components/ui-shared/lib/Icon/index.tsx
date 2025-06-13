@@ -11,7 +11,7 @@ import {
   CaretUp,
   Next
 } from './_Arrow';
-import { Tag } from './_Commerce';
+import { Tag, Handbag } from './_Commerce';
 import {
   Pencil,
   Ellipse,
@@ -108,12 +108,25 @@ import {
   UsersRight,
   UserCircle,
   Smiley,
-  SmileySad
+  SmileySad,
+  Hand,
+  Pedestrian
 } from './_People';
-import { Asterisk, PaperPlaneRight, ChatCircleText, Broadcast, Envelope } from './_Communication';
+import { Asterisk, PaperPlaneRight, ChatCircleText, Broadcast, Envelope, Megaphone } from './_Communication';
 import { Activity } from './_Health';
 import { Fire } from './_Weather';
-import { Key, Lock, LockKey, LockKeyOpen, Warning, Shield, Question, Flag, WarningOctagon } from './_Security';
+import {
+  Key,
+  Lock,
+  LockKey,
+  LockKeyOpen,
+  Warning,
+  Shield,
+  Question,
+  Flag,
+  WarningOctagon,
+  ShieldWarning
+} from './_Security';
 import { Synonym, Blocktank, Bitkit, Bitcoin, Tether, PubkyIcon } from './_Tag';
 
 export const Icon = {
@@ -173,6 +186,8 @@ export const Icon = {
   House,
   Iphone,
   Italy,
+  Hand,
+  Handbag,
   HomeIndicator,
   ImageSquare,
   Key,
@@ -191,6 +206,7 @@ export const Icon = {
   MagnifyingGlass,
   MagnifyingGlassLeft,
   Medium,
+  Megaphone,
   Minus,
   MusicNotesSimple,
   Newspaper,
@@ -199,6 +215,7 @@ export const Icon = {
   Note,
   PaperPlaneRight,
   Pause,
+  Pedestrian,
   Pencil,
   PencilLine,
   Play,
@@ -213,6 +230,7 @@ export const Icon = {
   SignIn,
   SlidersHorizontal,
   Shield,
+  ShieldWarning,
   Synonym,
   Spain,
   Smiley,

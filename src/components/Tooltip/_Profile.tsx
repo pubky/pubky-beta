@@ -177,7 +177,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
               event.stopPropagation();
             }}
             href={
-              (followers?.length ?? 0) > 0 || (following?.length ?? 0) > 0
+              ((followers?.length ?? 0) > 0 || (following?.length ?? 0) > 0) && pubky
                 ? `/profile/${idAuthor ? `${idAuthor}/following` : '/following'}`
                 : ''
             }
@@ -200,7 +200,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
               event.stopPropagation();
             }}
             href={
-              (followers?.length ?? 0) > 0 || (following?.length ?? 0) > 0
+              ((followers?.length ?? 0) > 0 || (following?.length ?? 0) > 0) && pubky
                 ? `/profile/${idAuthor ? `${idAuthor}/followers` : '/followers'}`
                 : ''
             }

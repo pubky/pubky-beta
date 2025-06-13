@@ -18,6 +18,7 @@ import { DropDown } from './lib/DropDown';
 import { Post } from './lib/Post';
 import { Tooltip } from './lib/Tooltip';
 import { SideCard } from './lib/SideCard';
+import { Skeleton } from './lib/Skeleton';
 
 export {
   Alert,
@@ -37,5 +38,6 @@ export {
   DropDown,
   Post,
   Tooltip,
-  SideCard
+  SideCard,
+  Skeleton
 };

@@ -63,12 +63,18 @@ export default function Post({
         router.push(Utils.encodePostUri(repostedPost.details.uri));
       }}
     >
-      <PostUI.MainCard isCensored={isCensored} className={restClassName} postId={repostedPost?.details?.id}>
+      <PostUI.MainCard className={restClassName} postId={repostedPost?.details?.id}>
         <div>
           <Header post={repostedPost} largeView={largeView} repostView={repostView} />
           {line && <div className={twMerge(lineBaseCSS, lineStyle)} />}
           <div>
-            <Content post={repostedPost} fullContent={fullContent} largeView={largeView} repostView={repostView} />
+            <Content
+              isCensored={isCensored}
+              post={repostedPost}
+              fullContent={fullContent}
+              largeView={largeView}
+              repostView={repostView}
+            />
           </div>
 
           <div className={`flex flex-col md:flex-row ${largeView ? 'gap-2' : 'justify-between'}`}>

@@ -1,1 +1,1 @@
-export const censoredTags = ['adult_nu_sex_act'];
+export const censoredTags = ['nudity'];

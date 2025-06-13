@@ -7,7 +7,7 @@ import { GitHub } from '@/components/ui-shared/lib/Preview/Github';
 import { useEffect, useState } from 'react';
 import { Tweet } from 'react-tweet';
 import Parsing from '../Content/_Parsing';
-import { Button, Icon, Typography } from '@social/ui-shared';
+import { Button, Icon, Skeleton, Typography } from '@social/ui-shared';
 import { FileView, PostView } from '@/types/Post';
 import { getFile } from '@/services/fileService';
 import { Spotify } from 'react-spotify-embed';
@@ -23,6 +23,7 @@ interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
   repostView?: boolean;
   replyView?: boolean;
+  isCensored?: boolean;
 }
 
 export default function Content({
@@ -31,7 +32,8 @@ export default function Content({
   largeView = false,
   children,
   repostView,
-  replyView
+  replyView,
+  isCensored
 }: PostProps) {
   const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
   const BASE_URL = `${NEXT_PUBLIC_NEXUS}/static/files`;
@@ -44,6 +46,27 @@ export default function Content({
   const [spotifyUrl, setSpotifyUrl] = useState('');
   const [fileContents, setFileContents] = useState<FileView[]>([]);
   const [loading, setLoading] = useState(true);
+  const blurCensored = Utils.storage.get('blurCensored') as boolean | undefined;
+  const [isUnblurred, setIsUnblurred] = useState(false);
+  const censored = !isUnblurred && isCensored && (blurCensored === false ? false : true);
+
+  useEffect(() => {
+    if (post?.details?.uri && isCensored) {
+      const unblurredPosts = (Utils.storage.get('unblurred_posts') as string[]) || [];
+      setIsUnblurred(unblurredPosts.includes(post.details.uri));
+    }
+  }, [post?.details?.uri, isCensored]);
+
+  const handleUnblur = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+    if (post?.details?.uri) {
+      const unblurredPosts = (Utils.storage.get('unblurred_posts') as string[]) || [];
+      if (!unblurredPosts.includes(post.details.uri)) {
+        Utils.storage.set('unblurred_posts', [...unblurredPosts, post.details.uri]);
+      }
+    }
+    setIsUnblurred(true);
+  };
 
   const cleanText = (text: string) => {
     return text?.replace(/\n{3,}/g, '\n\n');
@@ -207,11 +230,12 @@ export default function Content({
 
   const showMore = !fullContent && textToMinified !== minifiedContent;
 
-  const renderSkeleton = () => <div className="animate-pulse bg-gray-700 rounded-[10px] w-full h-[350px]" />;
-
   return (
-    <div className="w-full">
-      <div id="post-content-text" className={`text-white break-words ${largeView && 'text-2xl'}`}>
+    <div className="w-full relative">
+      <div
+        id="post-content-text"
+        className={`text-white break-words ${largeView && 'text-2xl'} ${censored && 'blur-lg'}`}
+      >
         {(() => {
           try {
             if (
@@ -237,25 +261,27 @@ export default function Content({
                   </div>
                   {fileContents.length > 0 && (
                     <div>
-                      {loading
-                        ? renderSkeleton()
-                        : fileContents.map((file, index) => {
-                            return (
-                              <div key={index} className="relative">
-                                {file.content_type === 'skeleton' ? (
-                                  renderSkeleton()
-                                ) : (
-                                  <img
-                                    src={generateFileUrl(file, file.content_type !== 'image/gif' ? 'feed' : 'main')}
-                                    alt={`Fetched file ${index}`}
-                                    width={360}
-                                    height={200}
-                                    className="w-full min-w-[200px] max-w-[360px] h-[104px] object-cover rounded-[8px] overflow-hidden"
-                                  />
-                                )}
-                              </div>
-                            );
-                          })}
+                      {loading ? (
+                        <Skeleton.File className="h-[250px]" />
+                      ) : (
+                        fileContents.map((file, index) => {
+                          return (
+                            <div key={index} className="relative">
+                              {file.content_type === 'skeleton' ? (
+                                <Skeleton.File className="h-[250px]" />
+                              ) : (
+                                <img
+                                  src={generateFileUrl(file, file.content_type !== 'image/gif' ? 'feed' : 'main')}
+                                  alt={`Fetched file ${index}`}
+                                  width={360}
+                                  height={200}
+                                  className="w-full min-w-[200px] max-w-[360px] h-[104px] object-cover rounded-[8px] overflow-hidden"
+                                />
+                              )}
+                            </div>
+                          );
+                        })
+                      )}
                     </div>
                   )}
                 </div>
@@ -341,12 +367,18 @@ export default function Content({
                 ) : (
                   <>
                     {fileContents.some(
-                      (file) => file?.content_type.startsWith('image') || file?.content_type.startsWith('video')
+                      (file) =>
+                        file?.content_type.startsWith('image') ||
+                        file?.content_type.startsWith('video') ||
+                        file?.content_type === 'skeleton'
                     ) && (
                       <div className="grid gap-1 overflow-hidden max-h-[544px]">
                         {(() => {
                           const mediaFiles = fileContents.filter(
-                            (file) => file?.content_type.startsWith('image') || file?.content_type.startsWith('video')
+                            (file) =>
+                              file?.content_type.startsWith('image') ||
+                              file?.content_type.startsWith('video') ||
+                              file?.content_type === 'skeleton'
                           );
 
                           let layoutClass = '';
@@ -378,7 +410,9 @@ export default function Content({
                                           : 'calc((544px - 4px) / 2)'
                                   }}
                                 >
-                                  {file.content_type.startsWith('image') ? (
+                                  {file.content_type === 'skeleton' ? (
+                                    <Skeleton.File className={mediaFiles.length === 1 ? 'h-[250px]' : 'h-full'} />
+                                  ) : file.content_type.startsWith('image') ? (
                                     <img
                                       src={generateFileUrl(file, file.content_type !== 'image/gif' ? 'feed' : 'main')}
                                       onClick={(event) => {
@@ -422,7 +456,7 @@ export default function Content({
                           return (
                             <div key={index}>
                               {isSkeleton ? (
-                                renderSkeleton()
+                                <></>
                               ) : isPDF ? (
                                 <div
                                   onClick={(event) => {
@@ -465,6 +499,19 @@ export default function Content({
           <div onClick={(event) => event.stopPropagation()}>{children}</div>
         </div>
       </div>
+      {censored && (
+        <div
+          className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer opacity-50 hover:opacity-100 transition-opacity duration-300 rounded-lg"
+          onClick={handleUnblur}
+        >
+          <div className="flex flex-col items-center justify-center gap-2">
+            <Icon.EyeSlash size="32px" color="white" />
+            <Typography.Body variant="small" className="text-center text-white">
+              This post may contain sexually explicit content
+            </Typography.Body>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

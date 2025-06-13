@@ -108,7 +108,7 @@ export default function SignIn() {
 
   return (
     <Card.Primary
-      title={isMobile ? 'Sign in with' : 'Use'}
+      title={isMobile ? 'Sign\u00A0in\u00A0with' : 'Use'}
       text={`${isMobile ? 'Use' : 'Scan the QR with'} Pubky Ring or any other Pubky Core powered wallet.`}
       imageTitle={
         <Link className="ml-2" href="https://github.com/pubky" target="_blank">

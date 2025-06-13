@@ -6,15 +6,23 @@ import { useEffect, useState } from 'react';
 
 export default function PrivacySafety() {
   const [isChecked, setIsChecked] = useState(true);
+  const [isBlurChecked, setIsBlurChecked] = useState(true);
   const defaultChecked = Utils.storage.get('checkLink');
+  const defaultBlurChecked = Utils.storage.get('blurCensored');
 
   useEffect(() => {
     if (defaultChecked !== null) setIsChecked(Boolean(defaultChecked));
-  }, [defaultChecked]);
+    if (defaultBlurChecked !== null) setIsBlurChecked(Boolean(defaultBlurChecked));
+  }, [defaultChecked, defaultBlurChecked]);
 
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
     Utils.storage.set('checkLink', !isChecked);
+  };
+
+  const handleBlurCheckboxChange = () => {
+    setIsBlurChecked(!isBlurChecked);
+    Utils.storage.set('blurCensored', !isBlurChecked);
   };
 
   return (
@@ -31,6 +39,10 @@ export default function PrivacySafety() {
           <div className="w-full h-8 justify-between items-center inline-flex">
             <Typography.Body variant="small-bold">Show confirmation before redirecting</Typography.Body>
             <Input.Switch checked={isChecked} onChange={handleCheckboxChange} />
+          </div>
+          <div className="w-full h-8 justify-between items-center inline-flex">
+            <Typography.Body variant="small-bold">Blur censored posts or profile pictures</Typography.Body>
+            <Input.Switch checked={isBlurChecked} onChange={handleBlurCheckboxChange} />
           </div>
           <div className="w-full h-8 justify-between items-center inline-flex">
             <Typography.Body variant="small-bold">Sign me out when inactive for 5 minutes</Typography.Body>

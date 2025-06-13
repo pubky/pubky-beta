@@ -9,7 +9,7 @@ import { SocialLinks } from '@/components';
 
 export default function Index() {
   const { pubky, isLoggedIn } = usePubkyClientContext();
-  const isMobile = useIsMobile();
+  const isMobile = useIsMobile(768);
   const currentYear = new Date().getFullYear();
   const [logoLink, setLogoLink] = useState('/onboarding');
 
@@ -25,8 +25,17 @@ export default function Index() {
     fetchData();
   }, [pubky, isLoggedIn]);
 
+  useEffect(() => {
+    // Disable vertical scroll on body
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, []);
+
   return (
-    <Content.Main>
+    <Content.Main className="overflow-hidden overflow-y-hidden h-screen">
       <Header.Root className="bg-gradient-to-b from-transparent via-transparent backdrop-blur-[0px]">
         <Header.Logo link={logoLink} />
         <div className="flex gap-6 items-center">
@@ -36,7 +45,7 @@ export default function Index() {
             className="hidden sm:inline-flex"
           />
           <Header.Action
-            className="lg:bg-black lg:bg-opacity-100 lg:hover:bg-opacity-90"
+            className="md:bg-black md:bg-opacity-100 md:hover:bg-opacity-90"
             icon={<Icon.SignIn size="16" />}
             link="/sign-in"
             id="onboarding-sign-in-btn"
@@ -45,8 +54,8 @@ export default function Index() {
           </Header.Action>
         </div>
       </Header.Root>
-      <Content.Grid className="relative z-20 xl:mt-14">
-        <Typography.Display className="text-5xl sm:text-7xl md:text-9xl md:leading-[128px] xl:text-[128px] xl:leading-[128px]">
+      <Content.Grid className="relative z-20 xl:mt-14 h-[calc(100vh-80px)]">
+        <Typography.Display className="text-[64px] leading-[64px] sm:text-7xl md:text-9xl md:leading-[128px] xl:text-[128px] xl:leading-[128px]">
           <span className="text-[#c8ff00]">Unlock</span> <br />
           the web.
         </Typography.Display>
@@ -78,21 +87,21 @@ export default function Index() {
               : 'Explore Pubky'}
           </Button.Large>
           */}
-          <Link href="https://pubky.org" target="_blank">
-            <Button.Large variant="secondary" className="w-auto lg:w-[156px]">
-              Pubky Core
+          <Link href="/sign-in">
+            <Button.Large variant="secondary" className="md:w-[156px]">
+              Sign In
             </Button.Large>
           </Link>
         </div>
-        <div className="fixed bottom-12">
+        <div className="fixed bottom-4">
           <SocialLinks
-            colorIcon="#000000"
+            colorIcon="#C8FF00"
             classNameIcon="opacity-100 hover:opacity-90"
             className="sm:hidden inline-flex"
           />
           <Typography.Body
             variant="small"
-            className="text-[13.5px] text-black lg:text-white lg:text-opacity-50 font-normal"
+            className="text-[13.5px] text-[#C8FF00] md:text-white md:text-opacity-50 font-normal"
           >
             Synonym Software Ltd. ©{currentYear}.
           </Typography.Body>

@@ -7,7 +7,7 @@ const censoredTagsList = process.env.NEXT_PUBLIC_MODERATED_TAGS
 
 const isCensored = (postToCheck: PostView) => {
   return postToCheck?.tags.some(
-    (tag) => censoredTagsList.includes(tag.label) && tag.taggers[0] === process.env.NEXT_PUBLIC_MODERATION_ID
+    (tag) => censoredTagsList.includes(tag.label) && tag.taggers.includes(process.env.NEXT_PUBLIC_MODERATION_ID)
   );
 };
 

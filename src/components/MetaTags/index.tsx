@@ -49,10 +49,6 @@ const MetaTags = ({ username, description, url, image, video }: MetaTagsProps) =
       <link rel="shortcut icon" href="/web-app-manifest-192x192.png" />
       <meta name="msapplication-TileColor" content="#000000" />
       <meta name="theme-color" content="#000000" />
-      <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
-      />
     </Head>
   );
 };

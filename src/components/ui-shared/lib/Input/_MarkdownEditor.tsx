@@ -36,7 +36,7 @@ const modules = {
       [{ align: [] }],
       [{ list: 'ordered' }, { list: 'bullet' }],
       ['blockquote', 'code-block'],
-      ['link', 'image'],
+      ['link'],
       ['emoji']
     ],
     handlers: {
@@ -75,8 +75,7 @@ const formats = [
   'list',
   'blockquote',
   'code-block',
-  'link',
-  'image'
+  'link'
 ];
 
 interface MarkdownEditorComponentProps {
@@ -124,7 +123,7 @@ const MarkdownEditorComponent = ({
       const file = input.files?.[0];
       if (file) {
         try {
-          const resizedBase64 = await Utils.resizeImageFile(file, 224); // max 224px
+          const resizedBase64 = await Utils.resizeImageFile(file); // Using default 800px max size
           if (quill) {
             const range = quill.getSelection();
             if (range) {
