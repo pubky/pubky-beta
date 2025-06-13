@@ -17,8 +17,9 @@ function LinkPreview({ url }: { url: string }) {
     const textarea = document.createElement('textarea');
     textarea.innerHTML = text;
     const decoded = textarea.value;
-    // Decode both named and numeric HTML entities
+    // Decode both named and numeric HTML entities and strip HTML tags
     return decoded
+      .replace(/<[^>]*>/g, '') // Remove HTML tags
       .replace(/&lt;/g, '<')
       .replace(/&gt;/g, '>')
       .replace(/&quot;/g, '"')
