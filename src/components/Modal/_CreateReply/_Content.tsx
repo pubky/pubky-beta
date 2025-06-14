@@ -23,7 +23,7 @@ export default function ContentCreateReply({
   className,
   postType
 }: CreateReplyProps) {
-  const { pubky, createReply} = usePubkyClientContext();
+  const { pubky, createReply } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [contentReply, setContentReply] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
