@@ -13,7 +13,7 @@ interface CreatePostProps {
 }
 
 export default function ContentCreatePost({ setShowModalPost, setHasContent, className }: CreatePostProps) {
-  const { createPost } = usePubkyClientContext();
+  const { createPost} = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [contentPost, setContentPost] = useState('');
   const [sendingPost, setSendingPost] = useState(false);
@@ -76,6 +76,7 @@ export default function ContentCreatePost({ setShowModalPost, setHasContent, cla
       }
     } catch (error) {
       console.log(error);
+      addAlert('Something wrong. Try again', 'warning');
     } finally {
       setSendingPost(false);
     }

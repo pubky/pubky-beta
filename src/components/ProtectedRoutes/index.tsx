@@ -174,7 +174,8 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
     // Condition to show dynamicPublicRoute: !isDynamicPublicRoute(pathname)
     if (!publicRoutes.includes(pathname) && !isDynamicPublicRoute(pathname)) {
       openModal('sessionExpired');
-      router.push('/onboarding');
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      router.push('/sign-in');
       setTimeout(() => {
         closeModal('sessionExpired');
       }, 2000);

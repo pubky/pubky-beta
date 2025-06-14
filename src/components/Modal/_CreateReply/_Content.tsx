@@ -23,7 +23,7 @@ export default function ContentCreateReply({
   className,
   postType
 }: CreateReplyProps) {
-  const { pubky, createReply, createTag } = usePubkyClientContext();
+  const { pubky, createReply} = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [contentReply, setContentReply] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
@@ -104,6 +104,7 @@ export default function ContentCreateReply({
       }
     } catch (error) {
       console.log(error);
+      addAlert('Something wrong. Try again', 'warning');
     } finally {
       setSendingReply(false);
     }

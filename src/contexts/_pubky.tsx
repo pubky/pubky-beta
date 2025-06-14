@@ -300,8 +300,13 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
       if (!currentPubky) return { status: false, message: 'User not logged in or pubky key not found' };
 
       const publicKey = PublicKey.from(currentPubky as string);
-      await client.session(publicKey);
-      return { status: true, message: 'Ok' };
+      const session = await client.session(publicKey);
+
+      if (!session) {
+        return { status: false, message: 'Session expired' };
+      }
+
+      return { status: true, message: 'Ok', session };
     } catch (error) {
       if (String(error) === 'error sending request' && typeof window !== 'undefined' && !navigator.onLine) {
         return { status: true, message: 'connection lost' };
@@ -433,6 +438,16 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
     }
   };
 
+  const handleHomeserverResponse = async (response: Response): Promise<void> => {
+    if (!response.ok) {
+      if (response.status === 401) {
+        logout();
+        throw new Error('Session expired');
+      }
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+  };
+
   const uploadFile = async (file: File, specsB?: PubkySpecsBuilder): Promise<string> => {
     let specs = specsB ? specsB : specsBuilder;
 
@@ -441,11 +456,14 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
     const blobData = new Uint8Array(fileContent);
     const blobResult = specs!.createBlob(blobData);
 
-    await homeserver.put(blobResult.meta.url, blobResult.blob.data);
+    const blobResponse = await homeserver.put(blobResult.meta.url, blobResult.blob.data);
+    await handleHomeserverResponse(blobResponse);
+
     // 2. Create File Record
     const fileResult = specs!.createFile(file.name, blobResult.meta.url, file.type, file.size);
 
-    await homeserver.put(fileResult.meta.url, JSON.stringify(fileResult.file.toJson()));
+    const fileResponse = await homeserver.put(fileResult.meta.url, JSON.stringify(fileResult.file.toJson()));
+    await handleHomeserverResponse(fileResponse);
 
     return fileResult.meta.url;
   };
@@ -565,7 +583,8 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
       await storeProfile(user);
 
       // Send the profile to the homeserver
-      await homeserver.put(userResult.meta.url, JSON.stringify(user));
+      const response = await homeserver.put(userResult.meta.url, JSON.stringify(user));
+      await handleHomeserverResponse(response);
 
       return user;
     }
@@ -582,7 +601,8 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
     await storeProfile(user);
 
     // Send the profile to the homeserver
-    await homeserver.put(userResult.meta.url, JSON.stringify(user));
+    const response = await homeserver.put(userResult.meta.url, JSON.stringify(user));
+    await handleHomeserverResponse(response);
 
     return user;
   });
@@ -606,7 +626,8 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
       const postResult = specsBuilder!.createPost(content, kind, parentUri, embed, attachments);
 
       const post = postResult.post.toJson() as PubkyAppPost;
-      await homeserver.put(postResult.meta.url, JSON.stringify(post));
+      const response = await homeserver.put(postResult.meta.url, JSON.stringify(post));
+      await handleHomeserverResponse(response);
 
       if (tags) {
         for (const tag of tags) {
@@ -804,7 +825,8 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
       // Use specs to edit the existing post and store in homeserver
       const result = specsBuilder!.editPost(originalPost, postId, content);
       const updatedPost = { ...result.post.toJson() };
-      await homeserver.put(result.meta.url, JSON.stringify(updatedPost));
+      const updateResponse = await homeserver.put(result.meta.url, JSON.stringify(updatedPost));
+      await handleHomeserverResponse(updateResponse);
 
       // Update tags
       if (tags) {
@@ -921,7 +943,8 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
 
     // Use specs to edit the existing post and store in homeserver
     const result = specsBuilder!.editPost(originalPost, postId, newContent);
-    await homeserver.put(result.meta.url, JSON.stringify(result.post.toJson()));
+    const updateResponse = await homeserver.put(result.meta.url, JSON.stringify(result.post.toJson()));
+    await handleHomeserverResponse(updateResponse);
 
     return result.meta.url;
   });
@@ -1077,7 +1100,8 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
       const dataUrl = `pubky://${pubky}/${filename.replace('data/', '')}`;
 
       // Upload the file
-      await homeserver.put(dataUrl, new Uint8Array(content));
+      const response = await homeserver.put(dataUrl, new Uint8Array(content));
+      await handleHomeserverResponse(response);
 
       // Update progress
       setProgress(Math.round(((index + 1) / totalFiles) * 100));
@@ -1109,7 +1133,8 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
     const result = specsBuilder!.createLastRead();
     const lastRead = result.last_read.toJson() as PubkyAppLastRead;
 
-    await homeserver.put(result.meta.url, JSON.stringify(lastRead));
+    const response = await homeserver.put(result.meta.url, JSON.stringify(lastRead));
+    await handleHomeserverResponse(response);
 
     setTimestamp(Number(lastRead.timestamp));
 
@@ -1138,7 +1163,8 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
 
       const settingsUrl = `${baseUriBuilder(pubky!)}settings`;
 
-      await homeserver.put(settingsUrl, JSON.stringify(settings));
+      const response = await homeserver.put(settingsUrl, JSON.stringify(settings));
+      await handleHomeserverResponse(response);
 
       return true;
     }
@@ -1188,7 +1214,8 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
     const postUrl = postUriBuilder(pubky!, post.details.id);
 
     // Send the post to the homeserver
-    await homeserver.del(postUrl);
+    const response = await homeserver.del(postUrl);
+    await handleHomeserverResponse(response);
 
     return true;
   });
@@ -1205,7 +1232,8 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
     const result = specsBuilder!.createFeed(tagsValue, reach, layout, sort, contentVal, name);
 
     const feedObj = result.feed.toJson();
-    await homeserver.put(result.meta.url, JSON.stringify(feedObj));
+    const response = await homeserver.put(result.meta.url, JSON.stringify(feedObj));
+    await handleHomeserverResponse(response);
 
     return true;
   });
@@ -1283,11 +1311,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
     userProfileCache.delete(user_id);
 
     const response = await homeserver.put(result.meta.url, JSON.stringify(result.follow.toJson()));
-
-    if (!response.ok) {
-      const errorMessage = `Error ${response.status}: ${response.statusText}`;
-      throw new Error(errorMessage);
-    }
+    await handleHomeserverResponse(response);
 
     return true;
   });
@@ -1298,10 +1322,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
 
     const response = await homeserver.del(result.meta.url);
 
-    if (!response.ok) {
-      const errorMessage = `Error ${response.status}: ${response.statusText}`;
-      throw new Error(errorMessage);
-    }
+    await handleHomeserverResponse(response);
 
     return true;
   });
@@ -1317,7 +1338,8 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
   const mute = withAuth(async (user_id: string): Promise<boolean> => {
     const result = specsBuilder!.createMute(user_id);
 
-    await homeserver.put(result.meta.url, JSON.stringify(result.mute.toJson()));
+    const response = await homeserver.put(result.meta.url, JSON.stringify(result.mute.toJson()));
+    await handleHomeserverResponse(response);
 
     return true;
   });
@@ -1325,7 +1347,8 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
   const unmute = withAuth(async (user_id: string): Promise<boolean> => {
     const result = specsBuilder!.createMute(user_id);
 
-    await homeserver.del(result.meta.url);
+    const response = await homeserver.del(result.meta.url);
+    await handleHomeserverResponse(response);
 
     return true;
   });
@@ -1335,11 +1358,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
     const result = specsBuilder!.createBookmark(uriPost);
 
     const response = await homeserver.put(result.meta.url, JSON.stringify(result.bookmark.toJson()));
-
-    if (!response.ok) {
-      const errorMessage = `Error ${response.status}: ${response.statusText}`;
-      throw new Error(errorMessage);
-    }
+    await handleHomeserverResponse(response);
 
     return result.meta.id;
   });
@@ -1350,10 +1369,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
 
     const response = await homeserver.del(result.meta.url);
 
-    if (!response.ok) {
-      const errorMessage = `Error ${response.status}: ${response.statusText}`;
-      throw new Error(errorMessage);
-    }
+    await handleHomeserverResponse(response);
 
     return true;
   });
@@ -1363,7 +1379,8 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
       const postUri = postUriBuilder(authorId, postId);
       const result = specsBuilder!.createTag(postUri, label);
 
-      await homeserver.put(result.meta.url, JSON.stringify(result.tag.toJson()));
+      const response = await homeserver.put(result.meta.url, JSON.stringify(result.tag.toJson()));
+      await handleHomeserverResponse(response);
 
       return true;
     } catch (error) {
@@ -1378,7 +1395,8 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
       const uriPost = postUriBuilder(authorId, postId);
       const result = specsBuilder!.createTag(uriPost, tagLabel);
 
-      await homeserver.del(result.meta.url);
+      const response = await homeserver.del(result.meta.url);
+      await handleHomeserverResponse(response);
 
       return true;
     } catch (error) {
@@ -1391,7 +1409,8 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
     const uriProfile = userUriBuilder(userId);
     const result = specsBuilder!.createTag(uriProfile, label);
 
-    await homeserver.put(result.meta.url, JSON.stringify(result.tag.toJson()));
+    const response = await homeserver.put(result.meta.url, JSON.stringify(result.tag.toJson()));
+    await handleHomeserverResponse(response);
 
     return true;
   });
@@ -1402,7 +1421,8 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
     // Compute ID and URL for a from its content (unique)
     const result = specsBuilder!.createTag(uriProfile, label);
 
-    await homeserver.del(result.meta.url);
+    const response = await homeserver.del(result.meta.url);
+    await handleHomeserverResponse(response);
 
     return true;
   });

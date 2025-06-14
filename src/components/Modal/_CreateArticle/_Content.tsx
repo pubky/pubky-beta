@@ -82,6 +82,7 @@ export default function ContentCreateArticle({
       }
     } catch (error) {
       console.log(error);
+      addAlert('Something wrong. Try again', 'warning');
     } finally {
       setSendingArticle(false);
     }

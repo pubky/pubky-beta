@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { ImageByUri } from '@/components/ImageByUri';
 import { useState } from 'react';
 import axios from 'axios';
+import { useAlertContext } from '@/contexts';
 
 interface FeedbackProps {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -15,6 +16,7 @@ interface FeedbackProps {
 
 export default function ContentFeedback({ setShowModal }: FeedbackProps) {
   const { pubky, profile } = usePubkyClientContext();
+  const { addAlert } = useAlertContext();
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -34,6 +36,7 @@ export default function ContentFeedback({ setShowModal }: FeedbackProps) {
       setMessage('');
     } catch (error) {
       console.error(error);
+      addAlert('Something wrong. Try again', 'warning');
       setError(true);
       setLoading(false);
     }

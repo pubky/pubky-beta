@@ -6,7 +6,7 @@ import File from './_File';
 import Phrase from './_Phrase';
 import Success from './_Success';
 import { z } from 'zod';
-import { usePubkyClientContext } from '@/contexts';
+import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 
 interface BackupProps {
@@ -35,6 +35,7 @@ export default function ContentBackup({
   setSuccess
 }: BackupProps) {
   const { getRecoveryFile, setSeed, setMnemonic } = usePubkyClientContext();
+  const { addAlert } = useAlertContext();
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<string>('');
@@ -90,6 +91,7 @@ export default function ContentBackup({
       setSuccess(true);
     } catch (error) {
       console.log(error);
+      addAlert('Something wrong. Try again', 'warning');
     } finally {
       setLoading(false);
       setShowBackupSuccess && setShowBackupSuccess(true);
