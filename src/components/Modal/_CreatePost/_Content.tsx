@@ -76,6 +76,7 @@ export default function ContentCreatePost({ setShowModalPost, setHasContent, cla
       }
     } catch (error) {
       console.log(error);
+      addAlert('Something wrong. Try again', 'warning');
     } finally {
       setSendingPost(false);
     }

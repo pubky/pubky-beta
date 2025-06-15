@@ -62,6 +62,7 @@ export default function ContentEditArticle({ setShowModalEditArticle, article, s
       setShowModalEditArticle(false);
     } catch (error) {
       console.log(error);
+      addAlert('Something wrong. Try again', 'warning');
     } finally {
       setSendingArticle(false);
       setShowMenu(false);

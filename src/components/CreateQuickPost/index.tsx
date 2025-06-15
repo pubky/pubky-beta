@@ -74,6 +74,7 @@ export default function CreateQuickPost({ largeView = false, loadingFeed }: Crea
       }
     } catch (error) {
       console.log(error);
+      addAlert('Something wrong. Try again', 'warning');
     } finally {
       setSendingPost(false);
     }
