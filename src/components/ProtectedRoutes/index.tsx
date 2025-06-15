@@ -61,6 +61,20 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
 
   const isDynamicPublicRoute = (path: string) => {
     const dynamicPublicRoutes = ['/post/[userId]/[postId]', '/profile/[userId]'];
+    const protectedProfileRoutes = [
+      '/profile/posts',
+      '/profile/replies',
+      '/profile/followers',
+      '/profile/following',
+      '/profile/friends',
+      '/profile/tagged'
+    ];
+
+    // If the path matches any protected profile route, it's not a public route
+    if (protectedProfileRoutes.some((route) => path.startsWith(route))) {
+      return false;
+    }
+
     return dynamicPublicRoutes.some((route) =>
       new RegExp(`^${route.replace(/\[.*?\]/g, '[^/]+').replace(/\//g, '\\/')}$`).test(path)
     );
