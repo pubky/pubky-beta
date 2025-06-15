@@ -14,6 +14,8 @@ import { getUserProfile } from '@/services/userService';
 import { UserView } from '@/types/User';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 import EmojiPicker from '@/components/EmojiPicker';
+import { searchTagsByPrefix } from '@/services/streamService';
+import { useSuggestedTags } from '@/hooks/useSuggestedTags';
 
 interface ShowAllTagsProps {
   post: PostView;
@@ -32,6 +34,7 @@ export default function ShowAllTags({ post, postType, onTagClick }: ShowAllTagsP
   const [tagInput, setTagInput] = useState('');
   const [showEmojis, setShowEmojis] = useState(false);
   const [loadingTag, setLoadingTag] = useState(false);
+  const [suggestedTags, setSuggestedTags] = useState<string[]>([]);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
 
@@ -62,6 +65,16 @@ export default function ShowAllTags({ post, postType, onTagClick }: ShowAllTagsP
     skipTaggers,
     TAGGER_LIMIT
   );
+
+  const {
+    suggestedTags: suggestedTagsFromHook,
+    selectedTagIndex,
+    handleKeyDown,
+    handleTagClick: handleSuggestedTagClick
+  } = useSuggestedTags({
+    tagInput,
+    onTagSelect: (tag) => setTagInput(tag)
+  });
 
   // Effects for tag management
   useEffect(() => {
@@ -188,23 +201,54 @@ export default function ShowAllTags({ post, postType, onTagClick }: ShowAllTagsP
     fetchProfiles();
   }, [taggers, pubky]);
 
+  useEffect(() => {
+    if (!tagInput.trim()) {
+      setSuggestedTags([]);
+      return;
+    }
+
+    let isActive = true;
+    const timeoutId = setTimeout(async () => {
+      try {
+        const tags = await searchTagsByPrefix(tagInput.trim(), 0, 3);
+        if (isActive) {
+          setSuggestedTags(tags || []);
+        }
+      } catch (error) {
+        if (isActive) {
+          setSuggestedTags([]);
+        }
+      }
+    }, 500);
+
+    return () => {
+      isActive = false;
+      clearTimeout(timeoutId);
+    };
+  }, [tagInput]);
+
   // Event handlers
   const handleAddTagInput = async (tag: string) => {
     if (!tag.trim()) return;
     setLoadingTag(true);
     try {
-      const optimisticTag: PostTag = {
-        label: tag,
-        taggers_count: 1,
-        taggers: [pubky ?? ''],
-        relationship: true
-      };
+      if (selectedTagIndex > -1) {
+        const selectedTag = suggestedTagsFromHook[selectedTagIndex];
+        setTagInput(selectedTag);
+      } else {
+        const optimisticTag: PostTag = {
+          label: tag,
+          taggers_count: 1,
+          taggers: [pubky ?? ''],
+          relationship: true
+        };
 
-      setAllTags((prev) => [optimisticTag, ...prev]);
-      await handleAddTag(tag);
-      setTagInput('');
-      setSkip(TAG_LIMIT);
-      setHasMore(true);
+        setAllTags((prev) => [optimisticTag, ...prev]);
+        await handleAddTag(tag);
+        setTagInput('');
+        setSkip(TAG_LIMIT);
+        setHasMore(true);
+      }
     } catch (error) {
       setAllTags((prev) => prev.filter((t) => t.label !== tag));
       console.error('Error adding tag', error);
@@ -457,19 +501,39 @@ export default function ShowAllTags({ post, postType, onTagClick }: ShowAllTagsP
           />
         </div>
       )}
-      <Input.Tag
-        value={tagInput}
-        onChange={setTagInput}
-        onClick={(event) => {
-          event.stopPropagation();
-          pubky ? undefined : openModal('join');
-        }}
-        onAddTag={handleAddTagInput}
-        onEmojiPickerClick={pubky ? () => setShowEmojis(true) : () => openModal('join')}
-        loading={loadingTag}
-        className="w-fit"
-        variant="small"
-      />
+      <div className="relative" onKeyDown={handleKeyDown} tabIndex={0}>
+        <Input.Tag
+          value={tagInput}
+          onChange={setTagInput}
+          onClick={(event) => {
+            event.stopPropagation();
+            pubky ? undefined : openModal('join');
+          }}
+          onAddTag={handleAddTagInput}
+          onEmojiPickerClick={pubky ? () => setShowEmojis(true) : () => openModal('join')}
+          loading={loadingTag}
+          className="w-fit"
+          variant="small"
+          autoComplete={false}
+        />
+        {suggestedTags.length > 0 && (
+          <div className="absolute top-full left-0 mt-1 bg-[#05050A] border border-white border-opacity-20 rounded-lg z-20 w-[200px] max-h-[150px] overflow-y-auto scrollbar-thin scrollbar-webkit">
+            {suggestedTags.map((tag, index) => (
+              <div
+                key={index}
+                onClick={() => handleSuggestedTagClick(tag)}
+                className={`cursor-pointer hover:bg-white hover:bg-opacity-10 rounded px-4 py-2 ${
+                  index === selectedTagIndex ? 'bg-white bg-opacity-10' : ''
+                }`}
+              >
+                <Typography.Body variant="small" className="text-opacity-80 hover:text-opacity-100">
+                  {tag}
+                </Typography.Body>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 

@@ -2,7 +2,8 @@ import { PostType, PostView } from '@/types/Post';
 import { useTagsLogic } from './TagsUtils';
 import { usePubkyClientContext } from '@/contexts';
 import EmojiPicker from '@/components/EmojiPicker';
-import { Icon, Input } from '@social/ui-shared';
+import { Icon, Input, Typography } from '@social/ui-shared';
+import { useSuggestedTags } from '@/hooks/useSuggestedTags';
 
 interface InputTagProps {
   post: PostView;
@@ -24,6 +25,20 @@ export default function InputTag({ post, postType }: InputTagProps) {
   } = useTagsLogic(post, postType);
   const { pubky } = usePubkyClientContext();
 
+  const { suggestedTags, selectedTagIndex, handleKeyDown, handleTagClick } = useSuggestedTags({
+    tagInput,
+    onTagSelect: (tag) => setTagInput(tag)
+  });
+
+  const handleAddTagWithCheck = (tag: string) => {
+    if (selectedTagIndex > -1) {
+      const selectedTag = suggestedTags[selectedTagIndex];
+      setTagInput(selectedTag);
+    } else {
+      handleAddTag(tag);
+    }
+  };
+
   return (
     <>
       {addTagInput ? (
@@ -40,18 +55,38 @@ export default function InputTag({ post, postType }: InputTagProps) {
               />
             </div>
           )}
-          <Input.Tag
-            value={tagInput}
-            onChange={setTagInput}
-            onAddTag={handleAddTag}
-            onEmojiPickerClick={() => setShowEmojis(true)}
-            showCloseButton={true}
-            onClose={() => setAddTagInput(false)}
-            loading={loadingTags !== ''}
-            variant="small"
-            autoFocus
-            className="w-max"
-          />
+          <div className="relative" onKeyDown={handleKeyDown} tabIndex={0}>
+            <Input.Tag
+              value={tagInput}
+              onChange={setTagInput}
+              onAddTag={handleAddTagWithCheck}
+              onEmojiPickerClick={() => setShowEmojis(true)}
+              showCloseButton={true}
+              onClose={() => setAddTagInput(false)}
+              loading={loadingTags !== ''}
+              variant="small"
+              autoFocus
+              className="w-max"
+              autoComplete={false}
+            />
+            {suggestedTags.length > 0 && (
+              <div className="absolute top-full left-0 mt-1 bg-[#05050A] border border-white border-opacity-20 rounded-lg z-20 w-[200px] max-h-[150px] overflow-y-auto scrollbar-thin scrollbar-webkit">
+                {suggestedTags.map((tag, index) => (
+                  <div
+                    key={index}
+                    onClick={() => handleTagClick(tag)}
+                    className={`cursor-pointer hover:bg-white hover:bg-opacity-10 rounded px-4 py-2 ${
+                      index === selectedTagIndex ? 'bg-white bg-opacity-10' : ''
+                    }`}
+                  >
+                    <Typography.Body variant="small" className="text-opacity-80 hover:text-opacity-100">
+                      {tag}
+                    </Typography.Body>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </>
       ) : (
         <div
