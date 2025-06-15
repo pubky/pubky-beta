@@ -3,6 +3,7 @@ import { slowCypressDown } from 'cypress-slow-down';
 // registers the cy.slowDown and cy.slowDownEnd commands
 import 'cypress-slow-down/commands';
 import { createQuickPost, createQuickPostWithTags } from '../support/posts';
+import { CheckIndexed } from '../support/types/enums';
 
 describe('search', () => {
   before(() => {
@@ -32,6 +33,9 @@ describe('search', () => {
     createQuickPostWithTags(postTags2and3, [tag2, tag3]);
     // create a post with no tags
     createQuickPost(postNoTags);
+
+    // wait for posts to be indexed before searching
+    cy.findFirstPostInFeed(CheckIndexed.Yes);
 
     // search for a single tag
     cy.get('#header-search-input').type(tag1).type('{enter}');

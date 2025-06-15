@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # https://github.com/pubky/pubky-stack
-      PUBKY_STACK_REF: 37f26c7b238c7a6d9214f5c4ad88570f388ae258
+      PUBKY_STACK_REF: 5ff570f356a1a2e3049e46f5df06a98c83cc9076
     strategy:
       matrix:
         browser: [chrome] # [chrome, firefox]
@@ -117,6 +117,7 @@ jobs:
           NEXT_PUBLIC_NEXUS=http://localhost:8080
           NEXT_PUBLIC_TESTNET=true
           NEXT_PUBLIC_DEFAULT_HTTP_RELAY=http://localhost:15412/link/
+          NEXT_ENABLE_PLAUSIBLE=false
           BASE_URL_SUPPORT=${{ secrets.BASE_URL_SUPPORT }}
           SUPPORT_API_ACCESS_TOKEN=${{ secrets.SUPPORT_API_ACCESS_TOKEN }}
           SUPPORT_ACCOUNT_ID=1" > .env
@@ -145,12 +146,78 @@ jobs:
           name: screenshots-${{ matrix.browser }}
           path: pubky-app/cypress/screenshots
 
-      - name: Upload ${{ matrix.browser }} videos
+
+      - name: Upload video for notifications test
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
+        continue-on-error: true
         with:
-          name: videos-${{ matrix.browser }}
-          path: pubky-app/cypress/videos
+          name: video-${{ matrix.browser }}-notifications
+          path: pubky-app/cypress/videos/notifications.cy.ts.mp4
+          if-no-files-found: ignore
+
+      - name: Upload video for settings test
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: video-${{ matrix.browser }}-settings
+          path: pubky-app/cypress/videos/settings.cy.ts.mp4
+          if-no-files-found: ignore
+
+      - name: Upload video for posts test
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: video-${{ matrix.browser }}-posts
+          path: pubky-app/cypress/videos/posts.cy.ts.mp4
+          if-no-files-found: ignore
+
+      - name: Upload video for profile test
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: video-${{ matrix.browser }}-profile
+          path: pubky-app/cypress/videos/profile.cy.ts.mp4
+          if-no-files-found: ignore
+
+      - name: Upload video for search test
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: video-${{ matrix.browser }}-search
+          path: pubky-app/cypress/videos/search.cy.ts.mp4
+          if-no-files-found: ignore
+
+      - name: Upload video for feed test
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: video-${{ matrix.browser }}-feed
+          path: pubky-app/cypress/videos/feed.cy.ts.mp4
+          if-no-files-found: ignore
+
+      - name: Upload video for contacts test
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: video-${{ matrix.browser }}-contacts
+          path: pubky-app/cypress/videos/contacts.cy.ts.mp4
+          if-no-files-found: ignore
+
+      - name: Upload video for onboard test
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: video-${{ matrix.browser }}-onboard
+          path: pubky-app/cypress/videos/onboard.cy.ts.mp4
+          if-no-files-found: ignore
 
       - name: Dump docker logs on failure
         if: failure()
