@@ -793,6 +793,82 @@ describe('posts', () => {
     checkArticleInFeed(articleTitle, articleContent, ImageExpected.No);
   });
 
+  it('signout when 401 response from homeserver when creating new post', () => {
+    // Set up network intercept to return 401 for post creation
+    cy.intercept('PUT', '**/pub/pubky.app/posts/**', {
+      statusCode: 401,
+      body: { error: 'Unauthorized' }
+    }).as('createPostWithError');
+
+    // Create a post
+    const postContent = `This post will be created! ${Date.now()}`;
+    createQuickPost(postContent);
+
+    // Wait for the intercepted request
+    cy.wait('@createPostWithError');
+
+    // Check that session expired modal is displayed
+    cy.get('#modal-root').should('be.visible');
+    cy.get('h1').contains('Session expired').should('be.visible');
+
+    // Check that user gets redirected to sign-in page
+    cy.location('pathname').should('eq', '/sign-in');
+  });
+
+  it('signout when 401 response from homeserver when creating new article', () => {
+    // Set up network intercept to return 401 for article creation (uses same endpoint as posts)
+    cy.intercept('PUT', '**/pub/pubky.app/posts/**', {
+      statusCode: 401,
+      body: { error: 'Unauthorized' }
+    }).as('createArticleWithError');
+
+    const articleTitle = `Test article! ${Date.now()}`;
+    const articleContent = `This article will fail to create due to 401! ${Date.now()}`;
+
+    cy.get('#quick-post-create-content')
+      .should('be.visible')
+      .within(() => {
+        cy.get('textarea').click();
+        cy.get('#article-btn').click();
+      });
+
+    createArticle(articleTitle, articleContent);
+
+    // Wait for the intercepted request
+    cy.wait('@createArticleWithError');
+
+    // Check that session expired modal is displayed (with specific header to avoid finding the article modal)
+    cy.contains('#modal-root', 'Session expired').find('h1').contains('Session expired').should('be.visible');
+
+    // Check that user gets redirected to sign-in page
+    cy.location('pathname').should('eq', '/sign-in');
+  });
+
+  it('signout when 401 response from homeserver when tagging a post', () => {
+    // First create a post to tag
+    const postContent = `This post will be tagged! ${Date.now()}`;
+    createQuickPost(postContent);
+
+    // Set up network intercept to return 401 for tagging
+    cy.intercept('PUT', '**/pub/pubky.app/tags/**', {
+      statusCode: 401,
+      body: { error: 'Unauthorized' }
+    }).as('createTagWithError');
+
+    // Tag the post
+    fastTagPostInFeed(['testtag'], postContent);
+
+    // Wait for the intercepted request
+    cy.wait('@createTagWithError');
+
+    // Check that session expired modal is displayed
+    cy.get('#modal-root').should('be.visible');
+    cy.get('h1').contains('Session expired').should('be.visible');
+
+    // Check that user gets redirected to sign-in page
+    cy.location('pathname').should('eq', '/sign-in');
+  });
+
   // todo: check that reply still shown in own profile page
   // todo: test 'Show n new posts' button
 });
