@@ -55,7 +55,6 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
   const [showEmojis, setShowEmojis] = useState(false);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   const bgCard = profileTags?.length > 0 && 'bg-white/10';
-  const [suggestedTags, setSuggestedTags] = useState<string[]>([]);
 
   const { addProfileTag, deleteProfileTag, loadingTags } = useUtilsTag({
     profileTags,
@@ -74,12 +73,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
     limitTaggers
   );
 
-  const {
-    suggestedTags: suggestedTagsFromHook,
-    selectedTagIndex,
-    handleKeyDown,
-    handleTagClick
-  } = useSuggestedTags({
+  const { suggestedTags, selectedTagIndex, handleKeyDown, handleTagClick } = useSuggestedTags({
     tagInput,
     onTagSelect: (tag) => setTagInput(tag)
   });
@@ -257,7 +251,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
     setLoadingTag(true);
     try {
       if (selectedTagIndex > -1) {
-        const selectedTag = suggestedTagsFromHook[selectedTagIndex];
+        const selectedTag = suggestedTags[selectedTagIndex];
         setTagInput(selectedTag);
       } else {
         await addProfileTag(tag);
@@ -270,32 +264,6 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
       setLoadingTag(false);
     }
   };
-
-  useEffect(() => {
-    if (!tagInput.trim()) {
-      setSuggestedTags([]);
-      return;
-    }
-
-    let isActive = true;
-    const timeoutId = setTimeout(async () => {
-      try {
-        const tags = await searchTagsByPrefix(tagInput.trim(), 0, 3);
-        if (isActive) {
-          setSuggestedTags(tags || []);
-        }
-      } catch (error) {
-        if (isActive) {
-          setSuggestedTags([]);
-        }
-      }
-    }, 500);
-
-    return () => {
-      isActive = false;
-      clearTimeout(timeoutId);
-    };
-  }, [tagInput]);
 
   return (
     <div className={`${bgCard} w-full p-6 rounded-lg`}>
