@@ -24,13 +24,13 @@ export default function Pic({ image, setImage }: PicProps) {
   };
 
   const UploadPic = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const maxSizeInMB = 20;
+    const maxSizeInMB = 5;
     const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
     const file = event.target.files?.[0];
 
     if (file) {
       if (file.size > maxSizeInBytes) {
-        addAlert('The maximum allowed size is 20 MB', 'warning');
+        addAlert('The maximum allowed size is 5 MB', 'warning');
         return;
       }
 

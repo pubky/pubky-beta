@@ -88,27 +88,34 @@ export default function InputArea({
     setIsDragging(false);
 
     const files = event.dataTransfer.files;
-    const maxSizeInMB = 20;
-    const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+    const maxImageSizeInMB = 5;
+    const maxOtherSizeInMB = 20;
+    const maxImageSizeInBytes = maxImageSizeInMB * 1024 * 1024;
+    const maxOtherSizeInBytes = maxOtherSizeInMB * 1024 * 1024;
 
     if (files) {
       const validFiles = Array.from(files).filter((file) => {
         const isImage = file.type.startsWith('image/');
         const isVideo = file.type.startsWith('video/');
         const isAudio = file.type.startsWith('audio/');
+        const isPDF = file.type === 'application/pdf';
 
         const isValidType =
           (isImage && Utils.supportedImageTypes.includes(file.type)) ||
           (isVideo && Utils.supportedVideoTypes.includes(file.type)) ||
           (isAudio && Utils.supportedAudioTypes.includes(file.type)) ||
-          file.type === 'application/pdf';
+          isPDF;
 
         if (!isValidType) {
           addAlert('File type not supported.', 'warning');
           return false;
         }
 
-        if (file.size > maxSizeInBytes) {
+        if (isImage && file.size > maxImageSizeInBytes) {
+          addAlert('The maximum allowed size for images is 5 MB.', 'warning');
+          return false;
+        }
+        if (!isImage && file.size > maxOtherSizeInBytes) {
           addAlert('The maximum allowed size is 20 MB.', 'warning');
           return false;
         }
