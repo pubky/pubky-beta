@@ -234,7 +234,7 @@ export default function Content({
     <div className="w-full relative">
       <div
         id="post-content-text"
-        className={`text-white break-words ${largeView && 'text-2xl'} ${censored && 'blur-lg'}`}
+        className={`text-white break-words ${largeView && 'text-2xl'} ${censored && 'blur-xl'}`}
       >
         {(() => {
           try {
