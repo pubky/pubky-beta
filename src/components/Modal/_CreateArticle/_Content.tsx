@@ -186,26 +186,33 @@ export default function ContentCreateArticle({
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    const maxSizeInMB = 5;
-    const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+    const maxImageSizeInMB = 5;
+    const maxOtherSizeInMB = 20;
+    const maxImageSizeInBytes = maxImageSizeInMB * 1024 * 1024;
+    const maxOtherSizeInBytes = maxOtherSizeInMB * 1024 * 1024;
 
     if (file) {
       const isImage = file.type.startsWith('image/');
       const isVideo = file.type.startsWith('video/');
       const isAudio = file.type.startsWith('audio/');
+      const isPDF = file.type === 'application/pdf';
       const isValidType =
         (isImage && Utils.supportedImageTypes.includes(file.type)) ||
         (isVideo && Utils.supportedVideoTypes.includes(file.type)) ||
         (isAudio && Utils.supportedAudioTypes.includes(file.type)) ||
-        file.type === 'application/pdf';
+        isPDF;
 
       if (!isValidType) {
         setErrorFile('File type not supported.');
         return;
       }
 
-      if (file.size > maxSizeInBytes) {
-        setErrorFile('The maximum allowed size is 5 MB');
+      if (isImage && file.size > maxImageSizeInBytes) {
+        setErrorFile('The maximum allowed size for images is 5 MB');
+        return;
+      }
+      if (!isImage && file.size > maxOtherSizeInBytes) {
+        setErrorFile('The maximum allowed size is 20 MB');
         return;
       }
       setSelectedFile([file]);

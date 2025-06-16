@@ -205,8 +205,10 @@ export default function CreateContent({
 
   const handlePaste = (event: ClipboardEvent) => {
     const items = event.clipboardData?.items;
-    const maxSizeInMB = 5;
-    const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+    const maxImageSizeInMB = 5;
+    const maxOtherSizeInMB = 20;
+    const maxImageSizeInBytes = maxImageSizeInMB * 1024 * 1024;
+    const maxOtherSizeInBytes = maxOtherSizeInMB * 1024 * 1024;
 
     if (items) {
       for (let i = 0; i < items.length; i++) {
@@ -217,17 +219,25 @@ export default function CreateContent({
           if (file) {
             const isImage = file.type.startsWith('image/');
             const isVideo = file.type.startsWith('video/');
+            const isAudio = file.type.startsWith('audio/');
+            const isPDF = file.type === 'application/pdf';
             const isValidType =
               (isImage && Utils.supportedImageTypes.includes(file.type)) ||
-              (isVideo && Utils.supportedVideoTypes.includes(file.type));
+              (isVideo && Utils.supportedVideoTypes.includes(file.type)) ||
+              (isAudio && Utils.supportedAudioTypes.includes(file.type)) ||
+              isPDF;
 
             if (!isValidType) {
               addAlert('File not supported', 'warning');
               continue;
             }
 
-            if (file.size > maxSizeInBytes) {
-              addAlert('The maximum allowed size is 5 MB', 'warning');
+            if (isImage && file.size > maxImageSizeInBytes) {
+              addAlert('The maximum allowed size for images is 5 MB', 'warning');
+              continue;
+            }
+            if (!isImage && file.size > maxOtherSizeInBytes) {
+              addAlert('The maximum allowed size is 20 MB', 'warning');
               continue;
             }
 
