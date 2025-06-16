@@ -107,7 +107,7 @@ const LongPost = ({ data, user }) => {
   return (
     <div className="w-full">
       <div className="flex flex-col lg:flex-row gap-6 relative">
-        <div className={`${censored && 'blur-xl'} w-auto lg:w-[1200px] flex flex-col gap-4`}>
+        <div className={`${censored && 'blur-2xl'} w-auto lg:w-[1200px] flex flex-col gap-4`}>
           <Typography.Display className="sm:leading-[64px] break-words">{content.title}</Typography.Display>
           <div className="flex w-full gap-4 justify-between items-center">
             <div className="justify-start gap-3 flex items-center mt-4 mb-2">

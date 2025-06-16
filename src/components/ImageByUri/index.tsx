@@ -135,7 +135,7 @@ const ImageByUri = ({
         alt={alt}
         width={width}
         height={height}
-        className={`${className} ${censored ? 'blur-xl' : ''}`}
+        className={`${className} ${censored ? 'blur-2xl' : ''}`}
         style={style}
         onClick={onClick}
       />
