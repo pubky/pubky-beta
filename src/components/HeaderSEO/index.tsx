@@ -11,7 +11,7 @@ export function getPWAConfig() {
     manifest: '/manifest.json',
     appleWebApp: {
       capable: true,
-      statusBarStyle: 'black-translucent',
+      statusBarStyle: 'black',
       title: 'Pubky.app'
     },
     icons: {
@@ -49,7 +49,7 @@ export function getHeaderMetaTags() {
       <meta name="msapplication-TileColor" content="#000000" />
       <meta name="theme-color" content="#000000" />
       <meta name="mobile-web-app-capable" content="yes" />
-      <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+      <meta name="apple-mobile-web-app-status-bar-style" content="black" />
       <meta name="apple-mobile-web-app-title" content="Pubky.app" />
     </>
   );
