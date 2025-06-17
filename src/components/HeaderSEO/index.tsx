@@ -32,7 +32,10 @@ export function getHeaderMetaTags() {
   return (
     <>
       {/* Viewport for mobile devices */}
-      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=contain"
+      />
 
       {/* PWA icons for iOS */}
       <link rel="apple-touch-icon" sizes="180x180" href="/web-app-manifest-192x192.png" />
@@ -49,6 +52,7 @@ export function getHeaderMetaTags() {
       <meta name="msapplication-TileColor" content="#000000" />
       <meta name="theme-color" content="#000000" />
       <meta name="mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-capable" content="yes" />
       <meta name="apple-mobile-web-app-status-bar-style" content="black" />
       <meta name="apple-mobile-web-app-title" content="Pubky.app" />
     </>

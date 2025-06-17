@@ -40,7 +40,7 @@ const MetaTags = ({ username, description, url, image, video }: MetaTagsProps) =
 
       {/* iOS and PWA Meta Tags */}
       <meta name="apple-mobile-web-app-capable" content="yes" />
-      <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+      <meta name="apple-mobile-web-app-status-bar-style" content="black" />
       <meta name="apple-mobile-web-app-title" content="Pubky.app" />
       <link rel="apple-touch-icon" sizes="180x180" href="/web-app-manifest-192x192.png" />
       <link rel="icon" type="image/png" sizes="32x32" href="/web-app-manifest-192x192.png" />
