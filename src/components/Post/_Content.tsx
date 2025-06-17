@@ -476,7 +476,7 @@ export default function Content({
                                   <div className="flex gap-2 items-center">
                                     <Icon.FileText size="20" />
                                     <Typography.Body className="text-opacity-80" variant="small-bold">
-                                      {Utils.minifyText(file?.name ?? generateFileUrl(file), isMobile ? 20 : 60)}
+                                      {Utils.minifyText(file?.name ?? generateFileUrl(file), isMobile ? 10 : 60)}
                                     </Typography.Body>
                                   </div>
                                   <Button.Medium
