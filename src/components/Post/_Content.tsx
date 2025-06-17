@@ -480,7 +480,7 @@ export default function Content({
                                     </Typography.Body>
                                   </div>
                                   <Button.Medium
-                                    className="w-auto h-8 px-3 py-2"
+                                    className="w-auto h-8 px-3 py-2 whitespace-nowrap truncate"
                                     icon={<Icon.DownloadSimple size="16" />}
                                   >
                                     Download
