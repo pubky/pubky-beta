@@ -277,10 +277,10 @@ export default function FooterArea({
                     if (!arrayTags || loading) return;
                     event.stopPropagation();
                     if (!loading) {
-                    openModal('tagCreatePost', {
-                      arrayTags: arrayTags,
-                      setArrayTags: setArrayTags
-                    });
+                      openModal('tagCreatePost', {
+                        arrayTags: arrayTags,
+                        setArrayTags: setArrayTags
+                      });
                     }
                   }}
                   disabled={!arrayTags || loading}
