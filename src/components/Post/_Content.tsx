@@ -395,48 +395,56 @@ export default function Content({
 
                           return (
                             <div className={`grid ${layoutClass} gap-1 max-h-[544px]`}>
-                              {mediaFiles.map((file, index) => (
-                                <div
-                                  key={index}
-                                  className={`relative cursor-pointer ${
-                                    mediaFiles.length === 3 && index === 0 ? 'row-span-2 col-span-2 pb-1' : ''
-                                  }`}
-                                  style={{
-                                    height:
-                                      mediaFiles.length === 1
-                                        ? 'auto'
-                                        : mediaFiles.length === 3 && index === 0
-                                          ? 'calc(544px - 4px)'
-                                          : 'calc((544px - 4px) / 2)'
-                                  }}
-                                >
-                                  {file.content_type === 'skeleton' ? (
-                                    <Skeleton.File className={mediaFiles.length === 1 ? 'h-[250px]' : 'h-full'} />
-                                  ) : file.content_type.startsWith('image') ? (
-                                    <img
-                                      src={generateFileUrl(file, file.content_type !== 'image/gif' ? 'feed' : 'main')}
-                                      onClick={(event) => {
-                                        event.stopPropagation();
-                                        handleOpenModal(index);
-                                      }}
-                                      alt={`Fetched file ${index}`}
-                                      className={`${widthMedia} h-full max-h-[544px] object-cover rounded-[10px] overflow-hidden`}
-                                    />
-                                  ) : (
-                                    <div
-                                      className="flex justify-center items-center bg-black rounded-[10px] overflow-hidden w-full h-full"
-                                      style={{ aspectRatio: '16/9' }}
-                                    >
-                                      <video
-                                        src={generateFileUrl(file)}
-                                        controls
-                                        onClick={(event) => event.stopPropagation()}
-                                        className="w-full h-full object-contain"
+                              {mediaFiles.map((file, index) => {
+                                let specialGrid = '';
+                                if (mediaFiles.length === 3) {
+                                  if (index === 0) specialGrid = 'row-span-2 col-span-1';
+                                  if (index === 1) specialGrid = 'row-span-1 col-start-2 row-start-1';
+                                  if (index === 2) specialGrid = 'row-span-1 col-start-2 row-start-2';
+                                }
+                                return (
+                                  <div
+                                    key={index}
+                                    className={`relative cursor-pointer ${specialGrid}`}
+                                    style={{
+                                      height:
+                                        mediaFiles.length === 1
+                                          ? 'auto'
+                                          : mediaFiles.length === 3 && index === 0
+                                            ? 'calc(544px - 4px)'
+                                            : mediaFiles.length === 3
+                                              ? 'calc((544px - 4px) / 2)'
+                                              : 'calc((544px - 4px) / 2)'
+                                    }}
+                                  >
+                                    {file.content_type === 'skeleton' ? (
+                                      <Skeleton.File className={mediaFiles.length === 1 ? 'h-[250px]' : 'h-full'} />
+                                    ) : file.content_type.startsWith('image') ? (
+                                      <img
+                                        src={generateFileUrl(file, file.content_type !== 'image/gif' ? 'feed' : 'main')}
+                                        onClick={(event) => {
+                                          event.stopPropagation();
+                                          handleOpenModal(index);
+                                        }}
+                                        alt={`Fetched file ${index}`}
+                                        className={`${widthMedia} h-full max-h-[544px] object-cover rounded-[10px] overflow-hidden`}
                                       />
-                                    </div>
-                                  )}
-                                </div>
-                              ))}
+                                    ) : (
+                                      <div
+                                        className="flex justify-center items-center bg-black rounded-[10px] overflow-hidden w-full h-full"
+                                        style={{ aspectRatio: '16/9' }}
+                                      >
+                                        <video
+                                          src={generateFileUrl(file)}
+                                          controls
+                                          onClick={(event) => event.stopPropagation()}
+                                          className="w-full h-full object-contain"
+                                        />
+                                      </div>
+                                    )}
+                                  </div>
+                                );
+                              })}
                             </div>
                           );
                         })()}
