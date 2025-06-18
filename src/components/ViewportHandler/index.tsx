@@ -29,17 +29,7 @@ export default function ViewportHandler() {
             })
             .catch(() => {});
         }
-        // Unregister all service workers
-        if ('serviceWorker' in navigator) {
-          navigator.serviceWorker
-            .getRegistrations()
-            .then((registrations) => {
-              registrations.forEach((registration) => {
-                registration.unregister();
-              });
-            })
-            .catch(() => {});
-        }
+
         // Force reload after a short delay to allow cache clearing
         setTimeout(() => {
           window.location.reload();
