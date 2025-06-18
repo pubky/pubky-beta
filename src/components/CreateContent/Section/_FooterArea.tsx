@@ -258,7 +258,7 @@ export default function FooterArea({
                 ))}
             </div>
             <div className="grow" />
-            <div className="w-full justify-between sm:justify-end flex gap-2">
+            <div className="w-full justify-between sm:justify-end flex flex-col min-[375px]:flex-row gap-2">
               {isError && (
                 <Typography.Body className="self-center text-[#e95164]" variant="small">
                   Content too long, reduce it and try again
