@@ -274,6 +274,7 @@ export default function FooterArea({
                   className="flex lg:hidden"
                   icon={<Icon.Tag size="32" color={!arrayTags ? 'gray' : 'white'} />}
                   onClick={(event) => {
+                    if (!arrayTags || loading) return;
                     event.stopPropagation();
                     if (!loading) {
                       openModal('tagCreatePost', {
