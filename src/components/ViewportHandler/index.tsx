@@ -9,7 +9,8 @@ export default function ViewportHandler() {
   useEffect(() => {
     // iOS PWA detection
     const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
+    const isStandalone =
+      window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
     const isiOSPWA = isIOS && isStandalone;
 
     // Only run on iOS PWA
@@ -21,17 +22,23 @@ export default function ViewportHandler() {
         win.__clearedCaches = true;
         // Clear all caches
         if ('caches' in window) {
-          caches.keys().then((names) => {
-            return Promise.all(names.map((name) => caches.delete(name)));
-          }).catch(() => {});
+          caches
+            .keys()
+            .then((names) => {
+              return Promise.all(names.map((name) => caches.delete(name)));
+            })
+            .catch(() => {});
         }
         // Unregister all service workers
         if ('serviceWorker' in navigator) {
-          navigator.serviceWorker.getRegistrations().then((registrations) => {
-            registrations.forEach((registration) => {
-              registration.unregister();
-            });
-          }).catch(() => {});
+          navigator.serviceWorker
+            .getRegistrations()
+            .then((registrations) => {
+              registrations.forEach((registration) => {
+                registration.unregister();
+              });
+            })
+            .catch(() => {});
         }
         // Force reload after a short delay to allow cache clearing
         setTimeout(() => {
