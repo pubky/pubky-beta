@@ -15,7 +15,7 @@ interface EditPostProps {
 
 export default function EditPost({ show, setShow, post, setShowMenu, title, className }: EditPostProps) {
   return (
-    <BottomSheet.Root show={show} setShow={setShow} title={title} className={className}>
+    <BottomSheet.Root show={show} setShow={setShow} title={title ?? 'Edit Post'} className={className}>
       <ContentEditPost
         setShowModalEditPost={setShow}
         className="p-0 border-none"
