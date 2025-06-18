@@ -212,50 +212,49 @@ export default function FooterArea({
               </>
             )}
             <div id="add-tag-container" className="w-auto hidden lg:flex flex-col self-center">
-              {setArrayTags &&
-                (addTagInput ? (
-                  <>
-                    {showEmojisFastTag && (
-                      <div className="absolute translate-y-[10%] translate-x-[30%] z-10" ref={wrapperRefEmojisFastTag}>
-                        <EmojiPicker
-                          onEmojiSelect={(emojiObject) => {
-                            setTagInput(tagInput + emojiObject.native);
-                            setShowEmojisFastTag(false);
-                          }}
-                          maxLength={20}
-                          currentInput={tagInput}
-                        />
-                      </div>
-                    )}
-
-                    <Input.Tag
-                      value={tagInput}
-                      onChange={setTagInput}
-                      onAddTag={handleAddTag}
-                      onEmojiPickerClick={() => setShowEmojisFastTag(true)}
-                      showCloseButton
-                      onClose={() => setAddTagInput(false)}
-                      variant="small"
-                      autoFocus
-                    />
-
-                    {errorTag && addTagInput && (
-                      <Typography.Body className="whitespace-nowrap text-[#e95164]" variant="small">
-                        Max 6 tags
-                      </Typography.Body>
-                    )}
-                  </>
-                ) : (
-                  <div
-                    id="show-add-tag-input-btn"
-                    onClick={() => setAddTagInput(true)}
-                    className={`cursor-pointer relative w-8 h-8 rounded-lg border border-white opacity-30 hover:opacity-50 border-dashed justify-center items-center gap-1 inline-flex`}
-                  >
-                    <div>
-                      <Icon.Plus size="16" />
+              {addTagInput ? (
+                <>
+                  {showEmojisFastTag && (
+                    <div className="absolute translate-y-[10%] translate-x-[30%] z-10" ref={wrapperRefEmojisFastTag}>
+                      <EmojiPicker
+                        onEmojiSelect={(emojiObject) => {
+                          setTagInput(tagInput + emojiObject.native);
+                          setShowEmojisFastTag(false);
+                        }}
+                        maxLength={20}
+                        currentInput={tagInput}
+                      />
                     </div>
+                  )}
+
+                  <Input.Tag
+                    value={tagInput}
+                    onChange={setTagInput}
+                    onAddTag={handleAddTag}
+                    onEmojiPickerClick={() => setShowEmojisFastTag(true)}
+                    showCloseButton
+                    onClose={() => setAddTagInput(false)}
+                    variant="small"
+                    autoFocus
+                  />
+
+                  {errorTag && addTagInput && (
+                    <Typography.Body className="whitespace-nowrap text-[#e95164]" variant="small">
+                      Max 6 tags
+                    </Typography.Body>
+                  )}
+                </>
+              ) : (
+                <div
+                  id="show-add-tag-input-btn"
+                  onClick={() => setArrayTags && setAddTagInput(true)}
+                  className={`${setArrayTags ? 'cursor-pointer opacity-30 hover:opacity-50' : 'cursor-not-allowed opacity-15'} relative w-8 h-8 rounded-lg border border-white border-dashed justify-center items-center gap-1 inline-flex`}
+                >
+                  <div>
+                    <Icon.Plus size="16" />
                   </div>
-                ))}
+                </div>
+              )}
             </div>
             <div className="grow" />
             <div className="w-full justify-between sm:justify-end flex gap-2">
