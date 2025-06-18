@@ -123,7 +123,7 @@ jobs:
           SUPPORT_ACCOUNT_ID=1" > .env
           npm ci
 
-      - name: Run e2e tests (${{ matrix.browser }})
+      - name: Run desktop e2e tests (${{ matrix.browser }})
         uses: cypress-io/github-action@v6
         env:
           DEBUG: '@cypress/github-action'
@@ -133,19 +133,41 @@ jobs:
           spec: e2e/**/*.cy.ts
           browser: ${{ matrix.browser }}
           headed: false
-          summary-title: ${{ matrix.browser }}
+          summary-title: desktop-${{ matrix.browser }}
           install: false
           start: npm run start:prod
           wait-on: 'http://localhost:4200'
           wait-on-timeout: 180
 
-      - name: Upload ${{ matrix.browser }} screenshots
+      - name: Run mobile e2e tests (${{ matrix.browser }})
+        uses: cypress-io/github-action@v6
+        env:
+          DEBUG: '@cypress/github-action'
+        with:
+          working-directory: pubky-app/cypress
+          config-file: cypress.mobile.config.ts
+          spec: mobile/**/*.cy.ts
+          browser: ${{ matrix.browser }}
+          headed: false
+          summary-title: mobile-${{ matrix.browser }}
+          install: false
+          start: npm run start:prod
+          wait-on: 'http://localhost:4200'
+          wait-on-timeout: 180
+
+      - name: Upload desktop screenshots
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
           name: screenshots-${{ matrix.browser }}
           path: pubky-app/cypress/screenshots
 
+      - name: Upload mobile screenshots
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-screenshots-${{ matrix.browser }}
+          path: pubky-app/cypress/screenshots/mobile
 
       - name: Upload video for notifications test
         if: ${{ always() }}
@@ -217,6 +239,15 @@ jobs:
         with:
           name: video-${{ matrix.browser }}-onboard
           path: pubky-app/cypress/videos/onboard.cy.ts.mp4
+          if-no-files-found: ignore
+
+      - name: Upload video for mobile onboard test
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: mobile-videos-${{ matrix.browser }}-onboard
+          path: pubky-app/cypress/videos/mobile-onboard.cy.ts.mp4
           if-no-files-found: ignore
 
       - name: Dump docker logs on failure

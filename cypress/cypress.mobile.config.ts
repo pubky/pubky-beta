@@ -1,45 +1,37 @@
 import { defineConfig } from 'cypress';
-
-import { readdirSync, rmdir, unlink, rename } from 'fs';
 import { defaultMs } from './support/slow-down';
 import { setupCypressTasks } from './support/cypress-tasks';
 
 export default defineConfig({
   e2e: {
     baseUrl: 'http://localhost:4200',
-    specPattern: 'e2e/**/*.cy.{js,jsx,ts,tsx}',
+    specPattern: 'mobile/**/*.cy.{js,jsx,ts,tsx}',
     supportFile: 'support/e2e.ts',
-    videosFolder: 'videos',
-    screenshotsFolder: 'screenshots',
-    downloadsFolder: 'download',
+    videosFolder: 'videos/mobile',
+    screenshotsFolder: 'screenshots/mobile',
+    downloadsFolder: 'download/mobile',
     fixturesFolder: 'fixtures',
     defaultCommandTimeout: process.env['CI'] ? 60_000 : 15_000,
     video: true,
-    viewportWidth: 1920,
-    viewportHeight: 1080,
+    viewportWidth: 393, // iPhone 15 Pro width
+    viewportHeight: 852, // iPhone 15 Pro height
     env: {
-      // slow down execution more in CI to avoid flaky tests
       commandDelay: defaultMs,
-      ci: process.env['CI']
+      ci: process.env['CI'],
+      isMobile: true
     },
-
-    // Plugins
 
     setupNodeEvents(on, _config) {
       on('before:browser:launch', (browser, launchOptions) => {
         if (browser.family === 'firefox') {
-          // Firefox to treat localhost as secure context (needed for win.navigator.clipboard)
           launchOptions.preferences['network.proxy.testing_localhost_is_secure_when_hijacked'] = true;
-          // Enables clipboard access
           launchOptions.preferences['dom.events.testing.asyncClipboard'] = true;
-          // Enables readText from clipboard
           launchOptions.preferences['dom.events.asyncClipboard.readText'] = true;
         }
-        // Enable clipboard for Chrome
         if (browser.family === 'chromium' && browser.name !== 'electron') {
           launchOptions.args.push('--enable-experimental-web-platform-features');
-          launchOptions.args.push('--clipboard-read-write'); // Enable clipboard read/write
-          launchOptions.args.push('--clipboard-sanitized-write'); // Enable sanitized write permissions
+          launchOptions.args.push('--clipboard-read-write');
+          launchOptions.args.push('--clipboard-sanitized-write');
         }
         return launchOptions;
       });
@@ -50,4 +42,4 @@ export default defineConfig({
     chromeWebSecurity: false,
     pageLoadTimeout: 60000
   }
-});
+}); 
