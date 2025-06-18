@@ -16,7 +16,6 @@ export default function ViewportHandler() {
     // Only run on iOS PWA
     if (isiOSPWA) {
       // Prevent infinite reload loop
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const win = window as any;
       if (!win.__clearedCaches) {
         win.__clearedCaches = true;
