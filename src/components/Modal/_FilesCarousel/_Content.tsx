@@ -78,7 +78,6 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex }:
   const currentFile = mediaFiles[localFileIndex];
   const isVideo = currentFile?.content_type.startsWith('video');
 
- 
   // Enable zoom
   useEffect(() => {
     const metaTag = document.querySelector('meta[name="viewport"]') as HTMLMetaElement | null;
@@ -90,7 +89,6 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex }:
       metaTag.content = 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no';
     };
   }, [localFileIndex]);
-  
 
   return (
     <div
