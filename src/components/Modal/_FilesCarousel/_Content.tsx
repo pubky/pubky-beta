@@ -15,6 +15,10 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex }:
   const [localFileIndex, setLocalFileIndex] = useState(currentFileIndex);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const [panPosition, setPanPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const touchStartX = useRef(0);
   const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
   const BASE_URL = `${NEXT_PUBLIC_NEXUS}/static/files`;
@@ -28,6 +32,8 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex }:
   useEffect(() => {
     setLocalFileIndex(currentFileIndex);
     setIsImageLoaded(false);
+    setZoomLevel(1); // Reset zoom when changing files
+    setPanPosition({ x: 0, y: 0 }); // Reset pan when changing files
   }, [currentFileIndex]);
 
   const changeFile = (direction: 'next' | 'prev') => {
@@ -46,17 +52,56 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex }:
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
+    if (zoomLevel > 1) {
+      // If zoomed in, handle panning
+      setIsDragging(true);
+      setDragStart({
+        x: e.touches[0].clientX - panPosition.x,
+        y: e.touches[0].clientY - panPosition.y
+      });
+      // Prevent page scroll while panning
+      e.preventDefault();
+      e.stopPropagation();
+    } else {
+      // If not zoomed, handle navigation
+      touchStartX.current = e.touches[0].clientX;
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (isDragging && zoomLevel > 1) {
+      const newX = e.touches[0].clientX - dragStart.x;
+      const newY = e.touches[0].clientY - dragStart.y;
+      
+      // Limit panning to prevent image from going too far out of view
+      const maxPanX = (zoomLevel - 1) * 200; // Adjust based on your needs
+      const maxPanY = (zoomLevel - 1) * 150;
+      
+      setPanPosition({
+        x: Math.max(-maxPanX, Math.min(maxPanX, newX)),
+        y: Math.max(-maxPanY, Math.min(maxPanY, newY))
+      });
+      // Prevent page scroll while panning
+      e.preventDefault();
+      e.stopPropagation();
+    }
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    const touchEndX = e.changedTouches[0].clientX;
-    const swipeDistance = touchStartX.current - touchEndX;
+    if (isDragging) {
+      setIsDragging(false);
+      return;
+    }
 
-    if (swipeDistance > 50) {
-      changeFile('next');
-    } else if (swipeDistance < -50) {
-      changeFile('prev');
+    if (zoomLevel <= 1) {
+      const touchEndX = e.changedTouches[0].clientX;
+      const swipeDistance = touchStartX.current - touchEndX;
+
+      if (swipeDistance > 50) {
+        changeFile('next');
+      } else if (swipeDistance < -50) {
+        changeFile('prev');
+      }
     }
   };
 
@@ -78,22 +123,38 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex }:
   const currentFile = mediaFiles[localFileIndex];
   const isVideo = currentFile?.content_type.startsWith('video');
 
-  // Enable zoom
+  // Disable zoom
   useEffect(() => {
     const metaTag = document.querySelector('meta[name="viewport"]') as HTMLMetaElement | null;
 
     if (!metaTag) return;
-    metaTag.content = 'width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes';
+    metaTag.content = 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no';
 
     return () => {
       metaTag.content = 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no';
     };
   }, [localFileIndex]);
 
+  const handleZoomIn = () => {
+    setZoomLevel(prev => Math.min(prev + 0.5, 3));
+    setPanPosition({ x: 0, y: 0 }); // Reset pan when zooming
+  };
+
+  const handleZoomOut = () => {
+    setZoomLevel(prev => Math.max(prev - 0.5, 0.5));
+    setPanPosition({ x: 0, y: 0 }); // Reset pan when zooming
+  };
+
+  const handleResetZoom = () => {
+    setZoomLevel(1);
+    setPanPosition({ x: 0, y: 0 }); // Reset pan when resetting zoom
+  };
+
   return (
     <div
       className={`${mediaFiles.length > 1 ? 'px-8 md:px-16' : 'px-4 md:px-0'} pb-8 relative flex items-center justify-center`}
       onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
       {!isMobile && mediaFiles.length > 1 && (
@@ -112,17 +173,48 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex }:
           className="rounded-2xl p-6 max-w-full w-full md:w-auto md:min-w-[500px] h-auto max-h-[80vh] object-contain"
         />
       ) : (
-        <img
-          src={generateFileUrl(
-            currentFile,
-            currentFile.content_type === 'image/gif' ? 'main' : isImageLoaded ? 'main' : 'feed'
-          )}
-          alt={`Modal view ${localFileIndex}`}
-          width={800}
-          height={418}
-          className={`rounded-2xl max-w-full w-full md:w-auto h-auto md:min-w-[500px] max-h-[80vh] object-contain transition-opacity duration-300 ${isImageLoaded ? 'opacity-100' : 'opacity-80'}`}
-          onLoad={() => setIsImageLoaded(true)}
-        />
+        <div className="relative overflow-hidden rounded-2xl">
+          <img
+            src={generateFileUrl(
+              currentFile,
+              currentFile.content_type === 'image/gif' ? 'main' : isImageLoaded ? 'main' : 'feed'
+            )}
+            alt={`Modal view ${localFileIndex}`}
+            width={800}
+            height={418}
+            className={`max-w-full w-full md:w-auto h-auto md:min-w-[500px] max-h-[80vh] object-contain transition-opacity duration-300 ${isImageLoaded ? 'opacity-100' : 'opacity-80'} ${isDragging ? 'cursor-grabbing' : zoomLevel > 1 ? 'cursor-grab' : 'cursor-default'}`}
+            style={{ 
+              transform: `scale(${zoomLevel}) translate(${panPosition.x / zoomLevel}px, ${panPosition.y / zoomLevel}px)`, 
+              transformOrigin: 'center',
+              transition: isDragging ? 'none' : 'transform 0.1s ease-out',
+              touchAction: zoomLevel > 1 ? 'none' : 'auto'
+            }}
+            onLoad={() => setIsImageLoaded(true)}
+          />
+          {/* Zoom controls */}
+          <div className="absolute top-2 right-2 flex gap-1 opacity-20 hover:opacity-100 transition-opacity duration-200">
+            <button
+              onClick={handleZoomOut}
+              className="bg-black bg-opacity-30 hover:bg-opacity-50 text-white p-1.5 rounded-full backdrop-blur-sm"
+              disabled={zoomLevel <= 0.5}
+            >
+              <Icon.Minus size="14" />
+            </button>
+            <button
+              onClick={handleResetZoom}
+              className="bg-black bg-opacity-30 hover:bg-opacity-50 text-white px-2 py-1.5 rounded-full text-xs backdrop-blur-sm"
+            >
+              {Math.round(zoomLevel * 100)}%
+            </button>
+            <button
+              onClick={handleZoomIn}
+              className="bg-black bg-opacity-30 hover:bg-opacity-50 text-white p-1.5 rounded-full backdrop-blur-sm"
+              disabled={zoomLevel >= 3}
+            >
+              <Icon.Plus size="14" />
+            </button>
+          </div>
+        </div>
       )}
       <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2">
         <Typography.Body className="text-opacity-80" variant="small">
