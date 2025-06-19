@@ -78,8 +78,8 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex }:
       const newY = e.touches[0].clientY - dragStart.y;
 
       // Limit panning to prevent image from going too far out of view
-      const maxPanX = (zoomLevel - 1) * 200; // Adjust based on your needs
-      const maxPanY = (zoomLevel - 1) * 150;
+      const maxPanX = (zoomLevel - 1) * 400;
+      const maxPanY = (zoomLevel - 1) * 300;
 
       setPanPosition({
         x: Math.max(-maxPanX, Math.min(maxPanX, newX)),
@@ -127,8 +127,8 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex }:
       const newY = e.clientY - dragStart.y;
 
       // Limit panning to prevent image from going too far out of view
-      const maxPanX = (zoomLevel - 1) * 200;
-      const maxPanY = (zoomLevel - 1) * 150;
+      const maxPanX = (zoomLevel - 1) * 500;
+      const maxPanY = (zoomLevel - 1) * 400;
 
       setPanPosition({
         x: Math.max(-maxPanX, Math.min(maxPanX, newX)),
