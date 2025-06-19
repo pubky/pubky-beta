@@ -105,6 +105,39 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex }:
     }
   };
 
+  // Mouse drag handlers for desktop
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (zoomLevel > 1) {
+      setIsDragging(true);
+      setDragStart({
+        x: e.clientX - panPosition.x,
+        y: e.clientY - panPosition.y
+      });
+      e.preventDefault();
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isDragging && zoomLevel > 1) {
+      const newX = e.clientX - dragStart.x;
+      const newY = e.clientY - dragStart.y;
+
+      // Limit panning to prevent image from going too far out of view
+      const maxPanX = (zoomLevel - 1) * 200;
+      const maxPanY = (zoomLevel - 1) * 150;
+
+      setPanPosition({
+        x: Math.max(-maxPanX, Math.min(maxPanX, newX)),
+        y: Math.max(-maxPanY, Math.min(maxPanY, newY))
+      });
+      e.preventDefault();
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowLeft') {
@@ -190,6 +223,10 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex }:
               touchAction: zoomLevel > 1 ? 'none' : 'auto'
             }}
             onLoad={() => setIsImageLoaded(true)}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
           />
         </div>
       )}
