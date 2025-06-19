@@ -173,8 +173,8 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex }:
   }, [localFileIndex]);
 
   const handleZoomIn = () => {
-    setZoomLevel((prev) => Math.min(prev + 0.5, 3));
-    setPanPosition({ x: 0, y: 0 }); // Reset pan when zooming
+    setZoomLevel((prev) => Math.min(prev + 0.5, 5));
+    // No need to reset pan position when zooming in
   };
 
   const handleZoomOut = () => {
@@ -252,7 +252,7 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex }:
           <button
             onClick={handleZoomIn}
             className="bg-black bg-opacity-30 hover:bg-opacity-50 text-white p-1.5 rounded-full backdrop-blur-sm"
-            disabled={zoomLevel >= 3}
+            disabled={zoomLevel >= 5}
           >
             <Icon.Plus size="14" />
           </button>
