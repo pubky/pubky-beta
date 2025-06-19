@@ -48,6 +48,10 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex }:
       return newIndex;
     });
 
+    // Reset zoom and pan when changing files
+    setZoomLevel(1);
+    setPanPosition({ x: 0, y: 0 });
+
     setTimeout(() => setIsTransitioning(false), 300);
   };
 
