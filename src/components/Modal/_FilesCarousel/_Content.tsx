@@ -136,12 +136,12 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex }:
   }, [localFileIndex]);
 
   const handleZoomIn = () => {
-    setZoomLevel(prev => Math.min(prev + 0.5, 3));
+    setZoomLevel((prev) => Math.min(prev + 0.5, 3));
     setPanPosition({ x: 0, y: 0 }); // Reset pan when zooming
   };
 
   const handleZoomOut = () => {
-    setZoomLevel(prev => Math.max(prev - 0.5, 0.5));
+    setZoomLevel((prev) => Math.max(prev - 0.5, 0.5));
     setPanPosition({ x: 0, y: 0 }); // Reset pan when zooming
   };
 
@@ -183,8 +183,8 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex }:
             width={800}
             height={418}
             className={`max-w-full w-full md:w-auto h-auto md:min-w-[500px] max-h-[80vh] object-contain transition-opacity duration-300 ${isImageLoaded ? 'opacity-100' : 'opacity-80'} ${isDragging ? 'cursor-grabbing' : zoomLevel > 1 ? 'cursor-grab' : 'cursor-default'}`}
-            style={{ 
-              transform: `scale(${zoomLevel}) translate(${panPosition.x / zoomLevel}px, ${panPosition.y / zoomLevel}px)`, 
+            style={{
+              transform: `scale(${zoomLevel}) translate(${panPosition.x / zoomLevel}px, ${panPosition.y / zoomLevel}px)`,
               transformOrigin: 'center',
               transition: isDragging ? 'none' : 'transform 0.1s ease-out',
               touchAction: zoomLevel > 1 ? 'none' : 'auto'
