@@ -18,8 +18,13 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
 
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasMore, setHasMore] = useState(true);
 
-  const loader = useInfiniteScroll(() => fetchReplies({ skipValue: skip }), isLoading);
+  const loader = useInfiniteScroll(() => {
+    if (hasMore && !isLoading) {
+      fetchReplies({ skipValue: skip });
+    }
+  }, isLoading || !hasMore);
 
   const fetchReplies = async ({ skipValue = skip }: { skipValue?: number }) => {
     setIsLoading(true);
@@ -37,11 +42,15 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
 
       setSkip(skipValue + limit);
 
-      if (repliesData) {
+      if (repliesData && repliesData.length > 0) {
         // filter muted and deleted replies
         const filteredReplies = repliesData.filter(
           (reply) => !mutedUsers.includes(reply.details.author) && !deletedPosts.includes(reply.details.id)
         );
+
+        // Check if we have more data to load
+        setHasMore(repliesData.length === limit);
+
         // If this is the initial load (skipValue is 0), just set the replies
         // Otherwise, append them to maintain chronological order
         if (skipValue === 0) {
@@ -50,12 +59,18 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
           setReplies((prev) => [...prev, ...filteredReplies]);
         }
       } else {
-        // If no replies data, ensure we set an empty array
-        setReplies([]);
+        // If no replies data, ensure we set an empty array and mark as no more data
+        setHasMore(false);
+        if (skipValue === 0) {
+          setReplies([]);
+        }
       }
     } catch (error) {
       setInitialLoadComplete(true);
-      setReplies([]);
+      setHasMore(false);
+      if (skipValue === 0) {
+        setReplies([]);
+      }
     } finally {
       setIsLoading(false);
       setInitialLoadComplete(true);
@@ -67,6 +82,7 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
     setSkip(0);
     setInitialLoadComplete(false);
     setIsLoading(true);
+    setHasMore(true);
     fetchReplies({ skipValue: 0 });
   }, [pubkyAuthor, postId]);
 
@@ -76,6 +92,7 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
       setReplies([]);
       setSkip(0);
       setInitialLoadComplete(false);
+      setHasMore(true);
     };
   }, []);
 
@@ -140,7 +157,16 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
           )}
         </div>
       )}
-      {!isLoading && !initialLoadComplete && <div ref={loader} />}
+
+      {/* Loader for infinite scroll - always visible when there's more data */}
+      {hasMore && <div ref={loader} className="h-10" />}
+
+      {/* Loading indicator for subsequent loads */}
+      {isLoading && initialLoadComplete && (
+        <div className="h-20 flex items-center justify-center">
+          <Skeleton.Simple />
+        </div>
+      )}
     </>
   );
 }
