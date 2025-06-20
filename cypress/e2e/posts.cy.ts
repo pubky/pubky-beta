@@ -633,6 +633,11 @@ describe('posts', () => {
     // repost without content
     repostPost({ postContent });
 
+    // TODO: remove workaround for repost sometimes not showing 'Poster reposted'
+    cy.waitReload(Cypress.env('ci') ? 1000 : 100);
+    waitForFeedToLoad();
+    cy.scrollTo('top');
+
     // verify the repost without content is displayed correctly in feed
     cy.findFirstPostInFeed().within(($post) => {
       // check that only original post text is displayed and not additional content text
