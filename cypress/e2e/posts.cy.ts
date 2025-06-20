@@ -16,7 +16,6 @@ import {
   fastTagWhilstCreatingPost,
   addImage,
   waitForBookmarksToLoad,
-  checkPostIsIndexed,
   checkLatestPostIsIndexed
 } from '../support/posts';
 import { defaultMs, fastMs } from '../support/slow-down';
@@ -43,6 +42,7 @@ describe('posts', () => {
     cy.location('pathname').then((currentPath) => {
       if (currentPath !== '/home') {
         cy.signIn(backupDownloadFilePath(username));
+        waitForFeedToLoad();
       }
     });
   });
@@ -457,6 +457,7 @@ describe('posts', () => {
 
     const clickMiddleTag = () => {
       cy.get('#tag-1').click();
+      cy.wait(100);
     };
 
     // add one tag now and the rest later
