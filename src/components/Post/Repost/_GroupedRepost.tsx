@@ -135,7 +135,9 @@ export default function GroupedRepost({
           <div className="flex flex-wrap items-center">
             {renderUserLink(displayReposters[1], secondUserData, 1)}
             <span className="ml-1 text-[13px] text-white text-opacity-80">and</span>
-            <span className="ml-1 text-[13px] text-white text-opacity-80">{remainingCount} others reposted</span>
+            <span className="ml-1 text-[13px] text-white text-opacity-80">
+              {remainingCount} {remainingCount > 1 ? 'others' : 'other'} reposted
+            </span>
           </div>
         </div>
       );
