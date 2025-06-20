@@ -30,6 +30,7 @@ export default function ConfirmPhrase({
 }: ConfirmPhraseProps) {
   const { setSeed, setMnemonic, mnemonic } = usePubkyClientContext();
   const [copyMnemonic, setCopyMnemonic] = useState(false);
+  const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
   const correctOrder = mnemonic?.split(' ') || [];
 
   useEffect(() => {
@@ -49,8 +50,9 @@ export default function ConfirmPhrase({
     }
   }, [mnemonic]);
 
-  const handleSelectWord = (word: string) => {
-    // if (selectedWords.includes(word)) return;
+  const handleSelectWord = (word: string, wordIndex: number) => {
+    // Check if this specific word index is already selected
+    if (selectedIndices.includes(wordIndex)) return;
 
     const firstEmptyOrIncorrectIndex = selectedWords.findIndex(
       (selectedWord, idx) => !selectedWord || selectedWord !== correctOrder[idx]
@@ -58,8 +60,24 @@ export default function ConfirmPhrase({
 
     if (firstEmptyOrIncorrectIndex !== -1) {
       const newSelectedWords = [...selectedWords];
+      const previousWord = newSelectedWords[firstEmptyOrIncorrectIndex];
       newSelectedWords[firstEmptyOrIncorrectIndex] = word;
       setSelectedWords(newSelectedWords);
+
+      // Remove the index of the previous word if it was incorrect
+      let newSelectedIndices = [...selectedIndices];
+      if (previousWord && previousWord !== correctOrder[firstEmptyOrIncorrectIndex]) {
+        // Find the index of the previous incorrect word in randomizedWords
+        const previousWordIndex = randomizedWords.findIndex(
+          (w, idx) => w === previousWord && selectedIndices.includes(idx)
+        );
+        if (previousWordIndex !== -1) {
+          newSelectedIndices = newSelectedIndices.filter((idx) => idx !== previousWordIndex);
+        }
+      }
+
+      // Add this specific word index to selected indices
+      setSelectedIndices([...newSelectedIndices, wordIndex]);
     }
   };
 
@@ -113,9 +131,9 @@ export default function ConfirmPhrase({
           {randomizedWords.map((word, index) => (
             <Typography.Body
               key={index}
-              onClick={() => handleSelectWord(word)}
+              onClick={() => handleSelectWord(word, index)}
               className={`py-2 px-4 rounded-full cursor-pointer ${
-                selectedWords.includes(word)
+                selectedIndices.includes(index)
                   ? 'bg-white bg-opacity-10 text-opacity-30'
                   : 'bg-white bg-opacity-20 hover:bg-opacity-30'
               }`}
@@ -208,6 +226,7 @@ export default function ConfirmPhrase({
           onClick={() => {
             setConfirmPhrase(false);
             setSelectedWords(Array(12).fill(''));
+            setSelectedIndices([]);
           }}
         >
           Back
