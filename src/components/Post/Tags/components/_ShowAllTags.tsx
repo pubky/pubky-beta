@@ -14,7 +14,6 @@ import { getUserProfile } from '@/services/userService';
 import { UserView } from '@/types/User';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 import EmojiPicker from '@/components/EmojiPicker';
-import { searchTagsByPrefix } from '@/services/streamService';
 import { useSuggestedTags } from '@/hooks/useSuggestedTags';
 
 interface ShowAllTagsProps {
@@ -34,9 +33,16 @@ export default function ShowAllTags({ post, postType, onTagClick }: ShowAllTagsP
   const [tagInput, setTagInput] = useState('');
   const [showEmojis, setShowEmojis] = useState(false);
   const [loadingTag, setLoadingTag] = useState(false);
-  const [suggestedTags, setSuggestedTags] = useState<string[]>([]);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
+  const inputWrapperRef = useRef<HTMLDivElement>(null);
   useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
+  useDrawerClickOutside(inputWrapperRef, () => {
+    // Hide suggested tags when clicking outside
+    if (suggestedTagsFromHook.length > 0) {
+      setSuggestedTagsFromHook([]);
+      setSelectedTagIndex(-1);
+    }
+  });
 
   // Infinite scroll state
   const [skip, setSkip] = useState(TAG_LIMIT);
@@ -70,7 +76,9 @@ export default function ShowAllTags({ post, postType, onTagClick }: ShowAllTagsP
     suggestedTags: suggestedTagsFromHook,
     selectedTagIndex,
     handleKeyDown,
-    handleTagClick: handleSuggestedTagClick
+    handleTagClick: handleSuggestedTagClick,
+    setSuggestedTags: setSuggestedTagsFromHook,
+    setSelectedTagIndex
   } = useSuggestedTags({
     tagInput,
     onTagSelect: (tag) => setTagInput(tag)
@@ -200,32 +208,6 @@ export default function ShowAllTags({ post, postType, onTagClick }: ShowAllTagsP
 
     fetchProfiles();
   }, [taggers, pubky]);
-
-  useEffect(() => {
-    if (!tagInput.trim()) {
-      setSuggestedTags([]);
-      return;
-    }
-
-    let isActive = true;
-    const timeoutId = setTimeout(async () => {
-      try {
-        const tags = await searchTagsByPrefix(tagInput.trim(), 0, 3);
-        if (isActive) {
-          setSuggestedTags(tags || []);
-        }
-      } catch (error) {
-        if (isActive) {
-          setSuggestedTags([]);
-        }
-      }
-    }, 500);
-
-    return () => {
-      isActive = false;
-      clearTimeout(timeoutId);
-    };
-  }, [tagInput]);
 
   // Event handlers
   const handleAddTagInput = async (tag: string) => {
@@ -488,7 +470,7 @@ export default function ShowAllTags({ post, postType, onTagClick }: ShowAllTagsP
   );
 
   const renderTagInput = () => (
-    <div className="relative">
+    <div className="relative" ref={inputWrapperRef}>
       {showEmojis && (
         <div className="absolute translate-y-[10%] translate-x-[30%] z-10" ref={wrapperRefEmojis}>
           <EmojiPicker
@@ -516,9 +498,9 @@ export default function ShowAllTags({ post, postType, onTagClick }: ShowAllTagsP
           variant="small"
           autoComplete={false}
         />
-        {suggestedTags.length > 0 && (
+        {suggestedTagsFromHook.length > 0 && (
           <div className="absolute top-full left-0 mt-1 bg-[#05050A] border border-white border-opacity-20 rounded-lg z-20 w-[200px] max-h-[150px] overflow-y-auto scrollbar-thin scrollbar-webkit">
-            {suggestedTags.map((tag, index) => (
+            {suggestedTagsFromHook.map((tag, index) => (
               <div
                 key={index}
                 onClick={() => handleSuggestedTagClick(tag)}
