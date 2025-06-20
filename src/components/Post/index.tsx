@@ -107,7 +107,20 @@ export default function Post({
                 />
               </div>
             ) : post?.relationships?.reposted && !repostView ? (
-              post?.details?.content || (post?.details?.attachments && post?.details?.attachments.length > 0) ? (
+              // Check if this is a grouped repost
+              post.groupedReposts && post.groupedReposts.length > 1 ? (
+                <Repost.GroupedRepost
+                  post={post}
+                  repostedPost={repostedPost}
+                  loadingRepostedPost={loadingRepostedPost}
+                  repostView={repostView}
+                  line={line}
+                  lineStyle={lineStyle}
+                  largeView={largeView}
+                  fullContent={fullContent}
+                  restClassName={rest.className}
+                />
+              ) : post?.details?.content || (post?.details?.attachments && post?.details?.attachments.length > 0) ? (
                 <Repost.Blank
                   postType={postType}
                   post={post}

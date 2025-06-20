@@ -37,6 +37,9 @@ export interface PostView {
   relationships?: PostRelationships;
   bookmark?: Bookmark;
   cached: 'local' | 'homeserver' | 'nexus';
+  groupedReposts?: PostView[];
+  repostCount?: number;
+  uniqueReposters?: string[];
 }
 
 export interface PostRelationships {
