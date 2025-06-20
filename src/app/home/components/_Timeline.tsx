@@ -91,7 +91,10 @@ export const Timeline = () => {
       const combinedTimeline = [...timelineValue, ...groupedNewPosts];
       const finalTimeline = groupReposts(combinedTimeline);
 
-      setTimeline(finalTimeline);
+      // Sort the final timeline by indexed_at to maintain chronological order
+      const sortedTimeline = finalTimeline.sort((a, b) => b.details.indexed_at - a.details.indexed_at);
+
+      setTimeline(sortedTimeline);
 
       // Set finishedLoading to true only if we received no new posts
       if (groupedNewPosts.length === 0) {
@@ -181,11 +184,13 @@ export const Timeline = () => {
 
           if (existingPost) {
             const updatedTimeline = prev.map((p) => (p.details.id === nexusData.details.id ? nexusData : p));
-            return groupReposts(updatedTimeline);
+            const groupedTimeline = groupReposts(updatedTimeline);
+            return groupedTimeline.sort((a, b) => b.details.indexed_at - a.details.indexed_at);
           }
 
           const newTimeline = [nexusData, ...prev];
-          return groupReposts(newTimeline);
+          const groupedTimeline = groupReposts(newTimeline);
+          return groupedTimeline.sort((a, b) => b.details.indexed_at - a.details.indexed_at);
         });
       } catch (error) {
         console.log('Error fetching Nexus data:', error);
