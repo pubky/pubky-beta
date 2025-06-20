@@ -365,16 +365,16 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                           </Link>
                           <div onClick={() => setSelectedTag(tag)} className="cursor-pointer flex items-center">
                             {displayedImages?.map((image, imageIndex) => (
-                              <ImageByUri
-                                id={image}
-                                width={32}
-                                height={32}
-                                key={`${tag?.label}-${imageIndex}`}
-                                className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${
-                                  imageIndex > 0 && '-ml-2'
-                                }`}
-                                alt={`tag-${imageIndex + 1}`}
-                              />
+                              <div className={`w-[32px] h-[32px] ${imageIndex > 0 && '-ml-2'}`}>
+                                <ImageByUri
+                                  id={image}
+                                  width={32}
+                                  height={32}
+                                  key={`${tag?.label}-${imageIndex}`}
+                                  className="w-[32px] h-[32px] rounded-full shadow justify-center items-center flex"
+                                  alt={`tag-${imageIndex + 1}`}
+                                />
+                              </div>
                             ))}
                             {extraImagesCount > 0 && (
                               <PostUtil.Counter className="-ml-2">+{extraImagesCount}</PostUtil.Counter>
