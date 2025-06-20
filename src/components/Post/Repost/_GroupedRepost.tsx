@@ -118,7 +118,7 @@ export default function GroupedRepost({
       return (
         <div className="flex flex-wrap items-center">
           {renderUserLink(displayReposters[0], firstUserData, 0)}
-          <span className="ml-1 text-[13px] text-white text-opacity-80">and</span>
+          <span className="mx-1 text-[13px] text-white text-opacity-80">and</span>
           {renderUserLink(displayReposters[1], secondUserData, 1)}
           <span className="ml-1 text-[13px] text-white text-opacity-80">reposted</span>
         </div>
