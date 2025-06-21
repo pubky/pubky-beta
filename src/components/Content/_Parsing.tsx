@@ -36,111 +36,6 @@ const tagsIcons: TagIcon = {
 const Parsing = ({ children, fullContent = false, largeView, repostView }: ParsingProps) => {
   const [copy, setCopy] = useState(false);
 
-  const highlightInlineCode = (text: string): JSX.Element[] => {
-    const parts = text.split(/(`[^`]*`)/g);
-    return parts.map((part, index) =>
-      part.startsWith('`') && part.endsWith('`') && part.length > 2 ? (
-        <span key={index} className="border border-white/10 px-1.5 py-0.5 rounded bg-[#2A2D30] text-[#E8902C]">
-          <LinkParser watchers={watchers as []}>{part.slice(1, -1)}</LinkParser>
-        </span>
-      ) : (
-        <span key={index}>
-          <LinkParser watchers={watchers as []}>{part}</LinkParser>
-        </span>
-      )
-    );
-  };
-
-  const highlightBoldText = (text: string): JSX.Element => {
-    const parts = text.split(/(\*\*[^*]+\*\*)/g);
-    return (
-      <>
-        {parts.map((part, index) => {
-          if (part.startsWith('**') && part.endsWith('**')) {
-            return (
-              <strong key={index} className="font-bold">
-                <LinkParser watchers={watchers as []}>{part.slice(2, -2)}</LinkParser>
-              </strong>
-            );
-          }
-          return (
-            <span key={index}>
-              <LinkParser watchers={watchers as []}>{part}</LinkParser>
-            </span>
-          );
-        })}
-      </>
-    );
-  };
-
-  const highlightItalicText = (text: string): JSX.Element => {
-    const parts = text.split(/(_[^_]+_)/g);
-    return (
-      <>
-        {parts.map((part, index) => {
-          if (part.startsWith('_') && part.endsWith('_')) {
-            return (
-              <em key={index} className="italic">
-                <LinkParser watchers={watchers as []}>{part.slice(1, -1)}</LinkParser>
-              </em>
-            );
-          }
-          return (
-            <span key={index}>
-              <LinkParser watchers={watchers as []}>{part}</LinkParser>
-            </span>
-          );
-        })}
-      </>
-    );
-  };
-
-  const highlightUnderlinedText = (text: string): JSX.Element => {
-    const parts = text.split(/(__[^_]+__)/g);
-    return (
-      <>
-        {parts.map((part, index) => {
-          if (part.startsWith('__') && part.endsWith('__')) {
-            return (
-              <span key={index} className="underline">
-                <LinkParser watchers={watchers as []}>{part.slice(2, -2)}</LinkParser>
-              </span>
-            );
-          }
-          return (
-            <span key={index}>
-              <LinkParser watchers={watchers as []}>{part}</LinkParser>
-            </span>
-          );
-        })}
-      </>
-    );
-  };
-
-  const highlightStrikethroughText = (text: string): JSX.Element => {
-    const strikethroughMatch = text.match(/~~[^~]+~~/);
-    if (!strikethroughMatch)
-      return (
-        <span>
-          <LinkParser watchers={watchers as []}>{text}</LinkParser>
-        </span>
-      );
-
-    const strikethroughText = strikethroughMatch[0];
-    const beforeStrikethrough = text.slice(0, text.indexOf(strikethroughText));
-    const afterStrikethrough = text.slice(text.indexOf(strikethroughText) + strikethroughText.length);
-
-    return (
-      <>
-        {beforeStrikethrough && <span>{beforeStrikethrough}</span>}
-        <span className="line-through">
-          <LinkParser watchers={watchers as []}>{strikethroughText.slice(2, -2)}</LinkParser>
-        </span>
-        {afterStrikethrough && <span>{afterStrikethrough}</span>}
-      </>
-    );
-  };
-
   const isValidUrl = (url: string): boolean => {
     try {
       // Remove trailing punctuation marks
@@ -354,6 +249,29 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
     return <React.Fragment key={`domain-link-${partIndex}`}>{elements}</React.Fragment>;
   };
 
+  const renderInlineCode = (part: string, partIndex: number) => {
+    if (!part.includes('`')) return null;
+
+    const codeSplit = part.split(/(`[^`]+`)/g);
+    const elements = codeSplit.map((codePart, codeIndex) => {
+      if (!codePart) return null;
+      if (codePart.startsWith('`') && codePart.endsWith('`')) {
+        return (
+          <span
+            key={`code-${partIndex}-${codeIndex}`}
+            className="border border-white/10 px-1.5 py-0.5 rounded bg-[#2A2D30] text-[#E8902C]"
+          >
+            {codePart.slice(1, -1)}
+          </span>
+        );
+      }
+      // Return non-code parts as plain text for main logic to handle
+      return codePart;
+    });
+
+    return <React.Fragment key={`inline-code-${partIndex}`}>{elements}</React.Fragment>;
+  };
+
   const renderQuote = (text: string, level: number = 1): JSX.Element => {
     // Line style
     const lineColor = '#dddddd';
@@ -447,11 +365,11 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
             );
           }
 
-          // Handle inline code
+          // Handle inline code: render as code, do not parse further
           if (part.startsWith('`') && part.endsWith('`')) {
             return (
               <span key={index} className="border border-white/10 px-1.5 py-0.5 rounded bg-[#2A2D30] text-[#E8902C]">
-                <LinkParser watchers={watchers as []}>{part.slice(1, -1)}</LinkParser>
+                {part.slice(1, -1)}
               </span>
             );
           }
@@ -497,6 +415,9 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
           const processedParts = parts
             .map((part, partIndex) => {
               if (!part) return null;
+
+              const inlineCode = renderInlineCode(part, partIndex);
+              if (inlineCode) return inlineCode;
 
               const pkLink = renderPkLink(part, partIndex);
               if (pkLink) return pkLink;
