@@ -207,7 +207,7 @@ export default function Contact({ contacts, isLoading }: { contacts: UserView[] 
                       </div>
                     </div>
                   </div>
-                  <div className="flex lg:justify-end gap-2 items-center lg:w-full">
+                  <div className="flex flex-wrap lg:justify-end gap-2 items-center lg:w-full">
                     {contactTags.slice(0, 3).map((tag, index) => {
                       const isTagFound = tag?.relationship || false;
 
