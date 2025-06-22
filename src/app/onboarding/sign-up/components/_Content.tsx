@@ -20,7 +20,9 @@ const profileSchema = z.object({
     .string()
     .min(3, { message: 'Minimum length 3 character.' })
     .max(24, { message: 'Maximum length 24 characters' }),
-  token: z.string().length(14, { message: 'Invite code must be 14 characters.' }),
+  token: z.string().refine((val) => val.length === 12 || val.length === 14, {
+    message: 'Invite code must be 14 characters.'
+  }),
   bio: z.string().max(160, { message: 'Maximum length 160 characters' }).optional()
 });
 
@@ -84,7 +86,8 @@ export default function Index() {
         }
 
         const tokenUppercase = token.toUpperCase();
-        const signUpResponse = await signUp(name, tokenUppercase, bio, linksObject, image);
+        const formattedToken = tokenUppercase.replace(/(.{4})/g, '$1-').slice(0, -1);
+        const signUpResponse = await signUp(name, formattedToken, bio, linksObject, image);
 
         if ('state' in signUpResponse && !signUpResponse.state) {
           const errorMessage = signUpResponse.error.split('Error message: ')[1] || signUpResponse.error;
