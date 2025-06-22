@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import LinkParser from 'react-link-parser';
 import ProfileLink from '../Post/_ProfileLink';
 import { Icon, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
@@ -19,8 +18,6 @@ interface TagIcon {
 }
 
 const PK_PATTERNS = {
-  SPACE_BEFORE: /\s+pk:[a-zA-Z0-9]{52}/,
-  SPACE_AFTER: /pk:[a-zA-Z0-9]{52}\s+/,
   BASE: /pk:[a-zA-Z0-9]{52}/
 };
 
@@ -35,111 +32,6 @@ const tagsIcons: TagIcon = {
 
 const Parsing = ({ children, fullContent = false, largeView, repostView }: ParsingProps) => {
   const [copy, setCopy] = useState(false);
-
-  const highlightInlineCode = (text: string): JSX.Element[] => {
-    const parts = text.split(/(`[^`]*`)/g);
-    return parts.map((part, index) =>
-      part.startsWith('`') && part.endsWith('`') && part.length > 2 ? (
-        <span key={index} className="border border-white/10 px-1.5 py-0.5 rounded bg-[#2A2D30] text-[#E8902C]">
-          <LinkParser watchers={watchers as []}>{part.slice(1, -1)}</LinkParser>
-        </span>
-      ) : (
-        <span key={index}>
-          <LinkParser watchers={watchers as []}>{part}</LinkParser>
-        </span>
-      )
-    );
-  };
-
-  const highlightBoldText = (text: string): JSX.Element => {
-    const parts = text.split(/(\*\*[^*]+\*\*)/g);
-    return (
-      <>
-        {parts.map((part, index) => {
-          if (part.startsWith('**') && part.endsWith('**')) {
-            return (
-              <strong key={index} className="font-bold">
-                <LinkParser watchers={watchers as []}>{part.slice(2, -2)}</LinkParser>
-              </strong>
-            );
-          }
-          return (
-            <span key={index}>
-              <LinkParser watchers={watchers as []}>{part}</LinkParser>
-            </span>
-          );
-        })}
-      </>
-    );
-  };
-
-  const highlightItalicText = (text: string): JSX.Element => {
-    const parts = text.split(/(_[^_]+_)/g);
-    return (
-      <>
-        {parts.map((part, index) => {
-          if (part.startsWith('_') && part.endsWith('_')) {
-            return (
-              <em key={index} className="italic">
-                <LinkParser watchers={watchers as []}>{part.slice(1, -1)}</LinkParser>
-              </em>
-            );
-          }
-          return (
-            <span key={index}>
-              <LinkParser watchers={watchers as []}>{part}</LinkParser>
-            </span>
-          );
-        })}
-      </>
-    );
-  };
-
-  const highlightUnderlinedText = (text: string): JSX.Element => {
-    const parts = text.split(/(__[^_]+__)/g);
-    return (
-      <>
-        {parts.map((part, index) => {
-          if (part.startsWith('__') && part.endsWith('__')) {
-            return (
-              <span key={index} className="underline">
-                <LinkParser watchers={watchers as []}>{part.slice(2, -2)}</LinkParser>
-              </span>
-            );
-          }
-          return (
-            <span key={index}>
-              <LinkParser watchers={watchers as []}>{part}</LinkParser>
-            </span>
-          );
-        })}
-      </>
-    );
-  };
-
-  const highlightStrikethroughText = (text: string): JSX.Element => {
-    const strikethroughMatch = text.match(/~~[^~]+~~/);
-    if (!strikethroughMatch)
-      return (
-        <span>
-          <LinkParser watchers={watchers as []}>{text}</LinkParser>
-        </span>
-      );
-
-    const strikethroughText = strikethroughMatch[0];
-    const beforeStrikethrough = text.slice(0, text.indexOf(strikethroughText));
-    const afterStrikethrough = text.slice(text.indexOf(strikethroughText) + strikethroughText.length);
-
-    return (
-      <>
-        {beforeStrikethrough && <span>{beforeStrikethrough}</span>}
-        <span className="line-through">
-          <LinkParser watchers={watchers as []}>{strikethroughText.slice(2, -2)}</LinkParser>
-        </span>
-        {afterStrikethrough && <span>{afterStrikethrough}</span>}
-      </>
-    );
-  };
 
   const isValidUrl = (url: string): boolean => {
     try {
@@ -167,56 +59,6 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
       return url;
     }
   };
-
-  const watchers = [
-    {
-      type: 'startsWith' as const,
-      watchFor: 'pk:',
-      render: (pk: string) => {
-        const pkMatch = pk.match(PK_PATTERNS.BASE);
-        return pkMatch ? <ProfileLink pk={pkMatch[0]} /> : pk;
-      }
-    },
-    {
-      type: 'startsWith' as const,
-      watchFor: '#',
-      render: (tag: string) => {
-        const trimmedTag = tag.trim().toLowerCase();
-        const icon = tagsIcons[trimmedTag];
-        return (
-          <Link
-            className="text-[#C8FF00] break-words inline-flex mr-1"
-            href={`/search?tags=${tag.replace('#', '').trim()}`}
-            target="_self"
-            rel="noreferrer"
-            onClick={(event) => event.stopPropagation()}
-          >
-            {tag} {icon && <span className="ml-1">{icon}</span>}
-          </Link>
-        );
-      }
-    },
-    {
-      type: 'startsWith' as const,
-      watchFor: 'mailto:',
-      render: (url: string) => {
-        const email = url.replace('mailto:', '');
-        if (!isValidEmail(email)) return url;
-
-        return (
-          <Link
-            className="text-[#C8FF00] break-words mr-1"
-            href={`mailto:${email.trim()}`}
-            target="_blank"
-            rel="noreferrer noopener"
-            onClick={(event) => event.stopPropagation()}
-          >
-            {email}
-          </Link>
-        );
-      }
-    }
-  ];
 
   const cleanText = (text: string): string => text.replace(/\n{3,}/g, '\n\n');
   const cleanedText = cleanText(children.toString());
@@ -270,23 +112,6 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
           {codeContent}
         </SyntaxHighlighter>
       </div>
-    );
-  };
-
-  const renderPkLink = (part: string, partIndex: number) => {
-    const pkMatch = part.match(PK_PATTERNS.BASE);
-    if (!pkMatch) return null;
-
-    const pk = pkMatch[0];
-    const beforePk = part.slice(0, part.indexOf(pk));
-    const afterPk = part.slice(part.indexOf(pk) + pk.length);
-
-    return (
-      <React.Fragment key={`pk-link-${partIndex}`}>
-        {beforePk && <span key={`before-${partIndex}`}>{beforePk}</span>}
-        <ProfileLink key={`pk-${partIndex}`} pk={pk} />
-        {afterPk && <span key={`after-${partIndex}`}>{afterPk}</span>}
-      </React.Fragment>
     );
   };
 
@@ -387,7 +212,7 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
             />
           ))}
         </div>
-        <div style={{ flex: 1 }}>{text}</div>
+        <div style={{ flex: 1 }}>{processFormattedText(text)}</div>
       </div>
     );
   };
@@ -413,55 +238,117 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
 
           // Handle bold text
           if (part.startsWith('**') && part.endsWith('**')) {
+            const content = part.slice(2, -2);
             return (
               <strong key={index} className="font-bold">
-                <LinkParser watchers={watchers as []}>{part.slice(2, -2)}</LinkParser>
+                {processTextWithLinks(content)}
               </strong>
             );
           }
 
           // Handle underlined text
           if (part.startsWith('__') && part.endsWith('__')) {
+            const content = part.slice(2, -2);
             return (
               <span key={index} className="underline">
-                <LinkParser watchers={watchers as []}>{part.slice(2, -2)}</LinkParser>
+                {processTextWithLinks(content)}
               </span>
             );
           }
 
           // Handle strikethrough text
           if (part.startsWith('~~') && part.endsWith('~~')) {
+            const content = part.slice(2, -2);
             return (
               <span key={index} className="line-through">
-                <LinkParser watchers={watchers as []}>{part.slice(2, -2)}</LinkParser>
+                {processTextWithLinks(content)}
               </span>
             );
           }
 
           // Handle italic text
           if (part.startsWith('_') && part.endsWith('_')) {
+            const content = part.slice(1, -1);
             return (
               <em key={index} className="italic">
-                <LinkParser watchers={watchers as []}>{part.slice(1, -1)}</LinkParser>
+                {processTextWithLinks(content)}
               </em>
             );
           }
 
           // Handle inline code
           if (part.startsWith('`') && part.endsWith('`')) {
+            const content = part.slice(1, -1);
             return (
               <span key={index} className="border border-white/10 px-1.5 py-0.5 rounded bg-[#2A2D30] text-[#E8902C]">
-                <LinkParser watchers={watchers as []}>{part.slice(1, -1)}</LinkParser>
+                {content}
               </span>
             );
           }
 
           // Handle regular text
-          return (
-            <span key={index}>
-              <LinkParser watchers={watchers as []}>{part}</LinkParser>
-            </span>
-          );
+          return <span key={index}>{processTextWithLinks(part)}</span>;
+        })}
+      </>
+    );
+  };
+
+  const processTextWithLinks = (text: string): JSX.Element => {
+    // Split by PK patterns, hashtags, and mailto links
+    const parts = text.split(/(pk:[a-zA-Z0-9]{52}|#[^\s]+|mailto:[^\s]+)/g);
+
+    return (
+      <>
+        {parts.map((part, partIndex) => {
+          if (!part) return null;
+
+          // Handle PK links
+          if (part.match(PK_PATTERNS.BASE)) {
+            return <ProfileLink key={`pk-${partIndex}`} pk={part} />;
+          }
+
+          // Handle hashtags
+          if (part.startsWith('#')) {
+            const trimmedTag = part.trim().toLowerCase();
+            const icon = tagsIcons[trimmedTag];
+            return (
+              <Link
+                key={`tag-${partIndex}`}
+                className="text-[#C8FF00] break-words inline-flex mr-1"
+                href={`/search?tags=${part.replace('#', '').trim()}`}
+                target="_self"
+                rel="noreferrer"
+                onClick={(event) => event.stopPropagation()}
+              >
+                {part} {icon && <span className="ml-1">{icon}</span>}
+              </Link>
+            );
+          }
+
+          // Handle mailto links
+          if (part.startsWith('mailto:')) {
+            const email = part.replace('mailto:', '');
+            if (!isValidEmail(email)) return <span key={`invalid-email-${partIndex}`}>{part}</span>;
+
+            return (
+              <Link
+                key={`email-${partIndex}`}
+                className="text-[#C8FF00] break-words mr-1"
+                href={`mailto:${email.trim()}`}
+                target="_blank"
+                rel="noreferrer noopener"
+                onClick={(event) => event.stopPropagation()}
+              >
+                {email}
+              </Link>
+            );
+          }
+
+          // Handle regular text with domain links
+          const domainLink = renderDomainLink(part, partIndex);
+          if (domainLink) return domainLink;
+
+          return <span key={`text-${partIndex}`}>{part}</span>;
         })}
       </>
     );
@@ -489,39 +376,11 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
         if (quoteElement) {
           elements.push(quoteElement);
         } else {
-          const parts = line.split(
-            new RegExp(
-              `(${PK_PATTERNS.SPACE_BEFORE.source}|${PK_PATTERNS.SPACE_AFTER.source}|${PK_PATTERNS.BASE.source})`
-            )
-          );
-          const processedParts = parts
-            .map((part, partIndex) => {
-              if (!part) return null;
-
-              const pkLink = renderPkLink(part, partIndex);
-              if (pkLink) return pkLink;
-
-              const domainLink = renderDomainLink(part, partIndex);
-              if (domainLink) return domainLink;
-
-              return (
-                <span key={`text-${partIndex}`}>
-                  {(() => {
-                    // Handle special symbols first
-                    if (/^[^a-zA-Z0-9\s]+$/.test(part)) {
-                      return <>{part}</>;
-                    }
-
-                    // Process all formatting in the text
-                    return processFormattedText(part);
-                  })()}
-                </span>
-              );
-            })
-            .filter(Boolean);
+          // Process formatting first, then handle links within the formatted text
+          const processedLine = processFormattedText(line);
           elements.push(
             <span key={index} className={`${cssText} opacity-90 font-normal tracking-wide`}>
-              {processedParts}
+              {processedLine}
               {index < lines.length - 1 && <br />}
             </span>
           );
