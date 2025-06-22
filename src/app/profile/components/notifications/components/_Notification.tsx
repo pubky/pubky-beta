@@ -70,6 +70,7 @@ export default function Notification({ notification, unread }: { notification: N
   const isMobile = useIsMobile();
   const [user, setUser] = useState<UserView | null | undefined>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentNotificationId, setCurrentNotificationId] = useState<string | number>('');
 
   const fetchProfile = useCallback(
     async (userId: string) => {
@@ -88,6 +89,16 @@ export default function Notification({ notification, unread }: { notification: N
   );
 
   useEffect(() => {
+    // Identifier for this notification to track changes
+    const notificationId = notification.timestamp;
+
+    // If notification changed, reset everything
+    if (notificationId !== currentNotificationId) {
+      setCurrentNotificationId(notificationId);
+      setUser(undefined);
+      setIsLoading(true);
+    }
+
     let userId: string | undefined;
     if (
       notification.body.type === notificationType?.follow?.type ||
@@ -114,8 +125,11 @@ export default function Notification({ notification, unread }: { notification: N
 
     if (userId) {
       fetchProfile(userId);
+    } else {
+      // If no userId found, set loading to false immediately
+      setIsLoading(false);
     }
-  }, [notification, fetchProfile]);
+  }, [notification, fetchProfile, currentNotificationId]);
 
   const currentNotificationType = notificationType[notification?.body?.type as NotificationTypeKey];
 
@@ -201,7 +215,7 @@ export default function Notification({ notification, unread }: { notification: N
                 {Utils.minifyPubky(userId)}
               </Typography.Body>
             </Link>
-          ) : user || user === null ? (
+          ) : user !== undefined ? (
             <Link href={`/profile/${userId}`} className="flex gap-2 items-center">
               <ImageByUri
                 id={user?.details?.id}
