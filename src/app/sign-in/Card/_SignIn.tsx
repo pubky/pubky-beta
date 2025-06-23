@@ -25,6 +25,7 @@ export default function SignIn() {
   const [authUrl, setAuthUrl] = useState('');
   const [appLink, setAppLink] = useState('');
   const [qrSize, setQrSize] = useState(210);
+  const retryCountRef = useRef(0);
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -50,8 +51,15 @@ export default function SignIn() {
     }, 2000);
   };
 
-  const handleGenerateAuthUrl = async (signal: AbortSignal) => {
+  const handleGenerateAuthUrl = async (signal: AbortSignal, isRetry = false) => {
     if (signal.aborted) return;
+
+    // Increment retry count if this is a retry attempt
+    if (isRetry) {
+      retryCountRef.current += 1;
+    } else {
+      retryCountRef.current = 1; // Start with 1 for initial attempt
+    }
 
     const result = await generateAuthUrl();
 
@@ -77,6 +85,17 @@ export default function SignIn() {
     } catch (error: unknown) {
       setLoginError(String(error));
       console.error('Login error:', error);
+      
+      // Regenerate auth URL on error, but only up to 4 attempts total
+      if (!signal.aborted && retryCountRef.current < 4) {
+        setTimeout(() => {
+          handleGenerateAuthUrl(signal, true);
+        }, 2000); // Wait 2 seconds before retrying
+      } else if (retryCountRef.current >= 4) {
+        // After 4 attempts, stop trying and clear the auth URL
+        setAuthUrl('');
+        setLoginError('Retry attempts reached. Please reload the page.');
+      }
     }
   };
 
