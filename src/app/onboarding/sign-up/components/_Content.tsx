@@ -10,6 +10,7 @@ import { Onboarding } from '../../components';
 import { Card } from '../Card';
 import { Links } from '@/types/Post';
 import { processUserLinks } from '../../register/components/processUserLinks';
+import { Utils } from '@/components/utils-shared';
 
 interface FormErrors {
   [fieldName: string]: string[];
@@ -20,7 +21,7 @@ const profileSchema = z.object({
     .string()
     .min(3, { message: 'Minimum length 3 character.' })
     .max(24, { message: 'Maximum length 24 characters' }),
-  token: z.string().refine((val) => val.length === 12 || val.length === 14, {
+  token: z.string().refine((val) => val.length === 14, {
     message: 'Invite code must be 14 characters.'
   }),
   bio: z.string().max(160, { message: 'Maximum length 160 characters' }).optional()
@@ -48,6 +49,11 @@ export default function Index() {
   ) : (
     <Icon.LockKey size="26" />
   );
+
+  const handleTokenChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const maskedValue = Utils.inviteCodeMask(e.target.value);
+    setToken(maskedValue);
+  };
 
   const handleSubmit = async () => {
     if (loading) {
@@ -85,9 +91,7 @@ export default function Index() {
           return;
         }
 
-        const tokenUppercase = token.toUpperCase();
-        const formattedToken = tokenUppercase.replace(/(.{4})/g, '$1-').slice(0, -1);
-        const signUpResponse = await signUp(name, formattedToken, bio, linksObject, image);
+        const signUpResponse = await signUp(name, token, bio, linksObject, image);
 
         if ('state' in signUpResponse && !signUpResponse.state) {
           const errorMessage = signUpResponse.error.split('Error message: ')[1] || signUpResponse.error;
@@ -129,12 +133,12 @@ export default function Index() {
         <div className="flex flex-col lg:justify-self-end lg:mt-4">
           <Input.Text
             icon={iconInviteCode}
-            defaultValue={token}
+            value={token}
             disabled={loading || success}
             maxLength={14}
             id="onboarding-token-input"
             autoCorrect="off"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setToken(e.target.value)}
+            onChange={handleTokenChange}
             error={errors.token}
             className={`${success && 'border-[#C8FF00] text-[#C8FF00]'} border-opacity-100 h-auto lg:w-[280px] pl-16 pr-6 py-5 uppercase placeholder:text-opacity-40 text-opacity-100 text-[17px]`}
             placeholder="Invite code"
