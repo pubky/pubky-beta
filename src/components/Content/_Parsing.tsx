@@ -174,7 +174,7 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
       watchFor: 'pk:',
       render: (pk: string) => {
         const pkMatch = pk.match(PK_PATTERNS.BASE);
-        return pkMatch ? <ProfileLink pk={pkMatch[0]} /> : pk;
+        return pkMatch ? <ProfileLink pk={pkMatch[0]} /> : <span>{pk}</span>;
       }
     },
     {
@@ -201,7 +201,7 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
       watchFor: 'mailto:',
       render: (url: string) => {
         const email = url.replace('mailto:', '');
-        if (!isValidEmail(email)) return url;
+        if (!isValidEmail(email)) return <span>{url}</span>;
 
         return (
           <Link
@@ -362,7 +362,10 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
     const totalLineWidth = level * lineWidth + (level - 1) * lineGap;
 
     return (
-      <div style={{ display: 'flex', alignItems: 'stretch', width: '100%' }}>
+      <div
+        key={`quote-${level}-${text.slice(0, 10)}`}
+        style={{ display: 'flex', alignItems: 'stretch', width: '100%' }}
+      >
         <div
           style={{
             display: 'flex',
@@ -476,7 +479,10 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
     lines.forEach((line, index) => {
       if (line.trim() === '```') {
         if (isCodeBlock) {
-          elements.push(renderCodeBlock(codeLines.join('\n'), `code-${index}`) || <></>);
+          const renderedBlock = renderCodeBlock(codeLines.join('\n'), `code-${index}`);
+          if (renderedBlock) {
+            elements.push(renderedBlock);
+          }
           codeLines = [];
           isCodeBlock = false;
         } else {
@@ -509,7 +515,7 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
                   {(() => {
                     // Handle special symbols first
                     if (/^[^a-zA-Z0-9\s]+$/.test(part)) {
-                      return <>{part}</>;
+                      return part;
                     }
 
                     // Process all formatting in the text

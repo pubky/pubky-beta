@@ -19,7 +19,6 @@ import { getUserProfile } from '@/services/userService';
 import { useAlertContext } from '@/contexts';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 import EmojiPicker from '@/components/EmojiPicker';
-import { searchTagsByPrefix } from '@/services/streamService';
 import { useSuggestedTags } from '@/hooks/useSuggestedTags';
 
 type TaggedAsProps = {
