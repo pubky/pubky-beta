@@ -85,7 +85,7 @@ export default function SignIn() {
     } catch (error: unknown) {
       setLoginError(String(error));
       console.error('Login error:', error);
-      
+
       // Regenerate auth URL on error, but only up to 4 attempts total
       if (!signal.aborted && retryCountRef.current < 4) {
         setTimeout(() => {
