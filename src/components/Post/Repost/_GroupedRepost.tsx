@@ -7,7 +7,7 @@ import { Utils } from '@/components/utils-shared';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { useState } from 'react';
 import { useUserProfile } from '@/hooks/useUser';
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import { useAlertContext, useModal, usePubkyClientContext } from '@/contexts';
 import { PostView } from '@/types/Post';
 
 interface GroupedRepostProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -35,6 +35,7 @@ export default function GroupedRepost({
   ...rest
 }: GroupedRepostProps) {
   const { pubky, deletePost } = usePubkyClientContext();
+  const { openModal } = useModal();
   const { addAlert } = useAlertContext();
   const isMobile = useIsMobile();
   const [showTooltipProfile, setShowTooltipProfile] = useState('');
@@ -43,7 +44,6 @@ export default function GroupedRepost({
 
   // Get unique reposters and their data
   const uniqueReposters = post.uniqueReposters || [];
-  const repostCount = post.repostCount || 0;
 
   // Check if current user is among the reposters
   const currentUserReposted = uniqueReposters.includes(pubky ?? '');
@@ -136,7 +136,16 @@ export default function GroupedRepost({
             {renderUserLink(displayReposters[1], secondUserData, 1)}
             <span className="ml-1 text-[13px] text-white text-opacity-80">and</span>
             <span className="ml-1 text-[13px] text-white text-opacity-80">
-              {remainingCount} {remainingCount > 1 ? 'others' : 'other'} reposted
+              <span
+                onClick={(event) => {
+                  event.stopPropagation();
+                  openModal('repostedUsers', { users: uniqueReposters });
+                }}
+                className="underline cursor-pointer"
+              >
+                {remainingCount} {remainingCount > 1 ? 'others' : 'other'}
+              </span>{' '}
+              reposted
             </span>
           </div>
         </div>

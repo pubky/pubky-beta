@@ -54,11 +54,15 @@ export default function Post({
   const handlePostClick = (event: React.MouseEvent<HTMLDivElement>) => {
     const selection = window.getSelection();
     if (!selection || selection.toString().length === 0) {
+      // Determine which URI to use
+      const uriToUse =
+        post.details.content === '' && post.relationships?.reposted ? post.relationships.reposted : post.details.uri;
+
       if (event.metaKey || event.ctrlKey || event.button === 1) {
         // Open in new tab
-        window.open(Utils.encodePostUri(post?.details?.uri), '_blank');
+        window.open(Utils.encodePostUri(uriToUse), '_blank');
       } else {
-        router.push(Utils.encodePostUri(post?.details?.uri));
+        router.push(Utils.encodePostUri(uriToUse));
       }
     } else {
       event.stopPropagation();
