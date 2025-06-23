@@ -66,8 +66,33 @@ export function NewPostsNotifier() {
 
           // Group the posts to get the actual count that will be displayed
           const groupedPosts = groupReposts(allNewPosts);
-          const timelineIds = new Set(timeline.map((p) => p.details.id));
-          const newGroupedPosts = groupedPosts.filter((post) => !timelineIds.has(post.details.id));
+
+          // Create a set of reposted URIs that are already in the timeline
+          const timelineRepostedUris = new Set<string>();
+          timeline.forEach((post) => {
+            if (post.relationships?.reposted) {
+              timelineRepostedUris.add(post.relationships.reposted);
+            }
+            // Also check grouped reposts in timeline
+            if (post.groupedReposts) {
+              post.groupedReposts.forEach((groupedPost) => {
+                if (groupedPost.relationships?.reposted) {
+                  timelineRepostedUris.add(groupedPost.relationships.reposted);
+                }
+              });
+            }
+          });
+
+          // Filter out grouped posts that are reposts of content already in timeline
+          const newGroupedPosts = groupedPosts.filter((post) => {
+            // If it's a regular post (not a repost), check if ID exists in timeline
+            if (!post.relationships?.reposted) {
+              return !timeline.some((timelinePost) => timelinePost.details.id === post.details.id);
+            }
+
+            // If it's a repost, check if the reposted content is already in timeline
+            return !timelineRepostedUris.has(post.relationships.reposted);
+          });
 
           setNewPostsCount(newGroupedPosts.length);
           return allNewPosts;
