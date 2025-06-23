@@ -149,7 +149,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
       return (
         senderPubky &&
         !mutedUsers?.includes(senderPubky) &&
-        preferencesLoaded && 
+        preferencesLoaded &&
         preferencesLoaded[notification.body.type as keyof typeof preferencesLoaded]
       );
     });
