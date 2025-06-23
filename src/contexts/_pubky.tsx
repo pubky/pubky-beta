@@ -157,8 +157,6 @@ type PubkyClientContextType = {
   mutedUsers: string[] | undefined;
   timestamp: number;
   setTimestamp: React.Dispatch<React.SetStateAction<number>>;
-  notificationPreferences: NotificationPreferences;
-  setNotificationPreferences: React.Dispatch<React.SetStateAction<NotificationPreferences>>;
   newPosts: PostView[];
   setNewPosts: React.Dispatch<React.SetStateAction<PostView[]>>;
   deletedPosts: string[];
@@ -191,7 +189,6 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
   const [searchTags, setSearchTags] = useState<string[]>([]);
   const [repliesArray, setRepliesArray] = useState<PostView[]>({} as PostView[]);
   const [timestamp, setTimestamp] = useState<number>(0);
-  const [notificationPreferences, setNotificationPreferences] = useState<NotificationPreferences>(defaultPreferences);
   const [newPosts, setNewPosts] = useState<PostView[]>([]);
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [deletedPosts, setDeletedPosts] = useState<string[]>([]);
@@ -1498,8 +1495,6 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
         setMutedUsers,
         timestamp,
         setTimestamp,
-        notificationPreferences,
-        setNotificationPreferences,
         singlePost,
         setSinglePost
       }}

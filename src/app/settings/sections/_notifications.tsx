@@ -88,9 +88,9 @@ const getNotificationLabel = (type: NotificationType) => {
     case 'repost':
       return 'New repost to your post';
     case 'post_deleted':
-      return 'Someone deleted a post you replied/reposted';
+      return 'Someone deleted a post you replied/reposted/tagged';
     case 'post_edited':
-      return 'Someone edited a post you replied/reposted';
+      return 'Someone edited a post you replied/reposted/tagged';
     default:
       return '';
   }
