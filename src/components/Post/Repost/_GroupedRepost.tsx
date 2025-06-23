@@ -56,17 +56,42 @@ export default function GroupedRepost({
   const { data: firstUserData } = useUserProfile(displayReposters[0] || '', pubky ?? '');
   const { data: secondUserData } = useUserProfile(displayReposters[1] || '', pubky ?? '');
 
+  // Helper function to recursively find all reposts from the current user
+  const findAllUserReposts = (reposts: PostView[]): PostView[] => {
+    const userReposts: PostView[] = [];
+
+    reposts.forEach((repost) => {
+      // Check if this repost is from the current user
+      if (repost.details.author === pubky) {
+        userReposts.push(repost);
+      }
+
+      // Recursively check nested grouped reposts
+      if (repost.groupedReposts && repost.groupedReposts.length > 0) {
+        userReposts.push(...findAllUserReposts(repost.groupedReposts));
+      }
+    });
+
+    return userReposts;
+  };
+
   const handleDeletePost = async () => {
     if (!post.groupedReposts) return;
 
-    // Find the current user's repost
-    const userRepost = post.groupedReposts.find((r) => r.details.author === pubky);
-    if (!userRepost) return;
+    // Find all reposts from the current user (including nested ones)
+    const userReposts = findAllUserReposts(post.groupedReposts);
+    if (userReposts.length === 0) return;
 
-    const result = await deletePost(userRepost);
-    if (result) {
-      addAlert('Repost deleted!');
-    } else {
+    // Delete all reposts from the current user
+    const deletePromises = userReposts.map((userRepost) => deletePost(userRepost));
+
+    try {
+      const result = await Promise.all(deletePromises);
+
+      if (result) addAlert('Repost deleted!');
+      else addAlert('Something wrong. Try again', 'warning');
+    } catch (error) {
+      console.error('Error deleting reposts:', error);
       addAlert('Something wrong. Try again', 'warning');
     }
   };
