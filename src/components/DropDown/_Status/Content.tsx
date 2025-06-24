@@ -170,15 +170,25 @@ export default function ContentStatus({
       />
       <div>
         {showEmojis && (
-          <div className="absolute translate-y-[20%] translate-x-[0%] lg:translate-x-[30%] z-10" ref={wrapperRefEmojis}>
-            <EmojiPicker
-              onEmojiSelect={(emojiObject) => {
-                setSelectedEmoji(emojiObject.native);
+          <div
+            className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
+            ref={wrapperRefEmojis}
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
                 setShowEmojis(false);
-              }}
-              maxLength={20}
-              currentInput={customStatus}
-            />
+              }
+            }}
+          >
+            <div className="bg-white rounded-lg shadow-lg">
+              <EmojiPicker
+                onEmojiSelect={(emojiObject) => {
+                  setSelectedEmoji(emojiObject.native);
+                  setShowEmojis(false);
+                }}
+                maxLength={20}
+                currentInput={customStatus}
+              />
+            </div>
           </div>
         )}
         <div>
@@ -211,6 +221,7 @@ export default function ContentStatus({
                   <div
                     className="cursor-pointer flex items-center"
                     onClick={(event) => {
+                      event.preventDefault();
                       event.stopPropagation();
                       setShowEmojis(true);
                     }}
@@ -223,6 +234,7 @@ export default function ContentStatus({
                     icon={<Icon.Smiley size="32" />}
                     size="small"
                     onClick={(event) => {
+                      event.preventDefault();
                       event.stopPropagation();
                       setShowEmojis(true);
                     }}
