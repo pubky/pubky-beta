@@ -12,11 +12,12 @@ import { getStreamPosts } from '@/services/streamService';
 
 export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   const limit = 10;
-  const { pubky, setTimeline, timeline, deletedPosts } = usePubkyClientContext();
+  const { pubky, deletedPosts } = usePubkyClientContext();
   const isMyProfile = !!(pubky === creatorPubky || !creatorPubky);
   const [skip, setSkip] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
   const [finishedLoading, setFinishedLoading] = useState(false);
+  const [timeline, setTimeline] = useState<PostView[]>([]);
   const currentPubky = creatorPubky ?? pubky ?? '';
 
   const fetchPosts = async ({
