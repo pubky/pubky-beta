@@ -21,6 +21,7 @@ import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 import EmojiPicker from '@/components/EmojiPicker';
 import { searchTagsByPrefix } from '@/services/streamService';
 import { useSuggestedTags } from '@/hooks/useSuggestedTags';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 type TaggedAsProps = {
   creatorPubky?: string | undefined;
@@ -29,6 +30,7 @@ type TaggedAsProps = {
 
 export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
   const { openModal } = useModal();
+  const isMobile = useIsMobile(640);
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const isMyProfile = !!(pubky === creatorPubky || !creatorPubky);
@@ -326,7 +328,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                   <>
                     {profileTags.map((tag, index) => {
                       const isTagFound = tag?.relationship || false;
-                      const displayedImages = tag.taggers?.slice(0, 5);
+                      const displayedImages = tag.taggers?.slice(0, isMobile ? 2 : 5);
                       const extraImagesCount = tag.taggers_count - displayedImages?.length;
 
                       return (
@@ -433,51 +435,53 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                         />
                       </Link>
                     </div>
-                    {taggers?.map((user, userIndex) => {
-                      const profile = userProfiles[user];
-                      const pubkeyUser = pubky && user.includes(pubky);
-                      const isFollowed = followedUser[user];
+                    <div className="max-h-[300px] flex flex-col gap-2 pr-2 overflow-y-auto scrollbar-thin scrollbar-webkit">
+                      {taggers?.map((user, userIndex) => {
+                        const profile = userProfiles[user];
+                        const pubkeyUser = pubky && user.includes(pubky);
+                        const isFollowed = followedUser[user];
 
-                      return (
-                        <div key={userIndex} className="w-full max-w-[250px] flex justify-between gap-10">
-                          <SideCard.User
-                            uri={profile?.details?.id.replace('pubky:', '')}
-                            username={profile?.details?.name && Utils.minifyText(profile?.details?.name)}
-                            label={Utils.minifyPubky(profile?.details?.id.replace('pubky:', ''))}
-                          />
-                          {pubkeyUser ? (
-                            <SideCard.FollowAction
-                              text="Me"
-                              icon={<Icon.User size="16" />}
-                              className="bg-transparent cursor-default"
+                        return (
+                          <div key={userIndex} className="w-full max-w-[250px] flex justify-between gap-10">
+                            <SideCard.User
+                              uri={profile?.details?.id.replace('pubky:', '')}
+                              username={profile?.details?.name && Utils.minifyText(profile?.details?.name)}
+                              label={Utils.minifyPubky(profile?.details?.id.replace('pubky:', ''))}
                             />
-                          ) : initLoadingFollowers ? (
-                            <SideCard.FollowAction disabled icon={<Icon.LoadingSpin size="16" />} variant="small" />
-                          ) : isFollowed ? (
-                            <SideCard.FollowAction
-                              onClick={loadingFollowers[user] ? undefined : () => handleUnfollowUser(user)}
-                              disabled={loadingFollowers[user]}
-                              loading={loadingFollowers[user]}
-                              icon={<Icon.Minus size="16" />}
-                              variant="small"
-                            />
-                          ) : (
-                            <SideCard.FollowAction
-                              onClick={loadingFollowers[user] ? undefined : () => handleFollowUser(user)}
-                              disabled={loadingFollowers[user]}
-                              loading={loadingFollowers[user]}
-                              icon={<Icon.Plus size="16" />}
-                              variant="small"
-                            />
-                          )}
+                            {pubkeyUser ? (
+                              <SideCard.FollowAction
+                                text="Me"
+                                icon={<Icon.User size="16" />}
+                                className="bg-transparent cursor-default"
+                              />
+                            ) : initLoadingFollowers ? (
+                              <SideCard.FollowAction disabled icon={<Icon.LoadingSpin size="16" />} variant="small" />
+                            ) : isFollowed ? (
+                              <SideCard.FollowAction
+                                onClick={loadingFollowers[user] ? undefined : () => handleUnfollowUser(user)}
+                                disabled={loadingFollowers[user]}
+                                loading={loadingFollowers[user]}
+                                icon={<Icon.Minus size="16" />}
+                                variant="small"
+                              />
+                            ) : (
+                              <SideCard.FollowAction
+                                onClick={loadingFollowers[user] ? undefined : () => handleFollowUser(user)}
+                                disabled={loadingFollowers[user]}
+                                loading={loadingFollowers[user]}
+                                icon={<Icon.Plus size="16" />}
+                                variant="small"
+                              />
+                            )}
+                          </div>
+                        );
+                      })}
+                      {hasMoreTaggers && (
+                        <div ref={loaderTaggers}>
+                          <Icon.LoadingSpin />
                         </div>
-                      );
-                    })}
-                    {hasMoreTaggers && (
-                      <div ref={loaderTaggers}>
-                        <Icon.LoadingSpin />
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </>
                 )}
               </>
