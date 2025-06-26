@@ -13,6 +13,7 @@ import { Utils } from '@social/utils-shared';
 import { usePathname } from 'next/navigation';
 import { Header } from './_Header';
 import { ImageByUri } from '@/components/ImageByUri';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 export default function CreatorpubkyLayout({
   params,
@@ -22,6 +23,7 @@ export default function CreatorpubkyLayout({
   children: React.ReactNode;
 }) {
   const { pubky } = usePubkyClientContext();
+  const isMobile = useIsMobile();
   const pathname = usePathname();
   const [activeTab, setActiveTab] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -29,6 +31,11 @@ export default function CreatorpubkyLayout({
   const [resolvedParams, setResolvedParams] = useState<{
     creatorPubky: string;
   } | null>(null);
+
+  const shouldShowAvatarSection = () => {
+    const foundTab = Profile.FilterTabs.tabs.find((tab) => tab.id === activeTab);
+    return foundTab?.key === 'tagged' || !isMobile;
+  };
 
   useEffect(() => {
     params.then((p) => setResolvedParams(p));
@@ -77,23 +84,25 @@ export default function CreatorpubkyLayout({
               setLoading={setLoading}
               creatorPubky={creatorPubky}
             />
-            <div className="w-full rounded-2xl p-6 lg:p-0 bg-white lg:bg-transparent bg-opacity-10 flex flex-col text-center lg:flex-row items-center gap-3 lg:gap-14 relative">
-              {profile?.details?.id && (
-                <Profile.Avatar
-                  id={profile?.details?.id}
-                  isCensored={Utils.isProfileCensored(profile)}
-                  className="lg:pl-12 cursor-pointer"
-                  username={profile?.details?.name || Utils.minifyPubky(creatorPubky)}
-                  onClick={() => setIsAvatarOpen(true)}
+            {shouldShowAvatarSection() && (
+              <div className="w-full rounded-2xl p-6 lg:p-0 bg-white lg:bg-transparent bg-opacity-10 flex flex-col text-center lg:flex-row items-center gap-3 lg:gap-14 relative">
+                {profile?.details?.id && (
+                  <Profile.Avatar
+                    id={profile?.details?.id}
+                    isCensored={Utils.isProfileCensored(profile)}
+                    className="lg:pl-12 cursor-pointer"
+                    username={profile?.details?.name || Utils.minifyPubky(creatorPubky)}
+                    onClick={() => setIsAvatarOpen(true)}
+                  />
+                )}
+                <Profile.Handle
+                  className="md:pt-5"
+                  profileUser={profile}
+                  pubkey={creatorPubky ?? ''}
+                  creatorPubky={creatorPubky}
                 />
-              )}
-              <Profile.Handle
-                className="md:pt-5"
-                profileUser={profile}
-                pubkey={creatorPubky ?? ''}
-                creatorPubky={creatorPubky}
-              />
-            </div>
+              </div>
+            )}
           </Content.Grid>
         </div>
         <Content.Grid className="grid grid-cols-6 gap-2 lg:mt-6">

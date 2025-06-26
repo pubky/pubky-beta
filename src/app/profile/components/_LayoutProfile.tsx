@@ -10,12 +10,19 @@ import { useUserProfile } from '@/hooks/useUser';
 import { usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { ImageByUri } from '@/components/ImageByUri';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 export default function LayoutProfile({ children }: { children: React.ReactNode }) {
   const { pubky, profile } = usePubkyClientContext();
+  const isMobile = useIsMobile();
   const [activeTab, setActiveTab] = useState(0);
   const [loading, setLoading] = useState(true);
   const { data: userData } = useUserProfile(pubky ?? '', pubky ?? '');
+
+  const shouldShowAvatarSection = () => {
+    const foundTab = Profile.FilterTabs.tabs.find((tab) => tab.id === activeTab);
+    return foundTab?.key === 'tagged' || !isMobile;
+  };
 
   const loader = useRef(null);
   const pathname = usePathname();
@@ -42,15 +49,18 @@ export default function LayoutProfile({ children }: { children: React.ReactNode 
             loading={loading}
             setLoading={setLoading}
           />
-          <div className="w-full rounded-2xl p-6 lg:p-0 bg-white lg:bg-transparent bg-opacity-10 flex flex-col text-center lg:flex-row items-center gap-3 lg:gap-12 relative">
-            <Profile.Avatar
-              id={pubky}
-              className="lg:pl-12 cursor-pointer"
-              username={profile?.name || Utils.minifyPubky(pubky ?? '')}
-              onClick={() => setIsAvatarOpen(true)}
-            />
-            <Profile.Handle className="md:pt-5" profileUser={userData} pubkey={pubky ?? ''} />
-          </div>
+          {shouldShowAvatarSection() && (
+            <div className="w-full rounded-2xl p-6 lg:p-0 bg-white lg:bg-transparent bg-opacity-10 flex flex-col text-center lg:flex-row items-center gap-3 lg:gap-12 relative">
+              <Profile.Avatar
+                id={pubky}
+                className="lg:pl-12 cursor-pointer"
+                username={profile?.name || Utils.minifyPubky(pubky ?? '')}
+                onClick={() => setIsAvatarOpen(true)}
+              />
+
+              <Profile.Handle className="md:pt-5" profileUser={userData} pubkey={pubky ?? ''} />
+            </div>
+          )}
         </Content.Grid>
       </div>
       <Content.Grid className="flex xl:gap-2 lg:mt-6">
