@@ -1,88 +1,47 @@
 # Pubky App
 
-### Introduction
+> ⚠️ **DEPRECATED REPOSITORY** ⚠️
+>
+> 🚨 **This code is deprecated and will be replaced this summer with the WIP at https://github.com/pubky/franky/**
+>
+> ⛔ **DO NOT** contribute code here - this is a **dead-end repository**
+>
+> 🐛 You are welcome to submit issues, but no code contributions will be accepted
+>
+> 📚 **DO NOT** use this for **learning purposes** - the code is **VERY hacky**
 
-Pubky App is a social-media-like experience built over [Pubky Core](https://notes.pubky.app//Pubky-Core/Introduction). It serves as a working example on how to build over Pubky Core to create simple or complex applications. Its social components (profiles, tagging, etc) are intended for re-use in any other Pubky application that requires of social features.
+---
 
-For a deeper dive on the Pubky app please refer to our [Notes](https://notes.pubky.app/Pubky-App/Introduction)
+## Quick Links
 
-This repository holds the frontend application for the social Pubky App. For the specialized backend (aggregator/indexer/API) check out [Pubky-Nexus](https://github.com/pubky/pubky-nexus)
+- **Live Demo:** https://pubky.app
+- **New Repository:** https://github.com/pubky/franky/
+- **Build Compatible Client:** https://www.npmjs.com/package/pubky-app-specs
+- **Documentation:** https://pubky.org/
+- **Backend (Nexus):** https://github.com/pubky/pubky-nexus
 
-- [Setup Env Variables](#gear-setup-env-variables)
-  - [Testnet Configuration](#test_tube-testnet-configuration)
-  - [Mainnet Configuration](#earth_americas-mainnet-configuration)
-- [Running Scripts](#running-running-scripts)
-  - [Installation](#package-installation)
-  - [Development](#computer-development-server)
-  - [Production](#factory-production-build-and-server)
+---
 
-## :gear: Setup `.env` Variables
+## About
 
-Create a `.env` file at the root of the project and include the following environment variables:
+This is the Pubky-app MVP presented in BTC Prague, currently live at https://pubky.app
 
-### :test_tube: Testnet Configuration
+Pubky App is a social-media-like experience built over [Pubky Core](https://pubky.org/). It serves as a working example on how to build over Pubky Core to create simple or complex applications. Its social components (profiles, tagging, etc) are intended for re-use in any other Pubky application that requires social features.
 
-For that build, you will need to have running the following pieces:
+This repository holds the frontend application for the social Pubky App. For the specialized backend (aggregator/indexer/API) check out [Pubky-Nexus](https://github.com/pubky/pubky-nexus).
 
-- [nexus service](https://github.com/pubky/pubky-nexus?tab=readme-ov-file#%EF%B8%8F-setting-up-the-development-environment), the REST API server that provides access to indexed data
-- [nexus watcher](https://github.com/pubky/pubky-nexus?tab=readme-ov-file#%EF%B8%8F-setting-up-the-development-environment), the event aggregator that listens for homeserver events
-- [testnet homeserver](https://github.com/pubky/pubky-core/tree/dev/pubky-homeserver), the core data availability provider responsible for storing and serving user-generated content, ensuring distributed data persistence
+---
 
-```.env
-NEXT_PUBLIC_HOMESERVER=8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo
-NEXT_PUBLIC_NEXUS=http://localhost:8080
-NEXT_PUBLIC_DEFAULT_HTTP_RELAY=http://localhost:15412/link/
-NEXT_PUBLIC_TESTNET=true
-```
+## Installation & Setup
 
-### :earth_americas: Mainnet Configuration
+For installation instructions, environment setup, and running the application, please see:
 
-```.env
-NEXT_PUBLIC_HOMESERVER=ufibwbmed6jeq9k4p583go95wofakh9fwpp4k734trq79pd9u1uy
-NEXT_PUBLIC_NEXUS=https://nexus.staging.pubky.app
-NEXT_PUBLIC_DEFAULT_HTTP_RELAY=https://httprelay.staging.pubky.app/link
-```
+**📄 [docs/install.md](./docs/install.md)**
 
-## :running: Running Scripts
+---
 
-You can manage the application's development and production builds using the following npm scripts specified in your package.json. Here are examples of how to run each script from the terminal:
+## ⚠️ Important Notice
 
-### :package: Installation
+This is a sandbox built on moving parts. The code is in a transitional state and should not be used as a reference for production applications.
 
-Run the following command to install the dependencies:
-
-```bash
-npm install
-```
-
-### :computer: Development Server
-
-Start the development server with:
-
-```bash
-npm run start:dev
-```
-
-This script uses nx serve web to launch the development server.
-
-### :factory: Production Build and Server
-
-To build for production and start the server, use:
-
-```bash
-npm run start:prod
-```
-
-This command compiles the application with nx build web and then serves the production version with nx serve web --prod.
-
-### :hammer_and_wrench:Build Application
-
-For building the application without starting a server, run:
-
-```bash
-npm run build
-```
-
-This will execute nx build web to compile the application into static files ready for production deployment.
-
-These commands offer flexible ways to manage and test your application during development and before deployment.
+If you want to build a compatible social client, start with the official specs: https://www.npmjs.com/package/pubky-app-specs
