@@ -1202,6 +1202,151 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
       );
     }
 
+    // If this is a repost, update grouped reposts optimistically
+    if (post.relationships?.reposted) {
+      const repostedUri = post.relationships.reposted;
+      setTimeline(
+        (prevTimeline) =>
+          prevTimeline
+            .map((p) => {
+              // Check if this post is a grouped repost of the same reposted content
+              if (
+                p.groupedReposts &&
+                p.uniqueReposters &&
+                p.groupedReposts.some((r) => r.relationships?.reposted === repostedUri)
+              ) {
+                // Remove the current user's reposts from groupedReposts
+                const updatedGroupedReposts = p.groupedReposts.filter((r) => r.details.author !== pubky);
+
+                // If no reposts left, remove the entire grouped repost
+                if (updatedGroupedReposts.length === 0) {
+                  return null;
+                }
+
+                // Reconstruct uniqueReposters from the remaining groupedReposts, maintaining chronological order
+                const remainingReposters = updatedGroupedReposts
+                  .sort((a, b) => a.details.indexed_at - b.details.indexed_at)
+                  .map((r) => r.details.author);
+
+                // Remove duplicates while preserving order
+                const updatedUniqueReposters = [...new Set(remainingReposters)];
+
+                // Update the grouped repost with new uniqueReposters
+                return {
+                  ...p,
+                  uniqueReposters: updatedUniqueReposters,
+                  repostCount: updatedGroupedReposts.length,
+                  groupedReposts: updatedGroupedReposts
+                };
+              }
+              return p;
+            })
+            .filter(Boolean) as PostView[]
+      );
+
+      // Also update newPosts
+      setNewPosts(
+        (prevNewPosts) =>
+          prevNewPosts
+            .map((p) => {
+              if (
+                p.groupedReposts &&
+                p.uniqueReposters &&
+                p.groupedReposts.some((r) => r.relationships?.reposted === repostedUri)
+              ) {
+                const updatedGroupedReposts = p.groupedReposts.filter((r) => r.details.author !== pubky);
+
+                if (updatedGroupedReposts.length === 0) {
+                  return null;
+                }
+
+                const remainingReposters = updatedGroupedReposts
+                  .sort((a, b) => a.details.indexed_at - b.details.indexed_at)
+                  .map((r) => r.details.author);
+
+                const updatedUniqueReposters = [...new Set(remainingReposters)];
+
+                return {
+                  ...p,
+                  uniqueReposters: updatedUniqueReposters,
+                  repostCount: updatedGroupedReposts.length,
+                  groupedReposts: updatedGroupedReposts
+                };
+              }
+              return p;
+            })
+            .filter(Boolean) as PostView[]
+      );
+
+      // Also update replies
+      setReplies(
+        (prevReplies) =>
+          prevReplies
+            .map((p) => {
+              if (
+                p.groupedReposts &&
+                p.uniqueReposters &&
+                p.groupedReposts.some((r) => r.relationships?.reposted === repostedUri)
+              ) {
+                const updatedGroupedReposts = p.groupedReposts.filter((r) => r.details.author !== pubky);
+
+                if (updatedGroupedReposts.length === 0) {
+                  return null;
+                }
+
+                const remainingReposters = updatedGroupedReposts
+                  .sort((a, b) => a.details.indexed_at - b.details.indexed_at)
+                  .map((r) => r.details.author);
+
+                const updatedUniqueReposters = [...new Set(remainingReposters)];
+
+                return {
+                  ...p,
+                  uniqueReposters: updatedUniqueReposters,
+                  repostCount: updatedGroupedReposts.length,
+                  groupedReposts: updatedGroupedReposts
+                };
+              }
+              return p;
+            })
+            .filter(Boolean) as PostView[]
+      );
+
+      // Also update timelineProfile
+      setTimelineProfile(
+        (prevTimelineProfile) =>
+          prevTimelineProfile
+            .map((p) => {
+              if (
+                p.groupedReposts &&
+                p.uniqueReposters &&
+                p.groupedReposts.some((r) => r.relationships?.reposted === repostedUri)
+              ) {
+                const updatedGroupedReposts = p.groupedReposts.filter((r) => r.details.author !== pubky);
+
+                if (updatedGroupedReposts.length === 0) {
+                  return null;
+                }
+
+                const remainingReposters = updatedGroupedReposts
+                  .sort((a, b) => a.details.indexed_at - b.details.indexed_at)
+                  .map((r) => r.details.author);
+
+                const updatedUniqueReposters = [...new Set(remainingReposters)];
+
+                return {
+                  ...p,
+                  uniqueReposters: updatedUniqueReposters,
+                  repostCount: updatedGroupedReposts.length,
+                  groupedReposts: updatedGroupedReposts
+                };
+              }
+              return p;
+            })
+            .filter(Boolean) as PostView[]
+      );
+    }
+
     // delete the files
     if (post?.details?.attachments?.length > 0) {
       const fileDeletions = Object.values(post?.details?.attachments).map(async (file) => {
