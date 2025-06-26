@@ -32,6 +32,11 @@ export default function CreatorpubkyLayout({
     creatorPubky: string;
   } | null>(null);
 
+  const shouldShowAvatarSection = () => {
+    const foundTab = Profile.FilterTabs.tabs.find((tab) => tab.id === activeTab);
+    return foundTab?.key === 'tagged' || !isMobile;
+  };
+
   useEffect(() => {
     params.then((p) => setResolvedParams(p));
   }, [params]);
@@ -79,7 +84,7 @@ export default function CreatorpubkyLayout({
               setLoading={setLoading}
               creatorPubky={creatorPubky}
             />
-            {(activeTab === 6 || !isMobile) && (
+            {shouldShowAvatarSection() && (
               <div className="w-full rounded-2xl p-6 lg:p-0 bg-white lg:bg-transparent bg-opacity-10 flex flex-col text-center lg:flex-row items-center gap-3 lg:gap-14 relative">
                 {profile?.details?.id && (
                   <Profile.Avatar

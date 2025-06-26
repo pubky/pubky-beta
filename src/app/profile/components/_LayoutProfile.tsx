@@ -19,6 +19,11 @@ export default function LayoutProfile({ children }: { children: React.ReactNode 
   const [loading, setLoading] = useState(true);
   const { data: userData } = useUserProfile(pubky ?? '', pubky ?? '');
 
+  const shouldShowAvatarSection = () => {
+    const foundTab = Profile.FilterTabs.tabs.find((tab) => tab.id === activeTab);
+    return foundTab?.key === 'tagged' || !isMobile;
+  };
+
   const loader = useRef(null);
   const pathname = usePathname();
   const [isAvatarOpen, setIsAvatarOpen] = useState(false);
@@ -44,7 +49,7 @@ export default function LayoutProfile({ children }: { children: React.ReactNode 
             loading={loading}
             setLoading={setLoading}
           />
-          {(activeTab === 6 || !isMobile) && (
+          {shouldShowAvatarSection() && (
             <div className="w-full rounded-2xl p-6 lg:p-0 bg-white lg:bg-transparent bg-opacity-10 flex flex-col text-center lg:flex-row items-center gap-3 lg:gap-12 relative">
               <Profile.Avatar
                 id={pubky}
