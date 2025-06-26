@@ -187,7 +187,10 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
     const totalLineWidth = level * lineWidth + (level - 1) * lineGap;
 
     return (
-      <div style={{ display: 'flex', alignItems: 'stretch', width: '100%' }}>
+      <div
+        key={`quote-${level}-${text.slice(0, 10)}`}
+        style={{ display: 'flex', alignItems: 'stretch', width: '100%' }}
+      >
         <div
           style={{
             display: 'flex',
@@ -363,7 +366,10 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
     lines.forEach((line, index) => {
       if (line.trim() === '```') {
         if (isCodeBlock) {
-          elements.push(renderCodeBlock(codeLines.join('\n'), `code-${index}`) || <></>);
+          const renderedBlock = renderCodeBlock(codeLines.join('\n'), `code-${index}`);
+          if (renderedBlock) {
+            elements.push(renderedBlock);
+          }
           codeLines = [];
           isCodeBlock = false;
         } else {
