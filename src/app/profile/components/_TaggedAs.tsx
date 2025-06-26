@@ -21,7 +21,6 @@ import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 import EmojiPicker from '@/components/EmojiPicker';
 import { searchTagsByPrefix } from '@/services/streamService';
 import { useSuggestedTags } from '@/hooks/useSuggestedTags';
-import { useIsMobile } from '@/hooks/useIsMobile';
 
 type TaggedAsProps = {
   creatorPubky?: string | undefined;
@@ -30,7 +29,6 @@ type TaggedAsProps = {
 
 export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
   const { openModal } = useModal();
-  const isMobile = useIsMobile(640);
   const { pubky, follow, unfollow } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const isMyProfile = !!(pubky === creatorPubky || !creatorPubky);
@@ -325,10 +323,10 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                   </div>
                 </div>
                 {!selectedTag ? (
-                  <>
+                  <div className="max-w-[300px] flex flex-col gap-2 pr-2 pb-2 overflow-y-auto scrollbar-thin scrollbar-webkit">
                     {profileTags.map((tag, index) => {
                       const isTagFound = tag?.relationship || false;
-                      const displayedImages = tag.taggers?.slice(0, isMobile ? 2 : 5);
+                      const displayedImages = tag.taggers?.slice(0, 5);
                       const extraImagesCount = tag.taggers_count - displayedImages?.length;
 
                       return (
@@ -398,7 +396,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                         <Icon.LoadingSpin size="24" />
                       </div>
                     )}
-                  </>
+                  </div>
                 ) : (
                   <>
                     <div className="flex gap-2 items-center mb-2">
