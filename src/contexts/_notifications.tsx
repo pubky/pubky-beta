@@ -1,5 +1,5 @@
 'use client';
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { BodyNotification, NotificationView } from '@/types/User';
 import { useUserNotifications } from '@/hooks/useUser';
@@ -79,69 +79,6 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     fetchTimestamp();
   }, [pubky, timestamp, getTimestampNotification, setTimestamp]);
 
-  useEffect(() => {
-    if (!pubky || !preferencesLoaded) return;
-
-    // First check
-    fetchNotifications();
-
-    // Each 30 seconds
-    const intervalId = setInterval(() => {
-      setSkip(0);
-      fetchNotifications();
-    }, 30000);
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [pubky, preferencesLoaded]);
-
-  useEffect(() => {
-    // Don't process if we don't have notifications or if specs builder isn't ready yet
-    if (!initNotifications || !pubky) return;
-
-    const filtered = filterNotifications(initNotifications);
-    updateNotifications(filtered);
-
-    // Calculate unread count only when timestamp is actually loaded
-    if (timestampLoaded) {
-      const unreadCount = filtered.reduce(
-        (count, notification) => (notification.timestamp > timestamp ? count + 1 : count),
-        0
-      );
-      setUnReadNotification(unreadCount);
-    }
-  }, [initNotifications, timestamp, pubky, timestampLoaded, setUnReadNotification]);
-
-  // Add effect to update lastViewedTimestamp when notifications are viewed
-  useEffect(() => {
-    if (notifications.length > 0) {
-      const mostRecentTimestamp = Math.max(...notifications.map((n) => n.timestamp));
-      setLastViewedTimestamp(mostRecentTimestamp);
-    }
-  }, [notifications]);
-
-  const updateNotifications = (newNotifications: NotificationView[]) => {
-    setNotifications((prev) => {
-      const merged = [...prev, ...newNotifications].filter(
-        (notification, index, self) => index === self.findIndex((n) => n.timestamp === notification.timestamp)
-      );
-      return merged.sort((a, b) => b.timestamp - a.timestamp);
-    });
-  };
-
-  const extractSenderPubky = (notification: BodyNotification) => {
-    return (
-      notification.followed_by ||
-      notification.tagged_by ||
-      notification.replied_by ||
-      notification.reposted_by ||
-      notification.mentioned_by ||
-      notification.deleted_by ||
-      notification.edited_by
-    );
-  };
-
   const filterNotifications = (notifications: NotificationView[]) => {
     // First filter out muted users and disabled notification types
     const filtered = notifications.filter((notification) => {
@@ -157,7 +94,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     return filtered;
   };
 
-  const fetchNotifications = async () => {
+  const fetchNotifications = useCallback(async () => {
     if (!pubky || !preferencesLoaded || !hasMore) return;
 
     try {
@@ -198,6 +135,79 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     } catch (err) {
       console.error(err);
     }
+  }, [
+    pubky,
+    preferencesLoaded,
+    hasMore,
+    initNotifications,
+    lastViewedTimestamp,
+    timestamp,
+    setUnReadNotification,
+    getTimestampNotification,
+    setTimestamp
+  ]);
+
+  useEffect(() => {
+    if (!pubky || !preferencesLoaded) return;
+
+    // First check
+    fetchNotifications();
+
+    // Each 30 seconds
+    const intervalId = setInterval(() => {
+      setSkip(0);
+      fetchNotifications();
+    }, 30000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [pubky, preferencesLoaded, fetchNotifications]);
+
+  useEffect(() => {
+    // Don't process if we don't have notifications or if specs builder isn't ready yet
+    if (!initNotifications || !pubky || !preferencesLoaded) return;
+
+    const filtered = filterNotifications(initNotifications);
+    updateNotifications(filtered);
+
+    // Calculate unread count only when timestamp is actually loaded
+    if (timestampLoaded) {
+      const unreadCount = filtered.reduce(
+        (count, notification) => (notification.timestamp > timestamp ? count + 1 : count),
+        0
+      );
+      setUnReadNotification(unreadCount);
+    }
+  }, [initNotifications, timestamp, pubky, timestampLoaded, preferencesLoaded, setUnReadNotification]);
+
+  // Add effect to update lastViewedTimestamp when notifications are viewed
+  useEffect(() => {
+    if (notifications.length > 0) {
+      const mostRecentTimestamp = Math.max(...notifications.map((n) => n.timestamp));
+      setLastViewedTimestamp(mostRecentTimestamp);
+    }
+  }, [notifications]);
+
+  const updateNotifications = (newNotifications: NotificationView[]) => {
+    setNotifications((prev) => {
+      const merged = [...prev, ...newNotifications].filter(
+        (notification, index, self) => index === self.findIndex((n) => n.timestamp === notification.timestamp)
+      );
+      return merged.sort((a, b) => b.timestamp - a.timestamp);
+    });
+  };
+
+  const extractSenderPubky = (notification: BodyNotification) => {
+    return (
+      notification.followed_by ||
+      notification.tagged_by ||
+      notification.replied_by ||
+      notification.reposted_by ||
+      notification.mentioned_by ||
+      notification.deleted_by ||
+      notification.edited_by
+    );
   };
 
   const loadMoreNotifications = async () => {
@@ -226,13 +236,8 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
       setSkip(0);
       setHasMore(true);
       setTimestampLoaded(false);
-
-      // Fetch notifications only when pubky changes
-      if (preferencesLoaded && pubky) {
-        fetchNotifications();
-      }
     }
-  }, [pubky, preferencesLoaded]);
+  }, [pubky]);
 
   return (
     <NotificationsContext.Provider
