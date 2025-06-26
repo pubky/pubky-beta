@@ -323,7 +323,7 @@ export default function TaggedAs({ creatorPubky, loading }: TaggedAsProps) {
                   </div>
                 </div>
                 {!selectedTag ? (
-                  <div className="max-w-[300px] flex flex-col gap-2 pr-2 pb-2 overflow-y-auto scrollbar-thin scrollbar-webkit">
+                  <div className="w-full flex flex-col gap-2 pr-2 pb-2 overflow-y-auto scrollbar-thin scrollbar-webkit">
                     {profileTags.map((tag, index) => {
                       const isTagFound = tag?.relationship || false;
                       const displayedImages = tag.taggers?.slice(0, 5);
