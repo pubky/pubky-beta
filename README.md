@@ -1,9 +1,9 @@
 # Pubky App
 
 - This is the Pubky-app MVP presented in BTC Prague, and currently live at https://pubky.app
-- This code is deprecated and will be replaced this summer with the WIP at https://github.com/pubky/franky/
-- DO NOT contribute code here, this is a dead-end repository, but you are welcome to submit issues!
-- This is a sandbox built on moving parts. The code is VERY hacky, DO NOT use this for learning purposes.
+- This code is **deprecated** and will be replaced this summer with the WIP at https://github.com/pubky/franky/
+- **DO NOT** contribute code here, this is a **dead-end repository**, but you are welcome to submit issues!
+- This is a sandbox built on moving parts. The code is **VERY hacky**, **DO NOT** use this for **learning purposes**.
 - If you want to build a compatible social client, start here: https://www.npmjs.com/package/pubky-app-specs
 
 ### Introduction
