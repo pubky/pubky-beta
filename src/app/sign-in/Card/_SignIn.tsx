@@ -27,6 +27,7 @@ export default function SignIn() {
   const [qrSize, setQrSize] = useState(210);
   const retryCountRef = useRef(0);
   const canvasRef = useRef(null);
+  const errorRetryMessage = 'Retry attempts reached. Click here to reload the page.';
 
   useEffect(() => {
     if (!isOnline) {
@@ -89,12 +90,13 @@ export default function SignIn() {
       // Regenerate auth URL on error, but only up to 4 attempts total
       if (!signal.aborted && retryCountRef.current < 4) {
         setTimeout(() => {
+          setLoginError('');
           handleGenerateAuthUrl(signal, true);
         }, 2000); // Wait 2 seconds before retrying
       } else if (retryCountRef.current >= 4) {
         // After 4 attempts, stop trying and clear the auth URL
         setAuthUrl('');
-        setLoginError('Retry attempts reached. Please reload the page.');
+        setLoginError(errorRetryMessage);
       }
     }
   };
@@ -179,7 +181,10 @@ export default function SignIn() {
         </div>
       )}
       {loginError && (
-        <div className="flex w-full justify-between items-center px-4 py-2 mt-6 mb-4 rounded-lg border-2 border-red-600 bg-[#e95164] bg-opacity-10">
+        <div
+          onClick={() => loginError === errorRetryMessage && window.location.reload()}
+          className={`${loginError === errorRetryMessage ? 'cursor-pointer hover:bg-opacity-20' : ''} flex w-full justify-between items-center px-4 py-2 mt-6 mb-4 rounded-lg border-2 border-red-600 bg-[#e95164] bg-opacity-10`}
+        >
           <Typography.Body className="break-words text-red-600" variant="small-bold">
             {Utils.minifyText(loginError, 60)}
           </Typography.Body>
