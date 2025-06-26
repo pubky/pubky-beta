@@ -87,7 +87,7 @@ export default function ContentRepostedUsers({ users }: RepostedUsersProps) {
   };
 
   return (
-    <div className="flex flex-col gap-3 mt-4">
+    <div className="flex flex-col gap-3 mt-4 max-h-[300px] pr-4 overflow-y-auto scrollbar-thin scrollbar-webkit">
       {users.map((user, userIndex) => {
         const profile = userProfiles[user];
         const pubkeyUser = pubky && user.includes(pubky);
