@@ -213,7 +213,7 @@ export default function GroupedRepost({
               {currentUserReposted && (
                 <Typography.Body
                   variant="small-bold"
-                  className="sm:ml-2 text-[13px] text-red-500 text-opacity-80 hover:text-opacity-100 underline decoration-solid"
+                  className="ml-2 sm:ml-2 text-[13px] text-red-500 text-opacity-80 hover:text-opacity-100 underline decoration-solid"
                   onClick={(event) => {
                     event.stopPropagation();
                     handleDeletePost();
