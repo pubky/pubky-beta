@@ -1,6 +1,7 @@
 'use client';
 
 import DropDown from '@/components/DropDown';
+import { useModal } from '@/contexts';
 import { Button, Icon, Typography } from '@social/ui-shared';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -118,6 +119,7 @@ const questions: QuestionsType = {
 };
 
 export default function Help() {
+  const { openModal } = useModal();
   const [openQuestionId, setOpenQuestionId] = useState<number | null>(null);
 
   const handleQuestionClick = (id: number) => {
@@ -146,9 +148,28 @@ export default function Help() {
             />
           );
         })}
+        <div className="xl:hidden flex flex-col gap-6">
+          <div className="w-full h-px bg-white bg-opacity-10 my-6" />
+          <div className="justify-start items-center gap-2 inline-flex">
+            <Icon.ChatCircleText size="24" />
+            <Typography.H2>Feedback</Typography.H2>
+          </div>
+          <Typography.Body variant="medium" className="text-opacity-80">
+            What do you think about Pubky? Send us your feedback to improve or add new features that you would like to
+            see in the next releases.
+          </Typography.Body>
+          <Button.Large
+            variant="secondary"
+            className="w-fit"
+            onClick={() => openModal('feedback')}
+            icon={<Icon.ChatCircleText width="16" height="16" />}
+          >
+            Send Feedback
+          </Button.Large>
+        </div>
         <div className="w-full h-px bg-white bg-opacity-10 my-6" />
         <div className="justify-start items-center gap-2 inline-flex">
-          <Icon.ChatCircleText size="24" />
+          <Icon.FileText size="24" />
           <Typography.H2>User Guide</Typography.H2>
         </div>
         <Typography.Body variant="medium" className="text-opacity-80">
