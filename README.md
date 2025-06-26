@@ -1,7 +1,5 @@
 # Pubky App
 
-> ---
->
 > ⚠️ **DEPRECATED REPOSITORY** ⚠️
 >
 > 🚨 **This code is deprecated and will be replaced this summer with the WIP at https://github.com/pubky/franky/**
@@ -11,22 +9,20 @@
 > 🐛 You are welcome to submit issues, but no code contributions will be accepted
 >
 > 📚 **DO NOT** use this for **learning purposes** - the code is **VERY hacky**
->
-> ---
 
 ---
 
-## 🔗 Quick Links
+## Quick Links
 
-- **🌐 Live Demo:** https://pubky.app
-- **🚀 New Repository:** https://github.com/pubky/franky/
-- **📦 Build Compatible Client:** https://www.npmjs.com/package/pubky-app-specs
-- **📖 Documentation:** https://pubky.org/
-- **🔧 Backend (Nexus):** https://github.com/pubky/pubky-nexus
+- **Live Demo:** https://pubky.app
+- **New Repository:** https://github.com/pubky/franky/
+- **Build Compatible Client:** https://www.npmjs.com/package/pubky-app-specs
+- **Documentation:** https://pubky.org/
+- **Backend (Nexus):** https://github.com/pubky/pubky-nexus
 
 ---
 
-## 📋 About
+## About
 
 This is the Pubky-app MVP presented in BTC Prague, currently live at https://pubky.app
 
@@ -36,7 +32,7 @@ This repository holds the frontend application for the social Pubky App. For the
 
 ---
 
-## 🛠 Installation & Setup
+## Installation & Setup
 
 For installation instructions, environment setup, and running the application, please see:
 
