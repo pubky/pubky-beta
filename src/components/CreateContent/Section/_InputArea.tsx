@@ -82,7 +82,7 @@ export default function InputArea({
     setIsDragging(false);
   };
 
-  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     event.stopPropagation();
     setIsDragging(false);
@@ -94,51 +94,62 @@ export default function InputArea({
     const maxOtherSizeInBytes = maxOtherSizeInMB * 1024 * 1024;
 
     if (files) {
-      const validFiles = Array.from(files).filter((file) => {
-        const isImage = file.type.startsWith('image/');
-        const isVideo = file.type.startsWith('video/');
-        const isAudio = file.type.startsWith('audio/');
-        const isPDF = file.type === 'application/pdf';
+      const processFiles = async () => {
+        const validFiles: File[] = [];
 
-        const isValidType =
-          (isImage && Utils.supportedImageTypes.includes(file.type)) ||
-          (isVideo && Utils.supportedVideoTypes.includes(file.type)) ||
-          (isAudio && Utils.supportedAudioTypes.includes(file.type)) ||
-          isPDF;
+        for (const file of Array.from(files)) {
+          const isImage = file.type.startsWith('image/');
+          const isVideo = file.type.startsWith('video/');
+          const isAudio = file.type.startsWith('audio/');
+          const isPDF = file.type === 'application/pdf';
 
-        if (!isValidType) {
-          addAlert('File type not supported.', 'warning');
-          return false;
+          const isValidType =
+            (isImage && Utils.supportedImageTypes.includes(file.type)) ||
+            (isVideo && Utils.supportedVideoTypes.includes(file.type)) ||
+            (isAudio && Utils.supportedAudioTypes.includes(file.type)) ||
+            isPDF;
+
+          if (!isValidType) {
+            addAlert('File type not supported.', 'warning');
+            continue;
+          }
+
+          if (isImage && file.size > maxImageSizeInBytes) {
+            try {
+              addAlert('Compressing image...', 'warning');
+              const resizedFile = await Utils.resizeImageFile(file, maxImageSizeInBytes);
+              validFiles.push(resizedFile);
+            } catch (error) {
+              addAlert('The maximum allowed size for images is 5 MB.', 'warning');
+              continue;
+            }
+          } else if (!isImage && file.size > maxOtherSizeInBytes) {
+            addAlert('The maximum allowed size is 20 MB.', 'warning');
+            continue;
+          } else {
+            validFiles.push(file);
+          }
         }
 
-        if (isImage && file.size > maxImageSizeInBytes) {
-          addAlert('The maximum allowed size for images is 5 MB.', 'warning');
-          return false;
-        }
-        if (!isImage && file.size > maxOtherSizeInBytes) {
-          addAlert('The maximum allowed size is 20 MB.', 'warning');
-          return false;
+        if (selectedFiles && selectedFiles.length + validFiles.length > 4) {
+          addAlert('Max 4 files only.', 'warning');
+          return;
         }
 
-        return true;
-      });
+        const newFiles = selectedFiles && validFiles.slice(0, 4 - selectedFiles.length);
+        const newPreviews = newFiles && newFiles.map((file) => URL.createObjectURL(file));
 
-      if (selectedFiles && selectedFiles.length + validFiles.length > 4) {
-        addAlert('Max 4 files only.', 'warning');
-        return;
-      }
+        setSelectedFiles && newFiles && setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles].slice(0, 4));
+        newPreviews &&
+          setFilePreviews &&
+          setFilePreviews((prevPreviews) => [...prevPreviews, ...newPreviews].slice(0, 4));
 
-      const newFiles = selectedFiles && validFiles.slice(0, 4 - selectedFiles.length);
-      const newPreviews = newFiles && newFiles.map((file) => URL.createObjectURL(file));
+        if (newFiles && newFiles?.length > 0 && setTextArea) {
+          setTextArea(true);
+        }
+      };
 
-      setSelectedFiles && newFiles && setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles].slice(0, 4));
-      newPreviews &&
-        setFilePreviews &&
-        setFilePreviews((prevPreviews) => [...prevPreviews, ...newPreviews].slice(0, 4));
-
-      if (newFiles && newFiles?.length > 0 && setTextArea) {
-        setTextArea(true);
-      }
+      await processFiles();
     }
   };
 

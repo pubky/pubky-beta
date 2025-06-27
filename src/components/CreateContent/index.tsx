@@ -203,7 +203,7 @@ export default function CreateContent({
     };
   }, [selectedFiles, addAlert, setSelectedFiles, setFilePreviews]);
 
-  const handlePaste = (event: ClipboardEvent) => {
+  const handlePaste = async (event: ClipboardEvent) => {
     const items = event.clipboardData?.items;
     const maxImageSizeInMB = 5;
     const maxOtherSizeInMB = 20;
@@ -232,18 +232,24 @@ export default function CreateContent({
               continue;
             }
 
+            let processedFile = file;
+
             if (isImage && file.size > maxImageSizeInBytes) {
-              addAlert('The maximum allowed size for images is 5 MB', 'warning');
-              continue;
-            }
-            if (!isImage && file.size > maxOtherSizeInBytes) {
+              try {
+                addAlert('Compressing image...', 'warning');
+                processedFile = await Utils.resizeImageFile(file, maxImageSizeInBytes);
+              } catch (error) {
+                addAlert('The maximum allowed size for images is 5 MB', 'warning');
+                continue;
+              }
+            } else if (!isImage && file.size > maxOtherSizeInBytes) {
               addAlert('The maximum allowed size is 20 MB', 'warning');
               continue;
             }
 
             if (selectedFiles.length < 4) {
-              const filePreview = URL.createObjectURL(file);
-              setSelectedFiles((prevFiles) => [...prevFiles, file]);
+              const filePreview = URL.createObjectURL(processedFile);
+              setSelectedFiles((prevFiles) => [...prevFiles, processedFile]);
               setFilePreviews((prevPreviews) => [...prevPreviews, filePreview]);
             } else {
               addAlert('Maximum of 4 files can be uploaded', 'warning');

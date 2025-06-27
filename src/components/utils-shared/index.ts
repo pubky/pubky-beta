@@ -26,7 +26,7 @@ import truncateText from './lib/Text/truncateText';
 import truncateTag from './lib/Text/truncateTag';
 import genJdenticon from './lib/Helper/genJdenticon';
 import sanitizeUrlsArticle from './lib/Helper/sanitizeUrlsArticle';
-import { resizeImageFile } from './lib/Helper/resizeImageFile';
+import { resizeImageFile, resizeImageFileToDataURL } from './lib/Helper/resizeImageFile';
 import { censoredTags } from './lib/Helper/Moderation/censoredTags';
 import isPostCensored from './lib/Helper/Moderation/isPostCensored';
 import isProfileCensored from './lib/Helper/Moderation/isProfileCensored';
@@ -65,5 +65,6 @@ export const Utils = {
   truncateTag,
   genJdenticon,
   sanitizeUrlsArticle,
-  resizeImageFile
+  resizeImageFile,
+  resizeImageFileToDataURL
 };

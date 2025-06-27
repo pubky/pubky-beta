@@ -123,7 +123,7 @@ const MarkdownEditorComponent = ({
       const file = input.files?.[0];
       if (file) {
         try {
-          const resizedBase64 = await Utils.resizeImageFile(file); // Using default 800px max size
+          const resizedBase64 = await Utils.resizeImageFileToDataURL(file); // Using default 5MB max size
           if (quill) {
             const range = quill.getSelection();
             if (range) {

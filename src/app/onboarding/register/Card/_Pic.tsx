@@ -1,6 +1,7 @@
 import { ImageByUri } from '@/components/ImageByUri';
 import { useAlertContext, useModal, usePubkyClientContext } from '@/contexts';
 import { Button, Card, Icon } from '@social/ui-shared';
+import { Utils } from '@social/utils-shared';
 
 interface PicProps {
   image: File | string | undefined;
@@ -23,24 +24,36 @@ export default function Pic({ image, setImage }: PicProps) {
     }
   };
 
-  const UploadPic = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const UploadPic = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const maxSizeInMB = 5;
     const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
     const file = event.target.files?.[0];
 
     if (file) {
       if (file.size > maxSizeInBytes) {
-        addAlert('The maximum allowed size is 5 MB', 'warning');
-        return;
+        try {
+          addAlert('Compressing image...', 'warning');
+          const resizedFile = await Utils.resizeImageFile(file, maxSizeInBytes);
+
+          const img = new Image();
+          const newImageUrl = URL.createObjectURL(resizedFile);
+          img.src = newImageUrl;
+
+          img.onload = () => {
+            openModal('croppedImage', { image: newImageUrl, setImage });
+          };
+        } catch (error) {
+          addAlert('The maximum allowed size is 5 MB', 'warning');
+        }
+      } else {
+        const img = new Image();
+        const newImageUrl = URL.createObjectURL(file);
+        img.src = newImageUrl;
+
+        img.onload = () => {
+          openModal('croppedImage', { image: newImageUrl, setImage });
+        };
       }
-
-      const img = new Image();
-      const newImageUrl = URL.createObjectURL(file);
-      img.src = newImageUrl;
-
-      img.onload = () => {
-        openModal('croppedImage', { image: newImageUrl, setImage });
-      };
       event.target.value = '';
     }
   };
