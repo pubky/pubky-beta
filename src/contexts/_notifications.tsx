@@ -170,15 +170,6 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
 
     const filtered = filterNotifications(initNotifications);
     updateNotifications(filtered);
-
-    // Calculate unread count only when timestamp is actually loaded
-    if (timestampLoaded) {
-      const unreadCount = filtered.reduce(
-        (count, notification) => (notification.timestamp > timestamp ? count + 1 : count),
-        0
-      );
-      setUnReadNotification(unreadCount);
-    }
   }, [initNotifications, timestamp, pubky, timestampLoaded, preferencesLoaded, setUnReadNotification]);
 
   // Add effect to update lastViewedTimestamp when notifications are viewed
@@ -188,6 +179,18 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
       setLastViewedTimestamp(mostRecentTimestamp);
     }
   }, [notifications]);
+
+  // Add effect to recalculate unread count when notifications change
+  useEffect(() => {
+    if (!timestampLoaded || notifications.length === 0) return;
+
+    // Calculate unread count based on current notifications
+    const unreadCount = notifications.reduce(
+      (count, notification) => (notification.timestamp > timestamp ? count + 1 : count),
+      0
+    );
+    setUnReadNotification(unreadCount);
+  }, [notifications, timestamp, timestampLoaded, setUnReadNotification]);
 
   const updateNotifications = (newNotifications: NotificationView[]) => {
     setNotifications((prev) => {
