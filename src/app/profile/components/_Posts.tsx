@@ -19,6 +19,16 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   const [finishedLoading, setFinishedLoading] = useState(false);
   const currentPubky = creatorPubky ?? pubky ?? '';
 
+  // Filter timeline to only show posts that belong to the current profile being viewed
+  const filteredTimeline = timeline.filter((post) => {
+    // If viewing own profile, show all posts
+    if (isMyProfile) {
+      return true;
+    }
+    // If viewing someone else's profile, only show posts by that person
+    return post.details.author === currentPubky;
+  });
+
   const fetchPosts = async ({
     skipValue = skip,
     timelineValue = timeline
@@ -102,7 +112,7 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
 
   return (
     <div className="flex flex-col gap-3">
-      {timeline.map((post) => (
+      {filteredTimeline.map((post) => (
         <Post key={`post-${post.details.id}`} post={post} postType="timeline" />
       ))}
       {isLoading && !finishedLoading && (
@@ -111,7 +121,7 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
         </div>
       )}
       {!isLoading && !finishedLoading && <div ref={loader} />}
-      {!isLoading && timeline.length === 0 && (
+      {!isLoading && filteredTimeline.length === 0 && (
         <ContentNotFound
           icon={<Icon.Note size="48" color="#C8FF00" />}
           title="No posts yet"
