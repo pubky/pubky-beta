@@ -30,6 +30,8 @@ import { resizeImageFile } from './lib/Helper/resizeImageFile';
 import { censoredTags } from './lib/Helper/Moderation/censoredTags';
 import isPostCensored from './lib/Helper/Moderation/isPostCensored';
 import isProfileCensored from './lib/Helper/Moderation/isProfileCensored';
+import { inviteCodeMask } from './lib/Helper/inviteCodeMask';
+
 export const Utils = {
   base64ToUint8Array,
   svgToPng,
@@ -49,6 +51,7 @@ export const Utils = {
   minifyPubky,
   storage,
   minifyText,
+  inviteCodeMask,
   promptPlaceholder,
   timeAgo,
   formatTimestamp,
