@@ -95,10 +95,21 @@ export default function FooterArea({
     const maxOtherSizeInBytes = maxOtherSizeInMB * 1024 * 1024;
 
     if (files) {
+      // Check file limit before processing
+      const totalFiles = (selectedFiles?.length || 0) + files.length;
+      if (totalFiles > 4) {
+        addAlert('Max 4 files only. Only the first 4 files will be processed.', 'warning');
+      }
+
       const processFiles = async () => {
         const validFiles: File[] = [];
 
         for (const file of Array.from(files)) {
+          // Check if we already have 4 files
+          if (validFiles.length >= 4 - (selectedFiles?.length || 0)) {
+            break;
+          }
+
           const isImage = file.type.startsWith('image/');
           const isVideo = file.type.startsWith('video/');
           const isAudio = file.type.startsWith('audio/');
@@ -129,12 +140,6 @@ export default function FooterArea({
           } else {
             validFiles.push(file);
           }
-        }
-
-        const totalFiles = (selectedFiles?.length || 0) + validFiles.length;
-        if (totalFiles > 4) {
-          addAlert('Max 4 files only.', 'warning');
-          return;
         }
 
         const newFiles = validFiles.slice(0, 4 - (selectedFiles?.length || 0));

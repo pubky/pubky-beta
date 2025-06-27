@@ -21,6 +21,7 @@ export default function ContentCreateArticle({
 }: CreateArticleProps) {
   const { pubky, createArticle, profile } = usePubkyClientContext();
   const [isDragging, setIsDragging] = useState(false);
+  const [isCompressing, setIsCompressing] = useState(false);
   const isMobile = useIsMobile();
   const [isError, setIsError] = useState(false);
   const { addAlert } = useAlertContext();
@@ -185,7 +186,7 @@ export default function ContentCreateArticle({
     }
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     const maxImageSizeInMB = 5;
     const maxOtherSizeInMB = 20;
@@ -208,16 +209,27 @@ export default function ContentCreateArticle({
         return;
       }
 
+      let processedFile = file;
+
       if (isImage && file.size > maxImageSizeInBytes) {
-        setErrorFile('The maximum allowed size for images is 5 MB');
-        return;
-      }
-      if (!isImage && file.size > maxOtherSizeInBytes) {
+        try {
+          setIsCompressing(true);
+          setErrorFile('Compressing image...');
+          processedFile = await Utils.resizeImageFile(file, maxImageSizeInBytes);
+          setErrorFile('');
+        } catch (error) {
+          setErrorFile('The maximum allowed size for images is 5 MB');
+          return;
+        } finally {
+          setIsCompressing(false);
+        }
+      } else if (!isImage && file.size > maxOtherSizeInBytes) {
         setErrorFile('The maximum allowed size is 20 MB');
         return;
       }
-      setSelectedFile([file]);
-      const previewUrl = URL.createObjectURL(file);
+
+      setSelectedFile([processedFile]);
+      const previewUrl = URL.createObjectURL(processedFile);
       setFilePreview(previewUrl);
     }
   };
@@ -251,7 +263,7 @@ export default function ContentCreateArticle({
     setIsDragging(false);
   };
 
-  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     event.stopPropagation();
     setIsDragging(false);
@@ -261,36 +273,55 @@ export default function ContentCreateArticle({
     const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
 
     if (files) {
-      const validFiles = Array.from(files).filter((file) => {
-        const isImage = file.type.startsWith('image/');
-        const isVideo = file.type.startsWith('video/');
-        const isAudio = file.type.startsWith('audio/');
-        const isValidType =
-          (isImage && Utils.supportedImageTypes.includes(file.type)) ||
-          (isVideo && Utils.supportedVideoTypes.includes(file.type)) ||
-          (isAudio && Utils.supportedAudioTypes.includes(file.type)) ||
-          file.type === 'application/pdf';
+      setIsCompressing(true);
+      const processFiles = async () => {
+        const validFiles: File[] = [];
 
-        if (!isValidType) {
-          addAlert('File type not supported.', 'warning');
-          return false;
+        for (const file of Array.from(files)) {
+          const isImage = file.type.startsWith('image/');
+          const isVideo = file.type.startsWith('video/');
+          const isAudio = file.type.startsWith('audio/');
+          const isValidType =
+            (isImage && Utils.supportedImageTypes.includes(file.type)) ||
+            (isVideo && Utils.supportedVideoTypes.includes(file.type)) ||
+            (isAudio && Utils.supportedAudioTypes.includes(file.type)) ||
+            file.type === 'application/pdf';
+
+          if (!isValidType) {
+            addAlert('File type not supported.', 'warning');
+            continue;
+          }
+
+          if (isImage && file.size > maxSizeInBytes) {
+            try {
+              addAlert('Compressing image...', 'warning');
+              const resizedFile = await Utils.resizeImageFile(file, maxSizeInBytes);
+              validFiles.push(resizedFile);
+            } catch (error) {
+              addAlert('The maximum allowed size is 5 MB', 'warning');
+              continue;
+            }
+          } else if (file.size > maxSizeInBytes) {
+            addAlert('The maximum allowed size is 5 MB', 'warning');
+            continue;
+          } else {
+            validFiles.push(file);
+          }
         }
-        if (file.size > maxSizeInBytes) {
-          addAlert('The maximum allowed size is 5 MB', 'warning');
-          return false;
-        }
-        return true;
-      });
 
-      const newFiles = selectedFile && validFiles.slice(0, 3 - selectedFile.length);
-      //const newPreviews =
-      // newFiles && newFiles.map((file) => URL.createObjectURL(file));
+        const newFiles = selectedFile && validFiles.slice(0, 3 - selectedFile.length);
+        //const newPreviews =
+        // newFiles && newFiles.map((file) => URL.createObjectURL(file));
 
-      setSelectedFile && newFiles && setSelectedFile((prevFiles) => [...prevFiles, ...newFiles].slice(0, 3));
-      //newPreviews &&
-      // setFilePreviews((prevPreviews) =>
-      //   [...prevPreviews, ...newPreviews].slice(0, 3)
-      // );
+        setSelectedFile && newFiles && setSelectedFile((prevFiles) => [...prevFiles, ...newFiles].slice(0, 3));
+        //newPreviews &&
+        // setFilePreviews((prevPreviews) =>
+        //   [...prevPreviews, ...newPreviews].slice(0, 3)
+        // );
+      };
+
+      await processFiles();
+      setIsCompressing(false);
     }
   };
 
@@ -341,12 +372,12 @@ export default function ContentCreateArticle({
                 ) : (
                   <div
                     id="media-upload-btn"
-                    onClick={handleFileClick}
+                    onClick={!isCompressing ? handleFileClick : undefined}
                     onDragEnter={handleDragEnter}
                     onDragOver={handleDragOver}
                     onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
-                    className="flex flex-col justify-center items-center h-[216px] min-w-[200px] bg-white bg-opacity-10 rounded-lg p-4 cursor-pointer"
+                    className={`flex flex-col justify-center items-center h-[216px] min-w-[200px] bg-white bg-opacity-10 rounded-lg p-4 ${!isCompressing ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
                   >
                     <input
                       id="fileInput"
@@ -355,6 +386,7 @@ export default function ContentCreateArticle({
                       accept="image/*"
                       onChange={handleFileChange}
                       className="hidden"
+                      disabled={isCompressing}
                     />
                     <div className={`${isDragging && selectedFile ? 'opacity-100' : 'opacity-30'} hover:opacity-100`}>
                       <div className="w-12 h-12 bg-white/10 rounded-[48px] backdrop-blur-[10px] flex items-center justify-center justify-self-center">
@@ -412,13 +444,17 @@ export default function ContentCreateArticle({
                   variant="line"
                   icon={
                     <Icon.PaperPlaneRight
-                      color={!charCountArticle || !isValidContent || isError || !contentTitle ? 'gray' : 'white'}
+                      color={
+                        !charCountArticle || !isValidContent || isError || !contentTitle || isCompressing
+                          ? 'gray'
+                          : 'white'
+                      }
                     />
                   }
-                  disabled={!charCountArticle || !isValidContent || isError || !contentTitle}
+                  disabled={!charCountArticle || !isValidContent || isError || !contentTitle || isCompressing}
                   loading={sendingArticle}
                   onClick={
-                    charCountArticle && isValidContent && contentTitle && !isError && !sendingArticle
+                    charCountArticle && isValidContent && contentTitle && !isError && !sendingArticle && !isCompressing
                       ? () => handleSubmit(contentArticle)
                       : undefined
                   }
