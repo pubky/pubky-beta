@@ -1,5 +1,6 @@
 'use client';
 import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { BodyNotification, NotificationView } from '@/types/User';
 import { useUserNotifications } from '@/hooks/useUser';
@@ -11,13 +12,15 @@ type NotificationsContextType = {
   loading: boolean;
   fetchNotifications: () => Promise<void>;
   loadMoreNotifications: () => Promise<void>;
+  applySettings: () => Promise<void>;
 };
 
 const NotificationsContext = createContext<NotificationsContextType>({
   notifications: [],
   loading: true,
   fetchNotifications: async () => {},
-  loadMoreNotifications: async () => {}
+  loadMoreNotifications: async () => {},
+  applySettings: async () => {}
 });
 
 export function NotificationsWrapper({ children }: { children: ReactNode }) {
@@ -48,6 +51,30 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
       }
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const applySettings = async () => {
+    // Reset notification states
+    setNotifications([]);
+    setSkip(0);
+    setHasMore(true);
+    setTimestampLoaded(false);
+    setPreferencesLoaded(null);
+
+    // Reload settings
+    await checkSettings();
+
+    // Reload timestamp
+    if (pubky) {
+      try {
+        const lastTimestamp = await getTimestampNotification();
+        setTimestamp(lastTimestamp);
+        setTimestampLoaded(true);
+      } catch (error) {
+        console.warn('Error loading timestamp:', error);
+        setTimestampLoaded(true);
+      }
     }
   };
 
@@ -248,7 +275,8 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
         notifications,
         loading,
         fetchNotifications,
-        loadMoreNotifications
+        loadMoreNotifications,
+        applySettings
       }}
     >
       {children}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext, useNotificationsContext } from '@/contexts';
 import { Icon, Input, Typography } from '@social/ui-shared';
 
 const defaultPreferences = {
@@ -21,6 +21,7 @@ type NotificationType = keyof typeof defaultPreferences;
 
 export default function Notifications() {
   const { saveSettings, loadSettings } = usePubkyClientContext();
+  const { applySettings } = useNotificationsContext();
   const [preferences, setPreferences] = useState(defaultPreferences);
 
   const handleLoadSettings = async () => {
@@ -36,10 +37,11 @@ export default function Notifications() {
     handleLoadSettings();
   }, []);
 
-  const handleToggle = (type: NotificationType) => {
+  const handleToggle = async (type: NotificationType) => {
     const updatedPreferences = { ...preferences, [type]: !preferences[type] };
     setPreferences(updatedPreferences);
-    saveSettings(updatedPreferences);
+    await saveSettings(updatedPreferences);
+    await applySettings();
   };
 
   return (
