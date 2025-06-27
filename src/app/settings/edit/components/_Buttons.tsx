@@ -102,6 +102,14 @@ export default function Buttons({
         await deleteFile(String(prevImage));
       }
 
+      // If a new image was uploaded and there was no previous image, wait 2 seconds for indexing
+      const isNewImageUploaded = image instanceof File;
+      const hadPreviousImage = prevImage && prevImage !== '';
+
+      if (isNewImageUploaded && !hadPreviousImage) {
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+      }
+
       router.push('/profile');
     } catch (error) {
       console.log(error);
