@@ -308,6 +308,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
 
       return { status: true, message: 'Ok', session };
     } catch (error) {
+      console.log('Session check failed:', error);
       if (String(error) === 'error sending request' && typeof window !== 'undefined' && !navigator.onLine) {
         return { status: true, message: 'connection lost' };
       }
