@@ -18,6 +18,7 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   const [skip, setSkip] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
   const [finishedLoading, setFinishedLoading] = useState(false);
+  const [processedPosts, setProcessedPosts] = useState<Set<string>>(new Set());
   const currentPubky = creatorPubky ?? pubky ?? '';
 
   // Filter timeline to only show posts that belong to the current profile being viewed
@@ -83,9 +84,14 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
     if (!filteredTimeline.length) return;
 
     const homeserverPosts = filteredTimeline.filter(
-      (post) => post.cached === 'homeserver' || post.cached === undefined
+      (post) => (post.cached === 'homeserver' || post.cached === undefined) && !processedPosts.has(post.details.id)
     );
     if (!homeserverPosts.length) return;
+
+    const postToProcess = homeserverPosts[0];
+
+    // Mark this post as being processed
+    setProcessedPosts((prev) => new Set([...prev, postToProcess.details.id]));
 
     let retryCount = 0;
     const maxRetries = 5;
@@ -93,8 +99,8 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
     const attemptFetch = async (): Promise<void> => {
       try {
         const nexusData = await getPost(
-          homeserverPosts[0].details.author,
-          homeserverPosts[0].details.id,
+          postToProcess.details.author,
+          postToProcess.details.id,
           pubky ?? '',
           undefined,
           undefined
@@ -136,6 +142,7 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
     setSkip(0);
     setFinishedLoading(false);
     setTimeline([]);
+    setProcessedPosts(new Set());
 
     await fetchPosts({
       skipValue: 0,
@@ -147,6 +154,7 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
     setTimeline([]);
     setSkip(0);
     setFinishedLoading(false);
+    setProcessedPosts(new Set());
 
     fetchPosts({
       skipValue: 0,
@@ -164,8 +172,10 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
 
   // Fetch Nexus data for homeserver posts
   useEffect(() => {
-    fetchNexusData();
-  }, [filteredTimeline]);
+    if (filteredTimeline.length > 0) {
+      fetchNexusData();
+    }
+  }, [filteredTimeline.length]); // Only depend on length, not the entire array
 
   const loader = useInfiniteScroll(() => fetchPosts({ skipValue: skip, timelineValue: timeline }), isLoading);
 
