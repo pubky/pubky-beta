@@ -19,9 +19,9 @@ export const ReplyReplies = ({ reply }: { reply: PostView }) => {
     undefined,
     'ascending'
   );
-  const lineBaseCSS = `ml-[12px] absolute border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[2px]`;
+  const lineBaseCSS = `ml-[36px] absolute border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[2px]`;
   const lineHorizontalCSS = (
-    <div className="absolute ml-[10px]">
+    <div className="absolute ml-[34px]">
       <Icon.LineHorizontal size="14" color="#444447" />
     </div>
   );
@@ -47,7 +47,7 @@ export const ReplyReplies = ({ reply }: { reply: PostView }) => {
   return (
     <>
       {displayedReplies.map((nestedReply) => (
-        <div className="flex flex-col gap-3" key={nestedReply?.details?.id}>
+        <div className="flex flex-col gap-3 ml-6" key={nestedReply?.details?.id}>
           <Post
             post={nestedReply}
             size="full"
@@ -64,7 +64,7 @@ export const ReplyReplies = ({ reply }: { reply: PostView }) => {
           <Link href={Utils.encodePostUri(reply?.details?.uri)}>
             <Typography.Body
               variant="small-bold"
-              className="cursor-pointer flex gap-1 items-center ml-8 hover:opacity-80"
+              className="cursor-pointer flex gap-1 items-center ml-14 hover:opacity-80"
             >
               <Icon.PlusCircle />
               {repliesLeft === 1 ? '1 more reply' : `${repliesLeft} more replies`}
@@ -73,7 +73,7 @@ export const ReplyReplies = ({ reply }: { reply: PostView }) => {
         </div>
       )}
       {showQuickReply && (
-        <div className="relative">
+        <div className="relative ml-6">
           <div className={lineBaseCSS2} />
           {lineHorizontalCSS2}
           <CreateQuickReply post={reply} isNestedReply />
