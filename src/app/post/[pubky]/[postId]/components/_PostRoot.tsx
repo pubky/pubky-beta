@@ -11,7 +11,7 @@ import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { parse_uri, PubkyAppPostKind } from 'pubky-app-specs';
 
 export default function PostRoot({ post }: { uri: string; post: PostView }) {
-  const { pubky, createReply, createTag } = usePubkyClientContext();
+  const { pubky, createReply, createTag, replies } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -66,7 +66,7 @@ export default function PostRoot({ post }: { uri: string; post: PostView }) {
         <Post.Root className="col-span-2">
           <div className="flex items-center relative">
             <div
-              className={`ml-[10px] absolute border-l-[1px] h-full border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[26px] after:block after:-mt-[26px] after:-ml-[0.8px]`}
+              className={`${replies.length > 0 ? 'h-full' : 'h-[48%]'} ml-[10px] absolute border-l-[1px] top-0 border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[26px] after:block after:-mt-[26px] after:-ml-[0.8px]`}
             />
             <div className="absolute ml-[10px]">
               <Icon.LineHorizontal size="14" color="#444447" />
