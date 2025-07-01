@@ -91,7 +91,7 @@ export const Timeline = () => {
       const combinedTimeline = [...timelineValue, ...groupedNewPosts];
       const finalTimeline = groupReposts(combinedTimeline);
 
-      // Only sort by indexed_at for recent sorting, preserve API sorting for popularity
+      // Only sort by indexed_at for recent sorting
       const sortedTimeline =
         sort === 'recent' ? finalTimeline.sort((a, b) => b.details.indexed_at - a.details.indexed_at) : finalTimeline;
 
