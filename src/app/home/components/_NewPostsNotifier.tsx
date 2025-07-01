@@ -50,7 +50,7 @@ export function NewPostsNotifier() {
       // filter out deleted posts and muted users
       const filteredNewPosts = newPostsValue
         .filter((post) => !deletedPosts.includes(post.details.id) && !mutedUsers.includes(post.details.author))
-        .sort((a, b) => b.details.indexed_at - a.details.indexed_at);
+        .sort((a, b) => (sort === 'recent' ? b.details.indexed_at - a.details.indexed_at : 0));
 
       // Only add posts that are not already in the timeline
       const uniqueNewPosts = filteredNewPosts.filter(
@@ -119,9 +119,12 @@ export function NewPostsNotifier() {
       // Combine new posts with existing timeline
       const combinedTimeline = [...uniqueNewPosts.reverse(), ...prev];
 
-      // Group reposts and sort chronologically
+      // Group reposts and sort based on current sort setting
       const groupedTimeline = groupReposts(combinedTimeline);
-      const sortedTimeline = groupedTimeline.sort((a, b) => b.details.indexed_at - a.details.indexed_at);
+      const sortedTimeline =
+        sort === 'recent'
+          ? groupedTimeline.sort((a, b) => b.details.indexed_at - a.details.indexed_at)
+          : groupedTimeline;
 
       return sortedTimeline;
     });
