@@ -20,7 +20,7 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
   const [isLoading, setIsLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
   const lineBaseCSS = 'absolute left-[10px] top-[0px] w-[1px] h-[calc(100%+12px)] bg-[#444447]';
-  const lineBaseCSS2 = 'ml-[10px] absolute border-l-[1px] h-[48%] top-0 border-[#444447]';
+  const lineBaseCSS2 = 'ml-[10px] absolute left-0 top-0 bottom-1/2 border-l-[1px] border-[#444447] w-0';
 
   const loader = useInfiniteScroll(() => {
     if (hasMore && !isLoading) {
@@ -147,18 +147,35 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
         <div className="flex-col gap-3 inline-flex w-full relative">
           {replies.map((reply, index) => {
             const isLastReply = index === replies.length - 1;
-            return (
-              <div key={`reply-${reply.details.id}`} className="flex flex-col gap-3 relative">
-                <div className={isLastReply ? lineBaseCSS2 : lineBaseCSS} />
-                <div className={`flex items-center relative`}>
-                  <div className="absolute ml-[10px]">
-                    <Icon.LineHorizontal size="14" color="#444447" />
+            if (isLastReply) {
+              return (
+                <div key={`reply-${reply.details.id}`} className="flex flex-col gap-3 relative">
+                  <div className="relative">
+                    <div className={lineBaseCSS2} />
+                    <div className="flex items-center relative">
+                      <div className="absolute ml-[10px]">
+                        <Icon.LineHorizontal size="14" color="#444447" />
+                      </div>
+                      <Post className="ml-6" post={reply} postType="replies" />
+                    </div>
                   </div>
-                  <Post className="ml-6" post={reply} postType="replies" />
+                  {reply.counts?.replies > 0 && <ReplyReplies reply={reply} />}
                 </div>
-                {reply.counts?.replies > 0 && <ReplyReplies reply={reply} />}
-              </div>
-            );
+              );
+            } else {
+              return (
+                <div key={`reply-${reply.details.id}`} className="flex flex-col gap-3 relative">
+                  <div className={lineBaseCSS} />
+                  <div className="flex items-center relative">
+                    <div className="absolute ml-[10px]">
+                      <Icon.LineHorizontal size="14" color="#444447" />
+                    </div>
+                    <Post className="ml-6" post={reply} postType="replies" />
+                  </div>
+                  {reply.counts?.replies > 0 && <ReplyReplies reply={reply} />}
+                </div>
+              );
+            }
           })}
 
           {isLoading && !initialLoadComplete && (
