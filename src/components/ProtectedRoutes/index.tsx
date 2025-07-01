@@ -5,7 +5,6 @@ import { useRouter, usePathname } from 'next/navigation';
 import NextTopLoader from 'nextjs-toploader';
 import React, { useEffect, useState } from 'react';
 import { getUserMuted, getUserProfile } from '@/services/userService';
-import { defaultPreferences } from '@/contexts/_filters';
 import { PubkyAppUser } from 'pubky-app-specs';
 
 export default function ProtectedRoutes({ children }: { children: React.ReactNode }) {
@@ -18,8 +17,6 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
     setMutedUsers,
     getTimestampNotification,
     setTimestamp,
-    loadSettings,
-    setNotificationPreferences,
     newUser,
     setNewUser,
     isSessionActive,
@@ -88,21 +85,6 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
       setTimestamp(Number(result));
     } catch (error) {
       console.debug('No last_read data available for new user');
-    }
-  };
-
-  const checkSettings = async () => {
-    if (pubky === undefined) return;
-
-    try {
-      const result = await loadSettings();
-      if (result?.notifications) {
-        setNotificationPreferences(result.notifications);
-      } else {
-        setNotificationPreferences(defaultPreferences);
-      }
-    } catch (error) {
-      console.log(error);
     }
   };
 
@@ -202,7 +184,6 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
   useEffect(() => {
     checkMutedUsers();
     checkTimestamp();
-    checkSettings();
   }, [pubky]);
 
   useEffect(() => {
