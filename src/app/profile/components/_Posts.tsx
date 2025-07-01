@@ -8,6 +8,7 @@ import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { PostView } from '@/types/Post';
 import Image from 'next/image';
 import { getStreamPosts } from '@/services/streamService';
+import { getPost } from '@/services/postService';
 
 export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   const limit = 10;
@@ -17,6 +18,7 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   const [skip, setSkip] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
   const [finishedLoading, setFinishedLoading] = useState(false);
+  const [processedPosts, setProcessedPosts] = useState<Set<string>>(new Set());
   const currentPubky = creatorPubky ?? pubky ?? '';
 
   // Filter timeline to only show posts that belong to the current profile being viewed
@@ -78,10 +80,69 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
     }
   };
 
+  const fetchNexusData = async () => {
+    if (!filteredTimeline.length) return;
+
+    const homeserverPosts = filteredTimeline.filter(
+      (post) => (post.cached === 'homeserver' || post.cached === undefined) && !processedPosts.has(post.details.id)
+    );
+    if (!homeserverPosts.length) return;
+
+    const postToProcess = homeserverPosts[0];
+
+    // Mark this post as being processed
+    setProcessedPosts((prev) => new Set([...prev, postToProcess.details.id]));
+
+    let retryCount = 0;
+    const maxRetries = 5;
+
+    const attemptFetch = async (): Promise<void> => {
+      try {
+        const nexusData = await getPost(
+          postToProcess.details.author,
+          postToProcess.details.id,
+          pubky ?? '',
+          undefined,
+          undefined
+        );
+
+        if (!nexusData) {
+          if (retryCount < maxRetries) {
+            retryCount++;
+            await new Promise((resolve) => setTimeout(resolve, 1000 * retryCount)); // Exponential backoff
+            return attemptFetch();
+          }
+          return;
+        }
+
+        // Update the post in timeline with nexus data
+        setTimeline((prev) => {
+          const existingPost = prev.find((p) => p.details.id === nexusData.details.id);
+
+          if (existingPost) {
+            return prev.map((p) => (p.details.id === nexusData.details.id ? nexusData : p));
+          }
+
+          return prev;
+        });
+      } catch (error) {
+        console.log('Error fetching Nexus data:', error);
+        if (retryCount < maxRetries) {
+          retryCount++;
+          await new Promise((resolve) => setTimeout(resolve, 1000 * retryCount)); // Exponential backoff
+          return attemptFetch();
+        }
+      }
+    };
+
+    await attemptFetch();
+  };
+
   const initializeTimeline = async () => {
     setSkip(0);
     setFinishedLoading(false);
     setTimeline([]);
+    setProcessedPosts(new Set());
 
     await fetchPosts({
       skipValue: 0,
@@ -93,6 +154,7 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
     setTimeline([]);
     setSkip(0);
     setFinishedLoading(false);
+    setProcessedPosts(new Set());
 
     fetchPosts({
       skipValue: 0,
@@ -107,6 +169,13 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
   useEffect(() => {
     initializeTimelineCallback();
   }, [creatorPubky]);
+
+  // Fetch Nexus data for homeserver posts
+  useEffect(() => {
+    if (filteredTimeline.length > 0) {
+      fetchNexusData();
+    }
+  }, [filteredTimeline.length]); // Only depend on length, not the entire array
 
   const loader = useInfiniteScroll(() => fetchPosts({ skipValue: skip, timelineValue: timeline }), isLoading);
 
