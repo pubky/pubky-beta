@@ -20,7 +20,7 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
   const [isLoading, setIsLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
   const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-full border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[26px] after:block after:-mt-[26px] after:-ml-[0.8px]`;
-  const lineBaseCSS2 = `ml-[10px] absolute border-l-[1px] h-[64%] -top-7 border-[#444447]`;
+  const lineBaseCSS2 = `ml-[10px] absolute border-l-[1px] h-[55%] -top-6 border-[#444447]`;
 
   const loader = useInfiniteScroll(() => {
     if (hasMore && !isLoading) {
