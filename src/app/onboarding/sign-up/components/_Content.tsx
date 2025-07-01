@@ -94,7 +94,10 @@ export default function Index() {
         const signUpResponse = await signUp(name, token, bio, linksObject, image);
 
         if ('state' in signUpResponse && !signUpResponse.state) {
-          setErrors((prev) => ({ ...prev, token: signUpResponse.error }));
+          const errorMessage = signUpResponse.error.includes('Error message:')
+            ? signUpResponse.error.split('Error message:')[1].trim()
+            : signUpResponse.error;
+          setErrors((prev) => ({ ...prev, token: errorMessage }));
           throw new Error('Something went wrong');
         }
         router.push('/onboarding/pubky');
