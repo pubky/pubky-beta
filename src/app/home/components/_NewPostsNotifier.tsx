@@ -5,6 +5,7 @@ import { Button } from '@social/ui-shared';
 import { PostView } from '@/types/Post';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { getStreamPosts } from '@/services/streamService';
+import { groupReposts } from '@/utils/postUtils';
 
 export function NewPostsNotifier() {
   const { timeline, setTimeline, pubky, deletedPosts, mutedUsers } = usePubkyClientContext();
@@ -61,9 +62,42 @@ export function NewPostsNotifier() {
         setNewPosts((prev) => {
           const existingIds = new Set(prev.map((p) => p.details.id));
           const trulyUniquePosts = uniqueNewPosts.filter((post) => !existingIds.has(post.details.id));
-          return [...prev, ...trulyUniquePosts];
+          const allNewPosts = [...prev, ...trulyUniquePosts];
+
+          // Group the posts to get the actual count that will be displayed
+          const groupedPosts = groupReposts(allNewPosts);
+
+          // Create a set of reposted URIs that are already in the timeline
+          const timelineRepostedUris = new Set<string>();
+          timeline.forEach((post) => {
+            if (post.relationships?.reposted) {
+              timelineRepostedUris.add(post.relationships.reposted);
+            }
+            // Also check grouped reposts in timeline
+            if (post.groupedReposts) {
+              post.groupedReposts.forEach((groupedPost) => {
+                if (groupedPost.relationships?.reposted) {
+                  timelineRepostedUris.add(groupedPost.relationships.reposted);
+                }
+              });
+            }
+          });
+
+          // Filter out grouped posts that are reposts of content already in timeline
+          const newGroupedPosts = groupedPosts.filter((post) => {
+            // If it's a regular post (not a repost), check if ID exists in timeline
+            if (!post.relationships?.reposted) {
+              return !timeline.some((timelinePost) => timelinePost.details.id === post.details.id);
+            }
+
+            // If it's a repost, check if the reposted content is already in timeline
+            return !timelineRepostedUris.has(post.relationships.reposted);
+          });
+
+          setNewPostsCount(newGroupedPosts.length);
+          return allNewPosts;
         });
-        setNewPostsCount((prev) => prev + uniqueNewPosts.length);
+
         setLatestTimestamp(Math.max(...uniqueNewPosts.map((p) => p.details.indexed_at)));
       }
     } catch (error) {
@@ -81,7 +115,15 @@ export function NewPostsNotifier() {
     setTimeline((prev) => {
       const existingIds = new Set(prev.map((p) => p.details.id));
       const uniqueNewPosts = newPosts.filter((post) => !existingIds.has(post.details.id));
-      return [...uniqueNewPosts.reverse(), ...prev];
+
+      // Combine new posts with existing timeline
+      const combinedTimeline = [...uniqueNewPosts.reverse(), ...prev];
+
+      // Group reposts and sort chronologically
+      const groupedTimeline = groupReposts(combinedTimeline);
+      const sortedTimeline = groupedTimeline.sort((a, b) => b.details.indexed_at - a.details.indexed_at);
+
+      return sortedTimeline;
     });
     setNewPosts([]);
     setNewPostsCount(0);

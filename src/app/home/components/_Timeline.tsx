@@ -13,6 +13,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { getStreamPosts } from '@/services/streamService';
 import { PostView } from '@/types/Post';
+import { groupReposts } from '@/utils/postUtils';
 
 export const Timeline = () => {
   const { pubky, mutedUsers, newPosts, setNewPosts, timeline, setTimeline, deletedPosts, isOnline } =
@@ -83,10 +84,20 @@ export const Timeline = () => {
       const existingIds = new Set(timelineValue.map((p) => p.details.id));
       const uniqueNewPosts = filteredData.filter((post) => !existingIds.has(post.details.id));
 
-      setTimeline([...timelineValue, ...uniqueNewPosts]);
+      // Group reposts of the same post together
+      const groupedNewPosts = groupReposts(uniqueNewPosts);
+
+      // Combine with existing timeline and group again to handle any new groupings
+      const combinedTimeline = [...timelineValue, ...groupedNewPosts];
+      const finalTimeline = groupReposts(combinedTimeline);
+
+      // Sort the final timeline by indexed_at to maintain chronological order
+      const sortedTimeline = finalTimeline.sort((a, b) => b.details.indexed_at - a.details.indexed_at);
+
+      setTimeline(sortedTimeline);
 
       // Set finishedLoading to true only if we received no new posts
-      if (uniqueNewPosts.length === 0) {
+      if (groupedNewPosts.length === 0) {
         setFinishedLoading(true);
       } else {
         setFinishedLoading(false);
@@ -172,10 +183,14 @@ export const Timeline = () => {
           const existingPost = prev.find((p) => p.details.id === nexusData.details.id);
 
           if (existingPost) {
-            return prev.map((p) => (p.details.id === nexusData.details.id ? nexusData : p));
+            const updatedTimeline = prev.map((p) => (p.details.id === nexusData.details.id ? nexusData : p));
+            const groupedTimeline = groupReposts(updatedTimeline);
+            return groupedTimeline.sort((a, b) => b.details.indexed_at - a.details.indexed_at);
           }
 
-          return [nexusData, ...prev];
+          const newTimeline = [nexusData, ...prev];
+          const groupedTimeline = groupReposts(newTimeline);
+          return groupedTimeline.sort((a, b) => b.details.indexed_at - a.details.indexed_at);
         });
       } catch (error) {
         console.log('Error fetching Nexus data:', error);

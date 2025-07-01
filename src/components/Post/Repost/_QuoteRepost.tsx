@@ -64,7 +64,7 @@ export default function Quote({
       {/* Repost Card */}
       <div className={twMerge(`${line && 'ml-6'} w-full`, restClassName)}>
         <PostUI.RepostCard className="relative">
-          <div className="flex gap-2 items-center">
+          <div className="flex flex-wrap items-center">
             <Button.Action
               className="bg-black bg-opacity-100 hover:bg-opacity-100 cursor-default"
               size="small"
@@ -90,7 +90,7 @@ export default function Quote({
             {(!post?.details?.content || !post?.relationships?.reposted) && post?.details?.author === pubky && (
               <Typography.Body
                 variant="small-bold"
-                className="text-[13px] text-red-500 text-opacity-80 hover:text-opacity-100 underline decoration-solid"
+                className="ml-2 text-[13px] text-red-500 text-opacity-80 hover:text-opacity-100 underline decoration-solid"
                 onClick={(event) => {
                   event.stopPropagation();
                   handleDeletePost();

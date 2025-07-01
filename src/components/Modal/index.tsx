@@ -22,6 +22,7 @@ import MinimumAge from './_MinimumAge';
 import PrivacyPolicy from './_PrivacyPolicy';
 import ReportPost from './_ReportPost';
 import ReportProfile from './_ReportProfile';
+import RepostedUsers from './_RepostedUsers';
 import SearchedUsersCard from './_SearchedUsersCard';
 import SearchInputCard from './_SearchInputCard';
 import SessionExpired from './_SessionExpired';
@@ -53,6 +54,7 @@ export const Modal = {
   PrivacyPolicy,
   ReportPost,
   ReportProfile,
+  RepostedUsers,
   SearchedUsersCard,
   SearchInputCard,
   SessionExpired,
