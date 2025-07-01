@@ -19,8 +19,8 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
-  const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-full border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[26px] after:block after:-mt-[26px] after:-ml-[0.8px]`;
-  const lineBaseCSS2 = `ml-[10px] absolute border-l-[1px] h-[55%] -top-6 border-[#444447]`;
+  const lineBaseCSS = 'absolute left-[10px] top-[0px] w-[1px] h-[calc(100%+12px)] bg-[#444447]';
+  const lineBaseCSS2 = 'ml-[10px] absolute border-l-[1px] h-[48%] top-0 border-[#444447]';
 
   const loader = useInfiniteScroll(() => {
     if (hasMore && !isLoading) {
@@ -144,18 +144,16 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
       {replies.length === 0 && initialLoadComplete ? (
         <Typography.Body className="text-opacity-50 text-center mt-[100px]">No replies yet.</Typography.Body>
       ) : (
-        <div className="flex-col gap-3 inline-flex w-full">
+        <div className="flex-col gap-3 inline-flex w-full relative">
           {replies.map((reply, index) => {
             const isLastReply = index === replies.length - 1;
             return (
-              <div key={`reply-${reply.details.id}`} className="flex flex-col gap-3">
-                <div className={`flex items-center ${isLastReply && 'relative'}`}>
-                  <>
-                    <div className={isLastReply ? lineBaseCSS2 : lineBaseCSS} />
-                    <div className="absolute ml-[10px]">
-                      <Icon.LineHorizontal size="14" color="#444447" />
-                    </div>
-                  </>
+              <div key={`reply-${reply.details.id}`} className="flex flex-col gap-3 relative">
+                <div className={isLastReply ? lineBaseCSS2 : lineBaseCSS} />
+                <div className={`flex items-center relative`}>
+                  <div className="absolute ml-[10px]">
+                    <Icon.LineHorizontal size="14" color="#444447" />
+                  </div>
                   <Post className="ml-6" post={reply} postType="replies" />
                 </div>
                 {reply.counts?.replies > 0 && <ReplyReplies reply={reply} />}
