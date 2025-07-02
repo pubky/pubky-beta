@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { Typography } from '@social/ui-shared';
+import { Icon, Typography } from '@social/ui-shared';
 import { Post, Skeleton } from '@/components';
 
 import { usePubkyClientContext } from '@/contexts';
@@ -19,6 +19,8 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
+  const lineBaseCSS = 'absolute left-[10px] top-[0px] w-[1px] h-[calc(100%+12px)] bg-[#444447]';
+  const lineBaseCSS2 = `ml-[10px] absolute left-0 top-0 h-[49%] border-l-[1px] border-[#444447] w-0`;
 
   const loader = useInfiniteScroll(() => {
     if (hasMore && !isLoading) {
@@ -142,13 +144,39 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
       {replies.length === 0 && initialLoadComplete ? (
         <Typography.Body className="text-opacity-50 text-center mt-[100px]">No replies yet.</Typography.Body>
       ) : (
-        <div className="flex-col gap-3 inline-flex w-full">
-          {replies.map((reply) => (
-            <div key={`reply-${reply.details.id}`} className="flex flex-col gap-3">
-              <Post post={reply} postType="replies" />
-              {reply.counts?.replies > 0 && <ReplyReplies reply={reply} />}
-            </div>
-          ))}
+        <div className="flex-col gap-3 inline-flex w-full relative">
+          {replies.map((reply, index) => {
+            const isLastReply = index === replies.length - 1;
+            if (isLastReply) {
+              return (
+                <div key={`reply-${reply.details.id}`} className="flex flex-col gap-3 relative">
+                  <div className="relative">
+                    <div className={lineBaseCSS2} />
+                    <div className="flex items-center relative">
+                      <div className="absolute ml-[10px]">
+                        <Icon.LineHorizontal size="14" color="#444447" />
+                      </div>
+                      <Post className="ml-6" post={reply} postType="replies" />
+                    </div>
+                  </div>
+                  {reply.counts?.replies > 0 && <ReplyReplies reply={reply} />}
+                </div>
+              );
+            } else {
+              return (
+                <div key={`reply-${reply.details.id}`} className="flex flex-col gap-3 relative">
+                  <div className={lineBaseCSS} />
+                  <div className="flex items-center relative">
+                    <div className="absolute ml-[10px]">
+                      <Icon.LineHorizontal size="14" color="#444447" />
+                    </div>
+                    <Post className="ml-6" post={reply} postType="replies" />
+                  </div>
+                  {reply.counts?.replies > 0 && <ReplyReplies reply={reply} />}
+                </div>
+              );
+            }
+          })}
 
           {isLoading && !initialLoadComplete && (
             <div className="h-20 flex items-center justify-center">

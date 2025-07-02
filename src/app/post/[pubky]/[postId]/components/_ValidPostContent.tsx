@@ -54,7 +54,7 @@ export function ValidPostContent({ postRef, data }) {
 
 const NormalPost = ({ data }) => {
   const isMobile = useIsMobile(1280);
-  const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-[52%] -top-3 border-[#444447]`;
+  const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-full border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[0.8px]`;
 
   return (
     <div className="flex items-center relative">

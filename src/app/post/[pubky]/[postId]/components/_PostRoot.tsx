@@ -11,7 +11,7 @@ import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { parse_uri, PubkyAppPostKind } from 'pubky-app-specs';
 
 export default function PostRoot({ post }: { uri: string; post: PostView }) {
-  const { pubky, createReply, createTag } = usePubkyClientContext();
+  const { pubky, createReply, createTag, replies } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -61,46 +61,58 @@ export default function PostRoot({ post }: { uri: string; post: PostView }) {
   if (!pubky) return;
 
   return (
-    <div ref={wrapperRef} className="grid gap-6 xl:grid-cols-3">
-      <Post.Root className="col-span-2">
-        <CreateContent
-          id="reply-create-content"
-          handleSubmit={handleReply}
-          content={contentReply}
-          setContent={setContentReply}
-          setTextArea={setTextArea}
-          placeHolder={placeholder}
-          setQuote={setQuote}
-          isValidContent={isValidContent}
-          setIsValidContent={setIsValidContent}
-          selectedFiles={selectedFiles}
-          setSelectedFiles={setSelectedFiles}
-          loading={sendingReply}
-          arrayTags={arrayTags}
-          setArrayTags={setArrayTags}
-          button={
-            <Button.Medium
-              id="reply-btn"
-              className="w-auto"
-              variant="line"
-              icon={<Icon.ChatCircleText color={!isValidContent && selectedFiles.length === 0 ? 'gray' : 'white'} />}
-              disabled={!isValidContent && selectedFiles.length === 0}
+    <div className="flex items-center relative">
+      <div ref={wrapperRef} className="grid gap-6 xl:grid-cols-3">
+        <Post.Root className="col-span-2">
+          <div className="flex items-center relative">
+            <div
+              className={`${replies.length > 0 ? 'h-full' : 'h-[45%]'} ml-[10px] absolute border-l-[1px] top-0 border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[26px] after:block after:-mt-[24px] after:-ml-[0.8px]`}
+            />
+            <div className="absolute ml-[10px]">
+              <Icon.LineHorizontal size="14" color="#444447" />
+            </div>
+            <CreateContent
+              id="reply-create-content"
+              handleSubmit={handleReply}
+              content={contentReply}
+              setContent={setContentReply}
+              setTextArea={setTextArea}
+              placeHolder={placeholder}
+              setQuote={setQuote}
+              isValidContent={isValidContent}
+              setIsValidContent={setIsValidContent}
+              selectedFiles={selectedFiles}
+              setSelectedFiles={setSelectedFiles}
               loading={sendingReply}
-              onClick={
-                (isValidContent || selectedFiles.length > 0) && !sendingReply
-                  ? () => handleReply(contentReply)
-                  : undefined
+              arrayTags={arrayTags}
+              setArrayTags={setArrayTags}
+              button={
+                <Button.Medium
+                  id="reply-btn"
+                  className="w-auto"
+                  variant="line"
+                  icon={
+                    <Icon.ChatCircleText color={!isValidContent && selectedFiles.length === 0 ? 'gray' : 'white'} />
+                  }
+                  disabled={!isValidContent && selectedFiles.length === 0}
+                  loading={sendingReply}
+                  onClick={
+                    (isValidContent || selectedFiles.length > 0) && !sendingReply
+                      ? () => handleReply(contentReply)
+                      : undefined
+                  }
+                >
+                  Reply
+                </Button.Medium>
               }
-            >
-              Reply
-            </Button.Medium>
-          }
-          textArea={textArea}
-          className="mb-3"
-        />
-        <Replies postId={post?.details?.id} pubkyAuthor={post?.details?.author} />
-      </Post.Root>
-      <Participants author={post?.details?.author} />
+              textArea={textArea}
+              className="mb-3 ml-6"
+            />
+          </div>
+          <Replies postId={post?.details?.id} pubkyAuthor={post?.details?.author} />
+        </Post.Root>
+        <Participants author={post?.details?.author} />
+      </div>
     </div>
   );
 }
