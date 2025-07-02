@@ -92,6 +92,19 @@ export default defineConfig({
           const files = readdirSync(folder);
           const matchedFile = files.find((file) => file.endsWith(suffix));
           return !!matchedFile; // Return true if a match is found
+        },
+
+        log(message) {
+          console.log(message); // log to the console
+          return null; // return null to indicate task completion
+        },
+
+        logToFile({ testName, message }) {
+          require('fs').appendFileSync(
+            'cypress.log',
+            `\nTest: ${testName}\nTime: ${new Date().toISOString()}\n${message}`
+          );
+          return null; // return null to indicate task completion
         }
       });
     },

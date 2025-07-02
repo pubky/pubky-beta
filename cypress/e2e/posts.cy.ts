@@ -16,7 +16,6 @@ import {
   fastTagWhilstCreatingPost,
   addImage,
   waitForBookmarksToLoad,
-  checkPostIsIndexed,
   checkLatestPostIsIndexed
 } from '../support/posts';
 import { defaultMs, fastMs } from '../support/slow-down';
@@ -43,6 +42,7 @@ describe('posts', () => {
     cy.location('pathname').then((currentPath) => {
       if (currentPath !== '/home') {
         cy.signIn(backupDownloadFilePath(username));
+        waitForFeedToLoad();
       }
     });
   });
@@ -457,6 +457,7 @@ describe('posts', () => {
 
     const clickMiddleTag = () => {
       cy.get('#tag-1').click();
+      cy.wait(100);
     };
 
     // add one tag now and the rest later
@@ -626,12 +627,28 @@ describe('posts', () => {
 
   // todo: consider creating user to create the post to repost
   it('can repost without content then delete the repost', () => {
+    // TODO: remove debug logging for repost sometimes not showing 'Poster reposted'
+    // Set up network intercept to log response for GET /stream/posts
+    cy.intercept('GET', '**/stream/posts**', (req) => {
+      req.reply((res) => {
+        cy.task('logToFile', {
+          testName: 'can repost without content then delete the repost',
+          message: `GET /stream/posts response:\n${JSON.stringify(res.body, null, 2)}`
+        });
+      });
+    }).as('getStreamPosts');
+
     // create a post to repost
     const postContent = `This post will be reposted without content! ${Date.now()}`;
     createQuickPost(postContent);
 
     // repost without content
     repostPost({ postContent });
+
+    // TODO: remove workaround for repost sometimes not showing 'Poster reposted'
+    cy.waitReload(Cypress.env('ci') ? 1000 : 100);
+    waitForFeedToLoad();
+    cy.scrollTo('top');
 
     // verify the repost without content is displayed correctly in feed
     cy.findFirstPostInFeed().within(($post) => {

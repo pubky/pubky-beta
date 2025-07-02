@@ -387,11 +387,7 @@ export const waitForFeedToLoad = (postContent?: string) => {
       .then((text) => {
         // handle whitespace consistently
         const normalisedText = text.replace(/\s+/g, ' ').trim();
-        if (
-          normalisedText.includes('Welcome to your feed') ||
-          normalisedText.includes('Loading') ||
-          normalisedText.includes('Checking for new content')
-        ) {
+        if (normalisedText.includes('Loading') || normalisedText.includes('Checking for new content')) {
           firstCheck ? cy.wait(200) : cy.wait(1000);
           checkTimelineRecursively(attempts - 1, false);
         }
