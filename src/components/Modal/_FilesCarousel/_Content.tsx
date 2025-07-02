@@ -188,7 +188,7 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex, o
     setPanPosition({ x: 0, y: 0 }); // Reset pan when resetting zoom
   };
 
-  const handleContainerClick = (e: React.MouseEvent) => {
+  const handleContainerCloseClick = (e: React.MouseEvent) => {
     const isClickingOnImage = e.target instanceof HTMLImageElement;
     const isClickingOnButton = e.target instanceof HTMLButtonElement || (e.target as Element).closest('button');
     const isClickingOnVideo = e.target instanceof HTMLVideoElement;
@@ -208,12 +208,13 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex, o
         width: '95vw',
         height: '95vh',
         minWidth: '90vw',
-        minHeight: '90vh'
+        minHeight: '90vh',
+        touchAction: 'none'
       }}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
-      onClick={handleContainerClick}
+      onClick={handleContainerCloseClick}
     >
       {!isMobile && mediaFiles.length > 1 && (
         <button
@@ -245,7 +246,7 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex, o
               transform: `scale(${zoomLevel}) translate(${panPosition.x / zoomLevel}px, ${panPosition.y / zoomLevel}px)`,
               transformOrigin: 'center',
               transition: isDragging ? 'none' : 'transform 0.1s ease-out',
-              touchAction: zoomLevel > 1 ? 'none' : 'auto'
+              touchAction: 'none'
             }}
             onLoad={() => setIsImageLoaded(true)}
             onMouseDown={handleMouseDown}
