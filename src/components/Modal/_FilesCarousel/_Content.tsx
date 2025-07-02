@@ -203,12 +203,10 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex, o
 
   return (
     <div
-      className={`${mediaFiles.length > 1 ? 'px-8 md:px-16' : 'px-4 md:px-0'} pb-8 relative flex flex-col items-center justify-center`}
+      className={`${mediaFiles.length > 1 && !isMobile ? 'px-8 md:px-16' : 'px-4 md:px-0'} pb-8 relative flex flex-col items-center justify-center`}
       style={{
         width: '95vw',
         height: '95vh',
-        minWidth: '90vw',
-        minHeight: '90vh',
         touchAction: 'none'
       }}
       onTouchStart={handleTouchStart}
