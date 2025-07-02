@@ -146,7 +146,6 @@ jobs:
           name: screenshots-${{ matrix.browser }}
           path: pubky-app/cypress/screenshots
 
-
       - name: Upload video for notifications test
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
@@ -217,6 +216,15 @@ jobs:
         with:
           name: video-${{ matrix.browser }}-onboard
           path: pubky-app/cypress/videos/onboard.cy.ts.mp4
+          if-no-files-found: ignore
+
+      - name: Upload cypress.log
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: cypress-log-${{ matrix.browser }}
+          path: pubky-app/cypress/cypress.log
           if-no-files-found: ignore
 
       - name: Dump docker logs on failure

@@ -627,6 +627,20 @@ describe('posts', () => {
 
   // todo: consider creating user to create the post to repost
   it('can repost without content then delete the repost', () => {
+    // TODO: remove debug logging for repost sometimes not showing 'Poster reposted'
+    // Set up network intercept to log response for GET /stream/posts
+    cy.intercept('GET', '**/stream/posts**', (req) => {
+      req.reply((res) => {
+        cy.task(
+          'log',
+          "\nTest: 'can repost without content then delete the repost'\nTime: " +
+            new Date().toISOString() +
+            '\nGET /stream/posts response:' +
+            JSON.stringify(res.body, null, 2)
+        );
+      });
+    }).as('getStreamPosts');
+
     // create a post to repost
     const postContent = `This post will be reposted without content! ${Date.now()}`;
     createQuickPost(postContent);
