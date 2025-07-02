@@ -96,7 +96,14 @@ export default defineConfig({
 
         log(message) {
           console.log(message); // log to the console
-          require('fs').appendFileSync('cypress.log', `${message}\n`);
+          return null; // return null to indicate task completion
+        },
+
+        logToFile({ testName, message }) {
+          require('fs').appendFileSync(
+            'cypress.log',
+            `\nTest: ${testName}\nTime: ${new Date().toISOString()}\n${message}`
+          );
           return null; // return null to indicate task completion
         }
       });
