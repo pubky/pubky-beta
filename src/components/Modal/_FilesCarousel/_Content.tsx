@@ -8,9 +8,10 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 interface FilesCarouselProps {
   fileContents: FileView[];
   currentFileIndex: number;
+  onClose?: () => void;
 }
 
-export default function ContentFilesCarousel({ fileContents, currentFileIndex }: FilesCarouselProps) {
+export default function ContentFilesCarousel({ fileContents, currentFileIndex, onClose }: FilesCarouselProps) {
   const isMobile = useIsMobile();
   const [localFileIndex, setLocalFileIndex] = useState(currentFileIndex);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -187,12 +188,31 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex }:
     setPanPosition({ x: 0, y: 0 }); // Reset pan when resetting zoom
   };
 
+  const handleContainerCloseClick = (e: React.MouseEvent) => {
+    const isClickingOnImage = e.target instanceof HTMLImageElement;
+    const isClickingOnButton = e.target instanceof HTMLButtonElement || (e.target as Element).closest('button');
+    const isClickingOnVideo = e.target instanceof HTMLVideoElement;
+
+    if (isClickingOnImage || isClickingOnButton || isClickingOnVideo) {
+      return;
+    }
+    if (onClose) {
+      onClose();
+    }
+  };
+
   return (
     <div
-      className={`${mediaFiles.length > 1 ? 'px-8 md:px-16' : 'px-4 md:px-0'} pb-8 relative flex flex-col items-center justify-center`}
+      className={`${mediaFiles.length > 1 && !isMobile ? 'px-8 md:px-16' : 'px-4 md:px-0'} pb-8 relative flex flex-col items-center justify-center`}
+      style={{
+        width: '95vw',
+        height: '95vh',
+        touchAction: 'none'
+      }}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
+      onClick={handleContainerCloseClick}
     >
       {!isMobile && mediaFiles.length > 1 && (
         <button
@@ -210,7 +230,7 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex }:
           className="rounded-2xl p-6 max-w-full w-full md:w-auto md:min-w-[500px] h-auto max-h-[80vh] object-contain"
         />
       ) : (
-        <div className="relative overflow-hidden rounded-2xl">
+        <div className="relative overflow-hidden rounded-2xl w-full h-full flex items-center justify-center">
           <img
             src={generateFileUrl(
               currentFile,
@@ -219,12 +239,12 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex }:
             alt={`Modal view ${localFileIndex}`}
             width={800}
             height={418}
-            className={`max-w-full w-full md:w-auto h-auto md:min-w-[500px] max-h-[80vh] object-contain transition-opacity duration-300 ${isImageLoaded ? 'opacity-100' : 'opacity-80'} ${isDragging ? 'cursor-grabbing' : zoomLevel > 1 ? 'cursor-grab' : 'cursor-default'}`}
+            className={`max-w-full rounded-2xl max-h-full w-auto h-auto object-contain transition-opacity duration-300 ${isImageLoaded ? 'opacity-100' : 'opacity-80'} ${isDragging ? 'cursor-grabbing' : zoomLevel > 1 ? 'cursor-grab' : 'cursor-default'}`}
             style={{
               transform: `scale(${zoomLevel}) translate(${panPosition.x / zoomLevel}px, ${panPosition.y / zoomLevel}px)`,
               transformOrigin: 'center',
               transition: isDragging ? 'none' : 'transform 0.1s ease-out',
-              touchAction: zoomLevel > 1 ? 'none' : 'auto'
+              touchAction: 'none'
             }}
             onLoad={() => setIsImageLoaded(true)}
             onMouseDown={handleMouseDown}
