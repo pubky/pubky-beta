@@ -3,7 +3,6 @@ import svgToPng from './lib/Conversion/svgToPng';
 import cleanText from './lib/Text/cleanText';
 import copyToClipboard from './lib/Helper/copyToClipboard';
 import extractHashtags from './lib/Helper/extractHashtags';
-import decodePostUri from './lib/URI/decodePostUIri';
 import encodeImageId from './lib/URI/encodeImageId';
 import encodePostUri from './lib/URI/encodePostUri';
 import encodePostUri2 from './lib/URI/encodePostUri2';
@@ -37,7 +36,6 @@ export const Utils = {
   svgToPng,
   cleanText,
   censoredTags,
-  decodePostUri,
   encodeImageId,
   encodePostUri,
   encodePostUri2,
