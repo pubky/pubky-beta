@@ -7,18 +7,20 @@ import { createContext, useContext, useState, ReactNode } from 'react';
 type AlertMessage = {
   id: number;
   content: ReactNode;
-  variant?: 'default' | 'warning' | 'connection';
+  variant?: 'default' | 'warning' | 'connection' | 'loading';
   persistent?: boolean;
   isOnline?: boolean;
 };
 
 type AlertContextType = {
-  addAlert: (content: ReactNode, variant?: 'default' | 'warning') => void;
+  addAlert: (content: ReactNode, variant?: 'default' | 'warning' | 'loading') => number;
+  removeAlert: (id: number) => void;
   connectionAlertStatus: (isOnline: boolean) => void;
 };
 
 const AlertContext = createContext<AlertContextType>({
-  addAlert: () => {},
+  addAlert: () => 0,
+  removeAlert: () => {},
   connectionAlertStatus: () => {}
 });
 
@@ -26,13 +28,23 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
   const isMobile = useIsMobile();
   const [alerts, setAlerts] = useState<AlertMessage[]>([]);
 
-  const addAlert = (content: ReactNode, variant: 'default' | 'warning' = 'default') => {
+  const addAlert = (content: ReactNode, variant: 'default' | 'warning' | 'loading' = 'default'): number => {
     const id = Date.now();
-    setAlerts((prev) => [...prev, { id, content, variant }]);
+    const isPersistent = variant === 'loading';
+    setAlerts((prev) => [...prev, { id, content, variant, persistent: isPersistent }]);
 
-    setTimeout(() => {
-      setAlerts((prev) => prev.filter((alert) => alert.id !== id));
-    }, 5000);
+    // Only auto-remove if not persistent
+    if (!isPersistent) {
+      setTimeout(() => {
+        setAlerts((prev) => prev.filter((alert) => alert.id !== id));
+      }, 5000);
+    }
+
+    return id;
+  };
+
+  const removeAlert = (id: number) => {
+    setAlerts((prev) => prev.filter((alert) => alert.id !== id));
   };
 
   const connectionAlertStatus = (isOnline: boolean) => {
@@ -60,10 +72,12 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const iconToShow = (variant: 'default' | 'warning' | 'connection', isOnline?: boolean) => {
+  const iconToShow = (variant: 'default' | 'warning' | 'connection' | 'loading', isOnline?: boolean) => {
     switch (variant) {
       case 'warning':
         return <Icon.Warning size="20" />;
+      case 'loading':
+        return <Icon.LoadingSpin size="20" />;
       case 'connection':
         return isOnline ? (
           <Icon.CheckCircle size="20" color="#c8ff00" />
@@ -77,7 +91,7 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AlertContext.Provider value={{ addAlert, connectionAlertStatus }}>
+    <AlertContext.Provider value={{ addAlert, removeAlert, connectionAlertStatus }}>
       {children}
       <div
         style={{ bottom: isMobile ? '96px' : '24px' }}

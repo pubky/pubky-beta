@@ -1,4 +1,5 @@
 import { ImageByUri } from '@/components/ImageByUri';
+import { Utils } from '@/components/utils-shared';
 import { useAlertContext, useModal, usePubkyClientContext } from '@/contexts';
 import { Button, Card, Icon } from '@social/ui-shared';
 
@@ -10,7 +11,7 @@ interface PicProps {
 
 export default function Pic({ image, setImage, loading }: PicProps) {
   const { pubky } = usePubkyClientContext();
-  const { addAlert } = useAlertContext();
+  const { addAlert, removeAlert } = useAlertContext();
   const { openModal } = useModal();
 
   const handleUploadImage = () => {
@@ -24,24 +25,37 @@ export default function Pic({ image, setImage, loading }: PicProps) {
     }
   };
 
-  const UploadPic = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const UploadPic = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const maxSizeInMB = 5;
     const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
     const file = event.target.files?.[0];
 
     if (file) {
       if (file.size > maxSizeInBytes) {
-        addAlert('The maximum allowed size is 5 MB', 'warning');
-        return;
+        try {
+          const loadingAlertId = addAlert('Compressing image...', 'loading');
+          const resizedFile = await Utils.resizeImageFile(file, maxSizeInBytes);
+          removeAlert(loadingAlertId);
+
+          const img = new Image();
+          const newImageUrl = URL.createObjectURL(resizedFile);
+          img.src = newImageUrl;
+
+          img.onload = () => {
+            openModal('croppedImage', { image: newImageUrl, setImage });
+          };
+        } catch (error) {
+          addAlert('The maximum allowed size is 5 MB', 'warning');
+        }
+      } else {
+        const img = new Image();
+        const newImageUrl = URL.createObjectURL(file);
+        img.src = newImageUrl;
+
+        img.onload = () => {
+          openModal('croppedImage', { image: newImageUrl, setImage });
+        };
       }
-
-      const img = new Image();
-      const newImageUrl = URL.createObjectURL(file);
-      img.src = newImageUrl;
-
-      img.onload = () => {
-        openModal('croppedImage', { image: newImageUrl, setImage });
-      };
       event.target.value = '';
     }
   };

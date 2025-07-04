@@ -8,6 +8,7 @@ import { renderToString } from 'react-dom/server';
 import EmojiPicker from '@/components/EmojiPicker';
 import { Delta } from 'quill';
 import { Utils } from '@/components/utils-shared';
+import { useAlertContext } from '@/contexts';
 
 // Add custom CSS for the emoji button
 const customStyles = `
@@ -99,6 +100,7 @@ const MarkdownEditorComponent = ({
 }: MarkdownEditorComponentProps) => {
   const [showEmojis, setShowEmojis] = useState(false);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
+  const { addAlert, removeAlert } = useAlertContext();
 
   const handleEmojiClick = (emoji: any) => {
     if (quill) {
@@ -123,7 +125,10 @@ const MarkdownEditorComponent = ({
       const file = input.files?.[0];
       if (file) {
         try {
-          const resizedBase64 = await Utils.resizeImageFile(file); // Using default 800px max size
+          const loadingAlertId = addAlert('Compressing image...', 'loading');
+          const resizedBase64 = await Utils.resizeImageFile(file);
+          removeAlert(loadingAlertId);
+
           if (quill) {
             const range = quill.getSelection();
             if (range) {
@@ -133,6 +138,7 @@ const MarkdownEditorComponent = ({
         } catch (err) {
           // Optionally handle error
           console.error('Image upload error:', err);
+          addAlert('Error uploading image. Please try again.', 'warning');
         }
       }
     };
