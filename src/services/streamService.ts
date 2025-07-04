@@ -257,7 +257,7 @@ export async function searchUsersByName(prefix: string, skip?: number, limit?: n
 
     return JSON.parse(text);
   } catch (error) {
-    console.error('Error in searchUsersByUsername:', error);
+    console.error('Error in searchUsersByName:', error);
     return [];
   }
 }
