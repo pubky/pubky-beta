@@ -86,32 +86,30 @@ export default function Header({ title }: HeaderProps) {
     // Fetch users independently
     const fetchUsers = async () => {
       try {
-        if (isActive) {
-          const searchValue = inputValue.trim().startsWith('pk:') ? inputValue.trim().substring(3) : inputValue.trim();
-          const resultById = searchValue.length >= 3 ? await searchUsersById(searchValue) : [];
-          const resultByName = await searchUsersByName(inputValue.trim());
-          const result = Array.from(new Set([...resultById, ...resultByName]));
+        const searchValue = inputValue.trim().startsWith('pk:') ? inputValue.trim().substring(3) : inputValue.trim();
+        const resultById = searchValue.length >= 3 ? await searchUsersById(searchValue) : [];
+        const resultByName = await searchUsersByName(inputValue.trim());
+        const result = Array.from(new Set([...resultById, ...resultByName]));
 
-          if (isActive && result.length > 0) {
-            // Remove duplicate strings before fetching profiles
-            const uniqueUserIds = Array.from(new Set(result));
+        if (isActive && result.length > 0) {
+          // Remove duplicate strings before fetching profiles
+          const uniqueUserIds = Array.from(new Set(result));
 
-            const userProfiles = await Promise.all(
-              uniqueUserIds.map(async (userId) => {
-                try {
-                  return await getUserProfile(userId, pubky);
-                } catch (error) {
-                  return null;
-                }
-              })
-            );
+          const userProfiles = await Promise.all(
+            uniqueUserIds.map(async (userId) => {
+              try {
+                return await getUserProfile(userId, pubky);
+              } catch (error) {
+                return null;
+              }
+            })
+          );
 
-            const validUsers = userProfiles.filter((user) => user !== null);
-            const uniqueUsers = Array.from(new Map(validUsers.map((user) => [user.details.id, user])).values());
-            setSearchedUsers(uniqueUsers);
-          } else {
-            setSearchedUsers([]);
-          }
+          const validUsers = userProfiles.filter((user) => user !== null);
+          const uniqueUsers = Array.from(new Map(validUsers.map((user) => [user.details.id, user])).values());
+          setSearchedUsers(uniqueUsers);
+        } else {
+          setSearchedUsers([]);
         }
       } catch (error) {
         if (isActive) {

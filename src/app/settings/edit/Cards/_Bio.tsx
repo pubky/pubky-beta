@@ -1,7 +1,9 @@
 'use client';
 
 import Modal from '@/components/Modal';
-import { searchUsersByUsername } from '@/services/streamService';
+import { searchUsersById, searchUsersByName } from '@/services/streamService';
+import { getUserProfile } from '@/services/userService';
+import { usePubkyClientContext } from '@/contexts';
 import { UserView } from '@/types/User';
 import { Input, Card } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
@@ -20,6 +22,7 @@ interface BioProps {
 }
 
 export default function Bio({ bio, setBio, errors, loading }: BioProps) {
+  const { pubky } = usePubkyClientContext();
   const [searchedUsers, setSearchedUsers] = useState<UserView[]>([]);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
 
@@ -29,16 +32,6 @@ export default function Bio({ bio, setBio, errors, loading }: BioProps) {
 
     setBio(newContent);
     setSearchedUsers([]);
-  };
-
-  const searchProfiles = async (text: string) => {
-    try {
-      const result = await searchUsersByUsername(text);
-      return result || [];
-    } catch (error) {
-      // console.error('Error searching profiles:', error);
-      return [];
-    }
   };
 
   const searchUsername = async (content: string) => {
@@ -52,19 +45,41 @@ export default function Bio({ bio, setBio, errors, loading }: BioProps) {
       return;
     }
 
-    let results: UserView[] = [];
+    let allUserIds: string[] = [];
 
     for (const query of searchQueries) {
       if (query.startsWith('@')) {
         const username = query.slice(1);
-        const searchResult = await searchUsersByUsername(username);
-        results = [...results, ...(searchResult || [])];
+        const searchResult = await searchUsersByName(username);
+        allUserIds = [...allUserIds, ...(searchResult || [])];
       } else if (query.startsWith('pk:')) {
-        const searchResult = await searchProfiles(query);
-        results = [...results, ...(searchResult || [])];
+        const userId = query.slice(3); // Remove 'pk:' prefix
+        const searchResult = await searchUsersById(userId);
+        allUserIds = [...allUserIds, ...(searchResult || [])];
       }
     }
-    setSearchedUsers(results.length > 0 ? results : []);
+
+    // Remove duplicates
+    const uniqueUserIds = Array.from(new Set(allUserIds));
+
+    if (uniqueUserIds.length > 0) {
+      // Fetch user profiles for each unique user ID
+      const userProfiles = await Promise.all(
+        uniqueUserIds.map(async (userId) => {
+          try {
+            return await getUserProfile(userId, pubky ?? '');
+          } catch (error) {
+            return null;
+          }
+        })
+      );
+
+      // Filter out null results and set the searched users
+      const validUsers = userProfiles.filter((user): user is UserView => user !== null);
+      setSearchedUsers(validUsers);
+    } else {
+      setSearchedUsers([]);
+    }
   };
 
   useEffect(() => {

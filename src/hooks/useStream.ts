@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { getStreamPosts, getUserStream, searchUsersByUsername } from '@/services/streamService';
+import { getStreamPosts, getUserStream } from '@/services/streamService';
 import { TContent, TReach, TSort, TSource, TSourceUser, TTimeframe } from '@/types';
 
 export function useStreamPost(
@@ -64,14 +64,6 @@ export function useStreamUsers(
   return useQuery({
     queryKey: [source ? `${source}-streamUser` : 'streamUser', userId, viewerId, source, reach, timeframe, skip, limit],
     queryFn: () => getUserStream(userId, viewerId, source, reach, timeframe, skip, limit),
-    retry: false
-  });
-}
-
-export function useStreamSearchUsersByUsername(username: string, viewerId?: string, skip?: number, limit?: number) {
-  return useQuery({
-    queryKey: ['streamSearchUsersByUsername', username, viewerId, skip, limit],
-    queryFn: () => searchUsersByUsername(username, viewerId, skip, limit),
     retry: false
   });
 }

@@ -181,39 +181,6 @@ export async function getUserStream(
   return response.json();
 }
 
-// TODO Stream users by ID
-
-// Get stream users from username search
-export async function searchUsersByUsername(
-  username: string,
-  viewerId?: string,
-  skip?: number,
-  limit?: number
-): Promise<UserView[]> {
-  try {
-    if (!username) throw new Error('Username is required');
-
-    const queryParams = new URLSearchParams({ username });
-    if (viewerId) queryParams.append('viewer_id', viewerId);
-    if (skip !== undefined) queryParams.append('skip', String(skip));
-    if (limit !== undefined) queryParams.append('limit', String(limit));
-
-    const response = await fetch(`${BASE_URL}/stream/users/username?${queryParams.toString()}`);
-
-    if (!response.ok) {
-      throw new Error(`Failed to search users by username: ${response.status} ${response.statusText}`);
-    }
-
-    const text = await response.text();
-    if (!text) return [];
-
-    return JSON.parse(text);
-  } catch (error) {
-    console.error('Error in searchUsersByUsername:', error);
-    return [];
-  }
-}
-
 export async function searchUsersById(prefix: string, skip?: number, limit?: number): Promise<string[]> {
   try {
     if (!prefix) throw new Error('Prefix is required');
