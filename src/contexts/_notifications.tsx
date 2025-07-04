@@ -156,17 +156,17 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
 
   const getNotificationGroupKey = (notification: NotificationView): string | null => {
     const { body } = notification;
-    
+
     // For post_edited notifications, group by edited_uri + edited_by + edit_source
     if (body.type === 'post_edited' && body.edited_uri && body.edited_by) {
       return `edited_${body.edited_uri}_${body.edited_by}_${body.edit_source || 'default'}`;
     }
-    
+
     // For post_deleted notifications, group by deleted_uri + deleted_by + delete_source
     if (body.type === 'post_deleted' && body.deleted_uri && body.deleted_by) {
       return `deleted_${body.deleted_uri}_${body.deleted_by}_${body.delete_source || 'default'}`;
     }
-    
+
     // For other notification types, don't group (return null to use timestamp as key)
     return null;
   };
