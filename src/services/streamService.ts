@@ -214,6 +214,54 @@ export async function searchUsersByUsername(
   }
 }
 
+export async function searchUsersById(prefix: string, skip?: number, limit?: number): Promise<string[]> {
+  try {
+    if (!prefix) throw new Error('Prefix is required');
+
+    const queryParams = new URLSearchParams();
+    if (skip !== undefined) queryParams.append('skip', String(skip));
+    if (limit !== undefined) queryParams.append('limit', String(limit));
+
+    const response = await fetch(`${BASE_URL}/search/users/by_id/${prefix}?${queryParams.toString()}`);
+
+    if (!response.ok) {
+      throw new Error(`Failed to search users by id: ${response.status} ${response.statusText}`);
+    }
+
+    const text = await response.text();
+    if (!text) return [];
+
+    return JSON.parse(text);
+  } catch (error) {
+    console.error('Error in searchUsersById:', error);
+    return [];
+  }
+}
+
+export async function searchUsersByName(prefix: string, skip?: number, limit?: number): Promise<string[]> {
+  try {
+    if (!prefix) throw new Error('Prefix is required');
+
+    const queryParams = new URLSearchParams();
+    if (skip !== undefined) queryParams.append('skip', String(skip));
+    if (limit !== undefined) queryParams.append('limit', String(limit));
+
+    const response = await fetch(`${BASE_URL}/search/users/by_name/${prefix}?${queryParams.toString()}`);
+
+    if (!response.ok) {
+      throw new Error(`Failed to search users by username: ${response.status} ${response.statusText}`);
+    }
+
+    const text = await response.text();
+    if (!text) return [];
+
+    return JSON.parse(text);
+  } catch (error) {
+    console.error('Error in searchUsersByUsername:', error);
+    return [];
+  }
+}
+
 // Search tags by prefix
 export async function searchTagsByPrefix(prefix: string, skip?: number, limit?: number): Promise<string[]> {
   const queryParams = new URLSearchParams();
