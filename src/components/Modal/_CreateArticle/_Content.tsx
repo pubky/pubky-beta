@@ -38,6 +38,7 @@ export default function ContentCreateArticle({
   const [searchedUsers, setSearchedUsers] = useState<UserView[]>([]);
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const [placeholder, setPlaceholder] = useState('');
+  const [isCompressing, setIsCompressing] = useState(false);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File[]>([]);
@@ -213,8 +214,10 @@ export default function ContentCreateArticle({
       if (isImage && file.size > maxImageSizeInBytes) {
         try {
           const loadingAlertId = addAlert('Compressing image...', 'loading');
+          setIsCompressing(true);
           processedFile = await Utils.resizeImageFile(file, maxImageSizeInBytes);
           removeAlert(loadingAlertId);
+          setIsCompressing(false);
         } catch (error) {
           setErrorFile('The maximum allowed size for images is 5 MB');
           return;
@@ -300,8 +303,10 @@ export default function ContentCreateArticle({
         if (isImage && file.size > maxImageSizeInBytes) {
           try {
             const loadingAlertId = addAlert('Compressing image...', 'loading');
+            setIsCompressing(true);
             processedFile = await Utils.resizeImageFile(file, maxImageSizeInBytes);
             removeAlert(loadingAlertId);
+            setIsCompressing(false);
           } catch (error) {
             addAlert('The maximum allowed size for images is 5 MB', 'warning');
             return;
@@ -438,13 +443,17 @@ export default function ContentCreateArticle({
                   variant="line"
                   icon={
                     <Icon.PaperPlaneRight
-                      color={!charCountArticle || !isValidContent || isError || !contentTitle ? 'gray' : 'white'}
+                      color={
+                        !charCountArticle || !isValidContent || isError || !contentTitle || isCompressing
+                          ? 'gray'
+                          : 'white'
+                      }
                     />
                   }
-                  disabled={!charCountArticle || !isValidContent || isError || !contentTitle}
+                  disabled={!charCountArticle || !isValidContent || isError || !contentTitle || isCompressing}
                   loading={sendingArticle}
                   onClick={
-                    charCountArticle && isValidContent && contentTitle && !isError && !sendingArticle
+                    charCountArticle && isValidContent && contentTitle && !isError && !sendingArticle && !isCompressing
                       ? () => handleSubmit(contentArticle)
                       : undefined
                   }

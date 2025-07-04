@@ -31,6 +31,7 @@ export default function ContentCreateReply({
   const [isValidContent, setIsValidContent] = useState(false);
   const [quote, setQuote] = useState<string>();
   const [placeholder, setPlaceholder] = useState('');
+  const [isCompressing, setIsCompressing] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   const lineHorizontalCSS = (
@@ -138,16 +139,21 @@ export default function ContentCreateReply({
             loading={sendingReply}
             arrayTags={arrayTags}
             setArrayTags={setArrayTags}
+            setIsCompressing={setIsCompressing}
             button={
               <Button.Medium
                 id="reply-btn"
                 className="w-auto"
                 variant="line"
-                icon={<Icon.ChatCircleText color={!isValidContent && selectedFiles.length === 0 ? 'gray' : 'white'} />}
-                disabled={!isValidContent && selectedFiles.length === 0}
+                icon={
+                  <Icon.ChatCircleText
+                    color={(!isValidContent && selectedFiles.length === 0) || isCompressing ? 'gray' : 'white'}
+                  />
+                }
+                disabled={(!isValidContent && selectedFiles.length === 0) || sendingReply || isCompressing}
                 loading={sendingReply}
                 onClick={
-                  (isValidContent || selectedFiles.length > 0) && !sendingReply
+                  (isValidContent || selectedFiles.length > 0) && !sendingReply && !isCompressing
                     ? () => handleSubmit(contentReply)
                     : undefined
                 }

@@ -31,6 +31,7 @@ interface InputAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   handlePaste?: any;
   styleSearchedUsers?: string;
   setCharCountArticle?: React.Dispatch<React.SetStateAction<number>>;
+  setIsCompressing?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function InputArea({
@@ -56,7 +57,8 @@ export default function InputArea({
   setIsError,
   handlePaste,
   styleSearchedUsers,
-  setCharCountArticle
+  setCharCountArticle,
+  setIsCompressing
 }: InputAreaProps) {
   const [isDragging, setIsDragging] = useState(false);
   const { addAlert, removeAlert } = useAlertContext();
@@ -128,8 +130,10 @@ export default function InputArea({
           if (isImage && file.size > maxImageSizeInBytes) {
             try {
               const loadingAlertId = addAlert('Compressing image...', 'loading');
+              setIsCompressing(true);
               const resizedFile = await Utils.resizeImageFile(file, maxImageSizeInBytes);
               removeAlert(loadingAlertId);
+              setIsCompressing(false);
               validFiles.push(resizedFile);
             } catch (error) {
               addAlert('The maximum allowed size for images is 5 MB', 'warning');

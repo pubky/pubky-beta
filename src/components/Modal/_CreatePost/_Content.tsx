@@ -21,6 +21,7 @@ export default function ContentCreatePost({ setShowModalPost, setHasContent, cla
   const [isValidContent, setIsValidContent] = useState(false);
   const [quote, setQuote] = useState<string>();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [isCompressing, setIsCompressing] = useState(false);
   const [placeholder, setPlaceholder] = useState('');
 
   useEffect(() => {
@@ -100,17 +101,24 @@ export default function ContentCreatePost({ setShowModalPost, setHasContent, cla
         arrayTags={arrayTags}
         setArrayTags={setArrayTags}
         setShowModalPost={setShowModalPost}
+        setIsCompressing={setIsCompressing}
         article
         button={
           <Button.Medium
             id="post-btn"
             className="w-auto"
             variant="line"
-            icon={<Icon.PaperPlaneRight color={!isValidContent && selectedFiles.length === 0 ? 'gray' : 'white'} />}
-            disabled={!isValidContent && selectedFiles.length === 0}
+            icon={
+              <Icon.PaperPlaneRight
+                color={(!isValidContent && selectedFiles.length === 0) || isCompressing ? 'gray' : 'white'}
+              />
+            }
+            disabled={(!isValidContent && selectedFiles.length === 0) || sendingPost || isCompressing}
             loading={sendingPost}
             onClick={
-              (isValidContent || selectedFiles.length > 0) && !sendingPost ? () => handleSubmit(contentPost) : undefined
+              (isValidContent || selectedFiles.length > 0) && !sendingPost && !isCompressing
+                ? () => handleSubmit(contentPost)
+                : undefined
             }
           >
             Post

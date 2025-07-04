@@ -42,6 +42,7 @@ interface CreateContentProps extends React.HTMLAttributes<HTMLDivElement> {
   styleSearchedUsers?: string;
   charCountArticle?: number;
   setCharCountArticle?: React.Dispatch<React.SetStateAction<number>>;
+  setIsCompressing?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function CreateContent({
@@ -75,7 +76,8 @@ export default function CreateContent({
   setQuote,
   styleSearchedUsers,
   charCountArticle,
-  setCharCountArticle
+  setCharCountArticle,
+  setIsCompressing
 }: CreateContentProps) {
   const { profile, pubky } = usePubkyClientContext();
   const { addAlert, removeAlert } = useAlertContext();
@@ -242,8 +244,10 @@ export default function CreateContent({
             if (isImage && file.size > maxImageSizeInBytes) {
               try {
                 const loadingAlertId = addAlert('Compressing image...', 'loading');
+                setIsCompressing(true);
                 processedFile = await Utils.resizeImageFile(file, maxImageSizeInBytes);
                 removeAlert(loadingAlertId);
+                setIsCompressing(false);
               } catch (error) {
                 addAlert('The maximum allowed size for images is 5 MB', 'warning');
                 continue;
@@ -304,6 +308,7 @@ export default function CreateContent({
             handlePaste={handlePaste}
             styleSearchedUsers={styleSearchedUsers}
             setCharCountArticle={setCharCountArticle}
+            setIsCompressing={setIsCompressing}
           />
         </div>
         <LinkPreviewer setQuote={setQuote} content={content} />
@@ -347,6 +352,7 @@ export default function CreateContent({
           maxLength={maxLength}
           setShowModalPost={setShowModalPost}
           charCountArticle={charCountArticle}
+          setIsCompressing={setIsCompressing}
         />
       </div>
     </div>
