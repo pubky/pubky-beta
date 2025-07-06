@@ -84,7 +84,60 @@ export default function Content({
   const text = post?.details?.content;
   const files = post?.details?.attachments;
   const uri = post?.details?.uri;
-  const generateFileUrl = (file: FileView, type = 'main') => `${BASE_URL}/${file.owner_id}/${file.id}/${type}`;
+  const generateFileUrl = (file: FileView, type = 'main') => {
+    if (file.src === 'external') {
+      // For external images, return the URL directly
+      return file.uri;
+    }
+    return `${BASE_URL}/${file.owner_id}/${file.id}/${type}`;
+  };
+
+  const isImageUrl = (url: string): boolean => {
+    return (
+      url.match(/\.(jpg|jpeg|png|gif|webp|svg|bmp|tiff)$/i) !== null || url.includes('nexus.pubky.app/static/files/')
+    );
+  };
+
+  const createImageFileView = (imageUrl: string, index: number): FileView => {
+    const fileName = imageUrl.split('/').pop() || `image-${index}`;
+    const fileExtension = fileName.includes('.') ? fileName.split('.').pop()?.toLowerCase() : 'jpg';
+
+    // Determine content type based on extension
+    const getContentType = (ext: string): string => {
+      switch (ext) {
+        case 'jpg':
+        case 'jpeg':
+          return 'image/jpeg';
+        case 'png':
+          return 'image/png';
+        case 'gif':
+          return 'image/gif';
+        case 'webp':
+          return 'image/webp';
+        case 'svg':
+          return 'image/svg+xml';
+        case 'bmp':
+          return 'image/bmp';
+        case 'tiff':
+          return 'image/tiff';
+        default:
+          return 'image/jpeg';
+      }
+    };
+
+    return {
+      name: fileName,
+      created_at: Date.now(),
+      src: 'external',
+      content_type: getContentType(fileExtension),
+      size: 0,
+      id: `external-image-${index}`,
+      indexed_at: Date.now(),
+      owner_id: 'external',
+      uri: imageUrl,
+      urls: JSON.stringify({ main: imageUrl, feed: imageUrl })
+    };
+  };
 
   async function checkForLink(text: string) {
     // Find all URLs (both protocol and domain-only) with their positions
@@ -92,11 +145,17 @@ export default function Content({
     const domainRegex = /(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)*/g;
 
     const allUrls: Array<{ url: string; index: number }> = [];
+    const foundImageUrls: string[] = [];
 
     // Find protocol URLs
     for (const match of text.matchAll(protocolRegex)) {
       let url = match[0].replace(/[^a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+$/, '');
       allUrls.push({ url, index: match.index! });
+
+      // Check if it's an image URL
+      if (isImageUrl(url)) {
+        foundImageUrls.push(url);
+      }
     }
 
     // Find domain-only URLs (skip those that are part of protocol URLs)
@@ -110,18 +169,42 @@ export default function Content({
         const fullUrl = `https://${domain}`;
         if (isValidUrl(fullUrl)) {
           allUrls.push({ url: fullUrl, index: start });
+
+          // Check if it's an image URL
+          if (isImageUrl(fullUrl)) {
+            foundImageUrls.push(fullUrl);
+          }
         }
       }
     }
 
-    // Sort by position and take the first one
+    // Create FileView objects for found image URLs and add them to fileContents
+    if (foundImageUrls.length > 0) {
+      const imageFileViews = foundImageUrls.map((url, index) => createImageFileView(url, index));
+      setFileContents((prev) => {
+        // Filter out any existing external images to avoid duplicates
+        const existingFiles = prev.filter((file) => file.src !== 'external');
+
+        // Calculate how many external images we can add (max 4 total files)
+        const maxExternalImages = Math.max(0, 4 - existingFiles.length);
+        const limitedImageFileViews = imageFileViews.slice(0, maxExternalImages);
+
+        return [...existingFiles, ...limitedImageFileViews];
+      });
+    }
+
+    // Sort by position and take the first one for other link types
     if (allUrls.length > 0) {
       const firstUrl = allUrls.sort((a, b) => a.index - b.index)[0];
       const url = firstUrl.url;
 
       const postRegex = new RegExp(`/post/([^/]+)/([^/]+)`);
       if (postRegex.test(url)) return;
-      setPreview(url);
+
+      // Don't set preview for image URLs to avoid duplication
+      if (!isImageUrl(url)) {
+        setPreview(url);
+      }
 
       const youtubeId = getYouTubeID(url);
       if (youtubeId) setVideoId(youtubeId);
@@ -140,8 +223,12 @@ export default function Content({
 
   useEffect(() => {
     const cleanedText = cleanText(text?.toString());
+    // Only reset fileContents if there are no files to load
+    if (!files?.length) {
+      setFileContents([]);
+    }
     checkForLink(cleanedText); // Check entire text instead of word by word
-  }, [text]);
+  }, [text, files]);
 
   useEffect(() => {
     const retryInterval = 5000; // 5 seconds
@@ -189,14 +276,27 @@ export default function Content({
         const fileUris = Object.values(files).map((file) => file);
         const fetchedFiles = await Promise.all(fileUris.map((fileUri) => fetchFile(fileUri)));
 
-        setFileContents(
-          fetchedFiles
+        setFileContents((prev) => {
+          // Preserve external images when adding fetched files
+          const externalImages = prev.filter((file) => file.src === 'external');
+          const newFiles = fetchedFiles
             .filter((file): file is FileView => file !== null)
             .map((file) => ({
               ...file,
               urls: file.urls
-            }))
-        );
+            }));
+
+          // Limit total files to 4, giving priority to loaded files
+          const totalFiles = newFiles.length + externalImages.length;
+          if (totalFiles <= 4) {
+            return [...newFiles, ...externalImages];
+          } else {
+            // If we exceed 4 files, keep all loaded files and limit external images
+            const maxExternalImages = Math.max(0, 4 - newFiles.length);
+            const limitedExternalImages = externalImages.slice(0, maxExternalImages);
+            return [...newFiles, ...limitedExternalImages];
+          }
+        });
         setLoading(false);
       }
     };
