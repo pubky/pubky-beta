@@ -16,8 +16,20 @@ import { PostView } from '@/types/Post';
 import { groupReposts } from '@/utils/postUtils';
 
 export const Timeline = () => {
-  const { pubky, mutedUsers, newPosts, setNewPosts, timeline, setTimeline, deletedPosts, isOnline } =
-    usePubkyClientContext();
+  const {
+    pubky,
+    mutedUsers,
+    newPosts,
+    setNewPosts,
+    timeline,
+    setTimeline,
+    deletedPosts,
+    timelineScroll,
+    setTimelineScroll,
+    timelineLimit,
+    setTimelineLimit,
+    isOnline
+  } = usePubkyClientContext();
   const { reach, layout, sort, content, selectedFeed } = useFilterContext();
 
   const isMobile = useIsMobile(1024);
@@ -26,20 +38,22 @@ export const Timeline = () => {
   const [skip, setSkip] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
   const [finishedLoading, setFinishedLoading] = useState(false);
-  const limit = 10;
+  const [limit, setLimit] = useState<number>(timelineLimit || 10);
 
   const fetchPosts = async ({
     skipValue = skip,
-    timelineValue = timeline
+    timelineValue = timeline,
+    updateGlobalTimeline = false
   }: {
     skipValue?: number;
     timelineValue?: PostView[];
-  }) => {
+    updateGlobalTimeline?: boolean;
+  }): Promise<PostView[]> => {
     // Don't fetch if we're offline
     if (!isOnline) {
       setFinishedLoading(true);
       setIsLoading(false);
-      return;
+      return timelineValue;
     }
 
     // Cancel any ongoing request
@@ -70,10 +84,15 @@ export const Timeline = () => {
 
       // Check if the request was aborted
       if (signal.aborted) {
-        return;
+        return timelineValue;
       }
 
       setSkip(skipValue + limit);
+
+      // Update global limit if necessary
+      if (skipValue + limit > timelineLimit) {
+        setTimelineLimit(skipValue + limit);
+      }
 
       // filter out deleted posts, muted users, and ensure content type matches
       const filteredData = data.filter(
@@ -95,7 +114,9 @@ export const Timeline = () => {
       const sortedTimeline =
         sort === 'recent' ? finalTimeline.sort((a, b) => b.details.indexed_at - a.details.indexed_at) : finalTimeline;
 
-      setTimeline(sortedTimeline);
+      if (updateGlobalTimeline) {
+        setTimeline(sortedTimeline);
+      }
 
       // Set finishedLoading to true only if we received no new posts
       if (groupedNewPosts.length === 0) {
@@ -103,13 +124,16 @@ export const Timeline = () => {
       } else {
         setFinishedLoading(false);
       }
+
+      return sortedTimeline;
     } catch (error) {
       if (error.name === 'AbortError') {
         // Request was aborted, do nothing
-        return;
+        return timelineValue;
       }
 
       setFinishedLoading(true);
+      return timelineValue;
     } finally {
       if (!signal.aborted) {
         setIsLoading(false);
@@ -117,7 +141,10 @@ export const Timeline = () => {
     }
   };
 
-  const loader = useInfiniteScroll(() => fetchPosts({ skipValue: skip, timelineValue: timeline }), isLoading);
+  const loader = useInfiniteScroll(
+    () => fetchPosts({ skipValue: skip, timelineValue: timeline, updateGlobalTimeline: true }),
+    isLoading
+  );
 
   const initializeTimeline = async () => {
     // Cancel any ongoing request
@@ -132,11 +159,33 @@ export const Timeline = () => {
     setNewPosts([]);
     setIsLoading(true);
 
+    // Use a fixed limit for each request
+    const fixedLimit = 10;
+    setLimit(fixedLimit);
+
+    // Calculate how many requests we need to make
+    const totalPostsToLoad = timelineLimit || 10;
+    const numberOfRequests = Math.ceil(totalPostsToLoad / fixedLimit);
+
+    let tempTimeline: PostView[] = [];
     try {
-      await fetchPosts({
-        skipValue: 0,
-        timelineValue: []
-      });
+      for (let i = 0; i < numberOfRequests; i++) {
+        const skipValue = i * fixedLimit;
+        const newPosts = await fetchPosts({
+          skipValue,
+          timelineValue: tempTimeline,
+          updateGlobalTimeline: false
+        });
+
+        // Only add new posts that aren't already in the timeline
+        const uniqueNewPosts = newPosts.filter(
+          (newPost) => !tempTimeline.some((existingPost) => existingPost.details.id === newPost.details.id)
+        );
+
+        tempTimeline = [...tempTimeline, ...uniqueNewPosts];
+      }
+
+      setTimeline(tempTimeline);
     } catch (error) {
       if (error.name === 'AbortError') {
         return;
@@ -145,6 +194,11 @@ export const Timeline = () => {
       setFinishedLoading(true);
     } finally {
       setIsLoading(false);
+      // After loading, scroll to the saved position
+      setTimeout(() => {
+        window.scrollTo(0, timelineScroll);
+        setTimelineScroll(0); // Reset scroll position after restoring
+      }, 100); // Increased timeout to ensure DOM is ready
     }
   };
 
@@ -244,8 +298,49 @@ export const Timeline = () => {
     fetchNexusData();
   }, [newPosts]);
 
+  // Save timeline position and limit when user leaves the page or when timeline is stable
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      setTimelineScroll(window.scrollY);
+      setTimelineLimit(timeline.length);
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        setTimelineScroll(window.scrollY);
+        setTimelineLimit(timeline.length);
+      }
+    };
+
+    // Save position when page is about to unload
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    // Save position when page becomes hidden (user switches tabs or navigates away)
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Save position periodically when timeline is stable (not loading)
+    const interval = setInterval(() => {
+      if (!isLoading && timeline.length > 0) {
+        setTimelineScroll(window.scrollY);
+        setTimelineLimit(timeline.length);
+      }
+    }, 2000); // Save every 2 seconds when stable
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      clearInterval(interval);
+    };
+  }, [timeline.length, isLoading, setTimelineScroll, setTimelineLimit]);
+
   const handleTryAgain = () => {
     window.location.reload();
+  };
+
+  // Save position immediately when a post is clicked
+  const handlePostClick = () => {
+    setTimelineScroll(window.scrollY);
+    setTimelineLimit(timeline.length);
   };
 
   return (
@@ -255,7 +350,7 @@ export const Timeline = () => {
       {timeline.map(
         (post) =>
           post?.details?.content !== '[DELETED]' && (
-            <div key={post.details.id} className="flex flex-col">
+            <div key={post.details.id} className="flex flex-col" onClick={handlePostClick}>
               <Post largeView={!isMobile && layout === 'wide'} post={post} postType="timeline" />
               {post?.counts?.replies > 0 && <PostReplies isMobile={isMobile} homeView post={post} layout={layout} />}
             </div>

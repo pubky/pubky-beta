@@ -163,6 +163,10 @@ type PubkyClientContextType = {
   singlePost: PostView | undefined;
   setSinglePost: React.Dispatch<React.SetStateAction<PostView | undefined>>;
   updateFeed: (originalFeed: ICustomFeed, updatedFeed: ICustomFeed, name: string) => Promise<boolean>;
+  timelineScroll: number;
+  setTimelineScroll: React.Dispatch<React.SetStateAction<number>>;
+  timelineLimit: number;
+  setTimelineLimit: React.Dispatch<React.SetStateAction<number>>;
 };
 
 const PubkyClientContext = createContext({} as PubkyClientContextType);
@@ -193,6 +197,8 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
   const [timeline, setTimeline] = useState<PostView[]>([]);
   const [deletedPosts, setDeletedPosts] = useState<string[]>([]);
   const [singlePost, setSinglePost] = useState<PostView | undefined>(undefined);
+  const [timelineScroll, setTimelineScroll] = useState<number>(0);
+  const [timelineLimit, setTimelineLimit] = useState<number>(10);
 
   useEffect(() => {
     init()
@@ -1642,7 +1648,11 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
         timestamp,
         setTimestamp,
         singlePost,
-        setSinglePost
+        setSinglePost,
+        timelineScroll,
+        setTimelineScroll,
+        timelineLimit,
+        setTimelineLimit
       }}
     >
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
