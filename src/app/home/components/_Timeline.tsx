@@ -163,16 +163,15 @@ export const Timeline = () => {
     const fixedLimit = 10;
     setLimit(fixedLimit);
 
-    // Calculate how many requests we need to make
-    const totalPostsToLoad = timelineLimit || 10;
-    const numberOfRequests = Math.ceil(totalPostsToLoad / fixedLimit);
-
     let tempTimeline: PostView[] = [];
+    let currentSkip = 0;
+    let hasReachedScrollPosition = false;
+
     try {
-      for (let i = 0; i < numberOfRequests; i++) {
-        const skipValue = i * fixedLimit;
+      // Load posts progressively until we have enough to reach the saved scroll position
+      while (!hasReachedScrollPosition && currentSkip < (timelineLimit || 100)) {
         const newPosts = await fetchPosts({
-          skipValue,
+          skipValue: currentSkip,
           timelineValue: tempTimeline,
           updateGlobalTimeline: false
         });
@@ -182,10 +181,29 @@ export const Timeline = () => {
           (newPost) => !tempTimeline.some((existingPost) => existingPost.details.id === newPost.details.id)
         );
 
+        if (uniqueNewPosts.length === 0) {
+          // No more posts available
+          break;
+        }
+
         tempTimeline = [...tempTimeline, ...uniqueNewPosts];
+        currentSkip += fixedLimit;
+
+        // Check if we have enough posts to reach the scroll position
+        // For mobile, we need to be more conservative with the height estimation
+        const estimatedHeightPerPost = isMobile ? 300 : 200; // Higher estimate for mobile
+        const estimatedTotalHeight = tempTimeline.length * estimatedHeightPerPost;
+
+        // Add some buffer for mobile to account for UI elements and varying post heights
+        const scrollTarget = isMobile ? timelineScroll + 200 : timelineScroll;
+
+        if (estimatedTotalHeight >= scrollTarget) {
+          hasReachedScrollPosition = true;
+        }
       }
 
       setTimeline(tempTimeline);
+      setSkip(currentSkip);
     } catch (error) {
       if (error.name === 'AbortError') {
         return;
@@ -194,11 +212,26 @@ export const Timeline = () => {
       setFinishedLoading(true);
     } finally {
       setIsLoading(false);
-      // After loading, scroll to the saved position
+      // After loading, scroll to the saved position with more precise positioning for mobile
       setTimeout(() => {
-        window.scrollTo(0, timelineScroll);
+        if (timelineScroll > 0) {
+          // For mobile, we need to account for potential UI elements and adjust the scroll position
+          let adjustedScrollPosition = timelineScroll;
+
+          if (isMobile) {
+            // Calculate dynamic offset based on viewport height and common mobile UI elements
+            const viewportHeight = window.innerHeight;
+            const estimatedHeaderHeight = Math.min(viewportHeight * 0.15, 150); // 15% of viewport or max 150px
+            const estimatedNavHeight = 60; // Typical mobile navigation height
+            const totalOffset = estimatedHeaderHeight + estimatedNavHeight;
+
+            adjustedScrollPosition = Math.max(0, timelineScroll - totalOffset);
+          }
+
+          window.scrollTo(0, adjustedScrollPosition);
+        }
         setTimelineScroll(0); // Reset scroll position after restoring
-      }, 100); // Increased timeout to ensure DOM is ready
+      }, 250); // Increased timeout to ensure DOM is ready, especially for mobile
     }
   };
 
