@@ -161,7 +161,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
       </div>
       <Typography.Body
         variant="medium"
-        className="scrollbar-thin scrollbar-webkit my-3 text-opacity-80 break-words max-h-[150px] overflow-y-auto"
+        className="my-3 text-opacity-80 break-words max-h-[150px] overflow-y-auto scrollbar-thin scrollbar-webkit"
         onClick={(event) => event.stopPropagation()}
       >
         <Parsing>{author?.details?.bio ? Utils.truncateText(author?.details?.bio, 80) : 'No bio.'}</Parsing>
