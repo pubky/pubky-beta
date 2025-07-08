@@ -231,6 +231,16 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
   };
 
   const processFormattedText = (text: string): JSX.Element => {
+    // First, check if the entire text is a URL to avoid formatting conflicts
+    const urlRegex =
+      /(https?:\/\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+|(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)*)/g;
+    const urlMatches = Array.from(text.matchAll(urlRegex));
+
+    // If the text contains URLs, process it as regular text with links
+    if (urlMatches.length > 0) {
+      return processTextWithLinks(text);
+    }
+
     // Split the text into parts based on formatting markers
     const parts = text.split(/(\*\*[^*]+\*\*|__[^_]+__|~~[^~]+~~|_[^_]+_|`[^`]+`)/g);
 
