@@ -38,7 +38,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     // LONG POST
     if (post?.details?.kind === PubkyAppPostKind[1].toLocaleLowerCase()) {
-      const parsedContent = JSON.parse(post?.details?.content);
+      // Safely parse content as JSON, fallback to using raw content if parsing fails
+      const parsedContent = (() => {
+        try {
+          return JSON.parse(post?.details?.content);
+        } catch (error) {
+          console.warn('Failed to parse content as JSON in metadata:', error);
+          return { title: post?.details?.content, body: post?.details?.content };
+        }
+      })();
+
       const postTitle = Utils.truncateText(parsedContent.title, 20);
       const firstParagraph = parsedContent.body.replace(/<[^>]*>/g, '').split('\n')[0];
 
