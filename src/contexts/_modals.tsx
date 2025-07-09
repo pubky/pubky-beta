@@ -50,12 +50,14 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
   const isOpen = (modalId: string) => !!openModals[modalId];
 
   // Check if current pathname is a post URL and open modal automatically
-  {/** */}
+  {
+    /** */
+  }
   useEffect(() => {
     const checkAndOpenPostModal = async () => {
       // Check if pathname matches post URL pattern: /post/[pubky]/[postId]
       const postUrlMatch = pathname.match(/^\/post\/([^\/]+)\/([^\/]+)$/);
-      
+
       // If we're navigating from a modal to a different page, close the modal instead
       if (isNavigatingFromModal.current) {
         isNavigatingFromModal.current = false;
@@ -64,15 +66,15 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         }
         return;
       }
-      
+
       // Only open modal if it's not already open and we're not navigating from a modal
       if (postUrlMatch && !openModals['postView'] && !modalOpenedByUrl.current) {
         const [, pubkyParam, postIdParam] = postUrlMatch;
-        
+
         try {
           // Fetch the post data
           const post = await getPost(pubkyParam, postIdParam, pubky ?? '');
-          
+
           if (post) {
             // Mark that we opened the modal via URL
             modalOpenedByUrl.current = true;
@@ -99,7 +101,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         modalOpenedByUrl.current = false; // Reset the flag
       }
     }
-    
+
     previousPathname.current = pathname;
   }, [pathname, openModals]);
 

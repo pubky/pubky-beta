@@ -47,22 +47,31 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
     if (showModal) {
       // Store original title
       originalTitle.current = document.title;
-      
+
       // Set appropriate title based on post type
       if (String(post?.details?.kind) === PubkyAppPostKind[1].toLocaleLowerCase()) {
         // Long post (article)
         try {
           const content = JSON.parse(post?.details?.content);
           const postTitle = Utils.truncateText(content.title, 20);
-          const profileName = Utils.truncateText(user?.data?.details?.name || Utils.minifyPubky(post?.details?.author), 20);
+          const profileName = Utils.truncateText(
+            user?.data?.details?.name || Utils.minifyPubky(post?.details?.author),
+            20
+          );
           document.title = `${postTitle} | ${profileName} on Pubky`;
         } catch {
-          const profileName = Utils.truncateText(user?.data?.details?.name || Utils.minifyPubky(post?.details?.author), 20);
+          const profileName = Utils.truncateText(
+            user?.data?.details?.name || Utils.minifyPubky(post?.details?.author),
+            20
+          );
           document.title = `${profileName} on Pubky`;
         }
       } else {
         // Regular post
-        const profileName = Utils.truncateText(user?.data?.details?.name || Utils.minifyPubky(post?.details?.author), 20);
+        const profileName = Utils.truncateText(
+          user?.data?.details?.name || Utils.minifyPubky(post?.details?.author),
+          20
+        );
         document.title = `${profileName} on Pubky`;
       }
     } else {
@@ -87,10 +96,9 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
     // Only update URL if it hasn't been updated yet
     if (!urlUpdated.current) {
       // Determine which URI to use for the URL
-      const uriToUse = post.details.content === '' && post.relationships?.reposted 
-        ? post.relationships.reposted 
-        : post.details.uri;
-      
+      const uriToUse =
+        post.details.content === '' && post.relationships?.reposted ? post.relationships.reposted : post.details.uri;
+
       const postUrl = Utils.encodePostUri(uriToUse);
 
       // Update URL to the post URL
