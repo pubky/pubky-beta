@@ -7,12 +7,21 @@ import { useRouter } from 'next/navigation';
 export function Header() {
   const router = useRouter();
 
+  const handleBack = async () => {
+    // Check if there's enough history to go back
+    if (window.history.length > 2) {
+      router.back();
+    } else {
+      router.push('/home');
+    }
+  };
+
   return (
     <>
       <Components.Header title="Post" postView />
       <Components.HeaderMobile
         leftIcon={
-          <div className="cursor-pointer" onClick={() => router.back()}>
+          <div className="cursor-pointer" onClick={handleBack}>
             <Icon.ArrowLeft size="24" />
           </div>
         }
