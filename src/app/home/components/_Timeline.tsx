@@ -203,7 +203,7 @@ export const Timeline = () => {
       }
 
       setTimeline(tempTimeline);
-      setSkip(currentSkip);
+      setSkip(tempTimeline.length);
     } catch (error) {
       if (error.name === 'AbortError') {
         return;
