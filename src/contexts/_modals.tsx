@@ -71,6 +71,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     link: 'Link',
     logout: 'Logout',
     minimumAge: 'MinimumAge',
+    postView: 'PostView',
     privacyPolicy: 'PrivacyPolicy',
     reportPost: 'ReportPost',
     reportProfile: 'ReportProfile',
@@ -83,7 +84,8 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
   };
 
   const renderModal = (modalType: string, modalId: string, props?: Record<string, any>) => {
-    const shouldUseModal = !isMobile || modalId === 'filesCarousel';
+    // Always use modal for postView, use modal for filesCarousel, otherwise use bottom sheet on mobile
+    const shouldUseModal = !isMobile || modalId === 'filesCarousel' || modalId === 'postView';
     const Component = shouldUseModal ? Modal[modalType] : BottomSheet[modalType];
 
     const componentProps = shouldUseModal
