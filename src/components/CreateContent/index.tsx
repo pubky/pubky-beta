@@ -42,6 +42,7 @@ interface CreateContentProps extends React.HTMLAttributes<HTMLDivElement> {
   styleSearchedUsers?: string;
   charCountArticle?: number;
   setCharCountArticle?: React.Dispatch<React.SetStateAction<number>>;
+  setIsCompressing?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function CreateContent({
@@ -75,10 +76,11 @@ export default function CreateContent({
   setQuote,
   styleSearchedUsers,
   charCountArticle,
-  setCharCountArticle
+  setCharCountArticle,
+  setIsCompressing
 }: CreateContentProps) {
   const { profile, pubky } = usePubkyClientContext();
-  const { addAlert } = useAlertContext();
+  const { addAlert, removeAlert } = useAlertContext();
   const [showEmojis, setShowEmojis] = useState(false);
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -203,7 +205,7 @@ export default function CreateContent({
     };
   }, [selectedFiles, addAlert, setSelectedFiles, setFilePreviews]);
 
-  const handlePaste = (event: ClipboardEvent) => {
+  const handlePaste = async (event: ClipboardEvent) => {
     const items = event.clipboardData?.items;
     const maxImageSizeInMB = 5;
     const maxOtherSizeInMB = 20;
@@ -232,22 +234,32 @@ export default function CreateContent({
               continue;
             }
 
-            if (isImage && file.size > maxImageSizeInBytes) {
-              addAlert('The maximum allowed size for images is 5 MB', 'warning');
+            if (selectedFiles.length >= 4) {
+              addAlert('Max 4 files only.', 'warning');
               continue;
             }
-            if (!isImage && file.size > maxOtherSizeInBytes) {
+
+            let processedFile = file;
+
+            if (isImage && file.size > maxImageSizeInBytes) {
+              try {
+                const loadingAlertId = addAlert('Compressing image...', 'loading');
+                setIsCompressing(true);
+                processedFile = await Utils.resizeImageFile(file, maxImageSizeInBytes);
+                removeAlert(loadingAlertId);
+                setIsCompressing(false);
+              } catch (error) {
+                addAlert('The maximum allowed size for images is 5 MB', 'warning');
+                continue;
+              }
+            } else if (!isImage && file.size > maxOtherSizeInBytes) {
               addAlert('The maximum allowed size is 20 MB', 'warning');
               continue;
             }
 
-            if (selectedFiles.length < 4) {
-              const filePreview = URL.createObjectURL(file);
-              setSelectedFiles((prevFiles) => [...prevFiles, file]);
-              setFilePreviews((prevPreviews) => [...prevPreviews, filePreview]);
-            } else {
-              addAlert('Maximum of 4 files can be uploaded', 'warning');
-            }
+            const filePreview = URL.createObjectURL(processedFile);
+            setSelectedFiles((prevFiles) => [...prevFiles, processedFile]);
+            setFilePreviews((prevPreviews) => [...prevPreviews, filePreview]);
           } else {
             addAlert('File not supported', 'warning');
           }
@@ -296,6 +308,7 @@ export default function CreateContent({
             handlePaste={handlePaste}
             styleSearchedUsers={styleSearchedUsers}
             setCharCountArticle={setCharCountArticle}
+            setIsCompressing={setIsCompressing}
           />
         </div>
         <LinkPreviewer setQuote={setQuote} content={content} />
@@ -339,6 +352,7 @@ export default function CreateContent({
           maxLength={maxLength}
           setShowModalPost={setShowModalPost}
           charCountArticle={charCountArticle}
+          setIsCompressing={setIsCompressing}
         />
       </div>
     </div>
