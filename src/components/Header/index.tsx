@@ -205,12 +205,18 @@ export default function Header({ title, postView }: HeaderProps) {
     setSearchTags(newTags);
   };
 
-  const handleBack = async () => {
+  const handleBack = async (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
     // Check if there's enough history to go back
     if (window.history.length > 2) {
       router.back();
     } else {
-      if (pubky) router.push('/home');
+      if (pubky) {
+        router.push('/home');
+      } else {
+        router.push('/onboarding');
+      }
     }
   };
 
@@ -223,7 +229,9 @@ export default function Header({ title, postView }: HeaderProps) {
               <Icon.ArrowLeft size="24" />
             </div>
           )}
-          <HeaderUI.Logo link={logoLink} />
+          <div onClick={postView ? handleBack : undefined}>
+            <HeaderUI.Logo link={logoLink} />
+          </div>
           <HeaderUI.Title titleHeader={title} />
         </div>
       </div>

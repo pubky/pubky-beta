@@ -20,6 +20,7 @@ export function Header() {
     <>
       <Components.Header title="Post" postView />
       <Components.HeaderMobile
+        postView
         leftIcon={
           <div className="cursor-pointer" onClick={handleBack}>
             <Icon.ArrowLeft size="24" />

@@ -5,15 +5,18 @@ import { Header as HeaderUI, Icon } from '@social/ui-shared';
 import { useModal, usePubkyClientContext } from '@/contexts';
 import { usePathname } from 'next/navigation';
 import useIsScrollup from '@/hooks/useIsScrollUp';
+import { useRouter } from 'next/router';
 
 interface HeaderMobileProps {
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   children?: React.ReactNode;
+  postView?: boolean;
 }
 
-export default function HeaderMobile({ leftIcon, rightIcon, children }: HeaderMobileProps) {
+export default function HeaderMobile({ leftIcon, rightIcon, children, postView }: HeaderMobileProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const { openModal } = useModal();
   const { pubky, isLoggedIn, setSearchTags } = usePubkyClientContext();
   const isVisible = useIsScrollup();
@@ -39,12 +42,27 @@ export default function HeaderMobile({ leftIcon, rightIcon, children }: HeaderMo
     }
   }, [pathname, setSearchTags]);
 
+  const handleBack = async (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Check if there's enough history to go back
+    if (window.history.length > 2) {
+      router.back();
+    } else {
+      if (pubky) {
+        router.push('/home');
+      } else {
+        router.push('/onboarding');
+      }
+    }
+  };
+
   return (
     <HeaderUI.Root className={`flex lg:hidden items-center ${!isVisible && 'hidden'}`}>
       <div className="relative flex w-full items-center">
         {pubky && <div className="absolute left-0">{leftIcon}</div>}
 
-        <div className="mx-auto flex gap-4 items-center">
+        <div onClick={postView ? handleBack : undefined} className="mx-auto flex gap-4 items-center">
           <HeaderUI.Logo link={logoLink} />
           <HeaderUI.Title />
         </div>
