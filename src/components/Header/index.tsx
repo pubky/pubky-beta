@@ -205,12 +205,21 @@ export default function Header({ title, postView }: HeaderProps) {
     setSearchTags(newTags);
   };
 
+  const handleBack = async () => {
+    // Check if there's enough history to go back
+    if (window.history.length > 2) {
+      router.back();
+    } else {
+      if (pubky) router.push('/home');
+    }
+  };
+
   return (
     <HeaderUI.Root className="justify-between hidden lg:flex">
       <div className="flex gap-4 justify-between items-center">
         <div className="flex">
           {pubky && postView && (
-            <div className="cursor-pointer mr-2 mt-2" onClick={() => router.back()}>
+            <div className="cursor-pointer mr-2 mt-2" onClick={handleBack}>
               <Icon.ArrowLeft size="24" />
             </div>
           )}
