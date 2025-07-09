@@ -194,7 +194,7 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
     <div className="fixed inset-0 z-50 bg-[#05050A]">
       <div className="flex flex-col h-full">
         {/* Content */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-webkit">
           <Content.Main className="pt-[80px]">
             <Header />
 
