@@ -4,7 +4,8 @@ import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { Utils } from '@social/utils-shared';
 import { UserView } from '@/types/User';
 import Image from 'next/image';
-import { useStreamSearchUsersByUsername } from '@/hooks/useStream';
+import { searchUsersById, searchUsersByName } from '@/services/streamService';
+import { getUserProfile } from '@/services/userService';
 import { Section } from '@/components/CreateContent/Section';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
@@ -104,18 +105,6 @@ export default function ContentCreateArticle({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contentArticle]);
 
-  {
-    /**const searchProfiles = async (text: string) => {
-        try {
-          const result = await searchUsersByUsername(text);
-          return result || [];
-        } catch (error) {
-          console.error('Error searching profiles:', error);
-          return [];
-        }
-      }; */
-  }
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -145,16 +134,51 @@ export default function ContentCreateArticle({
       return;
     }
 
-    let results: UserView[] = [];
+    // Remove HTML tags from search queries
+    const cleanSearchQueries = searchQueries
+      .map((query) => query.replace(/<[^>]*>/g, ''))
+      .filter((query) => query.trim().length > 0);
 
-    for (const query of searchQueries) {
+    if (cleanSearchQueries.length === 0) {
+      setSearchedUsers([]);
+      return;
+    }
+
+    let allUserIds: string[] = [];
+
+    for (const query of cleanSearchQueries) {
       if (query.startsWith('@')) {
         const username = query.slice(1);
-        const searchResult = useStreamSearchUsersByUsername(username);
-        results = [...results, ...(searchResult.data || [])];
+        const searchResult = await searchUsersByName(username);
+        allUserIds = [...allUserIds, ...(searchResult || [])];
+      } else if (query.startsWith('pk:')) {
+        const userId = query.slice(3); // Remove 'pk:' prefix
+        const searchResult = await searchUsersById(userId);
+        allUserIds = [...allUserIds, ...(searchResult || [])];
       }
     }
-    setSearchedUsers(results.length > 0 ? results : []);
+
+    // Remove duplicates
+    const uniqueUserIds = Array.from(new Set(allUserIds));
+
+    if (uniqueUserIds.length > 0) {
+      // Fetch user profiles for each unique user ID
+      const userProfiles = await Promise.all(
+        uniqueUserIds.map(async (userId) => {
+          try {
+            return await getUserProfile(userId, pubky ?? '');
+          } catch (error) {
+            return null;
+          }
+        })
+      );
+
+      // Filter out null results and set the searched users
+      const validUsers = userProfiles.filter((user): user is UserView => user !== null);
+      setSearchedUsers(validUsers);
+    } else {
+      setSearchedUsers([]);
+    }
   };
 
   useEffect(() => {

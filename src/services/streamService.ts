@@ -181,24 +181,39 @@ export async function getUserStream(
   return response.json();
 }
 
-// TODO Stream users by ID
-
-// Get stream users from username search
-export async function searchUsersByUsername(
-  username: string,
-  viewerId?: string,
-  skip?: number,
-  limit?: number
-): Promise<UserView[]> {
+export async function searchUsersById(prefix: string, skip?: number, limit?: number): Promise<string[]> {
   try {
-    if (!username) throw new Error('Username is required');
+    if (!prefix) throw new Error('Prefix is required');
 
-    const queryParams = new URLSearchParams({ username });
-    if (viewerId) queryParams.append('viewer_id', viewerId);
+    const queryParams = new URLSearchParams();
     if (skip !== undefined) queryParams.append('skip', String(skip));
     if (limit !== undefined) queryParams.append('limit', String(limit));
 
-    const response = await fetch(`${BASE_URL}/stream/users/username?${queryParams.toString()}`);
+    const response = await fetch(`${BASE_URL}/search/users/by_id/${prefix}?${queryParams.toString()}`);
+
+    if (!response.ok) {
+      throw new Error(`Failed to search users by id: ${response.status} ${response.statusText}`);
+    }
+
+    const text = await response.text();
+    if (!text) return [];
+
+    return JSON.parse(text);
+  } catch (error) {
+    console.error('Error in searchUsersById:', error);
+    return [];
+  }
+}
+
+export async function searchUsersByName(prefix: string, skip?: number, limit?: number): Promise<string[]> {
+  try {
+    if (!prefix) throw new Error('Prefix is required');
+
+    const queryParams = new URLSearchParams();
+    if (skip !== undefined) queryParams.append('skip', String(skip));
+    if (limit !== undefined) queryParams.append('limit', String(limit));
+
+    const response = await fetch(`${BASE_URL}/search/users/by_name/${prefix}?${queryParams.toString()}`);
 
     if (!response.ok) {
       throw new Error(`Failed to search users by username: ${response.status} ${response.statusText}`);
@@ -209,7 +224,7 @@ export async function searchUsersByUsername(
 
     return JSON.parse(text);
   } catch (error) {
-    console.error('Error in searchUsersByUsername:', error);
+    console.error('Error in searchUsersByName:', error);
     return [];
   }
 }
