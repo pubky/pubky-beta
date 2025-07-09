@@ -3,9 +3,8 @@
 import { useEffect, useState } from 'react';
 import { Header as HeaderUI, Icon } from '@social/ui-shared';
 import { useModal, usePubkyClientContext } from '@/contexts';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import useIsScrollup from '@/hooks/useIsScrollUp';
-import { useRouter } from 'next/router';
 
 interface HeaderMobileProps {
   leftIcon?: React.ReactNode;
