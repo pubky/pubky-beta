@@ -13,9 +13,10 @@ import { UserView } from '@/types/User';
 
 interface HeaderProps {
   title?: React.ReactNode;
+  postView?: boolean;
 }
 
-export default function Header({ title }: HeaderProps) {
+export default function Header({ title, postView }: HeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { pubky, isLoggedIn, setSearchTags, searchTags } = usePubkyClientContext();
@@ -208,6 +209,11 @@ export default function Header({ title }: HeaderProps) {
     <HeaderUI.Root className="justify-between hidden lg:flex">
       <div className="flex gap-4 justify-between items-center">
         <div className="flex">
+          {postView && (
+            <div className="cursor-pointer mr-2 mt-2" onClick={() => router.back()}>
+              <Icon.ArrowLeft size="24" />
+            </div>
+          )}
           <HeaderUI.Logo link={logoLink} />
           <HeaderUI.Title titleHeader={title} />
         </div>

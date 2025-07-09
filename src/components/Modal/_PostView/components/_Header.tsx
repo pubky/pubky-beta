@@ -9,7 +9,7 @@ export function Header() {
 
   return (
     <>
-      <Components.Header title="Post" />
+      <Components.Header title="Post" postView/>
       <Components.HeaderMobile
         leftIcon={
           <div className="cursor-pointer" onClick={() => router.back()}>
