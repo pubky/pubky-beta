@@ -209,7 +209,7 @@ export default function Header({ title, postView }: HeaderProps) {
     <HeaderUI.Root className="justify-between hidden lg:flex">
       <div className="flex gap-4 justify-between items-center">
         <div className="flex">
-          {postView && (
+          {pubky && postView && (
             <div className="cursor-pointer mr-2 mt-2" onClick={() => router.back()}>
               <Icon.ArrowLeft size="24" />
             </div>

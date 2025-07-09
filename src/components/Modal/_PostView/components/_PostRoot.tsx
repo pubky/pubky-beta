@@ -62,7 +62,7 @@ export default function PostRoot({ post }: { uri: string; post: PostView }) {
 
   return (
     <div className="flex items-center relative">
-      <div ref={wrapperRef} className="grid gap-6 xl:grid-cols-3">
+      <div ref={wrapperRef} className="w-full grid gap-6 xl:grid-cols-3">
         <Post.Root className="col-span-2">
           <div className="flex items-center relative">
             <div
