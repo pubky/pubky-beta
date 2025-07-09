@@ -1,6 +1,5 @@
 'use client';
 import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { BodyNotification, NotificationView } from '@/types/User';
 import { useUserNotifications } from '@/hooks/useUser';
@@ -118,7 +117,58 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
       );
     });
 
-    return filtered;
+    // Group notifications by the same post to avoid duplicates
+    return groupNotificationsByPost(filtered);
+  };
+
+  const groupNotificationsByPost = (notifications: NotificationView[]): NotificationView[] => {
+    const groupedMap = new Map<string, NotificationView[]>();
+
+    notifications.forEach((notification) => {
+      const key = getNotificationGroupKey(notification);
+      if (key) {
+        if (!groupedMap.has(key)) {
+          groupedMap.set(key, []);
+        }
+        groupedMap.get(key)!.push(notification);
+      } else {
+        // For notifications that can't be grouped, use timestamp as key
+        const timestampKey = `timestamp_${notification.timestamp}`;
+        if (!groupedMap.has(timestampKey)) {
+          groupedMap.set(timestampKey, []);
+        }
+        groupedMap.get(timestampKey)!.push(notification);
+      }
+    });
+
+    // Convert grouped notifications back to array, keeping only the most recent one from each group
+    const result: NotificationView[] = [];
+    groupedMap.forEach((group) => {
+      if (group.length > 0) {
+        // Sort by timestamp descending and take the most recent
+        const sortedGroup = group.sort((a, b) => b.timestamp - a.timestamp);
+        result.push(sortedGroup[0]);
+      }
+    });
+
+    return result.sort((a, b) => b.timestamp - a.timestamp);
+  };
+
+  const getNotificationGroupKey = (notification: NotificationView): string | null => {
+    const { body } = notification;
+
+    // For post_edited notifications, group by edited_uri + edited_by + edit_source
+    if (body.type === 'post_edited' && body.edited_uri && body.edited_by) {
+      return `edited_${body.edited_uri}_${body.edited_by}_${body.edit_source || 'default'}`;
+    }
+
+    // For post_deleted notifications, group by deleted_uri + deleted_by + delete_source
+    if (body.type === 'post_deleted' && body.deleted_uri && body.deleted_by) {
+      return `deleted_${body.deleted_uri}_${body.deleted_by}_${body.delete_source || 'default'}`;
+    }
+
+    // For other notification types, don't group (return null to use timestamp as key)
+    return null;
   };
 
   const fetchNotifications = useCallback(async () => {
