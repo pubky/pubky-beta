@@ -101,9 +101,14 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
 
       const postUrl = Utils.encodePostUri(uriToUse);
 
-      // Update URL to the post URL
-      window.history.pushState({ modal: 'postView', postUrl }, '', postUrl);
-      urlUpdated.current = true;
+      // Check if we're already on the post URL to prevent duplicate pushState
+      if (window.location.pathname !== postUrl) {
+        window.history.pushState({ modal: 'postView', postUrl }, '', postUrl);
+        urlUpdated.current = true;
+      } else {
+        // We're already on the correct URL, just mark as updated
+        urlUpdated.current = true;
+      }
     }
 
     const handlePopState = (event: PopStateEvent) => {
@@ -140,6 +145,18 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
     urlUpdated.current = false;
     router.push(href);
   };
+
+  // Cleanup effect to ensure proper cleanup when component unmounts
+  useEffect(() => {
+    return () => {
+      // Cleanup when component unmounts
+      if (urlUpdated.current) {
+        urlUpdated.current = false;
+      }
+      // Re-enable background scrolling
+      document.body.style.overflow = '';
+    };
+  }, []);
 
   if (!showModal) return null;
 
