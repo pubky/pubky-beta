@@ -50,9 +50,6 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
   const isOpen = (modalId: string) => !!openModals[modalId];
 
   // Check if current pathname is a post URL and open modal automatically
-  {
-    /** */
-  }
   useEffect(() => {
     const checkAndOpenPostModal = async () => {
       // Check if pathname matches post URL pattern: /post/[pubky]/[postId]
@@ -67,8 +64,9 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      // Only open modal if it's not already open and we're not navigating from a modal
-      if (postUrlMatch && !openModals['postView'] && !modalOpenedByUrl.current) {
+      // Only open modal if it's not already open, we're not navigating from a modal,
+      // and the modal wasn't opened by direct click (check if modalProps has post data)
+      if (postUrlMatch && !openModals['postView'] && !modalOpenedByUrl.current && !modalProps['postView']) {
         const [, pubkyParam, postIdParam] = postUrlMatch;
 
         try {
@@ -88,7 +86,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     };
 
     checkAndOpenPostModal();
-  }, [pathname, pubky, openModals]);
+  }, [pathname, pubky, openModals, modalProps]);
 
   // Track pathname changes to detect navigation from modal
   useEffect(() => {
@@ -109,14 +107,24 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!openModals['postView']) {
       modalOpenedByUrl.current = false;
+      // Also clear the modal props to ensure clean state for next opening
+      setModalProps((prev) => {
+        const newProps = { ...prev };
+        delete newProps['postView'];
+        return newProps;
+      });
     }
   }, [openModals['postView']]);
 
+  // Reset all modals when pathname changes (but not for post URLs to avoid interference)
   useEffect(() => {
-    setOpenModals({});
-    setModalProps({});
-    setModalOrder([]);
-    modalOpenedByUrl.current = false;
+    const postUrlMatch = pathname.match(/^\/post\/([^\/]+)\/([^\/]+)$/);
+    if (!postUrlMatch) {
+      setOpenModals({});
+      setModalProps({});
+      setModalOrder([]);
+      modalOpenedByUrl.current = false;
+    }
   }, [pathname]);
 
   const modalComponents: Record<string, string> = {
