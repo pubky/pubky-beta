@@ -694,14 +694,15 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
           reposts: 0,
           tags: tags?.length || 0
         } as PostCounts,
-        tags: tags && tags.length > 0
-          ? tags.map((tag) => ({
-              label: tag,
-              taggers: [pubky],
-              taggers_count: 1,
-              relationship: true
-            }))
-          : [],
+        tags:
+          tags && tags.length > 0
+            ? tags.map((tag) => ({
+                label: tag,
+                taggers: [pubky],
+                taggers_count: 1,
+                relationship: true
+              }))
+            : [],
         cached: 'homeserver'
       } as PostView;
 
