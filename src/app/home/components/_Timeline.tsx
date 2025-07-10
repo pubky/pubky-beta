@@ -184,7 +184,20 @@ export const Timeline = () => {
           const existingPost = prev.find((p) => p.details.id === nexusData.details.id);
 
           if (existingPost) {
-            const updatedTimeline = prev.map((p) => (p.details.id === nexusData.details.id ? nexusData : p));
+            // Preserve optimistic tags if the server data has fewer tags
+            const mergedPost = {
+              ...nexusData,
+              tags:
+                nexusData.tags && nexusData.tags.length >= existingPost.tags.length
+                  ? nexusData.tags
+                  : existingPost.tags,
+              counts: {
+                ...nexusData.counts,
+                tags: Math.max(nexusData.counts?.tags || 0, existingPost.counts?.tags || 0)
+              }
+            };
+
+            const updatedTimeline = prev.map((p) => (p.details.id === nexusData.details.id ? mergedPost : p));
             const groupedTimeline = groupReposts(updatedTimeline);
             return sort === 'recent'
               ? groupedTimeline.sort((a, b) => b.details.indexed_at - a.details.indexed_at)

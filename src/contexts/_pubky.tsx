@@ -627,9 +627,14 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
       const response = await homeserver.put(postResult.meta.url, JSON.stringify(post));
       await handleHomeserverResponse(response);
 
-      if (tags) {
+      // Create tags before returning the result
+      if (tags && tags.length > 0) {
         for (const tag of tags) {
-          await createTag(pubky!, postResult.meta.id, tag);
+          try {
+            await createTag(pubky!, postResult.meta.id, tag);
+          } catch (error) {
+            console.error(`Error creating tag ${tag}:`, error);
+          }
         }
       }
 
@@ -689,7 +694,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
           reposts: 0,
           tags: tags?.length || 0
         } as PostCounts,
-        tags: tags
+        tags: tags && tags.length > 0
           ? tags.map((tag) => ({
               label: tag,
               taggers: [pubky],
@@ -744,11 +749,12 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
           reposts: 0,
           tags: tags?.length || 0
         } as PostCounts,
-        tags: tags
+        tags: tags && tags.length > 0
           ? tags.map((tag) => ({
               label: tag,
               taggers: [pubky],
-              taggers_count: 1
+              taggers_count: 1,
+              relationship: true
             }))
           : [],
         cached: 'homeserver'
