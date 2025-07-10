@@ -14,6 +14,7 @@ import MainPostContent from './_MainPostContent';
 import { useRouter } from 'next/navigation';
 import { parse_uri } from 'pubky-app-specs';
 import Repost from './Repost';
+import { useModal } from '@/contexts';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   repostView?: boolean;
@@ -46,6 +47,7 @@ export default function Post({
 }: PostProps) {
   const router = useRouter();
   const { pubky } = usePubkyClientContext();
+  const { openModal } = useModal();
   const [repostedPost, setRepostedPost] = useState<PostView>();
   const [loadingRepostedPost, setLoadingRepostedPost] = useState(true);
   const [showTags, setShowTags] = useState(false);
@@ -62,7 +64,8 @@ export default function Post({
         // Open in new tab
         window.open(Utils.encodePostUri(uriToUse), '_blank');
       } else {
-        router.push(Utils.encodePostUri(uriToUse));
+        // Open in modal instead of navigating
+        openModal('postView', { post });
       }
     } else {
       event.stopPropagation();

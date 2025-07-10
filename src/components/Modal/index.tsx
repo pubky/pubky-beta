@@ -26,6 +26,7 @@ import RepostedUsers from './_RepostedUsers';
 import SearchedUsersCard from './_SearchedUsersCard';
 import SearchInputCard from './_SearchInputCard';
 import SessionExpired from './_SessionExpired';
+import PostView from './_PostView';
 import TagCreatePost from './_TagCreatePost';
 import TermsOfService from './_TermsOfService';
 
@@ -51,6 +52,7 @@ export const Modal = {
   Link,
   Logout,
   MinimumAge,
+  PostView,
   PrivacyPolicy,
   ReportPost,
   ReportProfile,

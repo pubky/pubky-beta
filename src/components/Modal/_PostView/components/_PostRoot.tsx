@@ -62,11 +62,11 @@ export default function PostRoot({ post }: { uri: string; post: PostView }) {
 
   return (
     <div className="flex items-center relative">
-      <div ref={wrapperRef} className="grid gap-6 xl:grid-cols-3">
+      <div ref={wrapperRef} className="w-full grid gap-6 xl:grid-cols-3">
         <Post.Root className="col-span-2">
           <div className="flex items-center relative">
             <div
-              className={`${replies.length > 0 ? 'h-full' : 'h-[45%]'} ml-[10px] absolute border-l-[1px] top-0 border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[26px] after:block after:-mt-[24px] after:-ml-[0.8px]`}
+              className={`${replies.length > 0 ? 'h-full' : 'h-[47%]'} ml-[10px] absolute border-l-[1px] top-0 border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[26px] after:block after:-mt-[24px] after:-ml-[0.8px]`}
             />
             <div className="absolute ml-[10px]">
               <Icon.LineHorizontal size="14" color="#444447" />
