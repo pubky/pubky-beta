@@ -63,7 +63,7 @@ export default function Post({
       if (event.metaKey || event.ctrlKey || event.button === 1) {
         // Open in new tab
         window.open(Utils.encodePostUri(uriToUse), '_blank');
-      } else {
+      } else if (event.button === 0) {
         // Open in modal instead of navigating
         openModal('postView', { post });
       }
