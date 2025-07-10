@@ -45,7 +45,7 @@ export default function HeaderMobile({ leftIcon, rightIcon, children, postView }
     e.preventDefault();
     e.stopPropagation();
     // Check if there's enough history to go back
-    if (window.history.length > 2) {
+    if (window.history.length >= 2) {
       router.back();
     } else {
       if (pubky) {

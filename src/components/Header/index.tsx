@@ -208,15 +208,12 @@ export default function Header({ title, postView }: HeaderProps) {
   const handleBack = async (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    // Check if there's enough history to go back
-    if (window.history.length > 2) {
+
+    // Only go back if user is logged in and there's enough history
+    if (logoLink === '/home' && window.history.length >= 2) {
       router.back();
     } else {
-      if (pubky) {
-        router.push('/home');
-      } else {
-        router.push('/onboarding');
-      }
+      router.push(logoLink);
     }
   };
 

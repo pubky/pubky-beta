@@ -9,7 +9,7 @@ export function Header() {
 
   const handleBack = async () => {
     // Check if there's enough history to go back
-    if (window.history.length > 2) {
+    if (window.history.length >= 2) {
       router.back();
     } else {
       router.push('/home');
