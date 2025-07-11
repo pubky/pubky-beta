@@ -425,38 +425,44 @@ describe('posts', () => {
     const tag3 = 'feijoada';
 
     const checkTagsAreDisplayed = (expectedTags: ExpectedTags, expectedOrder: ExpectedOrder) => {
-      cy.get('#post-container').within(($post) => {
-        cy.get('#tag-0')
-          .should('be.visible')
-          .contains(expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag3 : tag1);
-        expectedTags === ExpectedTags.WithMiddleRemoved
-          ? cy.wrap($post).innerTextShouldNotContain(tag2)
-          : cy.get('#tag-1').should('be.visible').contains(tag2);
-        cy.get(expectedTags === ExpectedTags.WithMiddleRemoved ? '#tag-1' : '#tag-2')
-          .should('be.visible')
-          .contains(expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag1 : tag3);
+      cy.get('#post-view-modal').within(() => {
+        cy.get('#post-container').within(($post) => {
+          cy.get('#tag-0')
+            .should('be.visible')
+            .contains(expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag3 : tag1);
+          expectedTags === ExpectedTags.WithMiddleRemoved
+            ? cy.wrap($post).innerTextShouldNotContain(tag2)
+            : cy.get('#tag-1').should('be.visible').contains(tag2);
+          cy.get(expectedTags === ExpectedTags.WithMiddleRemoved ? '#tag-1' : '#tag-2')
+            .should('be.visible')
+            .contains(expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag1 : tag3);
+        });
       });
     };
 
     const checkTagCounters = (expectedTags: ExpectedTags, expectedOrder: ExpectedOrder) => {
-      cy.get('#post-container').within(() => {
-        cy.get('#tag-0')
-          .should('exist')
-          .contains(expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag3 : tag1);
-        cy.get('#tag-0-count').should('exist').contains('1');
-        cy.get('#tag-1').should('exist').contains(tag2);
-        cy.get('#tag-1-count')
-          .should('exist')
-          .contains(expectedTags === ExpectedTags.WithMiddleRemoved ? '0' : '1');
-        cy.get('#tag-2')
-          .should('exist')
-          .contains(expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag1 : tag3);
-        cy.get('#tag-2-count').should('exist').contains('1');
+      cy.get('#post-view-modal').within(() => {
+        cy.get('#post-container').within(() => {
+          cy.get('#tag-0')
+            .should('exist')
+            .contains(expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag3 : tag1);
+          cy.get('#tag-0-count').should('exist').contains('1');
+          cy.get('#tag-1').should('exist').contains(tag2);
+          cy.get('#tag-1-count')
+            .should('exist')
+            .contains(expectedTags === ExpectedTags.WithMiddleRemoved ? '0' : '1');
+          cy.get('#tag-2')
+            .should('exist')
+            .contains(expectedOrder === ExpectedOrder.ReverseAlphanumeric ? tag1 : tag3);
+          cy.get('#tag-2-count').should('exist').contains('1');
+        });
       });
     };
 
     const clickMiddleTag = () => {
-      cy.get('#tag-1').click();
+      cy.get('#post-view-modal').within(() => {
+        cy.get('#tag-1').click();
+      });
       cy.wait(100);
     };
 
@@ -472,11 +478,13 @@ describe('posts', () => {
     cy.location('pathname').should('contain', '/post/');
 
     // add two more tags to the post
-    cy.get('#post-container').within(() => {
-      cy.get('#add-tag-input').type(tag2);
-      cy.get('#add-tag-btn  ').click();
-      cy.get('#add-tag-input').type(tag3);
-      cy.get('#add-tag-btn').click();
+    cy.get('#post-view-modal').within(() => {
+      cy.get('#post-container').within(() => {
+        cy.get('#add-tag-input').type(tag2);
+        cy.get('#add-tag-btn  ').click();
+        cy.get('#add-tag-input').type(tag3);
+        cy.get('#add-tag-btn').click();
+      });
     });
 
     // check tags are displayed for post

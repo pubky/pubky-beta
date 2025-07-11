@@ -41,7 +41,18 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
       // Otherwise, open a new modal
       setOpenModals((prev) => ({ ...prev, [modalId]: true }));
       setModalProps((prev) => ({ ...prev, [modalId]: props }));
-      setModalOrder((prev) => [...prev, modalId]);
+      setModalOrder((prev) => {
+        // Remove any existing postView entries to ensure uniqueness
+        const filteredOrder = prev.filter((id) => id !== 'postView');
+
+        if (modalId === 'postView') {
+          // Always put postView at the beginning
+          return ['postView', ...filteredOrder];
+        }
+
+        // For other modals, add to the end if not already present
+        return filteredOrder.includes(modalId) ? filteredOrder : [...filteredOrder, modalId];
+      });
     }
   };
 
