@@ -16,7 +16,7 @@ interface HeaderMobileProps {
 export default function HeaderMobile({ leftIcon, rightIcon, children, postView }: HeaderMobileProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { openModal } = useModal();
+  const { openModal, isOpen } = useModal();
   const { pubky, isLoggedIn, setSearchTags } = usePubkyClientContext();
   const isVisible = useIsScrollup();
   const [logoLink, setLogoLink] = useState('/onboarding');
@@ -56,8 +56,11 @@ export default function HeaderMobile({ leftIcon, rightIcon, children, postView }
     }
   };
 
+  // Force header to be visible when modal is open
+  const shouldShowHeader = isVisible || isOpen('postView');
+
   return (
-    <HeaderUI.Root className={`flex lg:hidden items-center ${!isVisible && 'hidden'}`}>
+    <HeaderUI.Root className={`flex lg:hidden items-center ${!shouldShowHeader && 'hidden'}`}>
       <div className="relative flex w-full items-center">
         {pubky && <div className="absolute left-0">{leftIcon}</div>}
 
