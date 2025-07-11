@@ -37,7 +37,7 @@ export const Message = ({ icon, children, variant = 'default', isOnline, isUp, .
         colorTextCSS = 'text-[#e95164]';
       }
     case 'homeserver':
-      if (isOnline) {
+      if (isUp) {
         variantCSS =
           'bg-[#c8ff00] bg-opacity-10 shadow-[0px_50px_100px_0px_rgba(0,0,0,1.00)] backdrop-blur-[50px] border-[#C8FF00]';
         colorTextCSS = 'text-[#c8ff00]';
