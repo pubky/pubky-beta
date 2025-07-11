@@ -7,6 +7,7 @@ import Modal from '@/components/Modal';
 import { BottomSheet } from '@/components';
 import { getPost } from '@/services/postService';
 import { usePubkyClientContext } from '@/contexts';
+import { Utils } from '@social/utils-shared';
 
 interface ModalContextType {
   openModal: (modalId: string, props?: Record<string, any>) => void;
@@ -30,11 +31,18 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
   const previousPathname = useRef<string>('');
   const isNavigatingFromModal = useRef<boolean>(false);
   const modalOpenedByUrl = useRef<boolean>(false);
+  const navigationTimeout = useRef<NodeJS.Timeout | null>(null);
 
-  const openModal = (modalId: string, props: Record<string, any> = {}) => {
-    setOpenModals((prev) => ({ ...prev, [modalId]: true }));
-    setModalProps((prev) => ({ ...prev, [modalId]: props }));
-    setModalOrder((prev) => [...prev, modalId]);
+  const openModal = async (modalId: string, props: Record<string, any> = {}) => {
+    // If the modal is already open, just update its props
+    if (openModals[modalId]) {
+      setModalProps((prev) => ({ ...prev, [modalId]: props }));
+    } else {
+      // Otherwise, open a new modal
+      setOpenModals((prev) => ({ ...prev, [modalId]: true }));
+      setModalProps((prev) => ({ ...prev, [modalId]: props }));
+      setModalOrder((prev) => [...prev, modalId]);
+    }
   };
 
   const closeModal = (modalId: string) => {
@@ -88,6 +96,28 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     checkAndOpenPostModal();
   }, [pathname, pubky, openModals, modalProps]);
 
+  // Update post view modal when URL changes
+  useEffect(() => {
+    if (openModals['postView'] && pathname !== previousPathname.current) {
+      const postUrlMatch = pathname.match(/^\/post\/([^\/]+)\/([^\/]+)$/);
+      if (postUrlMatch) {
+        const [, pubkyParam, postIdParam] = postUrlMatch;
+        const fetchAndUpdatePost = async () => {
+          try {
+            const newPost = await getPost(pubkyParam, postIdParam, pubky ?? '');
+            if (newPost) {
+              setModalProps((prev) => ({ ...prev, postView: { post: newPost } }));
+            }
+          } catch (error) {
+            console.error('Error fetching post for modal update:', error);
+          }
+        };
+        fetchAndUpdatePost();
+      }
+    }
+    previousPathname.current = pathname;
+  }, [pathname, openModals, pubky]);
+
   // Track pathname changes to detect navigation from modal
   useEffect(() => {
     // If we had a modal open and the pathname changed to something other than a post URL,
@@ -116,15 +146,33 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     }
   }, [openModals['postView']]);
 
-  // Reset all modals when pathname changes (but not for post URLs to avoid interference)
+  // Debounced reset of modals to handle rapid navigation
   useEffect(() => {
     const postUrlMatch = pathname.match(/^\/post\/([^\/]+)\/([^\/]+)$/);
-    if (!postUrlMatch) {
-      setOpenModals({});
-      setModalProps({});
-      setModalOrder([]);
-      modalOpenedByUrl.current = false;
+
+    // Clear any existing timeout
+    if (navigationTimeout.current) {
+      clearTimeout(navigationTimeout.current);
     }
+
+    if (!postUrlMatch) {
+      // Add a small delay to handle rapid navigation
+      navigationTimeout.current = setTimeout(() => {
+        setOpenModals({});
+        setModalProps({});
+        setModalOrder([]);
+        modalOpenedByUrl.current = false;
+      }, 50);
+    } else {
+      // If we're on a post URL, clear the timeout and don't reset
+      navigationTimeout.current = null;
+    }
+
+    return () => {
+      if (navigationTimeout.current) {
+        clearTimeout(navigationTimeout.current);
+      }
+    };
   }, [pathname]);
 
   const modalComponents: Record<string, string> = {
