@@ -199,7 +199,7 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#05050A]">
+    <div id="post-view-modal" className="fixed inset-0 z-50 bg-[#05050A]">
       <div className="flex flex-col h-full">
         {/* Content */}
         <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-webkit">
