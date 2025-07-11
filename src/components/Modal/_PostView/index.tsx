@@ -42,6 +42,14 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
     }
   }, [showModal, setReplies]);
 
+  // Handle post prop changes
+  useEffect(() => {
+    if (showModal && post) {
+      // Reset URL updated flag when post changes
+      urlUpdated.current = false;
+    }
+  }, [post, showModal]);
+
   // Handle page title when modal opens/closes
   useEffect(() => {
     if (showModal) {
