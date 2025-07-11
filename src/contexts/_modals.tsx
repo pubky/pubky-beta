@@ -31,6 +31,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
   const previousPathname = useRef<string>('');
   const isNavigatingFromModal = useRef<boolean>(false);
   const modalOpenedByUrl = useRef<boolean>(false);
+  const navigationTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const openModal = async (modalId: string, props: Record<string, any> = {}) => {
     // If the modal is already open, just update its props
@@ -145,15 +146,33 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     }
   }, [openModals['postView']]);
 
-  // Reset all modals when pathname changes (but not for post URLs to avoid interference)
+  // Debounced reset of modals to handle rapid navigation
   useEffect(() => {
     const postUrlMatch = pathname.match(/^\/post\/([^\/]+)\/([^\/]+)$/);
-    if (!postUrlMatch) {
-      setOpenModals({});
-      setModalProps({});
-      setModalOrder([]);
-      modalOpenedByUrl.current = false;
+
+    // Clear any existing timeout
+    if (navigationTimeout.current) {
+      clearTimeout(navigationTimeout.current);
     }
+
+    if (!postUrlMatch) {
+      // Add a small delay to handle rapid navigation
+      navigationTimeout.current = setTimeout(() => {
+        setOpenModals({});
+        setModalProps({});
+        setModalOrder([]);
+        modalOpenedByUrl.current = false;
+      }, 50);
+    } else {
+      // If we're on a post URL, clear the timeout and don't reset
+      navigationTimeout.current = null;
+    }
+
+    return () => {
+      if (navigationTimeout.current) {
+        clearTimeout(navigationTimeout.current);
+      }
+    };
   }, [pathname]);
 
   const modalComponents: Record<string, string> = {
