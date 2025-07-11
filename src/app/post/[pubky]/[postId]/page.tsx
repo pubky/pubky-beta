@@ -59,4 +59,4 @@ export async function generateMetadata({ params }: { params: { pubky: string; po
 
 export default function PostOverlayPage({ params }: Props) {
   return <PostPage params={params} />;
-} 
+}

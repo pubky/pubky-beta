@@ -22,10 +22,10 @@ export default function PostPage({ params }: Props) {
       try {
         setIsLoading(true);
         setError(null);
-        
+
         // Fetch the post data
         const post = await getPost(params.pubky, params.postId, pubky ?? '');
-        
+
         if (post) {
           // Open the PostView modal with the fetched post
           openModal('postView', { post });
