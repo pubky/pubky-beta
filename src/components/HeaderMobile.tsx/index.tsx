@@ -41,6 +41,21 @@ export default function HeaderMobile({ leftIcon, rightIcon, children, postView }
     }
   }, [pathname, setSearchTags]);
 
+  const handleBack = async (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Check if there's enough history to go back
+    if (window.history.length >= 2) {
+      router.back();
+    } else {
+      if (pubky) {
+        router.push('/home');
+      } else {
+        router.push('/onboarding');
+      }
+    }
+  };
+
   // Force header to be visible when modal is open
   const shouldShowHeader = isVisible || isOpen('postView');
 
@@ -49,7 +64,7 @@ export default function HeaderMobile({ leftIcon, rightIcon, children, postView }
       <div className="relative flex w-full items-center">
         {pubky && <div className="absolute left-0">{leftIcon}</div>}
 
-        <div onClick={() => router.push('/home')} className="mx-auto flex gap-4 items-center">
+        <div onClick={postView ? handleBack : undefined} className="mx-auto flex gap-4 items-center">
           <HeaderUI.Logo link={logoLink} />
           <HeaderUI.Title />
         </div>
