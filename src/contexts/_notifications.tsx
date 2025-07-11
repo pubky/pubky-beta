@@ -50,71 +50,74 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
   // Extract unique user IDs from notifications
   const extractUserIdsFromNotifications = useCallback((notifications: NotificationView[]): string[] => {
     const userIds = new Set<string>();
-    
+
     notifications.forEach((notification) => {
       const senderPubky = extractSenderPubky(notification.body);
       if (senderPubky) {
         userIds.add(senderPubky);
       }
     });
-    
+
     return Array.from(userIds);
   }, []);
 
   // Preload user profiles for given user IDs
-  const preloadUserProfiles = useCallback(async (userIds: string[]) => {
-    if (!pubky || userIds.length === 0) return;
+  const preloadUserProfiles = useCallback(
+    async (userIds: string[]) => {
+      if (!pubky || userIds.length === 0) return;
 
-    setProfilesLoading(true);
-    
-    try {
-      const uniqueUserIds = userIds.filter(userId => !userProfilesCache.hasOwnProperty(userId));
-      
-      if (uniqueUserIds.length === 0) {
-        setProfilesLoading(false);
-        return;
-      }
+      setProfilesLoading(true);
 
-      // Fetch profiles in parallel with a limit to avoid overwhelming the API
-      const batchSize = 5;
-      const batches = [];
-      
-      for (let i = 0; i < uniqueUserIds.length; i += batchSize) {
-        batches.push(uniqueUserIds.slice(i, i + batchSize));
-      }
+      try {
+        const uniqueUserIds = userIds.filter((userId) => !userProfilesCache.hasOwnProperty(userId));
 
-      for (const batch of batches) {
-        const profilePromises = batch.map(async (userId) => {
-          try {
-            const profile = await getUserProfile(userId, pubky);
-            return { userId, profile };
-          } catch (error) {
-            console.error(`Error fetching profile for ${userId}:`, error);
-            return { userId, profile: null };
-          }
-        });
-
-        const results = await Promise.all(profilePromises);
-        
-        setUserProfilesCache(prevCache => {
-          const newCache = { ...prevCache };
-          results.forEach(({ userId, profile }) => {
-            newCache[userId] = profile;
-          });
-          return newCache;
-        });
-
-        // Small delay between batches to be respectful to the API
-        if (batches.length > 1) {
-          await new Promise(resolve => setTimeout(resolve, 100));
+        if (uniqueUserIds.length === 0) {
+          setProfilesLoading(false);
+          return;
         }
+
+        // Fetch profiles in parallel with a limit to avoid overwhelming the API
+        const batchSize = 5;
+        const batches = [];
+
+        for (let i = 0; i < uniqueUserIds.length; i += batchSize) {
+          batches.push(uniqueUserIds.slice(i, i + batchSize));
+        }
+
+        for (const batch of batches) {
+          const profilePromises = batch.map(async (userId) => {
+            try {
+              const profile = await getUserProfile(userId, pubky);
+              return { userId, profile };
+            } catch (error) {
+              console.error(`Error fetching profile for ${userId}:`, error);
+              return { userId, profile: null };
+            }
+          });
+
+          const results = await Promise.all(profilePromises);
+
+          setUserProfilesCache((prevCache) => {
+            const newCache = { ...prevCache };
+            results.forEach(({ userId, profile }) => {
+              newCache[userId] = profile;
+            });
+            return newCache;
+          });
+
+          // Small delay between batches to be respectful to the API
+          if (batches.length > 1) {
+            await new Promise((resolve) => setTimeout(resolve, 100));
+          }
+        }
+      } catch (error) {
+        console.error('Error preloading user profiles:', error);
+      } finally {
+        setProfilesLoading(false);
       }
-    } catch (error) {
-      console.error('Error preloading user profiles:', error);
-    } finally {
-      setProfilesLoading(false);
-    }
-  }, [pubky, userProfilesCache]);
+    },
+    [pubky, userProfilesCache]
+  );
 
   const checkSettings = async () => {
     if (pubky === undefined) return;
@@ -325,13 +328,22 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
 
     const filtered = filterNotifications(initNotifications);
     updateNotifications(filtered);
-    
+
     // Preload user profiles for the filtered notifications
     const userIds = extractUserIdsFromNotifications(filtered);
     if (userIds.length > 0) {
       preloadUserProfiles(userIds);
     }
-  }, [initNotifications, timestamp, pubky, timestampLoaded, preferencesLoaded, setUnReadNotification, extractUserIdsFromNotifications, preloadUserProfiles]);
+  }, [
+    initNotifications,
+    timestamp,
+    pubky,
+    timestampLoaded,
+    preferencesLoaded,
+    setUnReadNotification,
+    extractUserIdsFromNotifications,
+    preloadUserProfiles
+  ]);
 
   // Add effect to update lastViewedTimestamp when notifications are viewed
   useEffect(() => {

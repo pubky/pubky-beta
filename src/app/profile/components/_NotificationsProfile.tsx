@@ -9,7 +9,12 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
 export default function NotificationsProfile() {
-  const { notifications, loading: loadingNotifications, profilesLoading, loadMoreNotifications } = useNotificationsContext();
+  const {
+    notifications,
+    loading: loadingNotifications,
+    profilesLoading,
+    loadMoreNotifications
+  } = useNotificationsContext();
   const { unReadNotification, setUnReadNotification } = useFilterContext();
   const [tempUnReadNotification, setTempUnReadNotification] = useState(0);
   const { putTimestampNotification } = usePubkyClientContext();
