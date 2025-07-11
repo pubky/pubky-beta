@@ -7,7 +7,7 @@ import { createContext, useContext, useState, ReactNode } from 'react';
 type AlertMessage = {
   id: number;
   content: ReactNode;
-  variant?: 'default' | 'warning' | 'connection' | 'loading';
+  variant?: 'default' | 'warning' | 'connection' | 'homeserver' | 'loading';
   persistent?: boolean;
   isOnline?: boolean;
 };
@@ -16,12 +16,14 @@ type AlertContextType = {
   addAlert: (content: ReactNode, variant?: 'default' | 'warning' | 'loading') => number;
   removeAlert: (id: number) => void;
   connectionAlertStatus: (isOnline: boolean) => void;
+  homeserverAlertStaus: (isUp: boolean) => void;
 };
 
 const AlertContext = createContext<AlertContextType>({
   addAlert: () => 0,
   removeAlert: () => {},
-  connectionAlertStatus: () => {}
+  connectionAlertStatus: () => {},
+  homeserverAlertStaus: () => {}
 });
 
 export function AlertWrapper({ children }: { children: React.ReactNode }) {
@@ -72,7 +74,36 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const iconToShow = (variant: 'default' | 'warning' | 'connection' | 'loading', isOnline?: boolean) => {
+  const homeserverAlertStaus = (isUp: boolean) => {
+    // Remove any existing connection alerts
+    setAlerts((prev) => prev.filter((alert) => alert.variant !== 'homeserver'));
+
+    const content = isUp ? 'Homeserver restored' : 'Homeserver is down';
+    const id = Date.now();
+
+    setAlerts((prev) => [
+      ...prev,
+      {
+        id,
+        content,
+        variant: 'connection',
+        persistent: !isUp,
+        isUp
+      }
+    ]);
+
+    if (isUp) {
+      setTimeout(() => {
+        setAlerts((prev) => prev.filter((alert) => alert.id !== id));
+      }, 3000);
+    }
+  };
+
+  const iconToShow = (
+    variant: 'default' | 'warning' | 'connection' | 'homeserver' | 'loading',
+    isOnline?: boolean,
+    isUp?: boolean
+  ) => {
     switch (variant) {
       case 'warning':
         return <Icon.Warning size="20" />;
@@ -84,6 +115,8 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
         ) : (
           <Icon.LoadingSpin size="20" color="#e95164" />
         );
+      case 'homeserver':
+        return isUp ? <Icon.CheckCircle size="20" color="#c8ff00" /> : <Icon.LoadingSpin size="20" color="#e95164" />;
       case 'default':
       default:
         return <Icon.CheckCircle size="20" color="#c8ff00" />;
@@ -91,7 +124,7 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AlertContext.Provider value={{ addAlert, removeAlert, connectionAlertStatus }}>
+    <AlertContext.Provider value={{ addAlert, removeAlert, connectionAlertStatus, homeserverAlertStaus }}>
       {children}
       <div
         style={{ bottom: isMobile ? '96px' : '24px' }}
