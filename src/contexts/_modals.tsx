@@ -53,7 +53,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
 
         // For other modals, add to the end if not already present
         const newOrder = filteredOrder.includes(modalId) ? filteredOrder : [...filteredOrder, modalId];
-        
+
         // If postView was in the original order, keep it at the beginning
         return hasPostView ? ['postView', ...newOrder] : newOrder;
       });
