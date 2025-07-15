@@ -27,6 +27,17 @@ export default function PostRoot({ post }: { uri: string; post: PostView }) {
     setPlaceholder(Utils.promptPlaceholder('reply'));
   }, []);
 
+  // Reset component state when post changes
+  useEffect(() => {
+    setArrayTags([]);
+    setIsValidContent(false);
+    setTextArea(false);
+    setContentReply('');
+    setQuote(undefined);
+    setSendingReply(false);
+    setSelectedFiles([]);
+  }, [post?.details?.id]);
+
   const handleReply = async (content: string) => {
     setSendingReply(true);
 
