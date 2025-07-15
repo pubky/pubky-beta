@@ -16,7 +16,6 @@ interface UseInlineUrlsReturn {
   spotifyUrl: string;
 }
 
-
 export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrlsReturn => {
   const [fileContents, setFileContents] = useState<FileView[]>([]);
   const [loading, setLoading] = useState(true);
