@@ -2,7 +2,7 @@
 
 import { Typography, Icon } from '@social/ui-shared';
 import * as Components from '@/components';
-import { usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext, useModal } from '@/contexts';
 import { usePostReplies } from '@/hooks/usePost';
 import { Utils } from '@social/utils-shared';
 import CreateQuickReply from '@/components/CreateQuickReply';
@@ -18,6 +18,7 @@ interface PostRepliesProps {
 
 export const PostReplies = ({ post, layout, homeView = false, isMobile }: PostRepliesProps) => {
   const { pubky, mutedUsers, deletedPosts } = usePubkyClientContext();
+  const { openModal } = useModal();
   const { data: replies } = usePostReplies(
     post.details.author,
     post.details.id,
@@ -74,7 +75,7 @@ export const PostReplies = ({ post, layout, homeView = false, isMobile }: PostRe
             <div>
               <div className={lineBaseCSS} />
               {lineHorizontalCSS}
-              <Link href={Utils.encodePostUri(post?.details?.uri)}>
+              <div onClick={() => openModal('postView', { post })}>
                 <Typography.Body
                   variant="small-bold"
                   className="cursor-pointer flex gap-1 items-center ml-8 hover:opacity-80"
@@ -82,7 +83,7 @@ export const PostReplies = ({ post, layout, homeView = false, isMobile }: PostRe
                   <Icon.PlusCircle />
                   {repliesLeft === 1 ? '1 more reply' : `${repliesLeft} more replies`}
                 </Typography.Body>
-              </Link>
+              </div>
             </div>
           )}
           {post?.details?.content !== '[DELETED]' && (
