@@ -1,7 +1,6 @@
 'use client';
 
 import { Utils } from '@social/utils-shared';
-import getYouTubeID from 'get-youtube-id';
 import LinkPreview from '@/components/ui-shared/lib/Post/_Preview';
 import { GitHub } from '@/components/ui-shared/lib/Preview/Github';
 import { useEffect, useState } from 'react';
@@ -9,9 +8,10 @@ import { Tweet } from 'react-tweet';
 import Parsing from '../Content/_Parsing';
 import { Button, Icon, Skeleton, Typography } from '@social/ui-shared';
 import { FileView, PostView } from '@/types/Post';
-import { getFile } from '@/services/fileService';
 import { Spotify } from 'react-spotify-embed';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { useInlineUrls } from '@/hooks/useInlineUrls';
+import { useFileLoading } from '@/hooks/useFileLoading';
 import Link from 'next/link';
 import { PubkyAppPostKind } from 'pubky-app-specs';
 import { useModal } from '@/contexts';
@@ -39,16 +39,27 @@ export default function Content({
   const BASE_URL = `${NEXT_PUBLIC_NEXUS}/static/files`;
   const isMobile = useIsMobile();
   const { openModal } = useModal();
-  const [preview, setPreview] = useState('');
-  const [videoId, setVideoId] = useState('');
-  const [tweetId, setTweetId] = useState('');
-  const [githubUrl, setGithubUrl] = useState('');
-  const [spotifyUrl, setSpotifyUrl] = useState('');
-  const [fileContents, setFileContents] = useState<FileView[]>([]);
-  const [loading, setLoading] = useState(true);
   const blurCensored = Utils.storage.get('blurCensored') as boolean | undefined;
   const [isUnblurred, setIsUnblurred] = useState(false);
   const censored = !isUnblurred && isCensored && (blurCensored === false ? false : true);
+
+  const text = post?.details?.content;
+  const files = post?.details?.attachments;
+
+  // Use the new hooks for URL processing and file loading
+  const {
+    fileContents: externalFileContents,
+    preview,
+    videoId,
+    tweetId,
+    githubUrl,
+    spotifyUrl
+  } = useInlineUrls({ text: text?.toString() || '', files });
+
+  const { fileContents, loading } = useFileLoading({
+    files,
+    externalFileContents
+  });
 
   useEffect(() => {
     if (post?.details?.uri && isCensored) {
@@ -68,21 +79,6 @@ export default function Content({
     setIsUnblurred(true);
   };
 
-  const cleanText = (text: string) => {
-    return text?.replace(/\n{3,}/g, '\n\n');
-  };
-
-  const isValidUrl = (url: string): boolean => {
-    try {
-      const parsedUrl = new URL(url);
-      return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
-    } catch {
-      return false;
-    }
-  };
-
-  const text = post?.details?.content;
-  const files = post?.details?.attachments;
   const uri = post?.details?.uri;
   const generateFileUrl = (file: FileView, type = 'main') => {
     if (file.src === 'external') {
@@ -92,223 +88,6 @@ export default function Content({
     return `${BASE_URL}/${file.owner_id}/${file.id}/${type}`;
   };
 
-  const isImageUrl = (url: string): boolean => {
-    return (
-      url.match(/\.(jpg|jpeg|png|gif|webp|svg|bmp|tiff)$/i) !== null || url.includes('nexus.pubky.app/static/files/')
-    );
-  };
-
-  const createImageFileView = (imageUrl: string, index: number): FileView => {
-    const fileName = imageUrl.split('/').pop() || `image-${index}`;
-    const fileExtension = fileName.includes('.') ? fileName.split('.').pop()?.toLowerCase() : 'jpg';
-
-    // Determine content type based on extension
-    const getContentType = (ext: string): string => {
-      switch (ext) {
-        case 'jpg':
-        case 'jpeg':
-          return 'image/jpeg';
-        case 'png':
-          return 'image/png';
-        case 'gif':
-          return 'image/gif';
-        case 'webp':
-          return 'image/webp';
-        case 'svg':
-          return 'image/svg+xml';
-        case 'bmp':
-          return 'image/bmp';
-        case 'tiff':
-          return 'image/tiff';
-        default:
-          return 'image/jpeg';
-      }
-    };
-
-    return {
-      name: fileName,
-      created_at: Date.now(),
-      src: 'external',
-      content_type: getContentType(fileExtension),
-      size: 0,
-      id: `external-image-${index}`,
-      indexed_at: Date.now(),
-      owner_id: 'external',
-      uri: imageUrl,
-      urls: JSON.stringify({ main: imageUrl, feed: imageUrl })
-    };
-  };
-
-  async function checkForLink(text: string) {
-    // Find all URLs (both protocol and domain-only) with their positions
-    const protocolRegex = /(https?:\/\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+)/g;
-    const domainRegex = /(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)*/g;
-
-    const allUrls: Array<{ url: string; index: number }> = [];
-    const foundImageUrls: string[] = [];
-
-    // Find protocol URLs
-    for (const match of text.matchAll(protocolRegex)) {
-      let url = match[0].replace(/[^a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+$/, '');
-      allUrls.push({ url, index: match.index! });
-
-      // Check if it's an image URL
-      if (isImageUrl(url)) {
-        foundImageUrls.push(url);
-      }
-    }
-
-    // Find domain-only URLs (skip those that are part of protocol URLs)
-    for (const match of text.matchAll(domainRegex)) {
-      const domain = match[0];
-      const start = match.index!;
-
-      // Check if this domain is part of a protocol URL
-      const beforeDomain = text.slice(Math.max(0, start - 8), start);
-      if (!beforeDomain.includes('http://') && !beforeDomain.includes('https://')) {
-        const fullUrl = `https://${domain}`;
-        if (isValidUrl(fullUrl)) {
-          allUrls.push({ url: fullUrl, index: start });
-
-          // Check if it's an image URL
-          if (isImageUrl(fullUrl)) {
-            foundImageUrls.push(fullUrl);
-          }
-        }
-      }
-    }
-
-    // Create FileView objects for found image URLs and add them to fileContents
-    if (foundImageUrls.length > 0) {
-      const imageFileViews = foundImageUrls.map((url, index) => createImageFileView(url, index));
-      setFileContents((prev) => {
-        // Filter out any existing external images to avoid duplicates
-        const existingFiles = prev.filter((file) => file.src !== 'external');
-
-        // Calculate how many external images we can add (max 4 total files)
-        const maxExternalImages = Math.max(0, 4 - existingFiles.length);
-        const limitedImageFileViews = imageFileViews.slice(0, maxExternalImages);
-
-        return [...existingFiles, ...limitedImageFileViews];
-      });
-    }
-
-    // Sort by position and take the first one for other link types
-    if (allUrls.length > 0) {
-      const firstUrl = allUrls.sort((a, b) => a.index - b.index)[0];
-      const url = firstUrl.url;
-
-      const postRegex = new RegExp(`/post/([^/]+)/([^/]+)`);
-      if (postRegex.test(url)) return;
-
-      // Don't set preview for image URLs to avoid duplication
-      if (!isImageUrl(url)) {
-        setPreview(url);
-      }
-
-      const youtubeId = getYouTubeID(url);
-      if (youtubeId) setVideoId(youtubeId);
-
-      const twitterRegex = /https?:\/\/(?:www\.)?(?:twitter\.com|x\.com)\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/;
-      const twitterMatch = url.match(twitterRegex);
-      if (twitterMatch) setTweetId(twitterMatch[3]);
-
-      const githubRegex = /https:\/\/github\.com\/[^/]+\/[^/]+(?:\/.*)?/;
-      if (githubRegex.test(url)) setGithubUrl(url);
-
-      const spotifyRegex = /https:\/\/open\.spotify\.com\/track\/\w+/;
-      if (spotifyRegex.test(url)) setSpotifyUrl(url);
-    }
-  }
-
-  useEffect(() => {
-    const cleanedText = cleanText(text?.toString());
-    // Only reset fileContents if there are no files to load
-    if (!files?.length) {
-      setFileContents([]);
-    }
-    checkForLink(cleanedText); // Check entire text instead of word by word
-  }, [text, files]);
-
-  useEffect(() => {
-    const retryInterval = 5000; // 5 seconds
-    let retryTimeouts: NodeJS.Timeout[] = [];
-
-    const fetchFile = async (fileUri: string, retryCount = 0): Promise<FileView | null> => {
-      try {
-        const fetchedFile = await getFile(fileUri);
-        return fetchedFile;
-      } catch (error) {
-        // Return skeleton and schedule retry
-        if (retryCount < 5) {
-          // Limit retries to prevent infinite loops
-          const timeoutId = setTimeout(async () => {
-            const result = await fetchFile(fileUri, retryCount + 1);
-            if (result) {
-              // Update the specific file in fileContents
-              setFileContents((prev) =>
-                prev.map((f) =>
-                  f.urls === JSON.stringify({ main: 'skeleton' }) ? { ...result, urls: result.urls } : f
-                )
-              );
-            }
-          }, retryInterval);
-          retryTimeouts.push(timeoutId);
-        }
-        return {
-          content_type: 'skeleton',
-          urls: JSON.stringify({ main: 'skeleton' }),
-          name: 'Loading...',
-          created_at: Date.now(),
-          src: 'skeleton',
-          uri: fileUri,
-          id: `skeleton-${fileUri}`,
-          indexed_at: Date.now(),
-          owner_id: `skeleton-${fileUri}`,
-          size: 0
-        };
-      }
-    };
-
-    const fetchFiles = async () => {
-      if (files?.length > 0) {
-        setLoading(true);
-        const fileUris = Object.values(files).map((file) => file);
-        const fetchedFiles = await Promise.all(fileUris.map((fileUri) => fetchFile(fileUri)));
-
-        setFileContents((prev) => {
-          // Preserve external images when adding fetched files
-          const externalImages = prev.filter((file) => file.src === 'external');
-          const newFiles = fetchedFiles
-            .filter((file): file is FileView => file !== null)
-            .map((file) => ({
-              ...file,
-              urls: file.urls
-            }));
-
-          // Limit total files to 4, giving priority to loaded files
-          const totalFiles = newFiles.length + externalImages.length;
-          if (totalFiles <= 4) {
-            return [...newFiles, ...externalImages];
-          } else {
-            // If we exceed 4 files, keep all loaded files and limit external images
-            const maxExternalImages = Math.max(0, 4 - newFiles.length);
-            const limitedExternalImages = externalImages.slice(0, maxExternalImages);
-            return [...newFiles, ...limitedExternalImages];
-          }
-        });
-        setLoading(false);
-      }
-    };
-
-    fetchFiles();
-
-    // Cleanup timeouts on unmount
-    return () => {
-      retryTimeouts.forEach((timeoutId) => clearTimeout(timeoutId));
-    };
-  }, [files]);
-
   const handleOpenModal = (index: number) => {
     openModal('filesCarousel', {
       fileContents: fileContents,
@@ -316,7 +95,7 @@ export default function Content({
     });
   };
 
-  const cleanedText = cleanText(text?.toString() ?? '');
+  const cleanedText = text?.toString()?.replace(/\n{3,}/g, '\n\n') ?? '';
   const parsedContent = (() => {
     try {
       return JSON.parse(cleanedText);
