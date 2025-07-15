@@ -9,7 +9,7 @@ import {
   ModalProvider
 } from '@/contexts';
 
-import { Analytics, ProtectedRoutes, HeaderSEO, DynamicTitle, DynamicFavicon, ViewportHandler } from '@/components';
+import { Analytics, ProtectedRoutes, HeaderSEO, DynamicTitle, DynamicFavicon, ViewportHandler, PostSEO } from '@/components';
 
 export const metadata = {
   ...HeaderSEO.getSeoMetadata(),
@@ -33,6 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <ModalProvider>
                     <DynamicFavicon />
                     <DynamicTitle />
+                    <PostSEO />
                     <ProtectedRoutes>{children}</ProtectedRoutes>
                   </ModalProvider>
                 </ToastWrapper>

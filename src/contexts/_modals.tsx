@@ -108,7 +108,12 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
       }
     };
 
-    checkAndOpenPostModal();
+    // Add a small delay to ensure the page has loaded first
+    const timeoutId = setTimeout(() => {
+      checkAndOpenPostModal();
+    }, 100);
+
+    return () => clearTimeout(timeoutId);
   }, [pathname, pubky, openModals, modalProps]);
 
   // Update post view modal when URL changes
