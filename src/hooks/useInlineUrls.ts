@@ -16,8 +16,6 @@ interface UseInlineUrlsReturn {
   spotifyUrl: string;
 }
 
-const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
-const BASE_URL = `${NEXT_PUBLIC_NEXUS}/static/files`;
 
 export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrlsReturn => {
   const [fileContents, setFileContents] = useState<FileView[]>([]);
@@ -54,7 +52,7 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
   };
 
   const isInternalPubkyUrl = (url: string): boolean => {
-    return url.includes('pubky.app/static/files/') || url.includes('nexus.staging.pubky.app/static/files/');
+    return url.includes('pubky.app/static/files/');
   };
 
   const getContentTypeFromUrl = async (url: string): Promise<string | null> => {
