@@ -7,6 +7,7 @@ import Modal from '@/components/Modal';
 import { BottomSheet } from '@/components';
 import { getPost } from '@/services/postService';
 import { usePubkyClientContext } from '@/contexts';
+import { Utils } from '@social/utils-shared';
 
 interface ModalContextType {
   openModal: (modalId: string, props?: Record<string, any>) => void;
