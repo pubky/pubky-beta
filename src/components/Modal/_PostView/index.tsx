@@ -179,7 +179,15 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
 
   const renderMainPost = () => {
     if (isLongPost) {
-      return <LongPost key={`longpost-${postKey}`} data={post} user={user} onInternalNavigation={handleInternalNavigation} postKey={postKey} />;
+      return (
+        <LongPost
+          key={`longpost-${postKey}`}
+          data={post}
+          user={user}
+          onInternalNavigation={handleInternalNavigation}
+          postKey={postKey}
+        />
+      );
     } else {
       return (
         <div className="flex items-center relative">

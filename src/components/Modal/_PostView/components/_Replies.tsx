@@ -87,7 +87,7 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
     setInitialLoadComplete(false);
     setIsLoading(true);
     setHasMore(true);
-    
+
     // Fetch new replies for the current post
     fetchReplies({ skipValue: 0 });
   }, [pubkyAuthor, postId]);
