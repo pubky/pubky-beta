@@ -26,7 +26,6 @@ import HeaderSEO from './HeaderSEO';
 import { DynamicTitle } from './DynamicTitle';
 import DynamicFavicon from './DynamicFavicon';
 import ViewportHandler from './ViewportHandler';
-import { PostSEO } from './PostSEO';
 
 export {
   Analytics,
@@ -57,5 +56,4 @@ export {
   DynamicTitle,
   DynamicFavicon,
   ViewportHandler,
-  PostSEO
 };
