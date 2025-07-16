@@ -132,7 +132,7 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
         className="fixed z-max left-1/2 transform -translate-x-1/2 flex flex-col gap-2"
       >
         {alerts.map(({ id, content, variant = 'default', isOnline, isUp }) => (
-          <Alert.Message key={id} icon={iconToShow(variant, isOnline, isUp)} variant={variant} isOnline={isOnline}>
+          <Alert.Message key={id} icon={iconToShow(variant, isOnline, isUp)} variant={variant} isOnline={isOnline} isUp={isUp}>
             {content}
           </Alert.Message>
         ))}
