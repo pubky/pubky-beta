@@ -288,9 +288,10 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
 
   const processTextWithItalicAndLinks = (text: string): JSX.Element => {
     // First check if this text contains URLs
-    const urlRegex = /(https?:\/\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+|(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)*)/g;
+    const urlRegex =
+      /(https?:\/\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+|(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)*)/g;
     const urlMatches = Array.from(text.matchAll(urlRegex));
-    
+
     // If the text contains URLs, don't apply italic formatting
     if (urlMatches.length > 0) {
       return processTextWithLinks(text);
