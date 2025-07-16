@@ -69,7 +69,7 @@ export const Message = ({
 
   return (
     <div id="message-alert" {...rest} className={twMerge(baseCSS, variantCSS, rest.className)}>
-      <div className="flex gap-1 items-center justify-center">
+      <div className="flex flex-wrap gap-1 items-center justify-center">
         {icon && <div className="relative">{icon}</div>}
         <Typography.Body className={twMerge(colorTextCSS, 'text-opacity-80')} variant="small">
           {children}
