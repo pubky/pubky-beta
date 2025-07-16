@@ -35,19 +35,19 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
   };
 
   const isImageUrl = (url: string): boolean => {
-    return url.match(/\.(jpg|jpeg|png|gif|webp|svg|bmp|tiff)$/i) !== null;
+    return url.match(/\.(jpg|jpeg|png|gif|webp|svg|bmp|tiff)(?:\?|#|$)/i) !== null;
   };
 
   const isVideoUrl = (url: string): boolean => {
-    return url.match(/\.(mp4|webm|ogg|mov|avi|mkv|flv|wmv|m4v|3gp)$/i) !== null;
+    return url.match(/\.(mp4|webm|ogg)(?:\?|#|$)/i) !== null;
   };
 
   const isAudioUrl = (url: string): boolean => {
-    return url.match(/\.(mp3|wav|ogg|m4a|aac|flac|wma|opus|webm)$/i) !== null;
+    return url.match(/\.(mp3|wav|ogg)(?:\?|#|$)/i) !== null;
   };
 
   const isPdfUrl = (url: string): boolean => {
-    return url.match(/\.(pdf)$/i) !== null;
+    return url.match(/\.(pdf)(?:\?|#|$)/i) !== null;
   };
 
   const isInternalPubkyUrl = (url: string): boolean => {
@@ -91,9 +91,53 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
     });
   };
 
+  const isValidVideo = (url: string): Promise<boolean> => {
+    return new Promise((resolve) => {
+      const video = document.createElement('video');
+      video.onloadedmetadata = () => {
+        clearTimeout(timeout);
+        resolve(true);
+      };
+      video.onerror = () => {
+        clearTimeout(timeout);
+        resolve(false);
+      };
+
+      // Add timeout to prevent hanging
+      const timeout = setTimeout(() => {
+        resolve(false);
+      }, 10000); // 10 second timeout
+
+      video.src = url;
+    });
+  };
+
+  const isValidAudio = (url: string): Promise<boolean> => {
+    return new Promise((resolve) => {
+      const audio = document.createElement('audio');
+      audio.onloadedmetadata = () => {
+        clearTimeout(timeout);
+        resolve(true);
+      };
+      audio.onerror = () => {
+        clearTimeout(timeout);
+        resolve(false);
+      };
+
+      // Add timeout to prevent hanging
+      const timeout = setTimeout(() => {
+        resolve(false);
+      }, 10000); // 10 second timeout
+
+      audio.src = url;
+    });
+  };
+
   const createImageFileView = (imageUrl: string, index: number): FileView => {
     const fileName = imageUrl.split('/').pop() || `image-${index}`;
-    const fileExtension = fileName.includes('.') ? fileName.split('.').pop()?.toLowerCase() : 'jpg';
+    // Remove query parameters and hash from filename
+    const cleanFileName = fileName.split(/[?#]/)[0];
+    const fileExtension = cleanFileName.includes('.') ? cleanFileName.split('.').pop()?.toLowerCase() : 'jpg';
 
     const getContentType = (ext: string): string => {
       switch (ext) {
@@ -136,7 +180,9 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
 
   const createVideoFileView = (videoUrl: string, index: number): FileView => {
     const fileName = videoUrl.split('/').pop() || `video-${index}`;
-    const fileExtension = fileName.includes('.') ? fileName.split('.').pop()?.toLowerCase() : 'mp4';
+    // Remove query parameters and hash from filename
+    const cleanFileName = fileName.split(/[?#]/)[0];
+    const fileExtension = cleanFileName.includes('.') ? cleanFileName.split('.').pop()?.toLowerCase() : 'mp4';
 
     const getContentType = (ext: string): string => {
       switch (ext) {
@@ -146,20 +192,6 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
           return 'video/webm';
         case 'ogg':
           return 'video/ogg';
-        case 'mov':
-          return 'video/quicktime';
-        case 'avi':
-          return 'video/x-msvideo';
-        case 'mkv':
-          return 'video/x-matroska';
-        case 'flv':
-          return 'video/x-flv';
-        case 'wmv':
-          return 'video/x-ms-wmv';
-        case 'm4v':
-          return 'video/x-m4v';
-        case '3gp':
-          return 'video/3gpp';
         default:
           return 'video/mp4';
       }
@@ -184,7 +216,9 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
 
   const createAudioFileView = (audioUrl: string, index: number): FileView => {
     const fileName = audioUrl.split('/').pop() || `audio-${index}`;
-    const fileExtension = fileName.includes('.') ? fileName.split('.').pop()?.toLowerCase() : 'mp3';
+    // Remove query parameters and hash from filename
+    const cleanFileName = fileName.split(/[?#]/)[0];
+    const fileExtension = cleanFileName.includes('.') ? cleanFileName.split('.').pop()?.toLowerCase() : 'mp3';
 
     const getContentType = (ext: string): string => {
       switch (ext) {
@@ -194,18 +228,6 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
           return 'audio/wav';
         case 'ogg':
           return 'audio/ogg';
-        case 'm4a':
-          return 'audio/mp4';
-        case 'aac':
-          return 'audio/aac';
-        case 'flac':
-          return 'audio/flac';
-        case 'wma':
-          return 'audio/x-ms-wma';
-        case 'opus':
-          return 'audio/opus';
-        case 'webm':
-          return 'audio/webm';
         default:
           return 'audio/mpeg';
       }
@@ -230,7 +252,9 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
 
   const createPdfFileView = (pdfUrl: string, index: number): FileView => {
     const fileName = pdfUrl.split('/').pop() || `pdf-${index}`;
-    const fileExtension = fileName.includes('.') ? fileName.split('.').pop()?.toLowerCase() : 'pdf';
+    // Remove query parameters and hash from filename
+    const cleanFileName = fileName.split(/[?#]/)[0];
+    const fileExtension = cleanFileName.includes('.') ? cleanFileName.split('.').pop()?.toLowerCase() : 'pdf';
 
     const getContentType = (ext: string): string => {
       switch (ext) {
@@ -335,8 +359,11 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
       }
     }
 
-    // Validate external image URLs before creating FileView objects
+    // Validate external media URLs before creating FileView objects
     const validImageUrls: string[] = [];
+    const validVideoUrls: string[] = [];
+    const validAudioUrls: string[] = [];
+
     if (foundImageUrls.length > 0) {
       const imageValidationPromises = foundImageUrls.map(async (url) => {
         if (isInternalPubkyUrl(url)) {
@@ -353,16 +380,48 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
       validImageUrls.push(...validationResults.filter((url): url is string => url !== null));
     }
 
+    if (foundVideoUrls.length > 0) {
+      const videoValidationPromises = foundVideoUrls.map(async (url) => {
+        if (isInternalPubkyUrl(url)) {
+          // Internal URLs are always considered valid
+          return url;
+        } else {
+          // Validate external video URLs
+          const isValid = await isValidVideo(url);
+          return isValid ? url : null;
+        }
+      });
+
+      const validationResults = await Promise.all(videoValidationPromises);
+      validVideoUrls.push(...validationResults.filter((url): url is string => url !== null));
+    }
+
+    if (foundAudioUrls.length > 0) {
+      const audioValidationPromises = foundAudioUrls.map(async (url) => {
+        if (isInternalPubkyUrl(url)) {
+          // Internal URLs are always considered valid
+          return url;
+        } else {
+          // Validate external audio URLs
+          const isValid = await isValidAudio(url);
+          return isValid ? url : null;
+        }
+      });
+
+      const validationResults = await Promise.all(audioValidationPromises);
+      validAudioUrls.push(...validationResults.filter((url): url is string => url !== null));
+    }
+
     // Create FileView objects for found URLs
     if (
       validImageUrls.length > 0 ||
-      foundVideoUrls.length > 0 ||
-      foundAudioUrls.length > 0 ||
+      validVideoUrls.length > 0 ||
+      validAudioUrls.length > 0 ||
       foundPdfUrls.length > 0
     ) {
       const imageFileViews = validImageUrls.map((url, index) => createImageFileView(url, index));
-      const videoFileViews = foundVideoUrls.map((url, index) => createVideoFileView(url, index));
-      const audioFileViews = foundAudioUrls.map((url, index) => createAudioFileView(url, index));
+      const videoFileViews = validVideoUrls.map((url, index) => createVideoFileView(url, index));
+      const audioFileViews = validAudioUrls.map((url, index) => createAudioFileView(url, index));
       const pdfFileViews = foundPdfUrls.map((url, index) => createPdfFileView(url, index));
 
       setFileContents((prev) => {
