@@ -217,11 +217,13 @@ export default function Content({
   };
 
   const cleanedText = cleanText(text?.toString() ?? '');
+  // Safely parse content as JSON, fallback to using raw content if parsing fails
   const parsedContent = (() => {
     try {
-      return JSON.parse(cleanedText);
-    } catch {
-      return { body: cleanedText };
+      return JSON.parse(post?.details?.content);
+    } catch (error) {
+      console.warn('Failed to parse content as JSON in metadata:', error);
+      return { title: post?.details?.content, body: post?.details?.content };
     }
   })();
   const textToMinified = parsedContent?.body || cleanedText;
