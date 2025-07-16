@@ -13,7 +13,6 @@ interface FilesCarouselProps {
 
 export default function ContentFilesCarousel({ fileContents, currentFileIndex, onClose }: FilesCarouselProps) {
   const isMobile = useIsMobile();
-  const [localFileIndex, setLocalFileIndex] = useState(currentFileIndex);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
@@ -23,19 +22,36 @@ export default function ContentFilesCarousel({ fileContents, currentFileIndex, o
   const touchStartX = useRef(0);
   const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
   const BASE_URL = `${NEXT_PUBLIC_NEXUS}/static/files`;
-  const generateFileUrl = (file: FileView, type = 'main') => `${BASE_URL}/${file.owner_id}/${file.id}/${type}`;
+  const generateFileUrl = (file: FileView, type = 'main') => {
+    if (file.src === 'external') {
+      // For external images, return the URL directly
+      return file.uri;
+    }
+    return `${BASE_URL}/${file.owner_id}/${file.id}/${type}`;
+  };
   const mediaFiles = fileContents.filter(
     (file) => file?.content_type.startsWith('image') || file?.content_type.startsWith('video')
   );
 
   if (mediaFiles.length === 0) return null;
 
+  // Map the currentFileIndex to the correct index in mediaFiles
+  const getMediaFileIndex = (fileIndex: number): number => {
+    const targetFile = fileContents[fileIndex];
+    const mediaIndex = mediaFiles.findIndex((file) => file.id === targetFile.id);
+    return mediaIndex >= 0 ? mediaIndex : 0; // Fallback to 0 if not found
+  };
+
+  const initialMediaIndex = getMediaFileIndex(currentFileIndex);
+  const [localFileIndex, setLocalFileIndex] = useState(initialMediaIndex);
+
   useEffect(() => {
-    setLocalFileIndex(currentFileIndex);
+    const newMediaIndex = getMediaFileIndex(currentFileIndex);
+    setLocalFileIndex(newMediaIndex);
     setIsImageLoaded(false);
     setZoomLevel(1); // Reset zoom when changing files
     setPanPosition({ x: 0, y: 0 }); // Reset pan when changing files
-  }, [currentFileIndex]);
+  }, [currentFileIndex, fileContents]);
 
   const changeFile = (direction: 'next' | 'prev') => {
     if (isTransitioning) return;

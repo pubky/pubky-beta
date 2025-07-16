@@ -231,18 +231,8 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
   };
 
   const processFormattedText = (text: string): JSX.Element => {
-    // First, check if the entire text is a URL to avoid formatting conflicts
-    const urlRegex =
-      /(https?:\/\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+|(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)*)/g;
-    const urlMatches = Array.from(text.matchAll(urlRegex));
-
-    // If the text contains URLs, process it as regular text with links
-    if (urlMatches.length > 0) {
-      return processTextWithLinks(text);
-    }
-
-    // Split the text into parts based on formatting markers
-    const parts = text.split(/(\*\*[^*]+\*\*|__[^_]+__|~~[^~]+~~|_[^_]+_|`[^`]+`)/g);
+    // Split the text into parts based on formatting markers, but be more careful with italic
+    const parts = text.split(/(\*\*[^*]+\*\*|__[^_]+__|~~[^~]+~~|`[^`]+`)/g);
 
     return (
       <>
@@ -279,16 +269,6 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
             );
           }
 
-          // Handle italic text
-          if (part.startsWith('_') && part.endsWith('_')) {
-            const content = part.slice(1, -1);
-            return (
-              <em key={index} className="italic">
-                {processTextWithLinks(content)}
-              </em>
-            );
-          }
-
           // Handle inline code
           if (part.startsWith('`') && part.endsWith('`')) {
             const content = part.slice(1, -1);
@@ -299,8 +279,44 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
             );
           }
 
+          // Handle regular text - process italic formatting more carefully
+          return <span key={index}>{processTextWithItalicAndLinks(part)}</span>;
+        })}
+      </>
+    );
+  };
+
+  const processTextWithItalicAndLinks = (text: string): JSX.Element => {
+    // First check if this text contains URLs
+    const urlRegex =
+      /(https?:\/\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+|(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)*)/g;
+    const urlMatches = Array.from(text.matchAll(urlRegex));
+
+    // If the text contains URLs, don't apply italic formatting
+    if (urlMatches.length > 0) {
+      return processTextWithLinks(text);
+    }
+
+    // Split by italic markers
+    const parts = text.split(/(_[^_]+_)/g);
+
+    return (
+      <>
+        {parts.map((part, partIndex) => {
+          if (!part) return null;
+
+          // Handle italic text
+          if (part.startsWith('_') && part.endsWith('_')) {
+            const content = part.slice(1, -1);
+            return (
+              <em key={`italic-${partIndex}`} className="italic">
+                {processTextWithLinks(content)}
+              </em>
+            );
+          }
+
           // Handle regular text
-          return <span key={index}>{processTextWithLinks(part)}</span>;
+          return <span key={`text-${partIndex}`}>{processTextWithLinks(part)}</span>;
         })}
       </>
     );
