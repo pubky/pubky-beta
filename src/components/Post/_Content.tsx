@@ -98,10 +98,9 @@ export default function Content({
   const cleanedText = text?.toString()?.replace(/\n{3,}/g, '\n\n') ?? '';
   const parsedContent = (() => {
     try {
-      return JSON.parse(post?.details?.content);
-    } catch (error) {
-      console.warn('Failed to parse content as JSON in metadata:', error);
-      return { title: post?.details?.content, body: post?.details?.content };
+      return JSON.parse(cleanedText);
+    } catch {
+      return { body: cleanedText };
     }
   })();
   const textToMinified = parsedContent?.body || cleanedText;
