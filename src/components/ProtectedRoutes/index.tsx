@@ -132,7 +132,7 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
 
     if (sessionActive.status) {
       if (sessionActive.message === 'connection lost' || !isOnline) openModal('connectionLost');
-      homeserverAlertStatus(false);
+      if (sessionActive.message === 'homeserver down') homeserverAlertStatus(false);
       const hasProfile = await checkProfileUser();
 
       if (!hasProfile) {
