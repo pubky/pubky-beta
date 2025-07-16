@@ -80,7 +80,9 @@ export const Message = ({
             disabled={isRetrying}
             className="ml-2 underline text-[#e95164] hover:text-[#c8ff00] transition-colors duration-200 disabled:cursor-not-allowed"
           >
-            {isRetrying ? 'Trying...' : 'Try again'}
+            <Typography.Body className={twMerge(colorTextCSS, 'text-opacity-80')} variant="small">
+              {isRetrying ? 'Trying...' : 'Try again'}
+            </Typography.Body>
           </button>
         )}
       </div>
