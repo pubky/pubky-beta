@@ -17,22 +17,51 @@ export default function NotificationsProfile() {
   } = useNotificationsContext();
   const { unReadNotification, setUnReadNotification } = useFilterContext();
   const [tempUnReadNotification, setTempUnReadNotification] = useState(0);
+  const [isInitialized, setIsInitialized] = useState(false);
   const { putTimestampNotification } = usePubkyClientContext();
 
   const loader = useInfiniteScroll(loadMoreNotifications, loadingNotifications);
 
   const displayedNotifications = notifications.slice(tempUnReadNotification);
 
+  // Wait for notifications to be loaded before processing unread notifications
   useEffect(() => {
-    if (unReadNotification > 0) {
+    if (!loadingNotifications && notifications.length >= 0 && !isInitialized) {
+      // Add a small delay to ensure the context is fully initialized
+      const timer = setTimeout(() => {
+        setIsInitialized(true);
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+  }, [loadingNotifications, notifications.length, isInitialized]);
+
+  useEffect(() => {
+    // Only process unread notifications after the component is initialized and notifications are loaded
+    if (isInitialized && unReadNotification > 0 && notifications.length > 0) {
       setTempUnReadNotification(unReadNotification);
       setUnReadNotification(0);
       const updateTimestamp = async () => {
         await putTimestampNotification();
       };
       updateTimestamp();
+    } else if (isInitialized && unReadNotification === 0 && tempUnReadNotification > 0) {
+      // Reset tempUnReadNotification when there are no unread notifications
+      setTempUnReadNotification(0);
     }
-  }, [unReadNotification, setUnReadNotification, putTimestampNotification]);
+  }, [
+    unReadNotification,
+    setUnReadNotification,
+    putTimestampNotification,
+    isInitialized,
+    notifications.length,
+    tempUnReadNotification
+  ]);
+
+  // Show loading skeleton while initializing
+  if (!isInitialized && loadingNotifications) {
+    return <Skeleton.Simple />;
+  }
 
   return (
     <>

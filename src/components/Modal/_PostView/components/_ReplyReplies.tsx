@@ -1,6 +1,6 @@
 import { Post } from '@/components';
 import CreateQuickReply from '@/components/CreateQuickReply';
-import { usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext, useModal } from '@/contexts';
 import { usePostReplies } from '@/hooks/usePost';
 import { PostView } from '@/types/Post';
 import { Icon, Typography } from '@social/ui-shared';
@@ -9,6 +9,7 @@ import Link from 'next/link';
 
 export const ReplyReplies = ({ reply }: { reply: PostView }) => {
   const { pubky, mutedUsers } = usePubkyClientContext();
+  const { openModal } = useModal();
   const { data: replyReplies } = usePostReplies(
     reply?.details?.author,
     reply?.details?.id,
@@ -61,7 +62,7 @@ export const ReplyReplies = ({ reply }: { reply: PostView }) => {
         <div>
           <div className={lineBaseCSS} />
           {lineHorizontalCSS}
-          <Link href={Utils.encodePostUri(reply?.details?.uri)}>
+          <div onClick={() => openModal('postView', { post: reply })}>
             <Typography.Body
               variant="small-bold"
               className="cursor-pointer flex gap-1 items-center ml-14 hover:opacity-80"
@@ -69,7 +70,7 @@ export const ReplyReplies = ({ reply }: { reply: PostView }) => {
               <Icon.PlusCircle />
               {repliesLeft === 1 ? '1 more reply' : `${repliesLeft} more replies`}
             </Typography.Body>
-          </Link>
+          </div>
         </div>
       )}
       {showQuickReply && (

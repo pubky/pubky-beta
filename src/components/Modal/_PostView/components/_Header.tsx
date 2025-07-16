@@ -18,7 +18,7 @@ export function Header() {
 
   return (
     <>
-      <Components.Header title="Post" postView />
+      <Components.Header title="Post" />
       <Components.HeaderMobile
         postView
         leftIcon={

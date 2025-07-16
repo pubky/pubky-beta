@@ -34,19 +34,24 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
   const user = useUserProfile(post?.details?.author, pubky ?? '');
   const urlUpdated = useRef<boolean>(false);
   const originalTitle = useRef<string>('');
+  const [postKey, setPostKey] = useState<string>('');
 
-  // Reset replies when modal opens
+  // Reset replies when modal opens and update post key for proper re-rendering
   useEffect(() => {
-    if (showModal) {
+    if (showModal && post) {
       setReplies([]);
+      // Create a unique key for the post to force re-rendering of child components
+      setPostKey(`${post.details.author}-${post.details.id}`);
     }
-  }, [showModal, setReplies]);
+  }, [showModal, post, setReplies]);
 
   // Handle post prop changes
   useEffect(() => {
     if (showModal && post) {
       // Reset URL updated flag when post changes
       urlUpdated.current = false;
+      // Update post key when post changes to ensure clean re-render
+      setPostKey(`${post.details.author}-${post.details.id}`);
     }
   }, [post, showModal]);
 
@@ -174,7 +179,15 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
 
   const renderMainPost = () => {
     if (isLongPost) {
-      return <LongPost data={post} user={user} onInternalNavigation={handleInternalNavigation} />;
+      return (
+        <LongPost
+          key={`longpost-${postKey}`}
+          data={post}
+          user={user}
+          onInternalNavigation={handleInternalNavigation}
+          postKey={postKey}
+        />
+      );
     } else {
       return (
         <div className="flex items-center relative">
@@ -187,6 +200,7 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
             </>
           )}
           <Post
+            key={`post-${postKey}`}
             post={post}
             postType="single"
             largeView={!isMobile}
@@ -209,17 +223,17 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
             <Content.Grid className="flex justify-between flex-col gap-3">
               {/* Show parent posts if this is a reply */}
               {post?.relationships?.replied && (
-                <RootParent postRef={replyPostRef} parentURI={post?.relationships?.replied} />
+                <RootParent key={`parent-${postKey}`} postRef={replyPostRef} parentURI={post?.relationships?.replied} />
               )}
 
               {/* Main post */}
-              <div ref={replyPostRef} className="scroll-mt-20">
+              <div key={`main-post-${postKey}`} ref={replyPostRef} className="scroll-mt-20">
                 {renderMainPost()}
               </div>
 
               {/* Replies section */}
               <div className="mt-3">
-                <PostRoot uri={post?.details?.id} post={post} />
+                <PostRoot key={`replies-${postKey}`} uri={post?.details?.id} post={post} />
               </div>
             </Content.Grid>
 
@@ -232,7 +246,7 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
   );
 }
 
-const LongPost = ({ data, user, onInternalNavigation }) => {
+const LongPost = ({ data, user, onInternalNavigation, postKey }) => {
   const [isUnblurred, setIsUnblurred] = useState(false);
   const blurCensored = Utils.storage.get('blurCensored') as boolean;
   const content = JSON.parse(data?.details?.content);
@@ -263,13 +277,14 @@ const LongPost = ({ data, user, onInternalNavigation }) => {
   };
 
   return (
-    <div className="w-full">
+    <div key={`longpost-container-${postKey}`} className="w-full">
       <div className="flex flex-col lg:flex-row gap-6 relative">
         <div className={`${censored && 'blur-2xl'} w-auto lg:w-[1200px] flex flex-col gap-4`}>
           <Typography.Display className="sm:leading-[64px] break-words">{content.title}</Typography.Display>
           <div className="flex w-full gap-4 justify-between items-center">
             <div className="justify-start gap-3 flex items-center mt-4 mb-2">
               <ImageByUri
+                key={`avatar-${postKey}`}
                 id={user?.data?.details?.id}
                 isCensored={Utils.isProfileCensored(user)}
                 width={48}
@@ -298,6 +313,7 @@ const LongPost = ({ data, user, onInternalNavigation }) => {
           </div>
           {data?.details?.attachments?.length > 0 && data?.details?.attachments[0] && (
             <ImageArticle
+              key={`image-${postKey}`}
               uri={data?.details?.attachments[0]}
               width={1200}
               height={650}
@@ -325,7 +341,7 @@ const LongPost = ({ data, user, onInternalNavigation }) => {
             </div>
           </div>
         )}
-        <Tags.LargeView post={data} postType="single" articleView />
+        <Tags.LargeView key={`tags-${postKey}`} post={data} postType="single" articleView />
       </div>
     </div>
   );

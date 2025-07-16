@@ -7,21 +7,26 @@ import { createContext, useContext, useState, ReactNode } from 'react';
 type AlertMessage = {
   id: number;
   content: ReactNode;
-  variant?: 'default' | 'warning' | 'connection' | 'loading';
+  variant?: 'default' | 'warning' | 'connection' | 'homeserver' | 'loading';
   persistent?: boolean;
   isOnline?: boolean;
+  isUp?: boolean;
+  onRetry?: () => void;
+  isRetrying?: boolean;
 };
 
 type AlertContextType = {
   addAlert: (content: ReactNode, variant?: 'default' | 'warning' | 'loading') => number;
   removeAlert: (id: number) => void;
   connectionAlertStatus: (isOnline: boolean) => void;
+  homeserverAlertStatus: (isUp: boolean, onRetry?: () => void, isRetrying?: boolean) => void;
 };
 
 const AlertContext = createContext<AlertContextType>({
   addAlert: () => 0,
   removeAlert: () => {},
-  connectionAlertStatus: () => {}
+  connectionAlertStatus: () => {},
+  homeserverAlertStatus: () => {}
 });
 
 export function AlertWrapper({ children }: { children: React.ReactNode }) {
@@ -72,7 +77,38 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const iconToShow = (variant: 'default' | 'warning' | 'connection' | 'loading', isOnline?: boolean) => {
+  const homeserverAlertStatus = (isUp: boolean, onRetry?: () => void, isRetrying?: boolean) => {
+    // Remove any existing homeserver alerts
+    setAlerts((prev) => prev.filter((alert) => alert.variant !== 'homeserver'));
+
+    const content = isUp ? 'Homeserver restored' : 'Homeserver is down';
+    const id = Date.now();
+
+    setAlerts((prev) => [
+      ...prev,
+      {
+        id,
+        content,
+        variant: 'homeserver',
+        persistent: !isUp,
+        isUp,
+        onRetry: !isUp ? onRetry : undefined,
+        isRetrying
+      }
+    ]);
+
+    if (isUp) {
+      setTimeout(() => {
+        setAlerts((prev) => prev.filter((alert) => alert.id !== id));
+      }, 3000);
+    }
+  };
+
+  const iconToShow = (
+    variant: 'default' | 'warning' | 'connection' | 'homeserver' | 'loading',
+    isOnline?: boolean,
+    isUp?: boolean
+  ) => {
     switch (variant) {
       case 'warning':
         return <Icon.Warning size="20" />;
@@ -84,6 +120,8 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
         ) : (
           <Icon.LoadingSpin size="20" color="#e95164" />
         );
+      case 'homeserver':
+        return isUp ? <Icon.CheckCircle size="20" color="#c8ff00" /> : <Icon.LoadingSpin size="20" color="#e95164" />;
       case 'default':
       default:
         return <Icon.CheckCircle size="20" color="#c8ff00" />;
@@ -91,14 +129,22 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AlertContext.Provider value={{ addAlert, removeAlert, connectionAlertStatus }}>
+    <AlertContext.Provider value={{ addAlert, removeAlert, connectionAlertStatus, homeserverAlertStatus }}>
       {children}
       <div
         style={{ bottom: isMobile ? '96px' : '24px' }}
         className="fixed z-max left-1/2 transform -translate-x-1/2 flex flex-col gap-2"
       >
-        {alerts.map(({ id, content, variant = 'default', isOnline }) => (
-          <Alert.Message key={id} icon={iconToShow(variant, isOnline)} variant={variant} isOnline={isOnline}>
+        {alerts.map(({ id, content, variant = 'default', isOnline, isUp, onRetry, isRetrying }) => (
+          <Alert.Message
+            key={id}
+            icon={iconToShow(variant, isOnline, isUp)}
+            variant={variant}
+            isOnline={isOnline}
+            isUp={isUp}
+            onRetry={onRetry}
+            isRetrying={isRetrying}
+          >
             {content}
           </Alert.Message>
         ))}

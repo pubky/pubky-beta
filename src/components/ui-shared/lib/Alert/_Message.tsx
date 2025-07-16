@@ -5,11 +5,23 @@ import { Typography } from '../Typography';
 interface MessageProps extends React.HTMLAttributes<HTMLDivElement> {
   icon?: React.ReactNode;
   children: React.ReactNode;
-  variant?: 'default' | 'warning' | 'connection' | 'loading';
+  variant?: 'default' | 'warning' | 'connection' | 'homeserver' | 'loading';
   isOnline?: boolean;
+  isUp?: boolean;
+  onRetry?: () => void;
+  isRetrying?: boolean;
 }
 
-export const Message = ({ icon, children, variant = 'default', isOnline, ...rest }: MessageProps) => {
+export const Message = ({
+  icon,
+  children,
+  variant = 'default',
+  isOnline,
+  isUp,
+  onRetry,
+  isRetrying,
+  ...rest
+}: MessageProps) => {
   const baseCSS = `z-max relative py-2 px-4 rounded-md shadow border w-full`;
 
   let variantCSS = '';
@@ -36,6 +48,17 @@ export const Message = ({ icon, children, variant = 'default', isOnline, ...rest
         colorTextCSS = 'text-[#e95164]';
       }
       break;
+    case 'homeserver':
+      if (isUp) {
+        variantCSS =
+          'bg-[#c8ff00] bg-opacity-10 shadow-[0px_50px_100px_0px_rgba(0,0,0,1.00)] backdrop-blur-[50px] border-[#C8FF00]';
+        colorTextCSS = 'text-[#c8ff00]';
+      } else {
+        variantCSS =
+          'bg-[#e95164] bg-opacity-10 shadow-[0px_50px_100px_0px_rgba(0,0,0,1.00)] backdrop-blur-[50px] border-[#e95164]';
+        colorTextCSS = 'text-[#e95164]';
+      }
+      break;
     case 'default':
     default:
       variantCSS =
@@ -46,11 +69,22 @@ export const Message = ({ icon, children, variant = 'default', isOnline, ...rest
 
   return (
     <div id="message-alert" {...rest} className={twMerge(baseCSS, variantCSS, rest.className)}>
-      <div className="flex gap-1 items-center justify-center">
+      <div className="flex flex-wrap gap-1 items-center justify-center">
         {icon && <div className="relative">{icon}</div>}
         <Typography.Body className={twMerge(colorTextCSS, 'text-opacity-80')} variant="small">
           {children}
         </Typography.Body>
+        {onRetry && variant === 'homeserver' && !isUp && (
+          <button
+            onClick={onRetry}
+            disabled={isRetrying}
+            className="ml-2 underline text-[#e95164] hover:text-[#c8ff00] transition-colors duration-200 disabled:cursor-not-allowed"
+          >
+            <Typography.Body className={twMerge(colorTextCSS, 'text-opacity-80')} variant="small">
+              {isRetrying ? 'Trying...' : 'Try again'}
+            </Typography.Body>
+          </button>
+        )}
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useState, ReactNode, useCallback 
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { BodyNotification, NotificationView, UserView } from '@/types/User';
 import { useUserNotifications } from '@/hooks/useUser';
+import { getUserNotifications } from '@/services/userService';
 import { NotificationPreferences } from '@/types';
 import { defaultPreferences } from './_filters';
 import { getUserProfile } from '@/services/userService';
@@ -390,13 +391,20 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     if (!pubky || !preferencesLoaded || !hasMore || loading) return;
 
     try {
-      if (initNotifications) {
-        const filteredNotifications = filterNotifications(initNotifications);
+      setLoading(true);
+
+      // Fetch the next batch of notifications
+      const nextNotifications = await getUserNotifications(pubky ?? '', undefined, undefined, skip, limit);
+
+      if (nextNotifications && Array.isArray(nextNotifications) && nextNotifications.length > 0) {
+        const filteredNotifications = filterNotifications(nextNotifications);
+
         if (filteredNotifications.length === 0) {
-          setHasMore(false);
+          // If all notifications are filtered out, try to get more
+          setSkip((prev) => prev + limit);
+          setLoading(false);
           return;
         }
-        updateNotifications(filteredNotifications);
 
         // Preload user profiles for the new notifications
         const userIds = extractUserIdsFromNotifications(filteredNotifications);
@@ -404,10 +412,22 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
           preloadUserProfiles(userIds);
         }
 
+        updateNotifications(filteredNotifications);
         setSkip((prev) => prev + limit);
+
+        // If we got fewer notifications than the limit, we've reached the end
+        if (nextNotifications.length < limit) {
+          setHasMore(false);
+        }
+      } else {
+        // No more notifications
+        setHasMore(false);
       }
     } catch (err) {
-      console.error(err);
+      console.error('Error loading more notifications:', err);
+      setHasMore(false);
+    } finally {
+      setLoading(false);
     }
   };
   useEffect(() => {

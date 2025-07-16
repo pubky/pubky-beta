@@ -14,10 +14,9 @@ import { getUserProfile } from '@/services/userService';
 
 interface HeaderProps {
   title?: React.ReactNode;
-  postView?: boolean;
 }
 
-export default function Header({ title, postView }: HeaderProps) {
+export default function Header({ title }: HeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { pubky, isLoggedIn, setSearchTags, searchTags } = usePubkyClientContext();
@@ -222,28 +221,11 @@ export default function Header({ title, postView }: HeaderProps) {
     setSearchTags(newTags);
   };
 
-  const handleBack = async (e: React.MouseEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    // Only go back if user is logged in and there's enough history
-    if (logoLink === '/home' && window.history.length >= 2) {
-      router.back();
-    } else {
-      router.push(logoLink);
-    }
-  };
-
   return (
     <HeaderUI.Root className="justify-between hidden lg:flex">
       <div className="flex gap-4 justify-between items-center">
         <div className="flex">
-          {pubky && postView && (
-            <div className="cursor-pointer mr-2 mt-2" onClick={handleBack}>
-              <Icon.ArrowLeft size="24" />
-            </div>
-          )}
-          <div onClick={postView ? handleBack : undefined}>
+          <div>
             <HeaderUI.Logo link={logoLink} />
           </div>
           <HeaderUI.Title titleHeader={title} />
