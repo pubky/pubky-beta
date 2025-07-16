@@ -82,8 +82,8 @@ const NormalPost = ({ data }) => {
 const LongPost = ({ data, user }) => {
   const [isUnblurred, setIsUnblurred] = useState(false);
   const blurCensored = Utils.storage.get('blurCensored') as boolean;
-   // Safely parse content as JSON, fallback to empty object if parsing fails
-   const content = (() => {
+  // Safely parse content as JSON, fallback to empty object if parsing fails
+  const content = (() => {
     try {
       return JSON.parse(data?.details?.content);
     } catch (error) {
