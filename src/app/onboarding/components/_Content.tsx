@@ -60,7 +60,7 @@ export default function Index() {
           the web.
         </Typography.Display>
         <Typography.Body variant="large" className="text-[22px] sm:text-2xl leading-tight text-opacity-50 mt-2 sm:mt-4">
-          Grab your invite at our booth! (BTC Prague)
+          Your keys, your content, your rules.
         </Typography.Body>
         <div className="relative flex gap-3 mt-6 sm:mt-12">
           <Link href="/onboarding/intro">

@@ -8,7 +8,8 @@ import { Section } from './Section';
 import { UserView } from '@/types/User';
 import { twMerge } from 'tailwind-merge';
 import { Utils } from '@social/utils-shared';
-import { searchUsersByUsername } from '@/services/streamService';
+import { searchUsersById, searchUsersByName } from '@/services/streamService';
+import { getUserProfile } from '@/services/userService';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
 
 interface CreateContentProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -42,6 +43,7 @@ interface CreateContentProps extends React.HTMLAttributes<HTMLDivElement> {
   styleSearchedUsers?: string;
   charCountArticle?: number;
   setCharCountArticle?: React.Dispatch<React.SetStateAction<number>>;
+  setIsCompressing?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function CreateContent({
@@ -75,10 +77,11 @@ export default function CreateContent({
   setQuote,
   styleSearchedUsers,
   charCountArticle,
-  setCharCountArticle
+  setCharCountArticle,
+  setIsCompressing
 }: CreateContentProps) {
   const { profile, pubky } = usePubkyClientContext();
-  const { addAlert } = useAlertContext();
+  const { addAlert, removeAlert } = useAlertContext();
   const [showEmojis, setShowEmojis] = useState(false);
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -88,16 +91,6 @@ export default function CreateContent({
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const [searchedUsers, setSearchedUsers] = useState<UserView[]>([]);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
-
-  const searchProfiles = async (text: string) => {
-    try {
-      const result = await searchUsersByUsername(text);
-      return result || [];
-    } catch (error) {
-      // console.error('Error searching profiles:', error);
-      return [];
-    }
-  };
 
   const searchUsername = async (content: string) => {
     const pkMatches = content.match(/(pk:[^\s]+)/g);
@@ -110,19 +103,41 @@ export default function CreateContent({
       return;
     }
 
-    let results: UserView[] = [];
+    let allUserIds: string[] = [];
 
     for (const query of searchQueries) {
       if (query.startsWith('@')) {
         const username = query.slice(1);
-        const searchResult = await searchUsersByUsername(username);
-        results = [...results, ...(searchResult || [])];
+        const searchResult = await searchUsersByName(username);
+        allUserIds = [...allUserIds, ...(searchResult || [])];
       } else if (query.startsWith('pk:')) {
-        const searchResult = await searchProfiles(query);
-        results = [...results, ...(searchResult || [])];
+        const userId = query.slice(3); // Remove 'pk:' prefix
+        const searchResult = await searchUsersById(userId);
+        allUserIds = [...allUserIds, ...(searchResult || [])];
       }
     }
-    setSearchedUsers(results.length > 0 ? results : []);
+
+    // Remove duplicates
+    const uniqueUserIds = Array.from(new Set(allUserIds));
+
+    if (uniqueUserIds.length > 0) {
+      // Fetch user profiles for each unique user ID
+      const userProfiles = await Promise.all(
+        uniqueUserIds.map(async (userId) => {
+          try {
+            return await getUserProfile(userId, pubky ?? '');
+          } catch (error) {
+            return null;
+          }
+        })
+      );
+
+      // Filter out null results and set the searched users
+      const validUsers = userProfiles.filter((user): user is UserView => user !== null);
+      setSearchedUsers(validUsers);
+    } else {
+      setSearchedUsers([]);
+    }
   };
 
   useEffect(() => {
@@ -203,7 +218,7 @@ export default function CreateContent({
     };
   }, [selectedFiles, addAlert, setSelectedFiles, setFilePreviews]);
 
-  const handlePaste = (event: ClipboardEvent) => {
+  const handlePaste = async (event: ClipboardEvent) => {
     const items = event.clipboardData?.items;
     const maxImageSizeInMB = 5;
     const maxOtherSizeInMB = 20;
@@ -232,22 +247,32 @@ export default function CreateContent({
               continue;
             }
 
-            if (isImage && file.size > maxImageSizeInBytes) {
-              addAlert('The maximum allowed size for images is 5 MB', 'warning');
+            if (selectedFiles.length >= 4) {
+              addAlert('Max 4 files only.', 'warning');
               continue;
             }
-            if (!isImage && file.size > maxOtherSizeInBytes) {
+
+            let processedFile = file;
+
+            if (isImage && file.size > maxImageSizeInBytes) {
+              try {
+                const loadingAlertId = addAlert('Compressing image...', 'loading');
+                setIsCompressing(true);
+                processedFile = await Utils.resizeImageFile(file, maxImageSizeInBytes);
+                removeAlert(loadingAlertId);
+                setIsCompressing(false);
+              } catch (error) {
+                addAlert('The maximum allowed size for images is 5 MB', 'warning');
+                continue;
+              }
+            } else if (!isImage && file.size > maxOtherSizeInBytes) {
               addAlert('The maximum allowed size is 20 MB', 'warning');
               continue;
             }
 
-            if (selectedFiles.length < 4) {
-              const filePreview = URL.createObjectURL(file);
-              setSelectedFiles((prevFiles) => [...prevFiles, file]);
-              setFilePreviews((prevPreviews) => [...prevPreviews, filePreview]);
-            } else {
-              addAlert('Maximum of 4 files can be uploaded', 'warning');
-            }
+            const filePreview = URL.createObjectURL(processedFile);
+            setSelectedFiles((prevFiles) => [...prevFiles, processedFile]);
+            setFilePreviews((prevPreviews) => [...prevPreviews, filePreview]);
           } else {
             addAlert('File not supported', 'warning');
           }
@@ -296,6 +321,7 @@ export default function CreateContent({
             handlePaste={handlePaste}
             styleSearchedUsers={styleSearchedUsers}
             setCharCountArticle={setCharCountArticle}
+            setIsCompressing={setIsCompressing}
           />
         </div>
         <LinkPreviewer setQuote={setQuote} content={content} />
@@ -339,6 +365,7 @@ export default function CreateContent({
           maxLength={maxLength}
           setShowModalPost={setShowModalPost}
           charCountArticle={charCountArticle}
+          setIsCompressing={setIsCompressing}
         />
       </div>
     </div>

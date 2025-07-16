@@ -31,6 +31,7 @@ interface InputAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   handlePaste?: any;
   styleSearchedUsers?: string;
   setCharCountArticle?: React.Dispatch<React.SetStateAction<number>>;
+  setIsCompressing?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function InputArea({
@@ -56,10 +57,11 @@ export default function InputArea({
   setIsError,
   handlePaste,
   styleSearchedUsers,
-  setCharCountArticle
+  setCharCountArticle,
+  setIsCompressing
 }: InputAreaProps) {
   const [isDragging, setIsDragging] = useState(false);
-  const { addAlert } = useAlertContext();
+  const { addAlert, removeAlert } = useAlertContext();
 
   const handleDragEnter = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -82,7 +84,7 @@ export default function InputArea({
     setIsDragging(false);
   };
 
-  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     event.stopPropagation();
     setIsDragging(false);
@@ -94,51 +96,71 @@ export default function InputArea({
     const maxOtherSizeInBytes = maxOtherSizeInMB * 1024 * 1024;
 
     if (files) {
-      const validFiles = Array.from(files).filter((file) => {
-        const isImage = file.type.startsWith('image/');
-        const isVideo = file.type.startsWith('video/');
-        const isAudio = file.type.startsWith('audio/');
-        const isPDF = file.type === 'application/pdf';
-
-        const isValidType =
-          (isImage && Utils.supportedImageTypes.includes(file.type)) ||
-          (isVideo && Utils.supportedVideoTypes.includes(file.type)) ||
-          (isAudio && Utils.supportedAudioTypes.includes(file.type)) ||
-          isPDF;
-
-        if (!isValidType) {
-          addAlert('File type not supported.', 'warning');
-          return false;
-        }
-
-        if (isImage && file.size > maxImageSizeInBytes) {
-          addAlert('The maximum allowed size for images is 5 MB.', 'warning');
-          return false;
-        }
-        if (!isImage && file.size > maxOtherSizeInBytes) {
-          addAlert('The maximum allowed size is 20 MB.', 'warning');
-          return false;
-        }
-
-        return true;
-      });
-
-      if (selectedFiles && selectedFiles.length + validFiles.length > 4) {
+      // Check file limit before processing
+      const totalFiles = (selectedFiles?.length || 0) + files.length;
+      if (totalFiles > 4) {
         addAlert('Max 4 files only.', 'warning');
         return;
       }
 
-      const newFiles = selectedFiles && validFiles.slice(0, 4 - selectedFiles.length);
-      const newPreviews = newFiles && newFiles.map((file) => URL.createObjectURL(file));
+      const processFiles = async () => {
+        const validFiles: File[] = [];
 
-      setSelectedFiles && newFiles && setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles].slice(0, 4));
-      newPreviews &&
-        setFilePreviews &&
-        setFilePreviews((prevPreviews) => [...prevPreviews, ...newPreviews].slice(0, 4));
+        for (const file of Array.from(files)) {
+          // Check if we already have 4 files
+          if (validFiles.length >= 4 - (selectedFiles?.length || 0)) {
+            break;
+          }
 
-      if (newFiles && newFiles?.length > 0 && setTextArea) {
-        setTextArea(true);
-      }
+          const isImage = file.type.startsWith('image/');
+          const isVideo = file.type.startsWith('video/');
+          const isAudio = file.type.startsWith('audio/');
+          const isPDF = file.type === 'application/pdf';
+          const isValidType =
+            (isImage && Utils.supportedImageTypes.includes(file.type)) ||
+            (isVideo && Utils.supportedVideoTypes.includes(file.type)) ||
+            (isAudio && Utils.supportedAudioTypes.includes(file.type)) ||
+            isPDF;
+
+          if (!isValidType) {
+            addAlert('File type not supported.', 'warning');
+            continue;
+          }
+
+          if (isImage && file.size > maxImageSizeInBytes) {
+            try {
+              const loadingAlertId = addAlert('Compressing image...', 'loading');
+              setIsCompressing(true);
+              const resizedFile = await Utils.resizeImageFile(file, maxImageSizeInBytes);
+              removeAlert(loadingAlertId);
+              setIsCompressing(false);
+              validFiles.push(resizedFile);
+            } catch (error) {
+              addAlert('The maximum allowed size for images is 5 MB', 'warning');
+              continue;
+            }
+          } else if (!isImage && file.size > maxOtherSizeInBytes) {
+            addAlert('The maximum allowed size is 20 MB', 'warning');
+            continue;
+          } else {
+            validFiles.push(file);
+          }
+        }
+
+        const newFiles = validFiles.slice(0, 4 - (selectedFiles?.length || 0));
+        const newPreviews = newFiles.map((file) => URL.createObjectURL(file));
+
+        setSelectedFiles && newFiles && setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles].slice(0, 4));
+        newPreviews &&
+          setFilePreviews &&
+          setFilePreviews((prevPreviews) => [...prevPreviews, ...newPreviews].slice(0, 4));
+
+        if (newFiles && newFiles?.length > 0 && setTextArea) {
+          setTextArea(true);
+        }
+      };
+
+      await processFiles();
     }
   };
 

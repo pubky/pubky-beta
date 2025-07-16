@@ -273,7 +273,7 @@ const Parsing = ({ children, fullContent = false, largeView, repostView }: Parsi
           if (part.startsWith('`') && part.endsWith('`')) {
             const content = part.slice(1, -1);
             return (
-              <span key={index} className="border border-white/10 px-1.5 py-0.5 rounded bg-[#2A2D30] text-[#E8902C]">
+              <span key={index} className="border border-white/10 px-1 py-0 rounded bg-[#2A2D30] text-[#E8902C]">
                 {content}
               </span>
             );

@@ -22,6 +22,7 @@ export default function ContentCreateRepost({ setShowModalRepost, post, setHasCo
   const [isValidContent, setIsValidContent] = useState(false);
   const [sendingRepost, setSendingRepost] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
+  const [isCompressing, setIsCompressing] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   useEffect(() => {
@@ -131,20 +132,22 @@ export default function ContentCreateRepost({ setShowModalRepost, post, setHasCo
           arrayTags={arrayTags}
           setArrayTags={setArrayTags}
           placeHolder="Optional comment"
+          setIsCompressing={setIsCompressing}
           button={
             <Button.Medium
               id="repost-btn"
               className="w-auto"
               variant="line"
+              disabled={sendingRepost || isCompressing}
               loading={sendingRepost}
               onClick={
-                !sendingRepost
+                !sendingRepost && !isCompressing
                   ? isValidContent || selectedFiles.length > 0
                     ? () => handleSubmitRepost(contentRepost)
                     : () => handleSubmitQuickRepost()
                   : undefined
               }
-              icon={<Icon.Repost color="white" />}
+              icon={<Icon.Repost color={isCompressing ? 'gray' : 'white'} />}
             >
               Repost
             </Button.Medium>

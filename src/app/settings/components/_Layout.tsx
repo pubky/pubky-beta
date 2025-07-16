@@ -9,6 +9,7 @@ import MenuMobile from '../_menuMobile';
 import Faq from '../_faq';
 import Version from '../_version';
 import { Settings } from '.';
+import ToSAndPrivacy from '../_ToS-Privacy';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -42,6 +43,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
         {/* Sidebar extras */}
         <Components.Sidebar className="w-[280px] hidden xl:block">
+          <ToSAndPrivacy />
           {!isHelpSection && <Faq />}
           <div className="self-start sticky top-[120px]">
             <Components.Feedback />

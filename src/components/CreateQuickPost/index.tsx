@@ -21,6 +21,7 @@ export default function CreateQuickPost({ largeView = false, loadingFeed }: Crea
   const [textArea, setTextArea] = useState(false);
   const [quote, setQuote] = useState<string>();
   const [isValidContent, setIsValidContent] = useState(false);
+  const [isCompressing, setIsCompressing] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const [placeholder, setPlaceholder] = useState('');
 
@@ -102,16 +103,21 @@ export default function CreateQuickPost({ largeView = false, loadingFeed }: Crea
           loading={sendingPost}
           textArea={textArea}
           article
+          setIsCompressing={setIsCompressing}
           button={
             <Button.Medium
               id="post-btn"
               className="w-auto"
               variant="line"
-              icon={<Icon.PaperPlaneRight color={!isValidContent && selectedFiles.length === 0 ? 'gray' : 'white'} />}
-              disabled={(!isValidContent && selectedFiles.length === 0) || sendingPost}
+              icon={
+                <Icon.PaperPlaneRight
+                  color={(!isValidContent && selectedFiles.length === 0) || isCompressing ? 'gray' : 'white'}
+                />
+              }
+              disabled={(!isValidContent && selectedFiles.length === 0) || sendingPost || isCompressing}
               loading={sendingPost}
               onClick={
-                (isValidContent || selectedFiles.length > 0) && !sendingPost
+                (isValidContent || selectedFiles.length > 0) && !sendingPost && !isCompressing
                   ? () => handleSubmit(contentPost)
                   : undefined
               }

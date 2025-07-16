@@ -3,18 +3,20 @@
 import { useEffect, useState } from 'react';
 import { Header as HeaderUI, Icon } from '@social/ui-shared';
 import { useModal, usePubkyClientContext } from '@/contexts';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import useIsScrollup from '@/hooks/useIsScrollUp';
 
 interface HeaderMobileProps {
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   children?: React.ReactNode;
+  postView?: boolean;
 }
 
-export default function HeaderMobile({ leftIcon, rightIcon, children }: HeaderMobileProps) {
+export default function HeaderMobile({ leftIcon, rightIcon, children, postView }: HeaderMobileProps) {
   const pathname = usePathname();
-  const { openModal } = useModal();
+  const router = useRouter();
+  const { openModal, isOpen } = useModal();
   const { pubky, isLoggedIn, setSearchTags } = usePubkyClientContext();
   const isVisible = useIsScrollup();
   const [logoLink, setLogoLink] = useState('/onboarding');
@@ -39,8 +41,11 @@ export default function HeaderMobile({ leftIcon, rightIcon, children }: HeaderMo
     }
   }, [pathname, setSearchTags]);
 
+  // Force header to be visible when modal is open
+  const shouldShowHeader = isVisible || isOpen('postView');
+
   return (
-    <HeaderUI.Root className={`flex lg:hidden items-center ${!isVisible && 'hidden'}`}>
+    <HeaderUI.Root className={`flex lg:hidden items-center ${!shouldShowHeader && 'hidden'}`}>
       <div className="relative flex w-full items-center">
         {pubky && <div className="absolute left-0">{leftIcon}</div>}
 

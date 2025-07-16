@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Icon, Tooltip, Post as PostUI, Button, Typography } from '@social/ui-shared';
+import { Icon, Tooltip, Post as PostUI, Button, Typography, PostUtil } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import { useAlertContext, usePubkyClientContext } from '@/contexts';
 import { PostView } from '@/types/Post';
@@ -147,7 +147,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
   }, [following]);
 
   return (
-    <Tooltip.Main onClick={(event) => event.stopPropagation()} className="cursor-default w-[300px]">
+    <Tooltip.Main onClick={(event) => event.stopPropagation()} className="cursor-default w-[320px]">
       <div className="w-full flex flex-col justify-between">
         <Link href={`/profile/${idAuthor}`} className="justify-start items-center gap-2 flex cursor-pointer">
           <PostUI.ImageUser id={idAuthor} alt="user" />
@@ -161,7 +161,7 @@ export default function Profile({ post, profileId }: ProfileProps) {
       </div>
       <Typography.Body
         variant="medium"
-        className="scrollbar-thin scrollbar-webkit my-3 text-opacity-80 break-words max-h-[150px] overflow-y-auto"
+        className="my-3 text-opacity-80 break-words max-h-[150px] overflow-y-auto scrollbar-thin scrollbar-webkit"
         onClick={(event) => event.stopPropagation()}
       >
         <Parsing>{author?.details?.bio ? Utils.truncateText(author?.details?.bio, 80) : 'No bio.'}</Parsing>
@@ -187,7 +187,10 @@ export default function Profile({ post, profileId }: ProfileProps) {
               <Typography.Label>{following?.length}</Typography.Label>
               <Typography.Label className="text-opacity-50">Following</Typography.Label>
             </div>
-            {followingImages && <PostUI.UserPic images={followingImages} />}
+            <div className="flex flex-wrap">
+              {followingImages && <PostUI.UserPic images={followingImages} />}
+              {following?.length > 3 && <PostUtil.Counter className="-ml-2">+{following?.length - 3}</PostUtil.Counter>}
+            </div>
           </Link>
         )}
         {isLoadingFollowers || !followers ? (
@@ -210,7 +213,10 @@ export default function Profile({ post, profileId }: ProfileProps) {
               <Typography.Label>{followers?.length}</Typography.Label>
               <Typography.Label className="text-opacity-50">Followers</Typography.Label>
             </div>
-            {followersImages && <PostUI.UserPic images={followersImages} />}
+            <div className="flex flex-wrap">
+              {followersImages && <PostUI.UserPic images={followersImages} />}
+              {followers?.length > 3 && <PostUtil.Counter className="-ml-2">+{followers?.length - 3}</PostUtil.Counter>}
+            </div>
           </Link>
         )}
       </div>

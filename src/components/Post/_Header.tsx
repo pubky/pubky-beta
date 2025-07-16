@@ -56,14 +56,12 @@ export default function Header({ post, largeView = false, repostView = false }: 
               <PostUI.Username className={`${largeView ? 'text-2xl' : ''} hover:underline hover:decoration-solid`}>
                 {userDetails.name && Utils.minifyText(userDetails.name, 24)}
               </PostUI.Username>
-              {!repostView && (
-                <Typography.Label className="cursor-pointer text-opacity-30 -mt-1 lg:mt-0">
-                  {Utils.minifyPubky(author)}
-                </Typography.Label>
-              )}
+              <Typography.Label className="cursor-pointer text-opacity-30 -mt-1 lg:mt-0">
+                {Utils.minifyPubky(author)}
+              </Typography.Label>
             </div>
           </div>
-          {showTooltipProfile && !isMobile && !repostView && <Tooltip.Profile post={post} />}
+          {showTooltipProfile && !isMobile && <Tooltip.Profile post={post} />}
         </TooltipUI.Root>
       </div>
       <div className={`relative flex items-center gap-0 ${largeView ? 'hidden' : ''}`}>

@@ -120,7 +120,20 @@ export default function Index({ creatorPubky }: { creatorPubky?: string }) {
           const existingPost = prev.find((p) => p.details.id === nexusData.details.id);
 
           if (existingPost) {
-            return prev.map((p) => (p.details.id === nexusData.details.id ? nexusData : p));
+            // Preserve optimistic tags if the server data has fewer tags
+            const mergedPost = {
+              ...nexusData,
+              tags:
+                nexusData.tags && nexusData.tags.length >= existingPost.tags.length
+                  ? nexusData.tags
+                  : existingPost.tags,
+              counts: {
+                ...nexusData.counts,
+                tags: Math.max(nexusData.counts?.tags || 0, existingPost.counts?.tags || 0)
+              }
+            };
+
+            return prev.map((p) => (p.details.id === nexusData.details.id ? mergedPost : p));
           }
 
           return prev;

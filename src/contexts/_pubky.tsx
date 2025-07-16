@@ -309,7 +309,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
       if (String(error) === 'error sending request' && typeof window !== 'undefined' && !navigator.onLine) {
         return { status: true, message: 'connection lost' };
       }
-      return { status: false, message: String(error) };
+      return { status: true, message: 'homeserver down' };
     }
   };
 
@@ -627,9 +627,14 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
       const response = await homeserver.put(postResult.meta.url, JSON.stringify(post));
       await handleHomeserverResponse(response);
 
-      if (tags) {
+      // Create tags before returning the result
+      if (tags && tags.length > 0) {
         for (const tag of tags) {
-          await createTag(pubky!, postResult.meta.id, tag);
+          try {
+            await createTag(pubky!, postResult.meta.id, tag);
+          } catch (error) {
+            console.error(`Error creating tag ${tag}:`, error);
+          }
         }
       }
 
@@ -689,14 +694,15 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
           reposts: 0,
           tags: tags?.length || 0
         } as PostCounts,
-        tags: tags
-          ? tags.map((tag) => ({
-              label: tag,
-              taggers: [pubky],
-              taggers_count: 1,
-              relationship: true
-            }))
-          : [],
+        tags:
+          tags && tags.length > 0
+            ? tags.map((tag) => ({
+                label: tag,
+                taggers: [pubky],
+                taggers_count: 1,
+                relationship: true
+              }))
+            : [],
         cached: 'homeserver'
       } as PostView;
 
@@ -744,13 +750,15 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
           reposts: 0,
           tags: tags?.length || 0
         } as PostCounts,
-        tags: tags
-          ? tags.map((tag) => ({
-              label: tag,
-              taggers: [pubky],
-              taggers_count: 1
-            }))
-          : [],
+        tags:
+          tags && tags.length > 0
+            ? tags.map((tag) => ({
+                label: tag,
+                taggers: [pubky],
+                taggers_count: 1,
+                relationship: true
+              }))
+            : [],
         cached: 'homeserver'
       } as PostView;
 

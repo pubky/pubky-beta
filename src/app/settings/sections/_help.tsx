@@ -200,6 +200,36 @@ export default function Help() {
         >
           Pubky Support (Telegram)
         </Button.Large>
+        <div className="xl:hidden flex flex-col gap-6">
+          <div className="w-full h-px bg-white bg-opacity-10 my-6" />
+          <div className="justify-start items-center gap-2 inline-flex">
+            <div>
+              <Icon.FileText size="24" />
+            </div>
+            <Typography.H2>Terms of Service & Privacy</Typography.H2>
+          </div>
+          <Typography.Body variant="medium" className="text-opacity-80">
+            Please read our terms carefully.
+          </Typography.Body>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <Button.Large
+              variant="secondary"
+              className="w-fit"
+              onClick={() => openModal('termsOfService')}
+              icon={<Icon.ChatCircleText width="16" height="16" />}
+            >
+              Terms of Service
+            </Button.Large>
+            <Button.Large
+              variant="secondary"
+              className="w-fit"
+              onClick={() => openModal('privacyPolicy')}
+              icon={<Icon.ChatCircleText width="16" height="16" />}
+            >
+              Privacy Policy
+            </Button.Large>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -79,12 +79,16 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
     }
   };
 
+  // Reset state when post changes
   useEffect(() => {
+    // Clear any existing replies immediately when post changes
     setReplies([]);
     setSkip(0);
     setInitialLoadComplete(false);
     setIsLoading(true);
     setHasMore(true);
+
+    // Fetch new replies for the current post
     fetchReplies({ skipValue: 0 });
   }, [pubkyAuthor, postId]);
 
@@ -142,7 +146,7 @@ export default function Replies({ pubkyAuthor, postId }: { pubkyAuthor: string; 
   return (
     <>
       {replies.length === 0 && initialLoadComplete ? (
-        <Typography.Body className="text-opacity-50 text-center mt-[100px]">No replies yet.</Typography.Body>
+        <Typography.Body className="text-opacity-50 text-center mt-[50px]">No replies yet.</Typography.Body>
       ) : (
         <div className="flex-col gap-3 inline-flex w-full relative">
           {replies.map((reply, index) => {

@@ -22,6 +22,7 @@ export default function CreateQuickReply({ post, isNestedReply }: CreateQuickPos
   const [textArea, setTextArea] = useState(false);
   const [quote, setQuote] = useState<string>();
   const [isValidContent, setIsValidContent] = useState(false);
+  const [isCompressing, setIsCompressing] = useState(false);
   const [arrayTags, setArrayTags] = useState<string[]>([]);
   const [placeholder, setPlaceholder] = useState('');
 
@@ -91,15 +92,20 @@ export default function CreateQuickReply({ post, isNestedReply }: CreateQuickPos
         loading={sendingReply}
         styleSearchedUsers="absolute"
         variant="small"
+        setIsCompressing={setIsCompressing}
         button={
           <Button.Medium
             className="w-auto"
             variant="line"
-            icon={<Icon.ChatCircleText color={!isValidContent && selectedFiles.length === 0 ? 'gray' : 'white'} />}
-            disabled={!isValidContent && selectedFiles.length === 0}
+            icon={
+              <Icon.ChatCircleText
+                color={(!isValidContent && selectedFiles.length === 0) || isCompressing ? 'gray' : 'white'}
+              />
+            }
+            disabled={(!isValidContent && selectedFiles.length === 0) || sendingReply || isCompressing}
             loading={sendingReply}
             onClick={
-              (isValidContent || selectedFiles.length > 0) && !sendingReply
+              (isValidContent || selectedFiles.length > 0) && !sendingReply && !isCompressing
                 ? () => handleReply(contentReply)
                 : undefined
             }

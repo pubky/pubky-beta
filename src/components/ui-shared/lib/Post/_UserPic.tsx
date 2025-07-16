@@ -17,7 +17,7 @@ export const UserPic = ({ images, ...rest }: UserPicProps) => {
             width={32}
             height={32}
             key={index}
-            className={`w-[32px] h-[32px] rounded-full shadow justify-center items-center flex ${index > 0 && '-ml-2'}`}
+            className={`w-[32px] h-[32px] min-w-[32px] min-h-[32px] rounded-full shadow justify-center items-center flex object-cover flex-shrink-0 ${index > 0 && '-ml-2'}`}
             alt={image.alt ? image.alt : `image-${index + 1}`}
           />
         ))}

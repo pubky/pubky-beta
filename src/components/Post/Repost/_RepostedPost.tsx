@@ -7,9 +7,9 @@ import Actions from '../_Actions';
 import Tags from '../Tags';
 
 import { PostView, PostType } from '@/types/Post';
-import { Utils } from '@social/utils-shared';
 import { Skeleton } from '../..';
 import { useRouter } from 'next/navigation';
+import { useModal } from '@/contexts';
 
 interface RepostedPostProps {
   repostedPost?: PostView;
@@ -39,6 +39,7 @@ export default function Post({
   postType
 }: RepostedPostProps) {
   const router = useRouter();
+  const { openModal } = useModal();
   const [showTags, setShowTags] = useState(false);
   const lineBaseCSS = `ml-[10px] absolute border-l-[1px] h-full border-[#444447] after:content-[' * '] after:bg-[#444447] after:w-[1px] after:h-[12px] after:block after:-mt-[12px] after:-ml-[1px]`;
 
@@ -60,7 +61,7 @@ export default function Post({
     <div
       onClick={(event) => {
         event.stopPropagation();
-        router.push(Utils.encodePostUri(repostedPost.details.uri));
+        openModal('postView', { post: repostedPost });
       }}
     >
       <PostUI.MainCard className={restClassName} postId={repostedPost?.details?.id}>
