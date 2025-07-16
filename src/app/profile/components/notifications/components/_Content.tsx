@@ -10,7 +10,7 @@ import { NotificationView } from '@/types/User';
 
 export default function Index() {
   const { putTimestampNotification } = usePubkyClientContext();
-  const { notifications, loading } = useNotificationsContext();
+  const { notifications, loading, profilesLoading } = useNotificationsContext();
   const [loadingNotifications, setLoadingNotifications] = useState(true);
 
   useEffect(() => {
@@ -27,7 +27,7 @@ export default function Index() {
   }, [loading]);
 
   function renderNotifications(notifications: NotificationView[], loadingNotifications: boolean) {
-    if (loadingNotifications) {
+    if (loadingNotifications || profilesLoading) {
       return <Skeleton.Simple />;
     }
 

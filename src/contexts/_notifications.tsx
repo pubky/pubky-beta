@@ -1,26 +1,33 @@
 'use client';
 import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
-import { BodyNotification, NotificationView } from '@/types/User';
+import { BodyNotification, NotificationView, UserView } from '@/types/User';
 import { useUserNotifications } from '@/hooks/useUser';
 import { getUserNotifications } from '@/services/userService';
 import { NotificationPreferences } from '@/types';
 import { defaultPreferences } from './_filters';
+import { getUserProfile } from '@/services/userService';
 
 type NotificationsContextType = {
   notifications: NotificationView[];
   loading: boolean;
+  profilesLoading: boolean;
+  userProfilesCache: { [userId: string]: UserView | null };
   fetchNotifications: () => Promise<void>;
   loadMoreNotifications: () => Promise<void>;
   applySettings: () => Promise<void>;
+  preloadUserProfiles: (userIds: string[]) => Promise<void>;
 };
 
 const NotificationsContext = createContext<NotificationsContextType>({
   notifications: [],
   loading: true,
+  profilesLoading: true,
+  userProfilesCache: {},
   fetchNotifications: async () => {},
   loadMoreNotifications: async () => {},
-  applySettings: async () => {}
+  applySettings: async () => {},
+  preloadUserProfiles: async () => {}
 });
 
 export function NotificationsWrapper({ children }: { children: ReactNode }) {
@@ -32,12 +39,86 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
   const [skip, setSkip] = useState(0);
   const [notifications, setNotifications] = useState<NotificationView[]>([]);
   const [loading, setLoading] = useState(false);
+  const [profilesLoading, setProfilesLoading] = useState(true);
+  const [userProfilesCache, setUserProfilesCache] = useState<{ [userId: string]: UserView | null }>({});
   const [hasMore, setHasMore] = useState(true);
   const [prevPubky, setPrevPubky] = useState<string | null>(null);
   const [lastViewedTimestamp, setLastViewedTimestamp] = useState<number>(0);
   const [timestampLoaded, setTimestampLoaded] = useState(false);
   const [preferencesLoaded, setPreferencesLoaded] = useState<NotificationPreferences | null>(null);
   const { data: initNotifications, isLoading } = useUserNotifications(pubky ?? '', undefined, undefined, skip, limit);
+
+  // Extract unique user IDs from notifications
+  const extractUserIdsFromNotifications = useCallback((notifications: NotificationView[]): string[] => {
+    const userIds = new Set<string>();
+
+    notifications.forEach((notification) => {
+      const senderPubky = extractSenderPubky(notification.body);
+      if (senderPubky) {
+        userIds.add(senderPubky);
+      }
+    });
+
+    return Array.from(userIds);
+  }, []);
+
+  // Preload user profiles for given user IDs
+  const preloadUserProfiles = useCallback(
+    async (userIds: string[]) => {
+      if (!pubky || userIds.length === 0) return;
+
+      setProfilesLoading(true);
+
+      try {
+        const uniqueUserIds = userIds.filter((userId) => !userProfilesCache.hasOwnProperty(userId));
+
+        if (uniqueUserIds.length === 0) {
+          setProfilesLoading(false);
+          return;
+        }
+
+        // Fetch profiles in parallel with a limit to avoid overwhelming the API
+        const batchSize = 5;
+        const batches = [];
+
+        for (let i = 0; i < uniqueUserIds.length; i += batchSize) {
+          batches.push(uniqueUserIds.slice(i, i + batchSize));
+        }
+
+        for (const batch of batches) {
+          const profilePromises = batch.map(async (userId) => {
+            try {
+              const profile = await getUserProfile(userId, pubky);
+              return { userId, profile };
+            } catch (error) {
+              console.error(`Error fetching profile for ${userId}:`, error);
+              return { userId, profile: null };
+            }
+          });
+
+          const results = await Promise.all(profilePromises);
+
+          setUserProfilesCache((prevCache) => {
+            const newCache = { ...prevCache };
+            results.forEach(({ userId, profile }) => {
+              newCache[userId] = profile;
+            });
+            return newCache;
+          });
+
+          // Small delay between batches to be respectful to the API
+          if (batches.length > 1) {
+            await new Promise((resolve) => setTimeout(resolve, 100));
+          }
+        }
+      } catch (error) {
+        console.error('Error preloading user profiles:', error);
+      } finally {
+        setProfilesLoading(false);
+      }
+    },
+    [pubky, userProfilesCache]
+  );
 
   const checkSettings = async () => {
     if (pubky === undefined) return;
@@ -248,7 +329,22 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
 
     const filtered = filterNotifications(initNotifications);
     updateNotifications(filtered);
-  }, [initNotifications, timestamp, pubky, timestampLoaded, preferencesLoaded, setUnReadNotification]);
+
+    // Preload user profiles for the filtered notifications
+    const userIds = extractUserIdsFromNotifications(filtered);
+    if (userIds.length > 0) {
+      preloadUserProfiles(userIds);
+    }
+  }, [
+    initNotifications,
+    timestamp,
+    pubky,
+    timestampLoaded,
+    preferencesLoaded,
+    setUnReadNotification,
+    extractUserIdsFromNotifications,
+    preloadUserProfiles
+  ]);
 
   // Add effect to update lastViewedTimestamp when notifications are viewed
   useEffect(() => {
@@ -310,6 +406,12 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
           return;
         }
 
+        // Preload user profiles for the new notifications
+        const userIds = extractUserIdsFromNotifications(filteredNotifications);
+        if (userIds.length > 0) {
+          preloadUserProfiles(userIds);
+        }
+
         updateNotifications(filteredNotifications);
         setSkip((prev) => prev + limit);
 
@@ -344,9 +446,12 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
       value={{
         notifications,
         loading,
+        profilesLoading,
+        userProfilesCache,
         fetchNotifications,
         loadMoreNotifications,
-        applySettings
+        applySettings,
+        preloadUserProfiles
       }}
     >
       {children}

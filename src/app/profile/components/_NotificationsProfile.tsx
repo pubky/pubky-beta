@@ -9,7 +9,12 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
 export default function NotificationsProfile() {
-  const { notifications, loading: loadingNotifications, loadMoreNotifications } = useNotificationsContext();
+  const {
+    notifications,
+    loading: loadingNotifications,
+    profilesLoading,
+    loadMoreNotifications
+  } = useNotificationsContext();
   const { unReadNotification, setUnReadNotification } = useFilterContext();
   const [tempUnReadNotification, setTempUnReadNotification] = useState(0);
   const [isInitialized, setIsInitialized] = useState(false);
@@ -60,7 +65,7 @@ export default function NotificationsProfile() {
 
   return (
     <>
-      {loadingNotifications && notifications.length === 0 ? (
+      {(loadingNotifications && notifications.length === 0) || profilesLoading ? (
         <Skeleton.Simple />
       ) : notifications?.length === 0 ? (
         <ContentNotFound

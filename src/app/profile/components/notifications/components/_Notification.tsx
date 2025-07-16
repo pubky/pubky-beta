@@ -6,7 +6,7 @@ import { Icon, Typography, PostUtil } from '@social/ui-shared';
 import Link from 'next/link';
 import { ImageByUri } from '@/components/ImageByUri';
 import { getUserProfile } from '@/services/userService';
-import { usePubkyClientContext } from '@/contexts';
+import { usePubkyClientContext, useNotificationsContext } from '@/contexts';
 import { NotificationView, UserView } from '@/types/User';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
@@ -67,6 +67,7 @@ type NotificationTypeKey = keyof typeof notificationType;
 
 export default function Notification({ notification, unread }: { notification: NotificationView; unread?: boolean }) {
   const { pubky } = usePubkyClientContext();
+  const { userProfilesCache } = useNotificationsContext();
   const isMobile = useIsMobile();
   const [user, setUser] = useState<UserView | null | undefined>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -124,12 +125,19 @@ export default function Notification({ notification, unread }: { notification: N
     }
 
     if (userId) {
-      fetchProfile(userId);
+      // Check if user profile is already in cache
+      if (userProfilesCache.hasOwnProperty(userId)) {
+        setUser(userProfilesCache[userId]);
+        setIsLoading(false);
+      } else {
+        // Fallback to individual fetch if not in cache
+        fetchProfile(userId);
+      }
     } else {
       // If no userId found, set loading to false immediately
       setIsLoading(false);
     }
-  }, [notification, fetchProfile, currentNotificationId]);
+  }, [notification, fetchProfile, currentNotificationId, userProfilesCache]);
 
   const currentNotificationType = notificationType[notification?.body?.type as NotificationTypeKey];
 
