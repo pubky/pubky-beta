@@ -1,7 +1,6 @@
 'use client';
 
 import { Utils } from '@social/utils-shared';
-import getYouTubeID from 'get-youtube-id';
 import LinkPreview from '@/components/ui-shared/lib/Post/_Preview';
 import { GitHub } from '@/components/ui-shared/lib/Preview/Github';
 import { useEffect, useState } from 'react';
@@ -9,9 +8,10 @@ import { Tweet } from 'react-tweet';
 import Parsing from '../Content/_Parsing';
 import { Button, Icon, Skeleton, Typography } from '@social/ui-shared';
 import { FileView, PostView } from '@/types/Post';
-import { getFile } from '@/services/fileService';
 import { Spotify } from 'react-spotify-embed';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { useInlineUrls } from '@/hooks/useInlineUrls';
+import { useFileLoading } from '@/hooks/useFileLoading';
 import Link from 'next/link';
 import { PubkyAppPostKind } from 'pubky-app-specs';
 import { useModal } from '@/contexts';
@@ -39,16 +39,27 @@ export default function Content({
   const BASE_URL = `${NEXT_PUBLIC_NEXUS}/static/files`;
   const isMobile = useIsMobile();
   const { openModal } = useModal();
-  const [preview, setPreview] = useState('');
-  const [videoId, setVideoId] = useState('');
-  const [tweetId, setTweetId] = useState('');
-  const [githubUrl, setGithubUrl] = useState('');
-  const [spotifyUrl, setSpotifyUrl] = useState('');
-  const [fileContents, setFileContents] = useState<FileView[]>([]);
-  const [loading, setLoading] = useState(true);
   const blurCensored = Utils.storage.get('blurCensored') as boolean | undefined;
   const [isUnblurred, setIsUnblurred] = useState(false);
   const censored = !isUnblurred && isCensored && (blurCensored === false ? false : true);
+
+  const text = post?.details?.content;
+  const files = post?.details?.attachments;
+
+  // Use the new hooks for URL processing and file loading
+  const {
+    fileContents: externalFileContents,
+    preview,
+    videoId,
+    tweetId,
+    githubUrl,
+    spotifyUrl
+  } = useInlineUrls({ text: text?.toString() || '', files });
+
+  const { fileContents, loading } = useFileLoading({
+    files,
+    externalFileContents
+  });
 
   useEffect(() => {
     if (post?.details?.uri && isCensored) {
@@ -68,146 +79,14 @@ export default function Content({
     setIsUnblurred(true);
   };
 
-  const cleanText = (text: string) => {
-    return text?.replace(/\n{3,}/g, '\n\n');
-  };
-
-  const isValidUrl = (url: string): boolean => {
-    try {
-      const parsedUrl = new URL(url);
-      return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
-    } catch {
-      return false;
-    }
-  };
-
-  const text = post?.details?.content;
-  const files = post?.details?.attachments;
   const uri = post?.details?.uri;
-  const generateFileUrl = (file: FileView, type = 'main') => `${BASE_URL}/${file.owner_id}/${file.id}/${type}`;
-
-  async function checkForLink(text: string) {
-    // Find all URLs (both protocol and domain-only) with their positions
-    const protocolRegex = /(https?:\/\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+)/g;
-    const domainRegex = /(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)*/g;
-
-    const allUrls: Array<{ url: string; index: number }> = [];
-
-    // Find protocol URLs
-    for (const match of text.matchAll(protocolRegex)) {
-      let url = match[0].replace(/[^a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+$/, '');
-      allUrls.push({ url, index: match.index! });
+  const generateFileUrl = (file: FileView, type = 'main') => {
+    if (file.src === 'external') {
+      // For external images, return the URL directly
+      return file.uri;
     }
-
-    // Find domain-only URLs (skip those that are part of protocol URLs)
-    for (const match of text.matchAll(domainRegex)) {
-      const domain = match[0];
-      const start = match.index!;
-
-      // Check if this domain is part of a protocol URL
-      const beforeDomain = text.slice(Math.max(0, start - 8), start);
-      if (!beforeDomain.includes('http://') && !beforeDomain.includes('https://')) {
-        const fullUrl = `https://${domain}`;
-        if (isValidUrl(fullUrl)) {
-          allUrls.push({ url: fullUrl, index: start });
-        }
-      }
-    }
-
-    // Sort by position and take the first one
-    if (allUrls.length > 0) {
-      const firstUrl = allUrls.sort((a, b) => a.index - b.index)[0];
-      const url = firstUrl.url;
-
-      const postRegex = new RegExp(`/post/([^/]+)/([^/]+)`);
-      if (postRegex.test(url)) return;
-      setPreview(url);
-
-      const youtubeId = getYouTubeID(url);
-      if (youtubeId) setVideoId(youtubeId);
-
-      const twitterRegex = /https?:\/\/(?:www\.)?(?:twitter\.com|x\.com)\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/;
-      const twitterMatch = url.match(twitterRegex);
-      if (twitterMatch) setTweetId(twitterMatch[3]);
-
-      const githubRegex = /https:\/\/github\.com\/[^/]+\/[^/]+(?:\/.*)?/;
-      if (githubRegex.test(url)) setGithubUrl(url);
-
-      const spotifyRegex = /https:\/\/open\.spotify\.com\/track\/\w+/;
-      if (spotifyRegex.test(url)) setSpotifyUrl(url);
-    }
-  }
-
-  useEffect(() => {
-    const cleanedText = cleanText(text?.toString());
-    checkForLink(cleanedText); // Check entire text instead of word by word
-  }, [text]);
-
-  useEffect(() => {
-    const retryInterval = 5000; // 5 seconds
-    let retryTimeouts: NodeJS.Timeout[] = [];
-
-    const fetchFile = async (fileUri: string, retryCount = 0): Promise<FileView | null> => {
-      try {
-        const fetchedFile = await getFile(fileUri);
-        return fetchedFile;
-      } catch (error) {
-        // Return skeleton and schedule retry
-        if (retryCount < 5) {
-          // Limit retries to prevent infinite loops
-          const timeoutId = setTimeout(async () => {
-            const result = await fetchFile(fileUri, retryCount + 1);
-            if (result) {
-              // Update the specific file in fileContents
-              setFileContents((prev) =>
-                prev.map((f) =>
-                  f.urls === JSON.stringify({ main: 'skeleton' }) ? { ...result, urls: result.urls } : f
-                )
-              );
-            }
-          }, retryInterval);
-          retryTimeouts.push(timeoutId);
-        }
-        return {
-          content_type: 'skeleton',
-          urls: JSON.stringify({ main: 'skeleton' }),
-          name: 'Loading...',
-          created_at: Date.now(),
-          src: 'skeleton',
-          uri: fileUri,
-          id: `skeleton-${fileUri}`,
-          indexed_at: Date.now(),
-          owner_id: `skeleton-${fileUri}`,
-          size: 0
-        };
-      }
-    };
-
-    const fetchFiles = async () => {
-      if (files?.length > 0) {
-        setLoading(true);
-        const fileUris = Object.values(files).map((file) => file);
-        const fetchedFiles = await Promise.all(fileUris.map((fileUri) => fetchFile(fileUri)));
-
-        setFileContents(
-          fetchedFiles
-            .filter((file): file is FileView => file !== null)
-            .map((file) => ({
-              ...file,
-              urls: file.urls
-            }))
-        );
-        setLoading(false);
-      }
-    };
-
-    fetchFiles();
-
-    // Cleanup timeouts on unmount
-    return () => {
-      retryTimeouts.forEach((timeoutId) => clearTimeout(timeoutId));
-    };
-  }, [files]);
+    return `${BASE_URL}/${file.owner_id}/${file.id}/${type}`;
+  };
 
   const handleOpenModal = (index: number) => {
     openModal('filesCarousel', {
@@ -216,7 +95,7 @@ export default function Content({
     });
   };
 
-  const cleanedText = cleanText(text?.toString() ?? '');
+  const cleanedText = text?.toString()?.replace(/\n{3,}/g, '\n\n') ?? '';
   const parsedContent = (() => {
     try {
       return JSON.parse(cleanedText);
@@ -272,7 +151,7 @@ export default function Content({
                               ) : (
                                 <img
                                   src={generateFileUrl(file, file.content_type !== 'image/gif' ? 'feed' : 'main')}
-                                  alt={`Fetched file ${index}`}
+                                  alt={file.name || `Image ${index + 1}`}
                                   width={360}
                                   height={200}
                                   className="w-full min-w-[200px] max-w-[360px] h-[104px] object-cover rounded-[8px] overflow-hidden"
@@ -426,7 +305,7 @@ export default function Content({
                                           event.stopPropagation();
                                           handleOpenModal(index);
                                         }}
-                                        alt={`Fetched file ${index}`}
+                                        alt={file.name || `Image ${index + 1}`}
                                         className={`${widthMedia} h-full max-h-[544px] object-cover rounded-[10px] overflow-hidden`}
                                       />
                                     ) : (
