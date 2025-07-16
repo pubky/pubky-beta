@@ -71,22 +71,22 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
       const img = new Image();
       img.onload = () => resolve(true);
       img.onerror = () => resolve(false);
-      
+
       // Add timeout to prevent hanging
       const timeout = setTimeout(() => {
         resolve(false);
       }, 10000); // 10 second timeout
-      
+
       img.onload = () => {
         clearTimeout(timeout);
         resolve(true);
       };
-      
+
       img.onerror = () => {
         clearTimeout(timeout);
         resolve(false);
       };
-      
+
       img.src = url;
     });
   };
