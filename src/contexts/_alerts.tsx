@@ -10,20 +10,21 @@ type AlertMessage = {
   variant?: 'default' | 'warning' | 'connection' | 'homeserver' | 'loading';
   persistent?: boolean;
   isOnline?: boolean;
+  isUp?: boolean;
 };
 
 type AlertContextType = {
   addAlert: (content: ReactNode, variant?: 'default' | 'warning' | 'loading') => number;
   removeAlert: (id: number) => void;
   connectionAlertStatus: (isOnline: boolean) => void;
-  homeserverAlertStaus: (isUp: boolean) => void;
+  homeserverAlertStatus: (isUp: boolean) => void;
 };
 
 const AlertContext = createContext<AlertContextType>({
   addAlert: () => 0,
   removeAlert: () => {},
   connectionAlertStatus: () => {},
-  homeserverAlertStaus: () => {}
+  homeserverAlertStatus: () => {}
 });
 
 export function AlertWrapper({ children }: { children: React.ReactNode }) {
@@ -74,8 +75,8 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const homeserverAlertStaus = (isUp: boolean) => {
-    // Remove any existing connection alerts
+  const homeserverAlertStatus = (isUp: boolean) => {
+    // Remove any existing homeserver alerts
     setAlerts((prev) => prev.filter((alert) => alert.variant !== 'homeserver'));
 
     const content = isUp ? 'Homeserver restored' : 'Homeserver is down';
@@ -86,7 +87,7 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
       {
         id,
         content,
-        variant: 'connection',
+        variant: 'homeserver',
         persistent: !isUp,
         isUp
       }
@@ -124,14 +125,14 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AlertContext.Provider value={{ addAlert, removeAlert, connectionAlertStatus, homeserverAlertStaus }}>
+    <AlertContext.Provider value={{ addAlert, removeAlert, connectionAlertStatus, homeserverAlertStatus }}>
       {children}
       <div
         style={{ bottom: isMobile ? '96px' : '24px' }}
         className="fixed z-max left-1/2 transform -translate-x-1/2 flex flex-col gap-2"
       >
-        {alerts.map(({ id, content, variant = 'default', isOnline }) => (
-          <Alert.Message key={id} icon={iconToShow(variant, isOnline)} variant={variant} isOnline={isOnline}>
+        {alerts.map(({ id, content, variant = 'default', isOnline, isUp }) => (
+          <Alert.Message key={id} icon={iconToShow(variant, isOnline, isUp)} variant={variant} isOnline={isOnline}>
             {content}
           </Alert.Message>
         ))}

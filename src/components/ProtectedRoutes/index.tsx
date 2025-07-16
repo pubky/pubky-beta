@@ -25,7 +25,7 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
     setIsOnline
   } = usePubkyClientContext();
   const { openModal, closeModal } = useModal();
-  const { connectionAlertStatus, homeserverAlertStaus } = useAlertContext();
+  const { connectionAlertStatus, homeserverAlertStatus } = useAlertContext();
   const [loading, setLoading] = useState(true);
   const [imagesLoaded, setImagesLoaded] = useState(false);
 
@@ -132,7 +132,7 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
 
     if (sessionActive.status) {
       if (sessionActive.message === 'connection lost' || !isOnline) openModal('connectionLost');
-      if (sessionActive.message === 'homeserver down') homeserverAlertStaus(false);
+      homeserverAlertStatus(false);
       const hasProfile = await checkProfileUser();
 
       if (!hasProfile) {
