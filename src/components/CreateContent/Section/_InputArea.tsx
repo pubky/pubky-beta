@@ -165,8 +165,18 @@ export default function InputArea({
   };
 
   const handleUserClick = (userId: string) => {
-    const regex = /@\S+/;
-    const newContent = content.replace(regex, `pk:${userId}`);
+    // Handle both @username and pk:userId patterns
+    const atRegex = /@\S+/;
+    const pkRegex = /pk:\S+/;
+
+    let newContent = content;
+
+    // Check if we have a pk: pattern first, then @ pattern
+    if (pkRegex.test(content)) {
+      newContent = content.replace(pkRegex, `pk:${userId}`);
+    } else if (atRegex.test(content)) {
+      newContent = content.replace(atRegex, `pk:${userId}`);
+    }
 
     setContent(newContent);
     setSearchedUsers([]);

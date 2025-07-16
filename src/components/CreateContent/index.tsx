@@ -103,9 +103,30 @@ export default function CreateContent({
       return;
     }
 
+    // Filter out complete pubkeys and partial matches that are too short
+    const filteredQueries = searchQueries.filter((query) => {
+      if (query.startsWith('pk:')) {
+        const userId = query.slice(3);
+        const isCompletePubkey = userId.length >= 52 && /^[a-zA-Z0-9]+$/.test(userId);
+        const shouldSkip = isCompletePubkey || userId.length < 3;
+        return !shouldSkip;
+      }
+      if (query.startsWith('@')) {
+        const username = query.slice(1);
+        const shouldSkip = username.length < 2;
+        return !shouldSkip;
+      }
+      return false;
+    });
+
+    if (filteredQueries.length === 0) {
+      setSearchedUsers([]);
+      return;
+    }
+
     let allUserIds: string[] = [];
 
-    for (const query of searchQueries) {
+    for (const query of filteredQueries) {
       if (query.startsWith('@')) {
         const username = query.slice(1);
         const searchResult = await searchUsersByName(username);
