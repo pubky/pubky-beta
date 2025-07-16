@@ -8,9 +8,20 @@ interface MessageProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'warning' | 'connection' | 'homeserver' | 'loading';
   isOnline?: boolean;
   isUp?: boolean;
+  onRetry?: () => void;
+  isRetrying?: boolean;
 }
 
-export const Message = ({ icon, children, variant = 'default', isOnline, isUp, ...rest }: MessageProps) => {
+export const Message = ({
+  icon,
+  children,
+  variant = 'default',
+  isOnline,
+  isUp,
+  onRetry,
+  isRetrying,
+  ...rest
+}: MessageProps) => {
   const baseCSS = `z-max relative py-2 px-4 rounded-md shadow border w-full`;
 
   let variantCSS = '';
@@ -63,6 +74,15 @@ export const Message = ({ icon, children, variant = 'default', isOnline, isUp, .
         <Typography.Body className={twMerge(colorTextCSS, 'text-opacity-80')} variant="small">
           {children}
         </Typography.Body>
+        {onRetry && variant === 'homeserver' && !isUp && (
+          <button
+            onClick={onRetry}
+            disabled={isRetrying}
+            className="ml-2 underline text-[#e95164] hover:text-[#c8ff00] transition-colors duration-200 disabled:cursor-not-allowed"
+          >
+            {isRetrying ? 'Trying...' : 'Try again'}
+          </button>
+        )}
       </div>
     </div>
   );

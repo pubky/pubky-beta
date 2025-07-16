@@ -11,13 +11,15 @@ type AlertMessage = {
   persistent?: boolean;
   isOnline?: boolean;
   isUp?: boolean;
+  onRetry?: () => void;
+  isRetrying?: boolean;
 };
 
 type AlertContextType = {
   addAlert: (content: ReactNode, variant?: 'default' | 'warning' | 'loading') => number;
   removeAlert: (id: number) => void;
   connectionAlertStatus: (isOnline: boolean) => void;
-  homeserverAlertStatus: (isUp: boolean) => void;
+  homeserverAlertStatus: (isUp: boolean, onRetry?: () => void, isRetrying?: boolean) => void;
 };
 
 const AlertContext = createContext<AlertContextType>({
@@ -75,7 +77,7 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const homeserverAlertStatus = (isUp: boolean) => {
+  const homeserverAlertStatus = (isUp: boolean, onRetry?: () => void, isRetrying?: boolean) => {
     // Remove any existing homeserver alerts
     setAlerts((prev) => prev.filter((alert) => alert.variant !== 'homeserver'));
 
@@ -89,7 +91,9 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
         content,
         variant: 'homeserver',
         persistent: !isUp,
-        isUp
+        isUp,
+        onRetry: !isUp ? onRetry : undefined,
+        isRetrying
       }
     ]);
 
@@ -131,13 +135,15 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
         style={{ bottom: isMobile ? '96px' : '24px' }}
         className="fixed z-max left-1/2 transform -translate-x-1/2 flex flex-col gap-2"
       >
-        {alerts.map(({ id, content, variant = 'default', isOnline, isUp }) => (
+        {alerts.map(({ id, content, variant = 'default', isOnline, isUp, onRetry, isRetrying }) => (
           <Alert.Message
             key={id}
             icon={iconToShow(variant, isOnline, isUp)}
             variant={variant}
             isOnline={isOnline}
             isUp={isUp}
+            onRetry={onRetry}
+            isRetrying={isRetrying}
           >
             {content}
           </Alert.Message>

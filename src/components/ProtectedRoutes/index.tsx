@@ -29,6 +29,7 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
   const [loading, setLoading] = useState(true);
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const [homeserverDown, setHomeserverDown] = useState(false);
+  const [checkingHomeserver, setCheckingHomeserver] = useState(false);
 
   const publicRoutes = [
     '/onboarding',
@@ -128,6 +129,34 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
     return true;
   };
 
+  const retryHomeserverCheck = async () => {
+    if (checkingHomeserver) return; // Prevent multiple simultaneous checks
+
+    setCheckingHomeserver(true);
+
+    try {
+      // Show "Trying..." state in the button
+      homeserverAlertStatus(false, () => retryHomeserverCheck(), true);
+
+      // Wait a bit to show the "Trying..." state
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // Check homeserver status directly
+      const sessionActive = await isSessionActive();
+
+      if (sessionActive.status && sessionActive.message !== 'homeserver down') {
+        // Homeserver is back up
+        homeserverAlertStatus(true);
+        setHomeserverDown(false);
+      } else {
+        // Homeserver is still down
+        homeserverAlertStatus(false, () => retryHomeserverCheck(), false);
+      }
+    } finally {
+      setCheckingHomeserver(false);
+    }
+  };
+
   const checkAccess = async () => {
     const sessionActive = await isSessionActive();
 
@@ -137,7 +166,7 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
       // Handle homeserver status
       if (sessionActive.message === 'homeserver down') {
         if (!homeserverDown) {
-          homeserverAlertStatus(false);
+          homeserverAlertStatus(false, () => retryHomeserverCheck(), false);
           setHomeserverDown(true);
         }
       } else if (homeserverDown) {
