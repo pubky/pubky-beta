@@ -151,7 +151,7 @@ export default function Content({
                               ) : (
                                 <img
                                   src={generateFileUrl(file, file.content_type !== 'image/gif' ? 'feed' : 'main')}
-                                  alt={`Fetched file ${index}`}
+                                  alt={file.name || `Image ${index + 1}`}
                                   width={360}
                                   height={200}
                                   className="w-full min-w-[200px] max-w-[360px] h-[104px] object-cover rounded-[8px] overflow-hidden"
@@ -305,7 +305,7 @@ export default function Content({
                                           event.stopPropagation();
                                           handleOpenModal(index);
                                         }}
-                                        alt={`Fetched file ${index}`}
+                                        alt={file.name || `Image ${index + 1}`}
                                         className={`${widthMedia} h-full max-h-[544px] object-cover rounded-[10px] overflow-hidden`}
                                       />
                                     ) : (

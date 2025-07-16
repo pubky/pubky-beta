@@ -66,6 +66,31 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
     return null;
   };
 
+  const isValidImage = (url: string): Promise<boolean> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve(true);
+      img.onerror = () => resolve(false);
+      
+      // Add timeout to prevent hanging
+      const timeout = setTimeout(() => {
+        resolve(false);
+      }, 10000); // 10 second timeout
+      
+      img.onload = () => {
+        clearTimeout(timeout);
+        resolve(true);
+      };
+      
+      img.onerror = () => {
+        clearTimeout(timeout);
+        resolve(false);
+      };
+      
+      img.src = url;
+    });
+  };
+
   const createImageFileView = (imageUrl: string, index: number): FileView => {
     const fileName = imageUrl.split('/').pop() || `image-${index}`;
     const fileExtension = fileName.includes('.') ? fileName.split('.').pop()?.toLowerCase() : 'jpg';
@@ -310,14 +335,32 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
       }
     }
 
+    // Validate external image URLs before creating FileView objects
+    const validImageUrls: string[] = [];
+    if (foundImageUrls.length > 0) {
+      const imageValidationPromises = foundImageUrls.map(async (url) => {
+        if (isInternalPubkyUrl(url)) {
+          // Internal URLs are always considered valid
+          return url;
+        } else {
+          // Validate external image URLs
+          const isValid = await isValidImage(url);
+          return isValid ? url : null;
+        }
+      });
+
+      const validationResults = await Promise.all(imageValidationPromises);
+      validImageUrls.push(...validationResults.filter((url): url is string => url !== null));
+    }
+
     // Create FileView objects for found URLs
     if (
-      foundImageUrls.length > 0 ||
+      validImageUrls.length > 0 ||
       foundVideoUrls.length > 0 ||
       foundAudioUrls.length > 0 ||
       foundPdfUrls.length > 0
     ) {
-      const imageFileViews = foundImageUrls.map((url, index) => createImageFileView(url, index));
+      const imageFileViews = validImageUrls.map((url, index) => createImageFileView(url, index));
       const videoFileViews = foundVideoUrls.map((url, index) => createVideoFileView(url, index));
       const audioFileViews = foundAudioUrls.map((url, index) => createAudioFileView(url, index));
       const pdfFileViews = foundPdfUrls.map((url, index) => createPdfFileView(url, index));
@@ -374,7 +417,10 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
     if (!files?.length) {
       setFileContents([]);
     }
-    checkForLink(cleanedText);
+    setLoading(true);
+    checkForLink(cleanedText).finally(() => {
+      setLoading(false);
+    });
   }, [text, files]);
 
   return {
