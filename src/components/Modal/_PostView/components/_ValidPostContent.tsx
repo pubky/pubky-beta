@@ -87,7 +87,6 @@ const LongPost = ({ data, user }) => {
     try {
       return JSON.parse(data?.details?.content);
     } catch (error) {
-      console.warn('Failed to parse content as JSON:', error);
       return { title: Utils.minifyText(data?.details?.content, 20), body: data?.details?.content };
     }
   })();
