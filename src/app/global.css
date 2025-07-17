@@ -197,3 +197,8 @@ body {
 .ql-snow a {
   color: #c8ff00 !important;
 }
+
+.tweet-media_root__k6gQ2 {
+  max-height: 300px !important;
+  overflow-y: auto !important;
+}
