@@ -142,7 +142,6 @@ export const addProfileTags = (tags: string[]) => {
   cy.get(`#tag-${tags[0]}`).should('be.visible');
 };
 
-
 export const unfollowUserByUsername = (username: string) => {
   cy.get('#header-profile-pic').click();
   cy.location('pathname').should('eq', '/profile');

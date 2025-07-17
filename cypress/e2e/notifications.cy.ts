@@ -11,7 +11,13 @@ import {
 import { slowCypressDown } from 'cypress-slow-down';
 import 'cypress-slow-down/commands';
 import { searchAndFollowProfile, searchForProfileByPubky } from '../support/contacts';
-import { clickFollowButton, goToProfilePageFromHeader, unfollowUserByUsername, verifyNotificationCounter, waitForNotificationDotToDisappear } from '../support/profile';
+import {
+  clickFollowButton,
+  goToProfilePageFromHeader,
+  unfollowUserByUsername,
+  verifyNotificationCounter,
+  waitForNotificationDotToDisappear
+} from '../support/profile';
 import { addProfileTags } from '../support/profile';
 import { checkLatestNotification } from '../support/profile';
 import { HasBackedUp, SkipOnboardingSlides } from '../support/types/enums';
