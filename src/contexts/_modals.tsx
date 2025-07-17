@@ -185,7 +185,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
           });
           return newModals;
         });
-        
+
         setModalProps((prev) => {
           const newProps = { ...prev };
           // Only clear props for non-persistent modals
@@ -196,7 +196,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
           });
           return newProps;
         });
-        
+
         setModalOrder((prev) => prev.filter((modalId) => persistentModals.includes(modalId)));
         modalOpenedByUrl.current = false;
       }, 50);
