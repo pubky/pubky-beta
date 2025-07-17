@@ -39,7 +39,6 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
   // Reset replies when modal opens and update post key for proper re-rendering
   useEffect(() => {
     if (showModal && post) {
-      setReplies([]);
       // Create a unique key for the post to force re-rendering of child components
       setPostKey(`${post.details.author}-${post.details.id}`);
     }
