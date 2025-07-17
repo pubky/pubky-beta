@@ -155,3 +155,15 @@ export const unfollowUserByUsername = (username: string) => {
     .click();
   cy.get('#list-follow-button').should('contain.text', 'Follow');
 };
+
+export const verifyNotificationCounter = (expectedCount = '1') => {
+  // Wait and reload if the counter doesn't appear
+  cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
+  // Assert the counter text
+  cy.get('#header-notification-counter').should('have.text', expectedCount);
+};
+
+export const goToProfilePageFromHeader = () => {
+  cy.get('#header-profile-pic').click();
+  cy.location('pathname').should('eq', '/profile');
+};

@@ -11,7 +11,7 @@ import {
 import { slowCypressDown } from 'cypress-slow-down';
 import 'cypress-slow-down/commands';
 import { searchAndFollowProfile, searchForProfileByPubky } from '../support/contacts';
-import { clickFollowButton, unfollowUserByUsername, waitForNotificationDotToDisappear } from '../support/profile';
+import { clickFollowButton, goToProfilePageFromHeader, unfollowUserByUsername, verifyNotificationCounter, waitForNotificationDotToDisappear } from '../support/profile';
 import { addProfileTags } from '../support/profile';
 import { checkLatestNotification } from '../support/profile';
 import { HasBackedUp, SkipOnboardingSlides } from '../support/types/enums';
@@ -63,13 +63,8 @@ describe('notifications', () => {
     cy.signOut(HasBackedUp.Yes);
 
     cy.signIn(backupDownloadFilePath(profile2.username));
-    // wait and reload if notification counter doesn't show
-    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
-    // check notification counter on profile picture is 1
-    cy.get('#header-notification-counter').should('have.text', '1');
-    // navigate to profile 2 profile page
-    cy.get('#header-profile-pic').click();
-    cy.location('pathname').should('eq', '/profile');
+    verifyNotificationCounter();
+    goToProfilePageFromHeader();
     // check latest notification on profile page and navigate to profile 1 profile page
     checkLatestNotification([profile1.username, 'followed you'], profile1.username);
 
@@ -81,13 +76,8 @@ describe('notifications', () => {
 
     cy.signIn(backupDownloadFilePath(profile1.username));
     waitForFeedToLoad();
-    // wait and reload if notification counter doesn't show
-    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
-    // check notification counter on profile picture is 1
-    cy.get('#header-notification-counter').should('have.text', '1');
-    // navigate to profile 1 profile page
-    cy.get('#header-profile-pic').click();
-    cy.location('pathname').should('eq', '/profile');
+    verifyNotificationCounter();
+    goToProfilePageFromHeader();
     // check latest notification on profile page
     checkLatestNotification([profile2.username, 'is your friend now']);
 
@@ -103,13 +93,8 @@ describe('notifications', () => {
     // * profile 2 checks notification for lost friend
     cy.signIn(backupDownloadFilePath(profile2.username));
     waitForFeedToLoad();
-    // wait and reload if notification counter doesn't show
-    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
-    // check notification counter on profile picture is 1
-    cy.get('#header-notification-counter').should('have.text', '1');
-    // navigate to profile 1 profile page
-    cy.get('#header-profile-pic').click();
-    cy.location('pathname').should('eq', '/profile');
+    verifyNotificationCounter();
+    goToProfilePageFromHeader();
     // check latest notification on profile page
     checkLatestNotification([profile1.username, 'is not your friend anymore']);
 
@@ -150,13 +135,8 @@ describe('notifications', () => {
 
     cy.signIn(backupDownloadFilePath(profile2.username));
     waitForFeedToLoad();
-    // wait and reload if notification counter doesn't show
-    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
-    // check notification counter on profile picture is 1
-    cy.get('#header-notification-counter').should('have.text', '1');
-    // navigate to profile 2 profile page
-    cy.get('#header-profile-pic').click();
-    cy.location('pathname').should('eq', '/profile');
+    verifyNotificationCounter();
+    goToProfilePageFromHeader();
     // check latest notification on profile page
     checkLatestNotification([profile1.username, 'tagged your profile', profileTag]);
 
@@ -186,11 +166,8 @@ describe('notifications', () => {
 
     cy.signIn(backupDownloadFilePath(profile1.username));
     waitForFeedToLoad();
-    // wait and reload if notification counter doesn't show
-    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
-    cy.get('#header-notification-counter').should('have.text', '1');
-    cy.get('#header-profile-pic').click();
-    cy.location('pathname').should('eq', '/profile');
+    verifyNotificationCounter();
+    goToProfilePageFromHeader();
     checkLatestNotification([profile2.username, 'tagged your post', postTag]);
 
     // TODO: add checks for disabled notifications
@@ -214,13 +191,8 @@ describe('notifications', () => {
 
     cy.signIn(backupDownloadFilePath(profile2.username));
     waitForFeedToLoad();
-    // wait and reload if notification counter doesn't show
-    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
-    // check notification counter on profile picture is 1
-    cy.get('#header-notification-counter').should('have.text', '1');
-    // navigate to profile 2 profile page
-    cy.get('#header-profile-pic').click();
-    cy.location('pathname').should('eq', '/profile');
+    verifyNotificationCounter();
+    goToProfilePageFromHeader();
     // check latest notification on profile page
     checkLatestNotification([profile1.username, 'mentioned you in a post']);
 
@@ -245,11 +217,8 @@ describe('notifications', () => {
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(backupDownloadFilePath(profile1.username));
     waitForFeedToLoad();
-    // wait and reload if notification counter doesn't show
-    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
-    cy.get('#header-notification-counter').should('have.text', '1');
-    cy.get('#header-profile-pic').click();
-    cy.location('pathname').should('eq', '/profile');
+    verifyNotificationCounter();
+    goToProfilePageFromHeader();
     checkLatestNotification([profile2.username, 'replied to your post']);
 
     // TODO: add checks for disabled notifications
@@ -272,11 +241,8 @@ describe('notifications', () => {
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(backupDownloadFilePath(profile1.username));
     waitForFeedToLoad();
-    // wait and reload if notification counter doesn't show
-    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
-    cy.get('#header-notification-counter').should('have.text', '1');
-    cy.get('#header-profile-pic').click();
-    cy.location('pathname').should('eq', '/profile');
+    verifyNotificationCounter();
+    goToProfilePageFromHeader();
     checkLatestNotification([profile2.username, 'reposted your post']);
 
     // TODO: add checks for disabled notifications
@@ -306,11 +272,8 @@ describe('notifications', () => {
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(backupDownloadFilePath(profile2.username));
     waitForFeedToLoad();
-    // wait and reload if notification counter doesn't show
-    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
-    cy.get('#header-notification-counter').should('have.text', '1');
-    cy.get('#header-profile-pic').click();
-    cy.location('pathname').should('eq', '/profile');
+    verifyNotificationCounter();
+    goToProfilePageFromHeader();
     checkLatestNotification([profile1.username, 'deleted a post you replied to']);
 
     // TODO: add checks for disabled notifications
@@ -341,11 +304,8 @@ describe('notifications', () => {
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(backupDownloadFilePath(profile2.username));
     waitForFeedToLoad();
-    // wait and reload if notification counter doesn't show
-    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
-    cy.get('#header-notification-counter').should('have.text', '1');
-    cy.get('#header-profile-pic').click();
-    cy.location('pathname').should('eq', '/profile');
+    verifyNotificationCounter();
+    goToProfilePageFromHeader();
     checkLatestNotification([profile1.username, 'deleted a post you reposted']);
 
     // TODO: add checks for disabled notifications
@@ -375,11 +335,8 @@ describe('notifications', () => {
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(backupDownloadFilePath(profile2.username));
     waitForFeedToLoad();
-    // wait and reload if notification counter doesn't show
-    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
-    cy.get('#header-notification-counter').should('have.text', '1');
-    cy.get('#header-profile-pic').click();
-    cy.location('pathname').should('eq', '/profile');
+    verifyNotificationCounter();
+    goToProfilePageFromHeader();
     checkLatestNotification([profile1.username, 'edited a post you replied to']);
 
     // TODO: add checks for disabled notifications
@@ -411,11 +368,8 @@ describe('notifications', () => {
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(backupDownloadFilePath(profile2.username));
     waitForFeedToLoad();
-    // wait and reload if notification counter doesn't show
-    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
-    cy.get('#header-notification-counter').should('have.text', '1');
-    cy.get('#header-profile-pic').click();
-    cy.location('pathname').should('eq', '/profile');
+    verifyNotificationCounter();
+    goToProfilePageFromHeader();
     checkLatestNotification([profile1.username, 'edited a post you reposted']);
 
     // TODO: add checks for disabled notifications
