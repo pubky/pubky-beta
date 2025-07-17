@@ -84,7 +84,7 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
         persistent = true;
         break;
     }
-    
+
     const id = Date.now();
 
     setAlerts((prev) => [
