@@ -155,7 +155,6 @@ const ContactsContent = ({ contacts, creatorPubky }: ContactsContentProps) => {
           <Skeletons.Simple />
         </div>
       )}
-      {hasMore && <div ref={loader} />}
       {!isLoading && usersList.length === 0 && (
         <ContentNotFound
           icon={currentContact.icon}
@@ -168,6 +167,7 @@ const ContactsContent = ({ contacts, creatorPubky }: ContactsContentProps) => {
           </div>
         </ContentNotFound>
       )}
+      {hasMore && <div ref={loader} />}
     </>
   );
 };
