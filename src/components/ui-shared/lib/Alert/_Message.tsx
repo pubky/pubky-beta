@@ -8,6 +8,7 @@ interface MessageProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'warning' | 'connection' | 'homeserver' | 'loading';
   isOnline?: boolean;
   isUp?: boolean;
+  isLosingConnection?: boolean;
   onRetry?: () => void;
   isRetrying?: boolean;
 }
@@ -18,6 +19,7 @@ export const Message = ({
   variant = 'default',
   isOnline,
   isUp,
+  isLosingConnection,
   onRetry,
   isRetrying,
   ...rest
@@ -42,6 +44,10 @@ export const Message = ({
         variantCSS =
           'bg-[#c8ff00] bg-opacity-10 shadow-[0px_50px_100px_0px_rgba(0,0,0,1.00)] backdrop-blur-[50px] border-[#C8FF00]';
         colorTextCSS = 'text-[#c8ff00]';
+      } else if (isLosingConnection) {
+        variantCSS =
+          'bg-yellow-600 bg-opacity-10 shadow-[0px_50px_100px_0px_rgba(0,0,0,1.00)] backdrop-blur-[50px] border-yellow-500';
+        colorTextCSS = 'text-yellow-500';
       } else {
         variantCSS =
           'bg-[#e95164] bg-opacity-10 shadow-[0px_50px_100px_0px_rgba(0,0,0,1.00)] backdrop-blur-[50px] border-[#e95164]';
@@ -71,7 +77,7 @@ export const Message = ({
     <div id="message-alert" {...rest} className={twMerge(baseCSS, variantCSS, rest.className)}>
       <div className="flex flex-wrap gap-1 items-center justify-center">
         {icon && <div className="relative">{icon}</div>}
-        <Typography.Body className={twMerge(colorTextCSS, 'text-opacity-80')} variant="small">
+        <Typography.Body className={twMerge(colorTextCSS, 'text-center text-opacity-80')} variant="small">
           {children}
         </Typography.Body>
         {onRetry && variant === 'homeserver' && !isUp && (

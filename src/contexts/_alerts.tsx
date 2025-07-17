@@ -11,14 +11,17 @@ type AlertMessage = {
   persistent?: boolean;
   isOnline?: boolean;
   isUp?: boolean;
+  isLosingConnection?: boolean;
   onRetry?: () => void;
   isRetrying?: boolean;
 };
 
+type ConnectionStatus = 'waiting' | 'restored' | 'lost';
+
 type AlertContextType = {
   addAlert: (content: ReactNode, variant?: 'default' | 'warning' | 'loading') => number;
   removeAlert: (id: number) => void;
-  connectionAlertStatus: (isOnline: boolean) => void;
+  connectionAlertStatus: (status: ConnectionStatus) => void;
   homeserverAlertStatus: (isUp: boolean, onRetry?: () => void, isRetrying?: boolean) => void;
 };
 
@@ -52,11 +55,36 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
     setAlerts((prev) => prev.filter((alert) => alert.id !== id));
   };
 
-  const connectionAlertStatus = (isOnline: boolean) => {
+  const connectionAlertStatus = (status: ConnectionStatus) => {
     // Remove any existing connection alerts
     setAlerts((prev) => prev.filter((alert) => alert.variant !== 'connection'));
 
-    const content = isOnline ? 'Internet connection restored' : 'No internet connection';
+    let content: string;
+    let isOnline: boolean;
+    let isLosingConnection: boolean;
+    let persistent: boolean;
+
+    switch (status) {
+      case 'restored':
+        content = 'Internet connection restored';
+        isOnline = true;
+        isLosingConnection = false;
+        persistent = false;
+        break;
+      case 'waiting':
+        content = 'Reconnecting...';
+        isOnline = false;
+        isLosingConnection = true;
+        persistent = true;
+        break;
+      case 'lost':
+        content = 'No internet connection';
+        isOnline = false;
+        isLosingConnection = false;
+        persistent = true;
+        break;
+    }
+
     const id = Date.now();
 
     setAlerts((prev) => [
@@ -65,12 +93,13 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
         id,
         content,
         variant: 'connection',
-        persistent: !isOnline,
-        isOnline
+        persistent,
+        isOnline,
+        isLosingConnection
       }
     ]);
 
-    if (isOnline) {
+    if (status === 'restored') {
       setTimeout(() => {
         setAlerts((prev) => prev.filter((alert) => alert.id !== id));
       }, 3000);
@@ -107,7 +136,8 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
   const iconToShow = (
     variant: 'default' | 'warning' | 'connection' | 'homeserver' | 'loading',
     isOnline?: boolean,
-    isUp?: boolean
+    isUp?: boolean,
+    isLosingConnection?: boolean
   ) => {
     switch (variant) {
       case 'warning':
@@ -115,11 +145,13 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
       case 'loading':
         return <Icon.LoadingSpin size="20" />;
       case 'connection':
-        return isOnline ? (
-          <Icon.CheckCircle size="20" color="#c8ff00" />
-        ) : (
-          <Icon.LoadingSpin size="20" color="#e95164" />
-        );
+        if (isOnline) {
+          return <Icon.CheckCircle size="20" color="#c8ff00" />;
+        } else if (isLosingConnection) {
+          return <Icon.LoadingSpin size="20" color="#fbbf24" />;
+        } else {
+          return <Icon.LoadingSpin size="20" color="#e95164" />;
+        }
       case 'homeserver':
         return isUp ? <Icon.CheckCircle size="20" color="#c8ff00" /> : <Icon.LoadingSpin size="20" color="#e95164" />;
       case 'default':
@@ -135,13 +167,14 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
         style={{ bottom: isMobile ? '96px' : '24px' }}
         className="fixed z-max left-1/2 transform -translate-x-1/2 flex flex-col gap-2"
       >
-        {alerts.map(({ id, content, variant = 'default', isOnline, isUp, onRetry, isRetrying }) => (
+        {alerts.map(({ id, content, variant = 'default', isOnline, isUp, isLosingConnection, onRetry, isRetrying }) => (
           <Alert.Message
             key={id}
-            icon={iconToShow(variant, isOnline, isUp)}
+            icon={iconToShow(variant, isOnline, isUp, isLosingConnection)}
             variant={variant}
             isOnline={isOnline}
             isUp={isUp}
+            isLosingConnection={isLosingConnection}
             onRetry={onRetry}
             isRetrying={isRetrying}
           >

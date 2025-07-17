@@ -24,12 +24,13 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
     isOnline,
     setIsOnline
   } = usePubkyClientContext();
-  const { openModal, closeModal } = useModal();
+  const { openModal, closeModal, isOpen } = useModal();
   const { connectionAlertStatus, homeserverAlertStatus } = useAlertContext();
   const [loading, setLoading] = useState(true);
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const [homeserverDown, setHomeserverDown] = useState(false);
   const [checkingHomeserver, setCheckingHomeserver] = useState(false);
+  const [connectionLostTimeout, setConnectionLostTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const publicRoutes = [
     '/onboarding',
@@ -161,7 +162,42 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
     const sessionActive = await isSessionActive();
 
     if (sessionActive.status) {
-      if (sessionActive.message === 'connection lost' || !isOnline) openModal('connectionLost');
+      if (sessionActive.message === 'connection lost' || !isOnline) {
+        // If we're already offline (no internet at page load), show "lost" immediately
+        if (!navigator.onLine) {
+          connectionAlertStatus('lost');
+          if (!isOpen('connectionLost')) {
+            openModal('connectionLost');
+          }
+        } else {
+          // If we just lost connection, show "waiting" first
+          connectionAlertStatus('waiting');
+
+          if (connectionLostTimeout) {
+            clearTimeout(connectionLostTimeout);
+            setConnectionLostTimeout(null);
+          }
+
+          const timeout = setTimeout(() => {
+            connectionAlertStatus('lost');
+
+            if (!isOpen('connectionLost')) {
+              openModal('connectionLost');
+            }
+          }, 3000);
+
+          setConnectionLostTimeout(timeout);
+        }
+      } else {
+        if (connectionLostTimeout) {
+          clearTimeout(connectionLostTimeout);
+          setConnectionLostTimeout(null);
+        }
+
+        if (isOpen('connectionLost')) {
+          closeModal('connectionLost');
+        }
+      }
 
       // Handle homeserver status
       if (sessionActive.message === 'homeserver down') {
@@ -264,14 +300,39 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
     const handleOnline = () => {
       // Only show "connection restored" if we were previously offline
       if (!isOnline) {
-        connectionAlertStatus(true);
+        connectionAlertStatus('restored');
+
+        // Clear any existing timeout
+        if (connectionLostTimeout) {
+          clearTimeout(connectionLostTimeout);
+          setConnectionLostTimeout(null);
+        }
+
+        if (isOpen('connectionLost')) {
+          closeModal('connectionLost');
+        }
       }
       setIsOnline(true);
     };
 
     const handleOffline = () => {
+      connectionAlertStatus('waiting');
+
+      if (connectionLostTimeout) {
+        clearTimeout(connectionLostTimeout);
+        setConnectionLostTimeout(null);
+      }
+
+      const timeout = setTimeout(() => {
+        connectionAlertStatus('lost');
+
+        if (!isOpen('connectionLost')) {
+          openModal('connectionLost');
+        }
+      }, 3000);
+
+      setConnectionLostTimeout(timeout);
       setIsOnline(false);
-      connectionAlertStatus(false);
     };
 
     // Set initial online status without showing any alert
@@ -285,8 +346,12 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
+
+      if (connectionLostTimeout) {
+        clearTimeout(connectionLostTimeout);
+      }
     };
-  }, [isOnline]); // Add isOnline to dependencies to check previous state
+  }, [isOnline, isOpen, closeModal, connectionLostTimeout]); // Add isOnline to dependencies to check previous state
 
   return (
     <>

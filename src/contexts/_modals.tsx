@@ -173,9 +173,31 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     if (!postUrlMatch) {
       // Add a small delay to handle rapid navigation
       navigationTimeout.current = setTimeout(() => {
-        setOpenModals({});
-        setModalProps({});
-        setModalOrder([]);
+        // Don't close modals that should persist across navigation
+        const persistentModals = ['connectionLost', 'sessionExpired'];
+        setOpenModals((prev) => {
+          const newModals = { ...prev };
+          // Only close non-persistent modals
+          Object.keys(newModals).forEach((modalId) => {
+            if (!persistentModals.includes(modalId)) {
+              delete newModals[modalId];
+            }
+          });
+          return newModals;
+        });
+
+        setModalProps((prev) => {
+          const newProps = { ...prev };
+          // Only clear props for non-persistent modals
+          Object.keys(newProps).forEach((modalId) => {
+            if (!persistentModals.includes(modalId)) {
+              delete newProps[modalId];
+            }
+          });
+          return newProps;
+        });
+
+        setModalOrder((prev) => prev.filter((modalId) => persistentModals.includes(modalId)));
         modalOpenedByUrl.current = false;
       }, 50);
     } else {
