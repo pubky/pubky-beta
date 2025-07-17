@@ -49,18 +49,21 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
   const { data: initNotifications, isLoading } = useUserNotifications(pubky ?? '', undefined, undefined, skip, limit);
 
   // Extract unique user IDs from notifications
-  const extractUserIdsFromNotifications = useCallback((notifications: NotificationView[]): string[] => {
-    const userIds = new Set<string>();
+  const extractUserIdsFromNotifications = useCallback(
+    (notifications: NotificationView[]): string[] => {
+      const userIds = new Set<string>();
 
-    notifications.forEach((notification) => {
-      const senderPubky = extractSenderPubky(notification.body);
-      if (senderPubky) {
-        userIds.add(senderPubky);
-      }
-    });
+      notifications.forEach((notification) => {
+        const senderPubky = extractSenderPubky(notification.body);
+        if (senderPubky) {
+          userIds.add(senderPubky);
+        }
+      });
 
-    return Array.from(userIds);
-  }, [mutedUsers]);
+      return Array.from(userIds);
+    },
+    [mutedUsers]
+  );
 
   // Preload user profiles for given user IDs
   const preloadUserProfiles = useCallback(
@@ -204,54 +207,60 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     return null;
   }, []);
 
-  const groupNotificationsByPost = useCallback((notifications: NotificationView[]): NotificationView[] => {
-    const groupedMap = new Map<string, NotificationView[]>();
+  const groupNotificationsByPost = useCallback(
+    (notifications: NotificationView[]): NotificationView[] => {
+      const groupedMap = new Map<string, NotificationView[]>();
 
-    notifications.forEach((notification) => {
-      const key = getNotificationGroupKey(notification);
-      if (key) {
-        if (!groupedMap.has(key)) {
-          groupedMap.set(key, []);
+      notifications.forEach((notification) => {
+        const key = getNotificationGroupKey(notification);
+        if (key) {
+          if (!groupedMap.has(key)) {
+            groupedMap.set(key, []);
+          }
+          groupedMap.get(key)!.push(notification);
+        } else {
+          // For notifications that can't be grouped, use timestamp as key
+          const timestampKey = `timestamp_${notification.timestamp}`;
+          if (!groupedMap.has(timestampKey)) {
+            groupedMap.set(timestampKey, []);
+          }
+          groupedMap.get(timestampKey)!.push(notification);
         }
-        groupedMap.get(key)!.push(notification);
-      } else {
-        // For notifications that can't be grouped, use timestamp as key
-        const timestampKey = `timestamp_${notification.timestamp}`;
-        if (!groupedMap.has(timestampKey)) {
-          groupedMap.set(timestampKey, []);
+      });
+
+      // Convert grouped notifications back to array, keeping only the most recent one from each group
+      const result: NotificationView[] = [];
+      groupedMap.forEach((group) => {
+        if (group.length > 0) {
+          // Sort by timestamp descending and take the most recent
+          const sortedGroup = group.sort((a, b) => b.timestamp - a.timestamp);
+          result.push(sortedGroup[0]);
         }
-        groupedMap.get(timestampKey)!.push(notification);
-      }
-    });
+      });
 
-    // Convert grouped notifications back to array, keeping only the most recent one from each group
-    const result: NotificationView[] = [];
-    groupedMap.forEach((group) => {
-      if (group.length > 0) {
-        // Sort by timestamp descending and take the most recent
-        const sortedGroup = group.sort((a, b) => b.timestamp - a.timestamp);
-        result.push(sortedGroup[0]);
-      }
-    });
+      return result.sort((a, b) => b.timestamp - a.timestamp);
+    },
+    [getNotificationGroupKey]
+  );
 
-    return result.sort((a, b) => b.timestamp - a.timestamp);
-  }, [getNotificationGroupKey]);
+  const filterNotifications = useCallback(
+    (notifications: NotificationView[]) => {
+      // First filter out muted users and disabled notification types
+      const filtered = notifications.filter((notification) => {
+        const senderPubky = extractSenderPubky(notification.body);
+        return (
+          senderPubky &&
+          !mutedUsers?.includes(senderPubky) &&
+          preferencesLoaded &&
+          preferencesLoaded[notification.body.type as keyof typeof preferencesLoaded]
+        );
+      });
 
-  const filterNotifications = useCallback((notifications: NotificationView[]) => {
-    // First filter out muted users and disabled notification types
-    const filtered = notifications.filter((notification) => {
-      const senderPubky = extractSenderPubky(notification.body);
-      return (
-        senderPubky &&
-        !mutedUsers?.includes(senderPubky) &&
-        preferencesLoaded &&
-        preferencesLoaded[notification.body.type as keyof typeof preferencesLoaded]
-      );
-    });
-
-    // Group notifications by the same post to avoid duplicates
-    return groupNotificationsByPost(filtered);
-  }, [mutedUsers, preferencesLoaded, groupNotificationsByPost]);
+      // Group notifications by the same post to avoid duplicates
+      return groupNotificationsByPost(filtered);
+    },
+    [mutedUsers, preferencesLoaded, groupNotificationsByPost]
+  );
 
   const fetchNotifications = useCallback(async () => {
     if (!pubky || !preferencesLoaded || !hasMore) return;

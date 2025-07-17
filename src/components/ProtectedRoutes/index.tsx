@@ -225,7 +225,7 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
   };
 
   useEffect(() => {
-      checkMutedUsers();
+    checkMutedUsers();
     checkTimestamp();
   }, [pubky, profile]);
 
