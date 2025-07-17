@@ -60,7 +60,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     });
 
     return Array.from(userIds);
-  }, []);
+  }, [mutedUsers]);
 
   // Preload user profiles for given user IDs
   const preloadUserProfiles = useCallback(
@@ -117,7 +117,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
         setProfilesLoading(false);
       }
     },
-    [pubky, userProfilesCache]
+    [pubky, userProfilesCache, mutedUsers]
   );
 
   const checkSettings = async () => {
@@ -187,23 +187,24 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     fetchTimestamp();
   }, [pubky, timestamp, getTimestampNotification, setTimestamp]);
 
-  const filterNotifications = (notifications: NotificationView[]) => {
-    // First filter out muted users and disabled notification types
-    const filtered = notifications.filter((notification) => {
-      const senderPubky = extractSenderPubky(notification.body);
-      return (
-        senderPubky &&
-        !mutedUsers?.includes(senderPubky) &&
-        preferencesLoaded &&
-        preferencesLoaded[notification.body.type as keyof typeof preferencesLoaded]
-      );
-    });
+  const getNotificationGroupKey = useCallback((notification: NotificationView): string | null => {
+    const { body } = notification;
 
-    // Group notifications by the same post to avoid duplicates
-    return groupNotificationsByPost(filtered);
-  };
+    // For post_edited notifications, group by edited_uri + edited_by + edit_source
+    if (body.type === 'post_edited' && body.edited_uri && body.edited_by) {
+      return `edited_${body.edited_uri}_${body.edited_by}_${body.edit_source || 'default'}`;
+    }
 
-  const groupNotificationsByPost = (notifications: NotificationView[]): NotificationView[] => {
+    // For post_deleted notifications, group by deleted_uri + deleted_by + delete_source
+    if (body.type === 'post_deleted' && body.deleted_uri && body.deleted_by) {
+      return `deleted_${body.deleted_uri}_${body.deleted_by}_${body.delete_source || 'default'}`;
+    }
+
+    // For other notification types, don't group (return null to use timestamp as key)
+    return null;
+  }, []);
+
+  const groupNotificationsByPost = useCallback((notifications: NotificationView[]): NotificationView[] => {
     const groupedMap = new Map<string, NotificationView[]>();
 
     notifications.forEach((notification) => {
@@ -234,24 +235,23 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     });
 
     return result.sort((a, b) => b.timestamp - a.timestamp);
-  };
+  }, [getNotificationGroupKey]);
 
-  const getNotificationGroupKey = (notification: NotificationView): string | null => {
-    const { body } = notification;
+  const filterNotifications = useCallback((notifications: NotificationView[]) => {
+    // First filter out muted users and disabled notification types
+    const filtered = notifications.filter((notification) => {
+      const senderPubky = extractSenderPubky(notification.body);
+      return (
+        senderPubky &&
+        !mutedUsers?.includes(senderPubky) &&
+        preferencesLoaded &&
+        preferencesLoaded[notification.body.type as keyof typeof preferencesLoaded]
+      );
+    });
 
-    // For post_edited notifications, group by edited_uri + edited_by + edit_source
-    if (body.type === 'post_edited' && body.edited_uri && body.edited_by) {
-      return `edited_${body.edited_uri}_${body.edited_by}_${body.edit_source || 'default'}`;
-    }
-
-    // For post_deleted notifications, group by deleted_uri + deleted_by + delete_source
-    if (body.type === 'post_deleted' && body.deleted_uri && body.deleted_by) {
-      return `deleted_${body.deleted_uri}_${body.deleted_by}_${body.delete_source || 'default'}`;
-    }
-
-    // For other notification types, don't group (return null to use timestamp as key)
-    return null;
-  };
+    // Group notifications by the same post to avoid duplicates
+    return groupNotificationsByPost(filtered);
+  }, [mutedUsers, preferencesLoaded, groupNotificationsByPost]);
 
   const fetchNotifications = useCallback(async () => {
     if (!pubky || !preferencesLoaded || !hasMore) return;
@@ -301,6 +301,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     initNotifications,
     lastViewedTimestamp,
     timestamp,
+    mutedUsers,
     setUnReadNotification,
     getTimestampNotification,
     setTimestamp
@@ -321,7 +322,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     return () => {
       clearInterval(intervalId);
     };
-  }, [pubky, preferencesLoaded, fetchNotifications]);
+  }, [pubky, preferencesLoaded, mutedUsers, fetchNotifications]);
 
   useEffect(() => {
     // Don't process if we don't have notifications or if specs builder isn't ready yet
@@ -341,6 +342,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     pubky,
     timestampLoaded,
     preferencesLoaded,
+    mutedUsers,
     setUnReadNotification,
     extractUserIdsFromNotifications,
     preloadUserProfiles
@@ -365,6 +367,14 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     );
     setUnReadNotification(unreadCount);
   }, [notifications, timestamp, timestampLoaded, setUnReadNotification]);
+
+  // Refilter existing notifications when mutedUsers changes
+  useEffect(() => {
+    if (!initNotifications || !pubky || !preferencesLoaded) return;
+
+    const filtered = filterNotifications(initNotifications);
+    setNotifications(filtered);
+  }, [mutedUsers, initNotifications, pubky, preferencesLoaded, filterNotifications]);
 
   const updateNotifications = (newNotifications: NotificationView[]) => {
     setNotifications((prev) => {

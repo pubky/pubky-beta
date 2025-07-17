@@ -253,6 +253,16 @@ export const Timeline = () => {
     initializeTimeline();
   }, [reach, sort, content, selectedFeed?.tags, layout]);
 
+  // Refilter timeline when mutedUsers changes
+  useEffect(() => {
+    if (timeline.length > 0 && mutedUsers) {
+      const filteredTimeline = timeline.filter(
+        (post) => !deletedPosts.includes(post.details.id) && !mutedUsers.includes(post.details.author)
+      );
+      setTimeline(filteredTimeline);
+    }
+  }, [mutedUsers, timeline, deletedPosts]);
+
   useEffect(() => {
     fetchNexusData();
   }, [newPosts]);
