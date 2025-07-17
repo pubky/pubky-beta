@@ -81,8 +81,8 @@ export default function NotificationsProfile() {
         <div className="px-6 py-[18px] bg-white/10 rounded-lg" id="notifications-list">
           {tempUnReadNotification > 0 && (
             <div>
-              {notifications.slice(0, tempUnReadNotification).map((notification, index) => (
-                <Notifications.Notification key={index} notification={notification} unread />
+              {notifications.slice(0, tempUnReadNotification).map((notification) => (
+                <Notifications.Notification key={notification.timestamp} notification={notification} unread />
               ))}
             </div>
           )}
@@ -90,7 +90,7 @@ export default function NotificationsProfile() {
             const isLastElement = index === displayedNotifications.length - 1;
 
             return (
-              <div key={index} ref={isLastElement ? loader : null}>
+              <div key={notification.timestamp} ref={isLastElement ? loader : null}>
                 <Notifications.Notification notification={notification} />
               </div>
             );
