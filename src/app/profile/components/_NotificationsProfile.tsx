@@ -58,14 +58,14 @@ export default function NotificationsProfile() {
     tempUnReadNotification
   ]);
 
-  // Show loading skeleton while initializing
-  if (!isInitialized && loadingNotifications) {
+  // Show loading skeleton only for initial load when no notifications are available
+  if (!isInitialized && loadingNotifications && notifications.length === 0) {
     return <Skeleton.Simple />;
   }
 
   return (
     <>
-      {(loadingNotifications && notifications.length === 0) || profilesLoading ? (
+      {loadingNotifications && notifications.length === 0 ? (
         <Skeleton.Simple />
       ) : notifications?.length === 0 ? (
         <ContentNotFound
@@ -97,7 +97,7 @@ export default function NotificationsProfile() {
           })}
         </div>
       )}
-      {loadingNotifications && (
+      {loadingNotifications && notifications.length > 0 && (
         <div className="flex justify-center mt-4 mb-8">
           <Skeleton.Simple />
         </div>
