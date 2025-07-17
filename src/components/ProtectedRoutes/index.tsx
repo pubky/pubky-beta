@@ -24,7 +24,7 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
     isOnline,
     setIsOnline
   } = usePubkyClientContext();
-  const { openModal, closeModal } = useModal();
+  const { openModal, closeModal, isOpen } = useModal();
   const { connectionAlertStatus, homeserverAlertStatus } = useAlertContext();
   const [loading, setLoading] = useState(true);
   const [imagesLoaded, setImagesLoaded] = useState(false);
@@ -161,7 +161,15 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
     const sessionActive = await isSessionActive();
 
     if (sessionActive.status) {
-      if (sessionActive.message === 'connection lost' || !isOnline) openModal('connectionLost');
+      if (sessionActive.message === 'connection lost' || !isOnline) {
+        if (!isOpen('connectionLost')) {
+          openModal('connectionLost');
+        }
+      } else {
+        if (isOpen('connectionLost')) {
+          closeModal('connectionLost');
+        }
+      }
 
       // Handle homeserver status
       if (sessionActive.message === 'homeserver down') {
@@ -265,13 +273,19 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
       // Only show "connection restored" if we were previously offline
       if (!isOnline) {
         connectionAlertStatus(true);
+        if (isOpen('connectionLost')) {
+          closeModal('connectionLost');
+        }
       }
       setIsOnline(true);
     };
 
     const handleOffline = () => {
-      setIsOnline(false);
       connectionAlertStatus(false);
+      if (!isOpen('connectionLost')) {
+        openModal('connectionLost');
+      }
+      setIsOnline(false);
     };
 
     // Set initial online status without showing any alert
@@ -286,7 +300,7 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, [isOnline]); // Add isOnline to dependencies to check previous state
+  }, [isOnline, isOpen, closeModal]); // Add isOnline to dependencies to check previous state
 
   return (
     <>
