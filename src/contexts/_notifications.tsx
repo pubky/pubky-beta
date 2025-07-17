@@ -69,7 +69,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
 
       const hasCachedProfiles = Object.keys(userProfilesCache).length > 0;
       const hasNotifications = notifications.length > 0;
-      
+
       if (!hasCachedProfiles && !hasNotifications) {
         setProfilesLoading(true);
       }
