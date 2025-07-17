@@ -383,6 +383,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
   const extractSenderPubky = (notification: BodyNotification) => {
     return (
       notification.followed_by ||
+      notification.unfollowed_by ||
       notification.tagged_by ||
       notification.replied_by ||
       notification.reposted_by ||
