@@ -11,7 +11,7 @@ import {
 import { slowCypressDown } from 'cypress-slow-down';
 import 'cypress-slow-down/commands';
 import { searchAndFollowProfile, searchForProfileByPubky } from '../support/contacts';
-import { clickFollowButton, waitForNotificationDotToDisappear } from '../support/profile';
+import { clickFollowButton, unfollowUserByUsername, waitForNotificationDotToDisappear } from '../support/profile';
 import { addProfileTags } from '../support/profile';
 import { checkLatestNotification } from '../support/profile';
 import { HasBackedUp, SkipOnboardingSlides } from '../support/types/enums';
@@ -96,11 +96,31 @@ describe('notifications', () => {
     cy.get('#profile-tab-notifications').click();
     waitForNotificationDotToDisappear();
 
-    // TODO: add checks for unfollowing
     // * profile 1 unfollows profile 2
+    unfollowUserByUsername(profile2.username);
+    cy.signOut(HasBackedUp.Yes);
+
     // * profile 2 checks notification for lost friend
+    cy.signIn(backupDownloadFilePath(profile2.username));
+    waitForFeedToLoad();
+    // wait and reload if notification counter doesn't show
+    cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
+    // check notification counter on profile picture is 1
+    cy.get('#header-notification-counter').should('have.text', '1');
+    // navigate to profile 1 profile page
+    cy.get('#header-profile-pic').click();
+    cy.location('pathname').should('eq', '/profile');
+    // check latest notification on profile page
+    checkLatestNotification([profile1.username, 'is not your friend anymore']);
+
     // * profile 2 unfollows profile 1
+    unfollowUserByUsername(profile1.username);
+    cy.signOut(HasBackedUp.Yes);
+
     // * profile 1 checks absence of notifications
+    cy.signIn(backupDownloadFilePath(profile1.username));
+    waitForFeedToLoad();
+    cy.assertElementDoesNotExist('#header-notification-counter');
 
     // TODO: add checks for disabled notifications
     // * profile 1 disables follow notifications
