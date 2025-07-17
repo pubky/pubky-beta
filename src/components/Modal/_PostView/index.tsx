@@ -249,7 +249,13 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
 const LongPost = ({ data, user, onInternalNavigation, postKey }) => {
   const [isUnblurred, setIsUnblurred] = useState(false);
   const blurCensored = Utils.storage.get('blurCensored') as boolean;
-  const content = JSON.parse(data?.details?.content);
+  const content = (() => {
+    try {
+      return JSON.parse(data?.details?.content);
+    } catch (error) {
+      return { title: Utils.minifyText(data?.details?.content, 20), body: data?.details?.content };
+    }
+  })();
   const isCensored = Utils.isPostCensored(data);
   const censored = !isUnblurred && isCensored && (blurCensored === false ? false : true);
 
