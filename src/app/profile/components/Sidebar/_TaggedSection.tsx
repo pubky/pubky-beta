@@ -63,7 +63,7 @@ export default function TaggedSection({
                       }}
                       color={tag?.label && Utils.generateRandomColor(tag?.label)}
                     >
-                      <div className="flex gap-2 items-center">{Utils.minifyText(tag?.label, 20)}</div>
+                      <div className="flex gap-2 items-center">{Utils.minifyText(tag?.label, 10)}</div>
                     </PostUtil.Tag>
                     {/**</TooltipUI.Root>*/}
                     <Link href={pubky ? `/search?tags=${tag?.label}` : ''}>

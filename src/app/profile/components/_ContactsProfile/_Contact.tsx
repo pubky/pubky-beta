@@ -175,39 +175,42 @@ export default function Contact({ contacts, isLoading }: { contacts: UserView[] 
           return (
             <div key={contact?.details?.id} className="w-full">
               <div className="w-full">
-                <div className="p-6 rounded-2xl bg-white bg-opacity-10 lg:p-0 lg:bg-transparent flex-col lg:flex-row justify-start gap-4 inline-flex w-full">
-                  <div className="w-full flex justify-between items-center">
-                    <Link className="flex gap-2 w-full" href={`/profile/${contact?.details?.id}`}>
+                <div className="p-6 rounded-2xl bg-white bg-opacity-10 lg:p-0 lg:bg-transparent flex flex-col lg:flex-row justify-start gap-4 w-full min-w-0">
+                  <div className="flex justify-between items-center min-w-0 flex-1">
+                    <Link className="flex gap-2 min-w-0 flex-1" href={`/profile/${contact?.details?.id}`}>
                       <ImageByUri
                         id={contact?.details?.id}
                         isCensored={Utils.isProfileCensored(contact)}
                         width={48}
                         height={48}
                         alt={`profile-pic-${contact?.details?.id}`}
-                        className="rounded-full w-[48px] h-[48px] max-w-none"
+                        className="rounded-full w-[48px] h-[48px] max-w-none flex-shrink-0"
                       />
-                      <div className="flex-col justify-center items-start inline-flex">
-                        <Typography.Body id="list-profile-name" variant="medium-bold">
+                      <div className="flex-col justify-center items-start flex min-w-0">
+                        <Typography.Body id="list-profile-name" variant="medium-bold" className="truncate">
                           {contact?.details.name && Utils.minifyText(contact?.details?.name, 20)}
                         </Typography.Body>
-                        <Typography.Label className="text-opacity-30 -mt-1">
+                        <Typography.Label className="text-opacity-30 -mt-1 truncate">
                           {contact?.details?.id && Utils.minifyPubky(contact?.details?.id)}
                         </Typography.Label>
                       </div>
                     </Link>
 
-                    <div className="flex lg:hidden gap-4">
-                      <div className="inline-flex flex-col justify-start items-start gap-1">
+                    {/* Mobile Stats */}
+                    <div className="flex lg:hidden gap-4 flex-shrink-0">
+                      <div className="flex flex-col justify-start items-start gap-1">
                         <Typography.Label className="text-[12px] text-opacity-30 -mb-1">Tags</Typography.Label>
                         <Typography.Body variant="medium-bold">{contact?.counts?.tags ?? 0}</Typography.Body>
                       </div>
-                      <div className="inline-flex flex-col justify-start items-start gap-1">
+                      <div className="flex flex-col justify-start items-start gap-1">
                         <Typography.Label className="text-[12px] text-opacity-30 -mb-1">Posts</Typography.Label>
                         <Typography.Body variant="medium-bold">{contact?.counts?.posts ?? 0}</Typography.Body>
                       </div>
                     </div>
                   </div>
-                  <div className="flex flex-wrap lg:flex-nowrap lg:justify-end gap-2 items-center lg:w-full">
+
+                  {/* Tags Section */}
+                  <div className="flex flex-wrap gap-2 items-center min-w-0 flex-shrink-0">
                     {contactTags.slice(0, 3).map((tag, index) => {
                       const isTagFound = tag?.relationship || false;
 
@@ -222,13 +225,14 @@ export default function Contact({ contacts, isLoading }: { contacts: UserView[] 
                               : handleAddProfileTag(contact?.details?.id, tag?.label);
                           }}
                           color={tag?.label && Utils.generateRandomColor(tag?.label)}
+                          className="flex-shrink-0"
                         >
                           <div className="flex gap-2 items-center">
-                            {Utils.minifyText(tag?.label, 20)}
+                            <span className="truncate max-w-[80px]">{Utils.minifyText(tag?.label, 20)}</span>
                             {loadingTags === tag?.label ? (
                               <Icon.LoadingSpin size="12" />
                             ) : (
-                              <Typography.Caption variant="bold" className="text-opacity-60">
+                              <Typography.Caption variant="bold" className="text-opacity-60 flex-shrink-0">
                                 {tag.taggers_count}
                               </Typography.Caption>
                             )}
@@ -237,19 +241,25 @@ export default function Contact({ contacts, isLoading }: { contacts: UserView[] 
                       );
                     })}
                   </div>
-                  <div className="hidden lg:inline-flex flex-col justify-start items-start gap-1 inline-flex">
-                    <Typography.Label className="text-[12px] text-opacity-30 -mb-1">Tags</Typography.Label>
-                    <Typography.Body id="list-tags-counter" variant="medium-bold">
-                      {contact?.counts?.tags ?? 0}
-                    </Typography.Body>
+
+                  {/* Desktop Stats */}
+                  <div className="hidden lg:flex gap-4 flex-shrink-0">
+                    <div className="flex flex-col justify-start items-start gap-1">
+                      <Typography.Label className="text-[12px] text-opacity-30 -mb-1">Tags</Typography.Label>
+                      <Typography.Body id="list-tags-counter" variant="medium-bold">
+                        {contact?.counts?.tags ?? 0}
+                      </Typography.Body>
+                    </div>
+                    <div className="flex flex-col justify-start items-start gap-1">
+                      <Typography.Label className="text-[12px] text-opacity-30 -mb-1">Posts</Typography.Label>
+                      <Typography.Body id="list-posts-counter" variant="medium-bold">
+                        {contact?.counts?.posts ?? 0}
+                      </Typography.Body>
+                    </div>
                   </div>
-                  <div className="hidden lg:inline-flex flex-col justify-start items-start gap-1 inline-flex">
-                    <Typography.Label className="text-[12px] text-opacity-30 -mb-1">Posts</Typography.Label>
-                    <Typography.Body id="list-posts-counter" variant="medium-bold">
-                      {contact?.counts?.posts ?? 0}
-                    </Typography.Body>
-                  </div>
-                  <div className="flex gap-4">
+
+                  {/* Action Button */}
+                  <div className="flex gap-4 flex-shrink-0">
                     {pubkeyUser ? (
                       <Button.Medium
                         id="list-me-label"
@@ -258,8 +268,8 @@ export default function Contact({ contacts, isLoading }: { contacts: UserView[] 
                       >
                         Me
                       </Button.Medium>
-                    ) : isLoading ? (
-                      <Button.Medium disabled loading={isLoading}>
+                    ) : loadingContacts[contact?.details?.id] ? (
+                      <Button.Medium disabled loading={true}>
                         Loading
                       </Button.Medium>
                     ) : isFollowed ? (
