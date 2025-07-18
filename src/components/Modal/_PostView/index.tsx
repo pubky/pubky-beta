@@ -28,7 +28,7 @@ interface PostViewModalProps {
 
 export default function PostViewModal({ showModal, setShowModal, post }: PostViewModalProps) {
   const router = useRouter();
-  const { pubky, setReplies } = usePubkyClientContext();
+  const { pubky } = usePubkyClientContext();
   const isMobile = useIsMobile(1024);
   const replyPostRef = useRef<HTMLDivElement>(null);
   const user = useUserProfile(post?.details?.author, pubky ?? '');
@@ -39,11 +39,10 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
   // Reset replies when modal opens and update post key for proper re-rendering
   useEffect(() => {
     if (showModal && post) {
-      setReplies([]);
       // Create a unique key for the post to force re-rendering of child components
       setPostKey(`${post.details.author}-${post.details.id}`);
     }
-  }, [showModal, post, setReplies]);
+  }, [showModal, post]);
 
   // Handle post prop changes
   useEffect(() => {
