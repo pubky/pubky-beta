@@ -154,8 +154,3 @@ export const unfollowUserByUsername = (username: string) => {
     .click();
   cy.get('#list-follow-button').should('contain.text', 'Follow');
 };
-
-export const goToProfilePageFromHeader = () => {
-  cy.get('#header-profile-pic').click();
-  cy.location('pathname').should('eq', '/profile');
-};

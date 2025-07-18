@@ -13,7 +13,6 @@ import 'cypress-slow-down/commands';
 import { searchAndFollowProfile, searchForProfileByPubky } from '../support/contacts';
 import {
   clickFollowButton,
-  goToProfilePageFromHeader,
   unfollowUserByUsername,
   waitForNotificationDotToDisappear
 } from '../support/profile';
@@ -21,6 +20,7 @@ import { addProfileTags } from '../support/profile';
 import { checkLatestNotification } from '../support/profile';
 import { HasBackedUp, SkipOnboardingSlides } from '../support/types/enums';
 import { verifyNotificationCounter } from '../support/common';
+import { goToProfilePageFromHeader } from '../support/header';
 
 const profile1 = { username: 'Notif #1', pubkyAlias: 'pubky_1' };
 const profile2 = { username: 'Notif #2', pubkyAlias: 'pubky_2' };
