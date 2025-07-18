@@ -4,7 +4,7 @@ export async function resizeVideoFile(file: File, maxSizeInBytes: number = 20 * 
     const video = document.createElement('video');
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    
+
     if (!ctx) {
       reject('No canvas context available');
       return;
@@ -12,52 +12,52 @@ export async function resizeVideoFile(file: File, maxSizeInBytes: number = 20 * 
 
     // Create object URL for the video
     const videoUrl = URL.createObjectURL(file);
-    
+
     video.onloadedmetadata = () => {
       // Start with original dimensions
       let { videoWidth, videoHeight } = video;
       let quality = 0.8; // Start with good quality
       let scale = 1;
       let bitrate = 1000000; // Start with 1Mbps bitrate
-      
+
       const compressVideo = () => {
         // Calculate new dimensions
         const newWidth = Math.round(videoWidth * scale);
         const newHeight = Math.round(videoHeight * scale);
-        
+
         // Set canvas dimensions
         canvas.width = newWidth;
         canvas.height = newHeight;
-        
+
         // Create MediaRecorder with compression settings
         const stream = canvas.captureStream();
         const options: MediaRecorderOptions = {
           mimeType: 'video/mp4',
           videoBitsPerSecond: bitrate
         };
-        
+
         // Fallback to WebM if MP4 is not supported
         if (!MediaRecorder.isTypeSupported(options.mimeType!)) {
           options.mimeType = 'video/webm;codecs=vp9';
         }
-        
+
         // Fallback to VP8 if VP9 is not supported
         if (!MediaRecorder.isTypeSupported(options.mimeType!)) {
           options.mimeType = 'video/webm;codecs=vp8';
         }
-        
+
         const mediaRecorder = new MediaRecorder(stream, options);
         const chunks: Blob[] = [];
-        
+
         mediaRecorder.ondataavailable = (event) => {
           if (event.data.size > 0) {
             chunks.push(event.data);
           }
         };
-        
+
         mediaRecorder.onstop = () => {
           const compressedBlob = new Blob(chunks, { type: options.mimeType || 'video/mp4' });
-          
+
           // Check if file size is within limit
           if (compressedBlob.size <= maxSizeInBytes) {
             // Create new file with compressed video
@@ -65,7 +65,7 @@ export async function resizeVideoFile(file: File, maxSizeInBytes: number = 20 * 
               type: options.mimeType || 'video/mp4',
               lastModified: Date.now()
             });
-            
+
             URL.revokeObjectURL(videoUrl);
             resolve(compressedFile);
           } else {
@@ -87,41 +87,41 @@ export async function resizeVideoFile(file: File, maxSizeInBytes: number = 20 * 
             }
           }
         };
-        
+
         mediaRecorder.onerror = (event) => {
           URL.revokeObjectURL(videoUrl);
           reject('Error during video compression: ' + event);
         };
-        
+
         // Start recording
         mediaRecorder.start();
-        
+
         // Play video and draw frames to canvas
         video.currentTime = 0;
         video.play();
-        
+
         const drawFrame = () => {
           if (video.ended || video.paused) {
             mediaRecorder.stop();
             return;
           }
-          
+
           ctx.drawImage(video, 0, 0, newWidth, newHeight);
           requestAnimationFrame(drawFrame);
         };
-        
+
         drawFrame();
       };
-      
+
       // Start compression process
       compressVideo();
     };
-    
+
     video.onerror = () => {
       URL.revokeObjectURL(videoUrl);
       reject('Error loading video file');
     };
-    
+
     video.src = videoUrl;
     video.load();
   });
