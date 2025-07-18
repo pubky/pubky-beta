@@ -466,7 +466,7 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
       if (githubRegex.test(url)) setGithubUrl(url);
 
       // Spotify detection
-      const spotifyRegex = /https:\/\/open\.spotify\.com\/track\/\w+/;
+      const spotifyRegex = /https:\/\/open\.spotify\.com\/(?:intl-[a-z]{2}\/)?track\/\w+/;
       if (spotifyRegex.test(url)) setSpotifyUrl(url);
     }
   };
