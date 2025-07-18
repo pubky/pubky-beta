@@ -15,12 +15,12 @@ import {
   clickFollowButton,
   goToProfilePageFromHeader,
   unfollowUserByUsername,
-  verifyNotificationCounter,
   waitForNotificationDotToDisappear
 } from '../support/profile';
 import { addProfileTags } from '../support/profile';
 import { checkLatestNotification } from '../support/profile';
 import { HasBackedUp, SkipOnboardingSlides } from '../support/types/enums';
+import { verifyNotificationCounter } from '../support/common';
 
 const profile1 = { username: 'Notif #1', pubkyAlias: 'pubky_1' };
 const profile2 = { username: 'Notif #2', pubkyAlias: 'pubky_2' };
