@@ -1,3 +1,5 @@
+import { goToProfilePageFromHeader } from './header';
+
 interface ProfileField {
   editSelector: string;
   verifySelector: string;
@@ -143,8 +145,7 @@ export const addProfileTags = (tags: string[]) => {
 };
 
 export const unfollowUserByUsername = (username: string) => {
-  cy.get('#header-profile-pic').click();
-  cy.location('pathname').should('eq', '/profile');
+  goToProfilePageFromHeader();
   cy.get('#profile-tab-following').click();
   cy.contains('#list-profile-name', username)
     .parentsUntil('#profile-list-root')
