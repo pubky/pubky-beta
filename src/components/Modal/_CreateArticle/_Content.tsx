@@ -246,7 +246,18 @@ export default function ContentCreateArticle({
           setErrorFile('The maximum allowed size for images is 5 MB');
           return;
         }
-      } else if (!isImage && file.size > maxOtherSizeInBytes) {
+      } else if (isVideo && file.size > maxOtherSizeInBytes) {
+        try {
+          const loadingAlertId = addAlert('Compressing video...', 'loading');
+          setIsCompressing(true);
+          processedFile = await Utils.resizeVideoFile(file, maxOtherSizeInBytes);
+          removeAlert(loadingAlertId);
+          setIsCompressing(false);
+        } catch (error) {
+          setErrorFile('The maximum allowed size for videos is 20 MB');
+          return;
+        }
+      } else if (!isImage && !isVideo && file.size > maxOtherSizeInBytes) {
         setErrorFile('The maximum allowed size is 20 MB');
         return;
       }
@@ -335,7 +346,18 @@ export default function ContentCreateArticle({
             addAlert('The maximum allowed size for images is 5 MB', 'warning');
             return;
           }
-        } else if (!isImage && file.size > maxOtherSizeInBytes) {
+        } else if (isVideo && file.size > maxOtherSizeInBytes) {
+          try {
+            const loadingAlertId = addAlert('Compressing video...', 'loading');
+            setIsCompressing(true);
+            processedFile = await Utils.resizeVideoFile(file, maxOtherSizeInBytes);
+            removeAlert(loadingAlertId);
+            setIsCompressing(false);
+          } catch (error) {
+            addAlert('The maximum allowed size for videos is 20 MB', 'warning');
+            return;
+          }
+        } else if (!isImage && !isVideo && file.size > maxOtherSizeInBytes) {
           addAlert('The maximum allowed size is 20 MB', 'warning');
           return;
         }
