@@ -27,8 +27,24 @@ export default function Bio({ bio, setBio, errors, loading }: BioProps) {
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const handleUserClick = (userId: string) => {
-    const regex = /@\w+/;
-    const newContent = bio.replace(regex, `pk:${userId}`);
+    // Find the last @ or pk: pattern in the text and replace it
+    const atRegex = /@[^\s]*$/;
+    const pkRegex = /pk:[^\s]*$/;
+
+    let newContent = bio;
+
+    // Check if there's a pk: pattern at the end of the text
+    if (pkRegex.test(bio)) {
+      newContent = bio.replace(pkRegex, `pk:${userId}`);
+    }
+    // Check if there's an @ pattern at the end of the text
+    else if (atRegex.test(bio)) {
+      newContent = bio.replace(atRegex, `pk:${userId}`);
+    }
+    // If no pattern found, just append the pk:userId
+    else {
+      newContent = bio + ` pk:${userId}`;
+    }
 
     setBio(newContent);
     setSearchedUsers([]);
@@ -45,9 +61,30 @@ export default function Bio({ bio, setBio, errors, loading }: BioProps) {
       return;
     }
 
+    // Filter out complete pubkeys and partial matches that are too short
+    const filteredQueries = searchQueries.filter((query) => {
+      if (query.startsWith('pk:')) {
+        const userId = query.slice(3);
+        const isCompletePubkey = userId.length >= 52 && /^[a-zA-Z0-9]+$/.test(userId);
+        const shouldSkip = isCompletePubkey || userId.length < 3;
+        return !shouldSkip;
+      }
+      if (query.startsWith('@')) {
+        const username = query.slice(1);
+        const shouldSkip = username.length < 2;
+        return !shouldSkip;
+      }
+      return false;
+    });
+
+    if (filteredQueries.length === 0) {
+      setSearchedUsers([]);
+      return;
+    }
+
     let allUserIds: string[] = [];
 
-    for (const query of searchQueries) {
+    for (const query of filteredQueries) {
       if (query.startsWith('@')) {
         const username = query.slice(1);
         const searchResult = await searchUsersByName(username);
