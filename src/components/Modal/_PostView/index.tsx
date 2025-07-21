@@ -216,7 +216,7 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
       <div className="flex flex-col h-full">
         {/* Content */}
         <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-webkit">
-          <Content.Main className="pt-[80px]">
+          <Content.Main>
             <Header />
 
             <Content.Grid className="flex justify-between flex-col gap-3">
