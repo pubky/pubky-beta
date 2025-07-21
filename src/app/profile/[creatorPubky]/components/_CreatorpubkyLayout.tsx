@@ -50,11 +50,16 @@ export default function CreatorpubkyLayout({
     setLoading(true);
     const pathSegments = pathname?.split('/');
     const lastSegment = pathSegments?.pop();
-    const key = creatorPubky && lastSegment === creatorPubky ? 'posts' : lastSegment;
+    let key;
+    if (isMobile) {
+      key = creatorPubky && lastSegment === creatorPubky ? 'tagged' : lastSegment;
+    } else {
+      key = creatorPubky && lastSegment === creatorPubky ? 'posts' : lastSegment;
+    }
     const foundTab = Profile.FilterTabs.tabs.find((tab) => tab.key === key);
-    setActiveTab(foundTab ? foundTab.id : 0);
+    setActiveTab(foundTab ? foundTab.id : (isMobile ? 6 : 0));
     setLoading(false);
-  }, [pathname, creatorPubky]);
+  }, [pathname, creatorPubky, isMobile]);
 
   if (isLoading) {
     content = <Skeletons.Simple />;

@@ -1,9 +1,8 @@
 import { getSeoMetadata } from '@components/HeaderSEO';
 import { getFile } from '@/services/fileService';
 import { getUserDetails } from '@/services/userService';
-import CreatorpubkyLayout from './components/_CreatorpubkyLayout';
-import { Profile } from '../components';
-import TaggedAs from '../components/_TaggedAs';
+import CreatorpubkyLayout from '../components/_CreatorpubkyLayout';
+import { Profile } from '../../components';
 
 const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
 const BASE_URL = `${NEXT_PUBLIC_NEXUS}`;
@@ -16,18 +15,12 @@ export async function generateMetadata({ params }: Props) {
   const { creatorPubky } = await params;
   try {
     const profile = await getUserDetails(creatorPubky);
-    let profilePic;
-
-    try {
-      profilePic = profile?.image && profile.image !== 'null' && (await getFile(profile.image));
-    } catch (error) {
-      console.log(error);
-    }
+    const profilePic = profile?.image && profile.image !== 'null' && (await getFile(profile.image));
 
     const file = profilePic && `${BASE_URL}/static/files/${JSON.parse(profilePic?.urls).main}`;
 
     return getSeoMetadata({
-      title: `${profile.name} | Profile`,
+      title: `${profile.name} - Replies | Profile`,
       description: profile.bio,
       image: String(file)
     });
@@ -41,12 +34,9 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function Index({ params }: Props) {
-  const { creatorPubky } = await params;
-  const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 1024px)').matches;
-
   return (
     <CreatorpubkyLayout params={params}>
-      {isMobile ? <TaggedAs creatorPubky={creatorPubky} /> : <Profile.Posts creatorPubky={creatorPubky} />}
+      <Profile.Posts creatorPubky={(await params).creatorPubky} />
     </CreatorpubkyLayout>
   );
 }
