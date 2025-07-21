@@ -57,7 +57,7 @@ export default function CreatorpubkyLayout({
       key = creatorPubky && lastSegment === creatorPubky ? 'posts' : lastSegment;
     }
     const foundTab = Profile.FilterTabs.tabs.find((tab) => tab.key === key);
-    setActiveTab(foundTab ? foundTab.id : (isMobile ? 6 : 0));
+    setActiveTab(foundTab ? foundTab.id : isMobile ? 6 : 0);
     setLoading(false);
   }, [pathname, creatorPubky, isMobile]);
 
