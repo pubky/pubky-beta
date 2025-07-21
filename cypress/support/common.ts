@@ -49,3 +49,10 @@ export const addTagsWithModal = (tags: string[]) => {
     cy.get('#close-btn').click();
   });
 };
+
+export const verifyNotificationCounter = (expectedCount = '1') => {
+  // Wait and reload if the counter doesn't appear
+  cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
+  // Assert the counter text
+  cy.get('#header-notification-counter').should('have.text', expectedCount);
+};

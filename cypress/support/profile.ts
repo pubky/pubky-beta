@@ -1,3 +1,5 @@
+import { goToProfilePageFromHeader } from './header';
+
 interface ProfileField {
   editSelector: string;
   verifySelector: string;
@@ -140,4 +142,16 @@ export const addProfileTags = (tags: string[]) => {
 
   // wait for the tags to be added
   cy.get(`#tag-${tags[0]}`).should('be.visible');
+};
+
+export const unfollowUserByUsername = (username: string) => {
+  goToProfilePageFromHeader();
+  cy.get('#profile-tab-following').click();
+  cy.contains('#list-profile-name', username)
+    .parentsUntil('#profile-list-root')
+    .parent()
+    .find('#list-unfollow-button')
+    .should('be.visible')
+    .click();
+  cy.get('#list-follow-button').should('contain.text', 'Follow');
 };

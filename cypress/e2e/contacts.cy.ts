@@ -2,6 +2,7 @@ import { backupDownloadFilePath } from '../support/auth';
 import { slowCypressDown } from 'cypress-slow-down';
 import { searchAndFollowProfile } from '../support/contacts';
 import { HasBackedUp } from '../support/types/enums';
+import { goToProfilePageFromHeader } from '../support/header';
 
 describe('contacts', () => {
   before(() => {
@@ -28,7 +29,7 @@ describe('contacts', () => {
     cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath('pubky1'));
 
     // Copy and store pubky for account 1
-    cy.get('#header-profile-pic').click();
+    goToProfilePageFromHeader();
     cy.get('#profile-copy-pubkey-btn').click();
     cy.saveCopiedPubkyToAlias('pubky1');
     // log pubky for account 1
@@ -47,7 +48,7 @@ describe('contacts', () => {
     cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath('pubky2'));
 
     // Copy and store pubky for account 2
-    cy.get('#header-profile-pic').click();
+    goToProfilePageFromHeader();
     cy.get('#profile-copy-pubkey-btn').click();
     cy.saveCopiedPubkyToAlias('pubky2');
     // log pubky for account 2
@@ -112,7 +113,7 @@ describe('contacts', () => {
     ///
 
     // Check accounts 2 profile (own) for updated following
-    cy.get('#header-profile-pic').click();
+    goToProfilePageFromHeader();
     // tab shows number of following is 1
     cy.get('#profile-tab-following').find('#counter').should('have.text', 1);
 
@@ -156,7 +157,7 @@ describe('contacts', () => {
 
     // Sign in account 1
     cy.signIn(backupDownloadFilePath('pubky1'));
-    cy.get('#header-profile-pic').click();
+    goToProfilePageFromHeader();
 
     // Check account 1 (own) profile for follower
     cy.get('#profile-tab-followers').find('#counter').should('have.text', 1);

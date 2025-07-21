@@ -2,6 +2,7 @@ import * as path from 'path';
 import { defaultBackupFilename } from '../support/auth';
 import { slowCypressDown } from 'cypress-slow-down';
 import { HasBackedUp, SkipOnboardingSlides } from '../support/types/enums';
+import { goToProfilePageFromHeader } from '../support/header';
 
 describe('onboarding', () => {
   before(() => {
@@ -31,8 +32,7 @@ describe('onboarding', () => {
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(expectedFilePath, '666942');
 
-    cy.get('#header-profile-pic').click();
-    cy.location('pathname').should('eq', '/profile');
+    goToProfilePageFromHeader();
     cy.get('#profile-username-header').invoke('text').should('eq', username);
   });
 
@@ -51,7 +51,7 @@ describe('onboarding', () => {
 
     // check profile name is 'anonymous'
     cy.get('#quick-post-create-content').innerTextShouldContain('anonymous');
-    cy.get('#header-profile-pic').click();
+    goToProfilePageFromHeader();
     cy.get('#profile-username-header').should('have.text', 'anonymous');
   });
 

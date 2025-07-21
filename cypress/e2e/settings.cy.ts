@@ -3,6 +3,7 @@ import { slowCypressDown } from 'cypress-slow-down';
 import 'cypress-slow-down/commands';
 import { HasBackedUp } from '../support/types/enums';
 import { backupDownloadFilePath } from '../support/auth';
+import { goToProfilePageFromHeader } from '../support/header';
 
 describe('settings', () => {
   before(() => {
@@ -107,7 +108,7 @@ describe('settings', () => {
     createQuickPost(postContent);
 
     // Copy and store pubky for account 1
-    cy.get('#header-profile-pic').click();
+    goToProfilePageFromHeader();
     cy.get('#profile-copy-pubkey-btn').click();
     cy.saveCopiedPubkyToAlias('pubky1');
     // log pubky for account 2
