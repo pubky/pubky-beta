@@ -56,17 +56,8 @@ describe('onboarding', () => {
   });
 
   // test that invalid invite code is rejected
-  it('should reject invalid invite code', () => {
-    cy.visit('/');
-
-    cy.location('pathname').should('eq', '/onboarding');
-
-    cy.get('#onboarding-create-account-btn').click();
-    cy.location('pathname').should('eq', '/onboarding/intro');
-
-    cy.get('#onboarding-skip-intro-btn').click();
-
-    cy.get('#onboarding-sign-up-link').click();
+  it('should reject invalid or used invite code', () => {
+    cy.visit('/onboarding/sign-up');
     cy.location('pathname').should('eq', '/onboarding/sign-up');
 
     // test that a code with less than 14 characters is rejected
@@ -79,5 +70,17 @@ describe('onboarding', () => {
     cy.get('#onboarding-token-input').type('invalidcode123');
     cy.get('#onboarding-submit-button').click();
     cy.get('#onboarding-token-input-error').should('contain.text', 'Invalid');
+
+    // test a code that is already used is rejected
+    cy.onboardAsNewUser('OneTime', 'I exist to consume an invite code', SkipOnboardingSlides.Yes);
+    cy.signOut(HasBackedUp.No);
+    cy.visit('/onboarding/sign-up');
+    cy.get('#onboarding-name-input').type('NoTime');
+    cy.location('pathname').should('eq', '/onboarding/sign-up');
+    cy.get('@inviteCode').then((usedInviteCode) => {
+      cy.get('#onboarding-token-input').type(usedInviteCode as unknown as string);
+      cy.get('#onboarding-submit-button').click();
+      cy.get('#onboarding-token-input-error').should('contain.text', 'Token already used');
+    });
   });
 });
