@@ -6,6 +6,7 @@ import { useAlertContext, useModal } from '@/contexts';
 import { useEffect, useRef, useState } from 'react';
 import EmojiPicker from '@/components/EmojiPicker';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
+import { useSuggestedTags } from '@/hooks/useSuggestedTags';
 
 interface FooterAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   visibleTextArea: boolean;
@@ -76,6 +77,21 @@ export default function FooterArea({
   const [showEmojisFastTag, setShowEmojisFastTag] = useState(false);
   const wrapperRefEmojisFastTag = useRef<HTMLDivElement>(null);
   useDrawerClickOutside(wrapperRefEmojisFastTag, () => setShowEmojisFastTag(false));
+
+  // Tag suggestion logic
+  const { suggestedTags, selectedTagIndex, handleKeyDown, handleTagClick } = useSuggestedTags({
+    tagInput,
+    onTagSelect: (tag) => setTagInput(tag)
+  });
+
+  const handleAddTagWithCheck = (tag: string) => {
+    if (selectedTagIndex > -1) {
+      const selectedTag = suggestedTags[selectedTagIndex];
+      setTagInput(selectedTag);
+    } else {
+      handleAddTag();
+    }
+  };
 
   const handleEmojiClick = (emoji: any) => {
     const textBeforeCursor = content.slice(0, cursorPosition);
@@ -249,16 +265,36 @@ export default function FooterArea({
                     </div>
                   )}
 
-                  <Input.Tag
-                    value={tagInput}
-                    onChange={setTagInput}
-                    onAddTag={handleAddTag}
-                    onEmojiPickerClick={() => setShowEmojisFastTag(true)}
-                    showCloseButton
-                    onClose={() => setAddTagInput(false)}
-                    variant="small"
-                    autoFocus
-                  />
+                  {/* Wrap Input.Tag in a relative div for key handling and suggestions */}
+                  <div className="relative" onKeyDown={handleKeyDown} tabIndex={0}>
+                    <Input.Tag
+                      value={tagInput}
+                      onChange={setTagInput}
+                      onAddTag={handleAddTagWithCheck}
+                      onEmojiPickerClick={() => setShowEmojisFastTag(true)}
+                      showCloseButton
+                      onClose={() => setAddTagInput(false)}
+                      variant="small"
+                      autoFocus
+                    />
+                    {suggestedTags.length > 0 && (
+                      <div className="absolute top-full left-0 mt-1 bg-[#05050A] border border-white border-opacity-20 rounded-lg z-20 w-[200px] max-h-[150px] overflow-y-auto scrollbar-thin scrollbar-webkit">
+                        {suggestedTags.map((tag, index) => (
+                          <div
+                            key={index}
+                            onClick={() => handleTagClick(tag)}
+                            className={`cursor-pointer hover:bg-white hover:bg-opacity-10 rounded px-4 py-2 ${
+                              index === selectedTagIndex ? 'bg-white bg-opacity-10' : ''
+                            }`}
+                          >
+                            <Typography.Body variant="small" className="text-opacity-80 hover:text-opacity-100">
+                              {tag}
+                            </Typography.Body>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
 
                   {errorTag && addTagInput && (
                     <Typography.Body className="whitespace-nowrap text-[#e95164]" variant="small">
