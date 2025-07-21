@@ -894,6 +894,95 @@ describe('posts', () => {
     cy.location('pathname').should('eq', '/sign-in');
   });
 
+  it('can navigate back to feed from post view', () => {
+    const tallPostContent = "This is a tall post ...\n...\n...\n...\n...\n..."
+    function postSuffix(number: number): string {
+      return `${number} - post content suffix`;
+    }
+    const posts = [
+      `${tallPostContent} ${postSuffix(1)}! ${Date.now()}`,
+      `${tallPostContent} ${postSuffix(2)}! ${Date.now()}`,
+      `${tallPostContent} ${postSuffix(3)}! ${Date.now()}`,
+      `${tallPostContent} ${postSuffix(4)}! ${Date.now()}`
+    ];
+
+    // create 5 new posts
+    posts.forEach((post) => {
+      createQuickPost(post);
+    });
+
+    // * Open post view and navigate back to feed retaining scroll position
+
+    cy.findPostInFeed(0, postSuffix(1)).then(($post) => {
+      const yPosition = $post.position().top;
+      // scroll down to the first post
+      cy.scrollTo(0, yPosition - 100);
+
+      // Store the current y scroll position as a Cypress alias for later assertion
+      cy.wrap(yPosition).as('feedScrollY');
+
+      // click on the post
+      cy.wrap($post).click();
+    });
+
+    // check that we are on the post view page
+    cy.location('pathname').should('contain', '/post/');
+
+    // check that the post content is visible
+    cy.get('#post-view-modal')
+      .get('#post-container')
+      .get('#post-content-text')
+      .should('be.visible')
+      .innerTextShouldContain(postSuffix(4));
+
+    // use browser back button to navigate back to feed
+    cy.go('back');
+
+    // check that we are on the feed page
+    cy.location('pathname').should('contain', '/home');
+
+    // check that the post is still visible in feed
+    cy.findPostInFeed(0, postSuffix(1)).should('be.visible');
+    // check y scroll position is the same as before the post view
+    cy.get('@feedScrollY').then((scrollY) => {
+      cy.window().then((win) => {
+        // Assert that the scrollY value is within 1% tolerance of the original scrollY
+        const scrollYValue = scrollY as unknown as number;
+        const tolerance = Math.abs(scrollYValue) * 0.01;
+        expect(win.scrollY).to.be.closeTo(scrollYValue, tolerance);
+      });
+    });
+
+    // * Open post and navigate home to top of feed
+
+    // click on the first post created
+    cy.findPostInFeed(0, postSuffix(1)).then(($post) => {
+      const yPosition = $post.position().top;
+      // scroll down to the first post
+      cy.scrollTo(0, yPosition - 100);
+      // click on the post
+      cy.wrap($post).click();
+    });
+
+    // check that we are on the post view page
+    cy.location('pathname').should('contain', '/post/');
+
+    // use Pubky logo to navigate back to feed
+    // TODO: why are there two header logos
+    cy.get('#post-view-modal').find('#header-logo').first().click();
+
+    // check that we are on the feed page
+    cy.location('pathname').should('contain', '/home');
+
+    // check that the last is visible in feed
+    cy.findPostInFeed(0, postSuffix(4)).should('be.visible');
+
+    // check y scroll position is 0
+    cy.window().then((win) => {
+      expect(win.scrollY).to.equal(0);
+    });
+  });
+
   // todo: check that reply still shown in own profile page
   // todo: test 'Show n new posts' button
 });
