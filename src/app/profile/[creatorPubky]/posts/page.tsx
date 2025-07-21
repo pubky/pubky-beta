@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props) {
     const file = profilePic && `${BASE_URL}/static/files/${JSON.parse(profilePic?.urls).main}`;
 
     return getSeoMetadata({
-      title: `${profile.name} - Replies | Profile`,
+      title: `${profile.name} - Posts | Profile`,
       description: profile.bio,
       image: String(file)
     });
