@@ -34,7 +34,7 @@ export const Root = ({ children, ...rest }: HeaderRootProps) => {
         rest.className
       )}
       style={{
-        width: 'calc(100% - 8px)'
+        width: 'calc(100% - 12px)'
       }}
     >
       <header {...rest} className={twMerge(baseCSS, rest.className)}>
