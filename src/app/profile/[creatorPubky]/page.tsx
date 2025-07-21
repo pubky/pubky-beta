@@ -2,8 +2,7 @@ import { getSeoMetadata } from '@components/HeaderSEO';
 import { getFile } from '@/services/fileService';
 import { getUserDetails } from '@/services/userService';
 import CreatorpubkyLayout from './components/_CreatorpubkyLayout';
-import { Profile } from '../components';
-import TaggedAs from '../components/_TaggedAs';
+import ProfileContentSwitcher from './components/_ProfileContentSwitcher';
 
 const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
 const BASE_URL = `${NEXT_PUBLIC_NEXUS}`;
@@ -42,11 +41,9 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function Index({ params }: Props) {
   const { creatorPubky } = await params;
-  const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 1024px)').matches;
-
   return (
     <CreatorpubkyLayout params={params}>
-      {isMobile ? <TaggedAs creatorPubky={creatorPubky} /> : <Profile.Posts creatorPubky={creatorPubky} />}
+      <ProfileContentSwitcher creatorPubky={creatorPubky} />
     </CreatorpubkyLayout>
   );
 }
