@@ -895,7 +895,7 @@ describe('posts', () => {
   });
 
   it('can navigate back to feed from post view', () => {
-    const tallPostContent = "This is a tall post ...\n...\n...\n...\n...\n..."
+    const tallPostContent = 'This is a tall post ...\n...\n...\n...\n...\n...';
     function postSuffix(number: number): string {
       return `${number} - post content suffix`;
     }
@@ -981,6 +981,39 @@ describe('posts', () => {
     cy.window().then((win) => {
       expect(win.scrollY).to.equal(0);
     });
+  });
+
+  // bugfix https://github.com/pubky/pubky-app/issues/1489
+  it('new article modal is shown infront of new post modal', () => {
+    // click in post content area
+    cy.get('#quick-post-create-content').within(() => {
+      cy.get('textarea').should('have.value', '');
+      // click on textarea to expand to view buttons
+      cy.get('textarea').click();
+      // click on new article button
+      cy.get('#article-btn').click();
+    });
+
+    // close new article modal
+    cy.get('#article-modal').should('be.visible');
+    cy.get('#modal-root').within(() => {
+      cy.get('h1').contains('New Article');
+      cy.get('#close-btn').click();
+    });
+
+    // click on new post button (bottom right)
+    cy.get('#new-post-btn').click();
+
+    // click new article button in the new post modal
+    cy.get('#new-post-create-content')
+      .should('be.visible')
+      .within(() => {
+        cy.get('#article-btn').click();
+      });
+
+    // check that new article modal is shown infront of new post modal
+    cy.get('#article-modal').should('be.visible');
+    cy.get('#new-post-create-content').should('not.be.visible');
   });
 
   // todo: check that reply still shown in own profile page
