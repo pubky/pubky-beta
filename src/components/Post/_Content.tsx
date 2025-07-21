@@ -281,6 +281,8 @@ export default function Content({
                                   if (index === 1) specialGrid = 'row-span-1 col-start-2 row-start-1';
                                   if (index === 2) specialGrid = 'row-span-1 col-start-2 row-start-2';
                                 }
+                                const fileContentsIndex = fileContents.findIndex((f) => f.id === file.id);
+
                                 return (
                                   <div
                                     key={index}
@@ -303,7 +305,7 @@ export default function Content({
                                         src={generateFileUrl(file, file.content_type !== 'image/gif' ? 'feed' : 'main')}
                                         onClick={(event) => {
                                           event.stopPropagation();
-                                          handleOpenModal(index);
+                                          handleOpenModal(fileContentsIndex);
                                         }}
                                         alt={file.name || `Image ${index + 1}`}
                                         className={`${widthMedia} h-full max-h-[544px] object-cover rounded-[10px] overflow-hidden`}
