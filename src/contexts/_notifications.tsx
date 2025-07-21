@@ -39,7 +39,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
   const [skip, setSkip] = useState(0);
   const [notifications, setNotifications] = useState<NotificationView[]>([]);
   const [loading, setLoading] = useState(false);
-  const [profilesLoading, setProfilesLoading] = useState(true);
+  const [profilesLoading, setProfilesLoading] = useState(false);
   const [userProfilesCache, setUserProfilesCache] = useState<{ [userId: string]: UserView | null }>({});
   const [hasMore, setHasMore] = useState(true);
   const [prevPubky, setPrevPubky] = useState<string | null>(null);
@@ -67,7 +67,12 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     async (userIds: string[]) => {
       if (!pubky || userIds.length === 0) return;
 
-      setProfilesLoading(true);
+      const hasCachedProfiles = Object.keys(userProfilesCache).length > 0;
+      const hasNotifications = notifications.length > 0;
+
+      if (!hasCachedProfiles && !hasNotifications) {
+        setProfilesLoading(true);
+      }
 
       try {
         const uniqueUserIds = userIds.filter((userId) => !userProfilesCache.hasOwnProperty(userId));
@@ -117,7 +122,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
         setProfilesLoading(false);
       }
     },
-    [pubky, userProfilesCache]
+    [pubky, userProfilesCache, notifications.length]
   );
 
   const checkSettings = async () => {
@@ -378,6 +383,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
   const extractSenderPubky = (notification: BodyNotification) => {
     return (
       notification.followed_by ||
+      notification.unfollowed_by ||
       notification.tagged_by ||
       notification.replied_by ||
       notification.reposted_by ||
