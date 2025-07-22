@@ -91,6 +91,43 @@ describe('posts', () => {
     latestPostInFeedContentEq(postContent);
   });
 
+  it('can edit a post', () => {
+    const postContent = `This post will be edited! ${Date.now()}`;
+    const editSuffix = ' ..got edited';
+    const tags = ['welkin', 'octan'];
+    const editTag = ['wolfram'];
+    createQuickPostWithTags(postContent, tags);
+
+    // verify the post is displayed correctly in feed
+    cy.findFirstPostInFeed(CheckIndexed.Yes).within(() => {
+      // open post menu and check edit is available
+      cy.get('#menu-btn').should('be.visible').click();
+      cy.get('#post-tooltip-menu')
+        .should('be.visible')
+        .within(() => {
+          cy.get('#edit-post').should('be.visible').click();
+        });
+    });
+
+    // edit the post and add tags
+    cy.get('#modal-root')
+      .should('be.visible')
+      .within(() => {
+        cy.get('h1').contains('Edit Post').should('be.visible');
+        cy.get('textarea').type(editSuffix);
+        cy.get('textarea').should('have.value', postContent + editSuffix);
+
+        // check that tags cannot be edited from this edit modal
+        cy.get('#show-add-tag-input-btn').should('be.visible').click();
+        cy.get('#add-tag-input').should('not.exist');
+
+        cy.get('#post-btn').click();
+      });
+
+    // verify the post is displayed correctly in feed
+    latestPostInFeedContentEq(postContent + editSuffix);
+  });
+
   it('can post with maximum character limit (1000)', () => {
     // Helper function to generate 'o' characters
     const generateOs = (count: number): string => 'o'.repeat(count);
