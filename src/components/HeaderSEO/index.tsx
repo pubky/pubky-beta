@@ -38,8 +38,12 @@ export function getHeaderMetaTags() {
       />
 
       {/* PWA icons for iOS */}
-      <link rel="apple-touch-icon" sizes="180x180" href="/web-app-manifest-192x192.png" />
-      <link rel="apple-touch-startup-image" href="/web-app-manifest-512x512.png" />
+      <link rel="apple-touch-icon" sizes="180x180" href="/images/manifest/web-app-manifest-180x180.png" />
+      <link rel="apple-touch-icon" sizes="152x152" href="/images/manifest/web-app-manifest-152x152.png" />
+      <link rel="apple-touch-icon" sizes="144x144" href="/images/manifest/web-app-manifest-144x144.png" />
+      <link rel="apple-touch-icon" sizes="120x120" href="/images/manifest/web-app-manifest-120x120.png" />
+      <link rel="apple-touch-icon" sizes="76x76" href="/images/manifest/web-app-manifest-76x76.png" />
+      <link rel="apple-touch-startup-image" href="/images/manifest/web-app-manifest-512x512.png" />
 
       {/* Regular favicon for desktop browsers */}
       <link rel="icon" type="image/svg+xml" href="/images/pubky-logo.svg" />
