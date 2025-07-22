@@ -9,8 +9,15 @@ import {
   ModalProvider
 } from '@/contexts';
 
-import { Analytics, ProtectedRoutes, HeaderSEO, DynamicTitle, DynamicFavicon, ViewportHandler } from '@/components';
-import ErrorBoundary from '@/components/ErrorBoundary';
+import {
+  Analytics,
+  ProtectedRoutes,
+  ErrorBoundary,
+  HeaderSEO,
+  DynamicTitle,
+  DynamicFavicon,
+  ViewportHandler
+} from '@/components';
 
 export const metadata = {
   ...HeaderSEO.getSeoMetadata(),
