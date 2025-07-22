@@ -92,39 +92,16 @@ describe('posts', () => {
   });
 
   it('can post with maximum character limit (1000)', () => {
-    const postContent =
-      'I can make a really looooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      `ooooooooooooooooooooooooooooooooooooooooooog post! ${Date.now()}`;
+    // Helper function to generate 'o' characters
+    const generateOs = (count: number): string => 'o'.repeat(count);
 
-    const expectedPostContent =
-      'I can make a really looooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooo...Show more';
+    // 958 'o' characters makes 1000 in total
+    const postContent = `I can make a really l${generateOs(958)}g post! ${Date.now()}`;
 
+    // The truncation happens at 479 'o' characters
+    const expectedPostContent = `I can make a really l${generateOs(479)}...Show more`;
+
+    // create post and verify the counter is displayed correctly
     createQuickPost(postContent);
 
     // verify the post is displayed correctly in feed
