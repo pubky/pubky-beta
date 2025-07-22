@@ -263,7 +263,7 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
   useEffect(() => {
     checkMutedUsers();
     checkTimestamp();
-  }, [pubky]);
+  }, [pubky, profile]);
 
   useEffect(() => {
     checkAccess();
