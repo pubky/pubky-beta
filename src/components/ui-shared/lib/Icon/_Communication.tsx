@@ -148,7 +148,7 @@ export const Envelope = ({ size = '32', color = 'white' }: IconProps) => (
 
 export const Megaphone = ({ size = '32', color = 'white' }: IconProps) => (
   <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <g clip-path="url(#clip0_7409_4159)">
+    <g clipPath="url(#clip0_7409_4159)">
       <path
         opacity="0.2"
         d="M19 19.73H24C25.33 19.73 26.6 19.2 27.54 18.27C28.48 17.33 29 16.06 29 14.73C29 13.4 28.47 12.13 27.54 11.19C26.6 10.25 25.33 9.73 24 9.73H19V19.73Z"
