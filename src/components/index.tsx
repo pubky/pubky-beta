@@ -26,6 +26,7 @@ import HeaderSEO from './HeaderSEO';
 import { DynamicTitle } from './DynamicTitle';
 import DynamicFavicon from './DynamicFavicon';
 import ViewportHandler from './ViewportHandler';
+import ErrorBoundary from './ErrorBoundary';
 
 export {
   Analytics,
@@ -55,5 +56,6 @@ export {
   RemindBackup,
   DynamicTitle,
   DynamicFavicon,
-  ViewportHandler
+  ViewportHandler,
+  ErrorBoundary
 };

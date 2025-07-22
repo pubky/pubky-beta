@@ -139,6 +139,22 @@ jobs:
           wait-on: 'http://localhost:4200'
           wait-on-timeout: 180
 
+      - name: Run jitless tests (${{ matrix.browser }})
+        uses: cypress-io/github-action@v6
+        env:
+          DEBUG: '@cypress/github-action'
+        with:
+          working-directory: pubky-app/cypress
+          config-file: cypress.config.jitless.ts
+          spec: jitless/jitless.cy.ts
+          browser: ${{ matrix.browser }}
+          headed: false
+          summary-title: ${{ matrix.browser }}
+          install: false
+          start: npm run start:prod
+          wait-on: 'http://localhost:4200'
+          wait-on-timeout: 180
+
       - name: Upload ${{ matrix.browser }} screenshots
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
@@ -216,6 +232,15 @@ jobs:
         with:
           name: video-${{ matrix.browser }}-onboard
           path: pubky-app/cypress/videos/onboard.cy.ts.mp4
+          if-no-files-found: ignore
+
+      - name: Upload video for jitless test
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: video-${{ matrix.browser }}-jitless
+          path: pubky-app/cypress/videos/jitless.cy.ts.mp4
           if-no-files-found: ignore
 
       - name: Upload cypress.log

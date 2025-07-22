@@ -9,7 +9,15 @@ import {
   ModalProvider
 } from '@/contexts';
 
-import { Analytics, ProtectedRoutes, HeaderSEO, DynamicTitle, DynamicFavicon, ViewportHandler } from '@/components';
+import {
+  Analytics,
+  ProtectedRoutes,
+  ErrorBoundary,
+  HeaderSEO,
+  DynamicTitle,
+  DynamicFavicon,
+  ViewportHandler
+} from '@/components';
 
 export const metadata = {
   ...HeaderSEO.getSeoMetadata(),
@@ -23,23 +31,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {HeaderSEO.getHeaderMetaTags()}
         {HeaderSEO.getPlausibleScript()}
       </head>
-      <body className="overflow-x-hidden max-w-full">
-        <PubkyClientWrapper>
-          <ViewportHandler />
-          <FilterWrapper>
-            <AlertWrapper>
-              <NotificationsWrapper>
-                <ToastWrapper>
-                  <ModalProvider>
-                    <DynamicFavicon />
-                    <DynamicTitle />
-                    <ProtectedRoutes>{children}</ProtectedRoutes>
-                  </ModalProvider>
-                </ToastWrapper>
-              </NotificationsWrapper>
-            </AlertWrapper>
-          </FilterWrapper>
-        </PubkyClientWrapper>
+      <body className="text-white overflow-x-hidden max-w-full">
+        <ErrorBoundary>
+          <PubkyClientWrapper>
+            <ViewportHandler />
+            <FilterWrapper>
+              <AlertWrapper>
+                <NotificationsWrapper>
+                  <ToastWrapper>
+                    <ModalProvider>
+                      <DynamicFavicon />
+                      <DynamicTitle />
+                      <ProtectedRoutes>{children}</ProtectedRoutes>
+                    </ModalProvider>
+                  </ToastWrapper>
+                </NotificationsWrapper>
+              </AlertWrapper>
+            </FilterWrapper>
+          </PubkyClientWrapper>
+        </ErrorBoundary>
         <Analytics />
       </body>
     </html>
