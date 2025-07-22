@@ -301,7 +301,7 @@ export const Hand = ({ size = '32', color = 'white' }: IconProps) => (
 
 export const Pedestrian = ({ size = '32', color = 'white' }: IconProps) => (
   <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <g clip-path="url(#clip0_7409_3836)">
+    <g clipPath="url(#clip0_7409_3836)">
       <path
         opacity="0.2"
         d="M16.1599 9C18.0899 9 19.6599 7.43 19.6599 5.5C19.6599 3.57 18.0899 2 16.1599 2C14.2299 2 12.6599 3.57 12.6599 5.5C12.6599 7.43 14.2299 9 16.1599 9Z"
