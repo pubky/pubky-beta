@@ -113,7 +113,7 @@ export default function LinkPreviewer({ content, setQuote }: LinkPreviewerProps)
           const githubMatch = url.match(githubRegex);
           setGithubUrl(githubMatch ? githubMatch[0] : '');
 
-          const spotifyRegex = /https:\/\/open\.spotify\.com\/track\/\w+/;
+          const spotifyRegex = /https:\/\/open\.spotify\.com\/(?:intl-[a-z]{2}\/)?track\/\w+/;
           setSpotifyUrl(spotifyRegex.test(url) ? url : '');
         } else {
           setPreview('');
