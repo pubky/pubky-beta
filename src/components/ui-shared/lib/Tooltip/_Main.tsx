@@ -6,9 +6,10 @@ import { twMerge } from 'tailwind-merge';
 interface MainProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   ref?: any;
+  onClickOutside?: (event: MouseEvent | TouchEvent) => void;
 }
 
-export const Main = ({ children, ref, ...rest }: MainProps) => {
+export const Main = ({ children, ref, onClickOutside, ...rest }: MainProps) => {
   const tooltipRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState<'top' | 'bottom'>('top');
 
@@ -23,6 +24,23 @@ export const Main = ({ children, ref, ...rest }: MainProps) => {
       }
     }
   }, []);
+
+  useEffect(() => {
+    if (!onClickOutside) return;
+    const listener = (event: MouseEvent | TouchEvent) => {
+      const element = tooltipRef.current;
+      if (!element || element.contains(event.target as Node)) {
+        return;
+      }
+      onClickOutside(event);
+    };
+    document.addEventListener('mousedown', listener);
+    document.addEventListener('touchstart', listener);
+    return () => {
+      document.removeEventListener('mousedown', listener);
+      document.removeEventListener('touchstart', listener);
+    };
+  }, [onClickOutside]);
 
   const baseCSS =
     'w-full absolute left-1/2 transform -translate-x-1/2 bg-[#05050A] border border-white border-opacity-30 text-white px-8 py-6 rounded-[20px] shadow-md z-50';
