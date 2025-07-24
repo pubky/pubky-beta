@@ -111,7 +111,17 @@ export default function Content({
 
   const showMore = !fullContent && textToMinified !== minifiedContent;
 
-  const { needsTranslation, isTranslating, translatedText, handleTranslate } = useTranslation(textToTranslate);
+  const {
+    needsTranslation,
+    isTranslating,
+    translatedText,
+    translatedLines,
+    handleTranslate,
+    handleHideTranslation,
+    isTranslationShown,
+    canTranslate,
+    translationError
+  } = useTranslation(textToTranslate);
 
   return (
     <div className="w-full relative">
@@ -186,30 +196,42 @@ export default function Content({
           </Link>
         )}
 
-        {/* 👇 CORRECT PLACEMENT FOR THE TRANSLATION UI 👇 */}
         <div className="mt-3 cursor-default" onClick={(e) => e.stopPropagation()}>
-          {needsTranslation && (
-            <Button.Medium
+          {!isTranslationShown && needsTranslation && canTranslate && (
+            <span
               onClick={handleTranslate}
-              disabled={isTranslating}
-              className="text-opacity-70 hover:text-opacity-100"
+              className="text-sm cursor-pointer underline text-[#C8FF00]/80 hover:text-[#C8FF00]"
+              aria-disabled={isTranslating}
             >
               {isTranslating ? (
-                <>
-                  <Icon.LoadingSpin size="16" />
+                <span className="flex items-center gap-1">
+                  <Icon.LoadingSpin size="12" />
                   <span className="ml-2">Translating...</span>
-                </>
+                </span>
               ) : (
-                'Translate'
+                'Translate post'
               )}
-            </Button.Medium>
+            </span>
           )}
-          {translatedText && (
-            <div className="mt-2 p-3 bg-white bg-opacity-5 rounded-lg border border-white border-opacity-10">
-              <Typography.Body variant="small" className="text-white text-opacity-80 whitespace-pre-wrap">
-                {translatedText}
-              </Typography.Body>
-            </div>
+          {translationError && !isTranslationShown && (
+            <div className="mt-2 text-xs text-red-400">{translationError}</div>
+          )}
+          {isTranslationShown && (
+            <>
+              <span
+                onClick={handleHideTranslation}
+                className="text-sm cursor-pointer underline text-[#C8FF00]/80 hover:text-[#C8FF00]"
+              >
+                Hide translation
+              </span>
+              {translatedText && (
+                <div className="mt-2 p-3 bg-white bg-opacity-5 rounded-lg border border-white border-opacity-10">
+                  <Typography.Body variant="small" className="text-white text-opacity-80 whitespace-pre-wrap">
+                    {translatedLines && translatedLines.map((line, idx) => <Parsing key={idx}>{line}</Parsing>)}
+                  </Typography.Body>
+                </div>
+              )}
+            </>
           )}
         </div>
 
