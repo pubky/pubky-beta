@@ -120,7 +120,8 @@ export default function Content({
     handleHideTranslation,
     isTranslationShown,
     canTranslate,
-    translationError
+    translationError,
+    getUiLabel
   } = useTranslation(textToTranslate);
 
   return (
@@ -206,10 +207,10 @@ export default function Content({
               {isTranslating ? (
                 <span className="flex items-center gap-1">
                   <Icon.LoadingSpin size="12" />
-                  <span className="ml-2">Translating...</span>
+                  <span className="ml-2">{getUiLabel('translating')}</span>
                 </span>
               ) : (
-                'Translate post'
+                getUiLabel('translate')
               )}
             </span>
           )}
@@ -222,7 +223,7 @@ export default function Content({
                 onClick={handleHideTranslation}
                 className="text-sm cursor-pointer underline text-[#C8FF00]/80 hover:text-[#C8FF00]"
               >
-                Hide translation
+                {getUiLabel('hide')}
               </span>
               {translatedText && (
                 <div className="mt-2 p-3 bg-white bg-opacity-5 rounded-lg border border-white border-opacity-10">

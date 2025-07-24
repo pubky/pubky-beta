@@ -62,6 +62,30 @@ function restoreUrlsFromPlaceholders(text: string, urls: string[]): string {
   return text.replace(/__URL(\d+)__/g, (match, idx) => urls[Number(idx)] || match);
 }
 
+// Translate UI labels using the same translation API as content
+const uiLabelText: Record<'translate' | 'translating' | 'hide', string> = {
+  translate: 'Translate post',
+  translating: 'Translating...',
+  hide: 'Hide translation'
+};
+
+const uiLabelCache: Record<string, Record<string, string>> = {};
+
+async function translateUiLabel(label: 'translate' | 'translating' | 'hide', targetLang: string): Promise<string> {
+  if (targetLang === 'en') return uiLabelText[label];
+  if (uiLabelCache[targetLang]?.[label]) return uiLabelCache[targetLang][label];
+  if (typeof window !== 'undefined' && 'Translator' in self) {
+    try {
+      const translator = await self.Translator!.create({ sourceLanguage: 'en', targetLanguage: targetLang });
+      const translated = await translator.translate(uiLabelText[label]);
+      if (!uiLabelCache[targetLang]) uiLabelCache[targetLang] = {};
+      uiLabelCache[targetLang][label] = translated;
+      return translated;
+    } catch {}
+  }
+  return uiLabelText[label];
+}
+
 export const useTranslation = (originalText: string, getUsernameFromPk?: (pk: string) => string | undefined) => {
   const [isApiAvailable, setIsApiAvailable] = useState(false);
   const [needsTranslation, setNeedsTranslation] = useState(false);
@@ -71,6 +95,7 @@ export const useTranslation = (originalText: string, getUsernameFromPk?: (pk: st
   const [isTranslationShown, setIsTranslationShown] = useState(false);
   const [canTranslate, setCanTranslate] = useState(true);
   const [translationError, setTranslationError] = useState<string | null>(null);
+  const [uiLabels, setUiLabels] = useState<Record<'translate' | 'translating' | 'hide', string>>(uiLabelText);
 
   useEffect(() => {
     if ('Translator' in self && 'LanguageDetector' in self) {
@@ -81,6 +106,28 @@ export const useTranslation = (originalText: string, getUsernameFromPk?: (pk: st
         hasLanguageDetector: 'LanguageDetector' in self
       });
     }
+  }, []);
+
+  // Translate UI labels on mount or when language changes
+  useEffect(() => {
+    const targetLang = getTargetLanguage();
+    if (targetLang === 'en') {
+      setUiLabels(uiLabelText);
+      return;
+    }
+    let cancelled = false;
+    Promise.all([
+      translateUiLabel('translate', targetLang),
+      translateUiLabel('translating', targetLang),
+      translateUiLabel('hide', targetLang)
+    ]).then(([translate, translating, hide]) => {
+      if (!cancelled) {
+        setUiLabels({ translate, translating, hide });
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -188,6 +235,10 @@ export const useTranslation = (originalText: string, getUsernameFromPk?: (pk: st
     setTranslatedText(null);
   }, []);
 
+  function getUiLabel(label: 'translate' | 'translating' | 'hide'): string {
+    return uiLabels[label];
+  }
+
   return {
     needsTranslation,
     isTranslating,
@@ -197,6 +248,7 @@ export const useTranslation = (originalText: string, getUsernameFromPk?: (pk: st
     handleHideTranslation,
     isTranslationShown,
     canTranslate,
-    translationError
+    translationError,
+    getUiLabel
   };
 };
