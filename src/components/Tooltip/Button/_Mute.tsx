@@ -12,7 +12,7 @@ interface MuteProps {
 }
 
 export default function Mute({ pk }: MuteProps) {
-  const { pubky, mute, unmute, setMutedUsers } = usePubkyClientContext();
+  const { pubky, mute, unmute, mutedUsers, setMutedUsers } = usePubkyClientContext();
   const { data: author } = useUserProfile(pk, pubky ?? '');
   const [localAuthor, setLocalAuthor] = useState<UserView | null>(author);
   const [loadingMuted, setLoadingMuted] = useState(false);
@@ -24,6 +24,19 @@ export default function Mute({ pk }: MuteProps) {
       setInitLoadingMuted(false);
     }
   }, [author]);
+
+  useEffect(() => {
+    setLocalAuthor((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        relationship: {
+          ...prev.relationship,
+          muted: mutedUsers?.includes(pk) ?? false
+        }
+      };
+    });
+  }, [mutedUsers, pk]);
 
   const updateMutedStatus = (isMuted: boolean) => {
     setLocalAuthor((prev) => {
@@ -78,7 +91,7 @@ export default function Mute({ pk }: MuteProps) {
     }
   };
 
-  return initLoadingMuted ? (
+  return initLoadingMuted || localAuthor === null ? (
     <Tooltip.Item icon={<Icon.LoadingSpin size="24" />}>Loading</Tooltip.Item>
   ) : localAuthor?.relationship?.muted ? (
     <Tooltip.Item
