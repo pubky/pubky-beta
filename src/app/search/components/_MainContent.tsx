@@ -5,7 +5,7 @@ import * as Components from '@/components';
 import { Icon, Input } from '@social/ui-shared';
 import Modal from '@/components/Modal';
 import { useEffect, useRef, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 // import { TLayouts } from '@/types';
 import { Timeline } from './_Timeline';
 import { Utils } from '@social/utils-shared';
@@ -23,6 +23,7 @@ export function MainContent() {
   const searchParams = useSearchParams();
   const isMobile = useIsMobile();
   const router = useRouter();
+  const pathname = usePathname();
   const [inputValue, setInputValue] = useState('');
   const [isOpenCard, setIsOpenCard] = useState(false);
   const [tagsWidth, setTagsWidth] = useState(0);
@@ -127,14 +128,16 @@ export function MainContent() {
       })
       .join(',');
 
-    if (searchTags.length === 0 && !isMobile) {
-      router.replace('/home');
-    } else if (searchTags.length > 0) {
-      const searchUrl = `/search?tags=${searchTagsString}`;
-      router.replace(searchUrl);
+    if (pathname && pathname.startsWith('/search')) {
+      if (searchTags.length === 0 && !isMobile) {
+        router.replace('/home');
+      } else if (searchTags.length > 0) {
+        const searchUrl = `/search?tags=${searchTagsString}`;
+        router.replace(searchUrl);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchTags]);
+  }, [searchTags, pathname]);
 
   useEffect(() => {
     if (searchTags.length === 0) {
