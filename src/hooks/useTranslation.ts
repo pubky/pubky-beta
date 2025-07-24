@@ -3,10 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 // Define the types for the APIs we are using.
 interface CustomWindow extends Window {
   Translator?: {
-    create: (options: {
-      sourceLanguage: string;
-      targetLanguage: string;
-    }) => Promise<{
+    create: (options: { sourceLanguage: string; targetLanguage: string }) => Promise<{
       translate: (text: string) => Promise<string>;
     }>;
   };
@@ -31,8 +28,8 @@ export const useTranslation = (originalText: string) => {
       setIsApiAvailable(true);
     } else {
       console.error('[useTranslation] ERROR: One or both APIs are missing.', {
-          hasTranslator: 'Translator' in self,
-          hasLanguageDetector: 'LanguageDetector' in self
+        hasTranslator: 'Translator' in self,
+        hasLanguageDetector: 'LanguageDetector' in self
       });
     }
   }, []);
@@ -50,17 +47,20 @@ export const useTranslation = (originalText: string) => {
 
           if (results.length > 0 && results[0].detectedLanguage) {
             const detectedCode = results[0].detectedLanguage;
-            
+
             if (detectedCode && !detectedCode.startsWith('en')) {
               setNeedsTranslation(true);
               setSourceLang(detectedCode);
             } else {
             }
           } else {
-             console.warn('[useTranslation] WARN: Detection returned no results.');
+            console.warn('[useTranslation] WARN: Detection returned no results.');
           }
         } catch (error) {
-          console.error('[useTranslation] CRITICAL: Language detection failed. Device may be ineligible or another error occurred.', error);
+          console.error(
+            '[useTranslation] CRITICAL: Language detection failed. Device may be ineligible or another error occurred.',
+            error
+          );
         }
       };
 
@@ -70,8 +70,10 @@ export const useTranslation = (originalText: string) => {
 
   const handleTranslate = useCallback(async () => {
     if (!originalText || !sourceLang) {
-        console.error(`[useTranslation] ERROR: Cannot translate. Missing text or source language. Has text: ${!!originalText}, Has sourceLang: ${!!sourceLang}`);
-        return;
+      console.error(
+        `[useTranslation] ERROR: Cannot translate. Missing text or source language. Has text: ${!!originalText}, Has sourceLang: ${!!sourceLang}`
+      );
+      return;
     }
 
     console.log(`[useTranslation] Translating from "${sourceLang}"...`);
