@@ -15,6 +15,7 @@ import { useFileLoading } from '@/hooks/useFileLoading';
 import Link from 'next/link';
 import { PubkyAppPostKind } from 'pubky-app-specs';
 import { useModal } from '@/contexts';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -103,11 +104,14 @@ export default function Content({
       return { body: cleanedText };
     }
   })();
+  const textToTranslate = parsedContent?.body || cleanedText;
   const textToMinified = parsedContent?.body || cleanedText;
   const minifiedContent = Utils.minifyContent(textToMinified, 7, 500);
   const contentText = fullContent ? textToMinified : minifiedContent;
 
   const showMore = !fullContent && textToMinified !== minifiedContent;
+
+  const { needsTranslation, isTranslating, translatedText, handleTranslate } = useTranslation(textToTranslate);
 
   return (
     <div className="w-full relative">
@@ -181,6 +185,34 @@ export default function Content({
             Show more
           </Link>
         )}
+
+        {/* 👇 CORRECT PLACEMENT FOR THE TRANSLATION UI 👇 */}
+        <div className="mt-3 cursor-default" onClick={(e) => e.stopPropagation()}>
+          {needsTranslation && (
+            <Button.Medium
+              onClick={handleTranslate}
+              disabled={isTranslating}
+              className="text-opacity-70 hover:text-opacity-100"
+            >
+              {isTranslating ? (
+                <>
+                  <Icon.LoadingSpin size="16" />
+                  <span className="ml-2">Translating...</span>
+                </>
+              ) : (
+                'Translate'
+              )}
+            </Button.Medium>
+          )}
+          {translatedText && (
+            <div className="mt-2 p-3 bg-white bg-opacity-5 rounded-lg border border-white border-opacity-10">
+              <Typography.Body variant="small" className="text-white text-opacity-80 whitespace-pre-wrap">
+                {translatedText}
+              </Typography.Body>
+            </div>
+          )}
+        </div>
+
         <div>
           <div>
             {!replyView && String(post?.details?.kind) !== PubkyAppPostKind[1].toLocaleLowerCase() && (
