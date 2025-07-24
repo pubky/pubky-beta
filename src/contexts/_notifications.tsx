@@ -440,7 +440,6 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     if (pubky !== prevPubky) {
       setPrevPubky(pubky ?? '');
       setNotifications([]);
-      setUnReadNotification(0);
       setSkip(0);
       setHasMore(true);
       setTimestampLoaded(false);
