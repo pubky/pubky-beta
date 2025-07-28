@@ -4,7 +4,7 @@ async function combineVideoWithAudio(videoBlob: Blob, originalFile: File, mimeTy
     // Create canvas for video
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    
+
     if (!ctx) {
       reject('No canvas context available');
       return;
@@ -50,19 +50,19 @@ async function combineVideoWithAudio(videoBlob: Blob, originalFile: File, mimeTy
 
         // Create MediaStream from canvas (video track)
         const videoStream = canvas.captureStream();
-        
+
         // Create MediaStream from audio element (audio track) using type assertion
         const audioStream = (audioElement as any).captureStream();
-        
+
         // Combine video and audio streams
         const combinedStream = new MediaStream();
-        
+
         // Add video track from canvas
         const videoTracks = videoStream.getVideoTracks();
         if (videoTracks.length > 0) {
           combinedStream.addTrack(videoTracks[0]);
         }
-        
+
         // Add audio track from original video
         const audioTracks = audioStream.getAudioTracks();
         if (audioTracks.length > 0) {
@@ -131,7 +131,6 @@ async function combineVideoWithAudio(videoBlob: Blob, originalFile: File, mimeTy
         audioElement.onended = () => {
           recorder.stop();
         };
-
       } catch (error) {
         URL.revokeObjectURL(videoUrl);
         URL.revokeObjectURL(audioUrl);
