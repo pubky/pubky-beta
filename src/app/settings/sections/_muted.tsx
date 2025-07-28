@@ -3,11 +3,11 @@
 import { ImageByUri } from '@/components/ImageByUri';
 import Skeletons from '@/components/Skeletons';
 import { usePubkyClientContext } from '@/contexts';
-import { useStreamUsers } from '@/hooks/useStream';
+import { getUserStream } from '@/services/streamService';
 import { Button, Icon, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export interface LoadingMutedUsers {
   [pubky: string]: boolean;
@@ -15,12 +15,31 @@ export interface LoadingMutedUsers {
 
 export default function MutedUsers() {
   const { pubky, mute, unmute, setMutedUsers } = usePubkyClientContext();
-  const { data: mutedUsers, isLoading, isError } = useStreamUsers(pubky ?? '', pubky ?? '', 'muted');
-  if (isError) console.log(isError);
-
   const [loadingMutedUsers, setLoadingMutedUsers] = useState<LoadingMutedUsers>({});
   const [muted, setMuted] = useState<{ [pubky: string]: boolean }>({});
   const [isLoadingUnmuteAll, setIsLoadingUnmuteAll] = useState(false);
+  const [mutedUsers, setMutedUsersState] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Fetch muted users every time pubky changes
+  useEffect(() => {
+    async function fetchMutedUsers() {
+      if (pubky) {
+        setIsLoading(true);
+        try {
+          const users = await getUserStream(pubky, pubky, 'muted');
+          setMutedUsersState(users);
+        } catch (e) {
+          setMutedUsersState([]);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setMutedUsersState([]);
+      }
+    }
+    fetchMutedUsers();
+  }, [pubky]);
 
   const muteUser = async (pubkyMute: string) => {
     try {

@@ -371,6 +371,11 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     setUnReadNotification(unreadCount);
   }, [notifications, timestamp, timestampLoaded, setUnReadNotification]);
 
+  useEffect(() => {
+    if (!preferencesLoaded) return;
+    setNotifications((prev) => filterNotifications(prev));
+  }, [mutedUsers, preferencesLoaded, pubky]);
+
   const updateNotifications = (newNotifications: NotificationView[]) => {
     setNotifications((prev) => {
       const merged = [...prev, ...newNotifications].filter(
