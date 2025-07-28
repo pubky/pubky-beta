@@ -106,7 +106,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
       if (postUrlMatch && !openModals['postView'] && !modalOpenedByUrl.current && !modalProps['postView']) {
         // Check if this is a direct visit (no referrer or external referrer)
         const isDirectVisit = !document.referrer || !document.referrer.includes(window.location.origin);
-        
+
         if (isDirectVisit) {
           const [, pubkyParam, postIdParam] = postUrlMatch;
 
@@ -117,7 +117,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
             // Always open the modal, even if post doesn't exist
             // Mark that we opened the modal via URL
             modalOpenedByUrl.current = true;
-            
+
             if (post) {
               // Open the PostView modal with the fetched post
               openModal('postView', { post });
