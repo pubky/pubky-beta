@@ -19,6 +19,7 @@ import { Header } from './components/_Header';
 import RootParent from './components/_RootParent';
 import PostRoot from './components/_PostRoot';
 import { ImageArticle } from './components/_ImageArticle';
+import { useMediaPause } from '@/hooks/useMediaPause';
 
 interface PostViewModalProps {
   showModal: boolean;
@@ -35,6 +36,9 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
   const urlUpdated = useRef<boolean>(false);
   const originalTitle = useRef<string>('');
   const [postKey, setPostKey] = useState<string>('');
+
+  // Use the media pause hook to stop background media when modal opens
+  useMediaPause(showModal);
 
   // Reset replies when modal opens and update post key for proper re-rendering
   useEffect(() => {
