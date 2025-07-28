@@ -19,6 +19,7 @@ import { Header } from './components/_Header';
 import RootParent from './components/_RootParent';
 import PostRoot from './components/_PostRoot';
 import { ImageArticle } from './components/_ImageArticle';
+import { getPageTitle } from '@/utils/pageTitles';
 
 interface PostViewModalProps {
   showModal: boolean;
@@ -35,6 +36,23 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
   const urlUpdated = useRef<boolean>(false);
   const originalTitle = useRef<string>('');
   const [postKey, setPostKey] = useState<string>('');
+
+  // Function to restore title based on current route
+  const restoreTitleForRoute = () => {
+    const currentPath = window.location.pathname;
+
+    // Get the title from the page metadata
+    const pageTitle = getPageTitle(currentPath);
+
+    if (pageTitle) {
+      document.title = pageTitle;
+    } else {
+      // For unknown routes, restore the original title
+      if (originalTitle.current) {
+        document.title = originalTitle.current;
+      }
+    }
+  };
 
   // Reset replies when modal opens and update post key for proper re-rendering
   useEffect(() => {
@@ -93,17 +111,11 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
         document.title = `${profileName} on Pubky`;
       }
     } else {
-      // Restore original title when modal closes
-      if (originalTitle.current) {
-        document.title = originalTitle.current;
-      }
+      restoreTitleForRoute();
     }
 
     return () => {
-      // Cleanup: restore original title if component unmounts
-      if (originalTitle.current) {
-        document.title = originalTitle.current;
-      }
+      restoreTitleForRoute();
     };
   }, [showModal, post, user]);
 

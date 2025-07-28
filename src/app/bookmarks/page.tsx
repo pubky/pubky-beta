@@ -3,9 +3,12 @@ import { Content } from '@social/ui-shared';
 
 import * as Components from '@/components';
 import { BookmarksPage } from './components';
+import { routeTitleMap } from '@/utils/pageTitles';
+
+const title = routeTitleMap['/bookmarks'];
 
 export const metadata = getSeoMetadata({
-  title: 'Bookmarks | Pubky.app',
+  title,
   description: 'Welcome to Pubky.app - Unlock the web.'
 });
 
@@ -13,10 +16,9 @@ export default function Index() {
   return (
     <Content.Main className="pb-0 pt-[80px]">
       <BookmarksPage.Header />
-      <Components.RemindBackup />
       <BookmarksPage.Content />
       <Components.CreatePost />
-      <Components.FooterMobile title="Bookmarks" />
+      <Components.FooterMobile title={title} />
     </Content.Main>
   );
 }
