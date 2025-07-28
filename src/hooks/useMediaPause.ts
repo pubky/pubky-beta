@@ -67,12 +67,14 @@ export const useMediaPause = (isModalOpen: boolean) => {
           const iframeElement = iframe as HTMLIFrameElement;
           const src = iframeElement.src;
           // Skip if we already handled this iframe above
-          if (src && 
-              !src.includes('youtube.com') && 
-              !src.includes('youtu.be') && 
-              !src.includes('spotify.com') && 
-              !src.includes('platform.twitter.com') && 
-              !src.includes('x.com')) {
+          if (
+            src &&
+            !src.includes('youtube.com') &&
+            !src.includes('youtu.be') &&
+            !src.includes('spotify.com') &&
+            !src.includes('platform.twitter.com') &&
+            !src.includes('x.com')
+          ) {
             // For other iframes, try to pause by reloading
             iframeElement.src = '';
             iframeElement.src = src;
@@ -117,4 +119,4 @@ export const useMediaPause = (isModalOpen: boolean) => {
       mediaElementsRef.current = [];
     };
   }, [isModalOpen]);
-}; 
+};
