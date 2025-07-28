@@ -13,6 +13,10 @@ export async function resizeVideoFile(file: File, maxSizeInBytes: number = 20 * 
     // Create object URL for the video
     const videoUrl = URL.createObjectURL(file);
 
+    // Mute the video to prevent audio during compression
+    video.muted = true;
+    video.volume = 0;
+
     video.onloadedmetadata = () => {
       // Start with original dimensions
       let { videoWidth, videoHeight } = video;

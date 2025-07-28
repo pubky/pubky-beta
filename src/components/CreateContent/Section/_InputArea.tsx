@@ -92,8 +92,10 @@ export default function InputArea({
     const files = event.dataTransfer.files;
     const maxImageSizeInMB = 5;
     const maxOtherSizeInMB = 20;
+    const maxVideoSizeForCompressionInMB = 100;
     const maxImageSizeInBytes = maxImageSizeInMB * 1024 * 1024;
     const maxOtherSizeInBytes = maxOtherSizeInMB * 1024 * 1024;
+    const maxVideoSizeForCompressionInBytes = maxVideoSizeForCompressionInMB * 1024 * 1024;
 
     if (files) {
       // Check file limit before processing
@@ -140,6 +142,11 @@ export default function InputArea({
               continue;
             }
           } else if (isVideo && file.size > maxOtherSizeInBytes) {
+            // Check if video is too large for compression
+            if (file.size > maxVideoSizeForCompressionInBytes) {
+              addAlert('The maximum allowed size for videos compression is 100 MB', 'warning');
+              continue;
+            }
             try {
               const loadingAlertId = addAlert('Compressing video...', 'loading');
               setIsCompressing(true);
