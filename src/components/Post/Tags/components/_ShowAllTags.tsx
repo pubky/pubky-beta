@@ -46,7 +46,7 @@ export default function ShowAllTags({ post, postType, onTagClick }: ShowAllTagsP
 
   // Infinite scroll state
   const [skip, setSkip] = useState(TAG_LIMIT);
-  const [hasMore, setHasMore] = useState(post.counts?.tags > TAG_LIMIT);
+  const [hasMore, setHasMore] = useState(post?.counts?.tags > TAG_LIMIT);
   const [allTags, setAllTags] = useState<typeof tags>([]);
   const loaderRef = useRef<HTMLDivElement>(null);
 

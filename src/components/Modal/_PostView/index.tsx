@@ -60,6 +60,12 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
       // Store original title
       originalTitle.current = document.title;
 
+      // Handle deleted posts or non-existent posts
+      if (post?.details?.content === '[DELETED]') {
+        document.title = `Post not found | Pubky.app`;
+        return;
+      }
+
       // Set appropriate title based on post type
       if (String(post?.details?.kind) === PubkyAppPostKind[1].toLocaleLowerCase()) {
         // Long post (article)
@@ -144,13 +150,6 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
     };
   }, [showModal, setShowModal, post]);
 
-  const handleClose = () => {
-    setShowModal(false);
-    urlUpdated.current = false;
-    // Go back to previous URL
-    router.back();
-  };
-
   // Handle internal navigation (clicks on links within the modal)
   const handleInternalNavigation = (href: string) => {
     setShowModal(false);
@@ -230,10 +229,12 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
                 {renderMainPost()}
               </div>
 
-              {/* Replies section */}
-              <div className="mt-3">
-                <PostRoot key={`replies-${postKey}`} uri={post?.details?.id} post={post} />
-              </div>
+              {/* Replies section - only show if post is not deleted */}
+              {post?.details?.content !== '[DELETED]' && (
+                <div className="mt-3">
+                  <PostRoot key={`replies-${postKey}`} uri={post?.details?.id} post={post} />
+                </div>
+              )}
             </Content.Grid>
 
             <Components.CreatePost />
