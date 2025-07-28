@@ -296,6 +296,7 @@ export default function CreateContent({
           <Section.UserArea
             name={profile?.name ?? Utils.minifyPubky(pubky ?? '')}
             largeView={largeView}
+            warningLink
             variant={variant}
           />
           <Section.InputArea
