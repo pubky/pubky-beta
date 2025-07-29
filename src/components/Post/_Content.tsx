@@ -8,7 +8,7 @@ import { Tweet } from 'react-tweet';
 import Parsing from '../Content/_Parsing';
 import { Button, Icon, Skeleton, Typography } from '@social/ui-shared';
 import { FileView, PostView } from '@/types/Post';
-import { Spotify } from 'react-spotify-embed';
+import SpotifyEmbed from '@/components/SpotifyEmbed';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { useInlineUrls } from '@/hooks/useInlineUrls';
 import { useFileLoading } from '@/hooks/useFileLoading';
@@ -220,7 +220,7 @@ export default function Content({
                 )}
                 {spotifyUrl && (
                   <div onClick={(event) => event.stopPropagation()} className="mt-4">
-                    <Spotify link={spotifyUrl} />
+                    <SpotifyEmbed link={spotifyUrl} />
                   </div>
                 )}
               </div>

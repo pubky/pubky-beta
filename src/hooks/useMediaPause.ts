@@ -64,32 +64,31 @@ export const useMediaPause = (isModalOpen: boolean) => {
               JSON.stringify({ event: 'command', func: 'pauseVideo', args: '' }),
               '*'
             );
-          } else if (src.includes('spotify.com')) {
-            console.log('Pausing Spotify iframe');
-
-            // Try to pause Spotify embeds
-            iframeElement.contentWindow?.postMessage(
-              JSON.stringify({ event: 'command', func: 'pause', args: '' }),
-              '*'
-            );
           } else if (src.includes('vimeo.com')) {
             console.log('Pausing Vimeo iframe');
 
             // Try to pause Vimeo embeds
-            iframeElement.contentWindow?.postMessage(
-              JSON.stringify({ method: 'pause' }),
-              '*'
-            );
+            iframeElement.contentWindow?.postMessage(JSON.stringify({ method: 'pause' }), '*');
           } else if (src.includes('platform.twitter.com') || src.includes('x.com')) {
             console.log('Pausing Twitter/X iframe');
 
             // Try to pause Twitter/X embeds
-            iframeElement.contentWindow?.postMessage(
-              JSON.stringify({ type: 'pause' }),
-              '*'
-            );
+            iframeElement.contentWindow?.postMessage(JSON.stringify({ type: 'pause' }), '*');
           }
         });
+
+        // Handle Spotify embeds using global registry
+        if (typeof window !== 'undefined' && window.spotifyControllers) {
+          window.spotifyControllers.forEach((controller, id) => {
+            if (controller && typeof controller.pause === 'function') {
+              try {
+                controller.pause();
+              } catch (error) {
+                console.error(`Error pausing Spotify embed ${id}:`, error);
+              }
+            }
+          });
+        }
       };
 
       pauseAllMedia();

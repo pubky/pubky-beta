@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import getYouTubeID from 'get-youtube-id';
 import { Tweet } from 'react-tweet';
 import { Preview, Post as PostUI } from '@social/ui-shared';
-import { Spotify } from 'react-spotify-embed';
+import SpotifyEmbed from '@/components/SpotifyEmbed';
 import { usePubkyClientContext } from '@/contexts';
 import { PostView } from '@/types/Post';
 import { getPost } from '@/services/postService';
@@ -167,7 +167,7 @@ export default function LinkPreviewer({ content, setQuote }: LinkPreviewerProps)
         </div>
       )}
       {githubUrl && <Preview.GitHub url={githubUrl} />}
-      {spotifyUrl && <Spotify link={spotifyUrl} />}
+      {spotifyUrl && <SpotifyEmbed link={spotifyUrl} />}
     </>
   );
 }
