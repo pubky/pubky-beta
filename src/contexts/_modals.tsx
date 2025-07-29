@@ -92,6 +92,11 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
       // Check if pathname matches post URL pattern: /post/[pubky]/[postId]
       const postUrlMatch = pathname.match(/^\/post\/([^\/]+)\/([^\/]+)$/);
 
+      // Initialize previousPathname if we're on a post URL and it's not set
+      if (postUrlMatch && !previousPathname.current) {
+        previousPathname.current = pathname;
+      }
+
       // If we're navigating from a modal to a different page, close the modal instead
       if (isNavigatingFromModal.current) {
         isNavigatingFromModal.current = false;
