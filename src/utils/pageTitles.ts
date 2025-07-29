@@ -21,7 +21,7 @@ export const routeTitleMap: Record<string, string> = {
   '/onboarding/register': 'Register | Pubky.app',
   '/onboarding/pubky': 'Pubky | Pubky.app',
   '/onboarding/confirm': 'Confirm | Pubky.app',
-  '/sign-in': 'SignIn | Pubky.app',
+  '/sign-in': 'SignIn | Pubky.app'
 };
 
 /**
