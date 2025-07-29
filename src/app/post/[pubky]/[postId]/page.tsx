@@ -4,6 +4,7 @@ import { getUserDetails } from '@/services/userService';
 import { getFile } from '@/services/fileService';
 import { Utils } from '@social/utils-shared';
 import { PubkyAppPostKind } from 'pubky-app-specs';
+import PostPageClient from './PostPageClient';
 
 const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
 const BASE_URL = `${NEXT_PUBLIC_NEXUS}`;
@@ -92,12 +93,14 @@ export async function generateMetadata({ params }: Props) {
   } catch (error) {
     console.error('Error generating metadata for post:', error);
     return getSeoMetadata({
-      title: 'Poost not found | Pubky.app',
+      title: 'Post not found | Pubky.app',
       description: 'The requested post could not be found.'
     });
   }
 }
 
-export default async function PostPage() {
-  return null;
+export default async function PostPage({ params }: Props) {
+  const { pubky, postId } = await params;
+
+  return <PostPageClient pubky={pubky} postId={postId} />;
 }
