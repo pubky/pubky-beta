@@ -91,6 +91,7 @@ export default function CreateContent({
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const [searchedUsers, setSearchedUsers] = useState<UserView[]>([]);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
+  const hasContent = content.trim().length > 0 || selectedFiles?.length > 0 || arrayTags?.length > 0;
 
   const searchUsername = async (content: string) => {
     const pkMatches = content.match(/(pk:[^\s]+)/g);
@@ -296,7 +297,7 @@ export default function CreateContent({
           <Section.UserArea
             name={profile?.name ?? Utils.minifyPubky(pubky ?? '')}
             largeView={largeView}
-            warningLink
+            warningLink={hasContent}
             variant={variant}
           />
           <Section.InputArea
