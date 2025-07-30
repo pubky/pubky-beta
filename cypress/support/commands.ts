@@ -53,6 +53,7 @@ Cypress.Commands.add(
       }
     }).then((response) => {
       const inviteCode = response.body;
+      cy.wrap(inviteCode).as('inviteCode');
       cy.get('#onboarding-token-input').type(inviteCode);
     });
 

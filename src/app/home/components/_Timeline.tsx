@@ -239,6 +239,10 @@ export const Timeline = () => {
     }
   }, [isOnline]);
 
+  useEffect(() => {
+    setTimeline((prev) => prev.filter((post) => !mutedUsers.includes(post.details.author)));
+  }, [pubky, mutedUsers]);
+
   // Cleanup function to cancel any ongoing requests
   useEffect(() => {
     return () => {

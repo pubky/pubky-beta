@@ -29,7 +29,7 @@ export default function CreateArticle({ showModal, setShowModal, setShowModalPos
       closeModal={handleClose}
       className="max-h-[90vh] overflow-y-auto max-w-[1200px] scrollbar-thin scrollbar-webkit"
     >
-      <Modal.CloseAction onClick={handleClose} />
+      <Modal.CloseAction id="close-btn" onClick={handleClose} />
       <div id="article-modal" className="flex flex-col gap-4">
         <Modal.Header title="New Article" />
         <ContentCreateArticle
