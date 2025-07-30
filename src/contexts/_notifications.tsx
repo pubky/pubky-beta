@@ -353,7 +353,6 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     preloadUserProfiles
   ]);
 
-
   const updateNotifications = (newNotifications: NotificationView[]) => {
     setNotifications((prev) => {
       const merged = [...prev, ...newNotifications].filter(

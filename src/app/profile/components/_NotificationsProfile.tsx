@@ -49,12 +49,12 @@ export default function NotificationsProfile() {
       setTempUnReadNotification(unReadNotification);
       setUiUnreadCount(unReadNotification); // Set UI count immediately
       setUnReadNotification(0);
-      
+
       const updateTimestamp = async () => {
         await putTimestampNotification();
       };
       updateTimestamp();
-      
+
       // Hide UI unread indicator after 5 seconds
       hideTimerRef.current = setTimeout(() => {
         setUiUnreadCount(0);
