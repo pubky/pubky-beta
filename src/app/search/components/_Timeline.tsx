@@ -104,7 +104,7 @@ export const Timeline = () => {
           title={`No results ${searchTags.length > 0 ? `with the tag: ${searchTags}` : ''}`}
           description="Try searching for something else."
         >
-          <div className="md:hidden flex gap-3 justify-center flex-wrap">
+          <div className="z-10 md:hidden flex gap-3 justify-center flex-wrap">
             <Link href="/home">
               <Button.Medium icon={<Icon.House size="16" />}>Go back home</Button.Medium>
             </Link>
