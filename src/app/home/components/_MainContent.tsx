@@ -17,7 +17,7 @@ export function MainContent({ layout, loadingFeed, setLoadingFeed, ref }: MainCo
   const isMobile = useIsMobile(1280);
 
   return (
-    <Components.PostsLayout ref={ref} id="posts-feed" className="w-full flex-col inline-flex gap-3">
+    <Components.PostsLayout ref={ref} id="posts-feed" className="w-full flex-col inline-flex lg:gap-3">
       {pubky && (
         <>
           <Components.CustomFeeds loading={loadingFeed} setLoading={setLoadingFeed} />
