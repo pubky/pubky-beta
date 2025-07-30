@@ -6,6 +6,7 @@ import axios from 'axios';
 import { useState } from 'react';
 import { PostView } from '@/types/Post';
 import InputReport from './InputReport';
+import { useRouter } from 'next/navigation';
 
 interface ReportPostProps {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -14,6 +15,7 @@ interface ReportPostProps {
 }
 
 export default function ContentReportPost({ setShowModal, post, setShowMenu }: ReportPostProps) {
+  const router = useRouter();
   const { profile, pubky } = usePubkyClientContext();
   const [selectedItem, setSelectedItem] = useState<string>('Personal Info Leak');
   const [showInput, setShowInput] = useState(false);
@@ -30,7 +32,8 @@ export default function ContentReportPost({ setShowModal, post, setShowMenu }: R
     { icon: <Icon.Megaphone size="24" />, title: 'Promotion of Terrorist' },
     { icon: <Icon.ShieldWarning size="24" />, title: 'Graphic or Criminal Violence' },
     { icon: <Icon.Handbag size="24" />, title: 'Illegal Sales or Criminal' },
-    { icon: <Icon.Fire size="24" />, title: 'Non-consensual or Criminal Sexual Content' }
+    { icon: <Icon.Fire size="24" />, title: 'Non-consensual or Criminal Sexual Content' },
+    { icon: <Icon.Copy size="24" />, title: 'Copyright Infringement' }
   ];
 
   const handleSubmit = async () => {
@@ -102,7 +105,10 @@ export default function ContentReportPost({ setShowModal, post, setShowMenu }: R
           <Button.Large id="cancel-report" onClick={() => setShowModal(false)} variant="secondary">
             Cancel
           </Button.Large>
-          <Button.Large onClick={() => setShowInput(true)} id="next-report">
+          <Button.Large
+            onClick={() => (selectedItem === 'Copyright Infringement' ? router.push('/copyright') : setShowInput(true))}
+            id="next-report"
+          >
             Next
           </Button.Large>
         </div>
