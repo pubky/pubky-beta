@@ -5,7 +5,7 @@ import { ContentNotFound, Skeleton } from '@/components';
 import { useFilterContext, useNotificationsContext, usePubkyClientContext } from '@/contexts';
 import { Icon } from '@social/ui-shared';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 
 export default function NotificationsProfile() {
@@ -17,8 +17,10 @@ export default function NotificationsProfile() {
   } = useNotificationsContext();
   const { unReadNotification, setUnReadNotification } = useFilterContext();
   const [tempUnReadNotification, setTempUnReadNotification] = useState(0);
+  const [uiUnreadCount, setUiUnreadCount] = useState(0); // Separate state for UI display
   const [isInitialized, setIsInitialized] = useState(false);
   const { putTimestampNotification } = usePubkyClientContext();
+  const hideTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const loader = useInfiniteScroll(loadMoreNotifications, loadingNotifications);
 
@@ -39,15 +41,29 @@ export default function NotificationsProfile() {
   useEffect(() => {
     // Only process unread notifications after the component is initialized and notifications are loaded
     if (isInitialized && unReadNotification > 0 && notifications.length > 0) {
+      // Clear any existing timer
+      if (hideTimerRef.current) {
+        clearTimeout(hideTimerRef.current);
+      }
+
       setTempUnReadNotification(unReadNotification);
+      setUiUnreadCount(unReadNotification); // Set UI count immediately
       setUnReadNotification(0);
+      
       const updateTimestamp = async () => {
         await putTimestampNotification();
       };
       updateTimestamp();
+      
+      // Hide UI unread indicator after 5 seconds
+      hideTimerRef.current = setTimeout(() => {
+        setUiUnreadCount(0);
+        hideTimerRef.current = null;
+      }, 5000);
     } else if (isInitialized && unReadNotification === 0 && tempUnReadNotification > 0) {
       // Reset tempUnReadNotification when there are no unread notifications
       setTempUnReadNotification(0);
+      // Don't reset uiUnreadCount here, let the timer handle it
     }
   }, [
     unReadNotification,
@@ -57,6 +73,15 @@ export default function NotificationsProfile() {
     notifications.length,
     tempUnReadNotification
   ]);
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (hideTimerRef.current) {
+        clearTimeout(hideTimerRef.current);
+      }
+    };
+  }, []);
 
   // Show loading skeleton only for initial load when no notifications are available
   if (!isInitialized && loadingNotifications && notifications.length === 0) {
@@ -79,9 +104,9 @@ export default function NotificationsProfile() {
         </ContentNotFound>
       ) : (
         <div className="px-6 py-[18px] bg-white/10 rounded-lg" id="notifications-list">
-          {tempUnReadNotification > 0 && (
+          {uiUnreadCount > 0 && (
             <div>
-              {notifications.slice(0, tempUnReadNotification).map((notification) => (
+              {notifications.slice(0, uiUnreadCount).map((notification) => (
                 <Notifications.Notification key={notification.timestamp} notification={notification} unread />
               ))}
             </div>
