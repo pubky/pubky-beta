@@ -6,6 +6,7 @@ import { useFilterContext, useNotificationsContext, usePubkyClientContext } from
 import { Icon } from '@social/ui-shared';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useEffect, useState, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 
 export default function NotificationsProfile() {
@@ -20,11 +21,24 @@ export default function NotificationsProfile() {
   const [uiUnreadCount, setUiUnreadCount] = useState(0); // Separate state for UI display
   const [isInitialized, setIsInitialized] = useState(false);
   const { putTimestampNotification } = usePubkyClientContext();
-  const hideTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const pathname = usePathname();
+  const [isOnProfilePage, setIsOnProfilePage] = useState(true);
 
   const loader = useInfiniteScroll(loadMoreNotifications, loadingNotifications);
 
   const displayedNotifications = notifications.slice(tempUnReadNotification);
+
+  // Track if user is on profile page
+  useEffect(() => {
+    const isProfilePage = pathname === '/profile' || pathname.startsWith('/profile/');
+    setIsOnProfilePage(isProfilePage);
+
+    // If user navigates away from profile page, hide unread dots
+    if (!isProfilePage && uiUnreadCount > 0) {
+      setUiUnreadCount(0);
+      setTempUnReadNotification(0);
+    }
+  }, [pathname, uiUnreadCount]);
 
   // Wait for notifications to be loaded before processing unread notifications
   useEffect(() => {
@@ -40,12 +54,7 @@ export default function NotificationsProfile() {
 
   useEffect(() => {
     // Only process unread notifications after the component is initialized and notifications are loaded
-    if (isInitialized && unReadNotification > 0 && notifications.length > 0) {
-      // Clear any existing timer
-      if (hideTimerRef.current) {
-        clearTimeout(hideTimerRef.current);
-      }
-
+    if (isInitialized && unReadNotification > 0 && notifications.length > 0 && isOnProfilePage) {
       setTempUnReadNotification(unReadNotification);
       setUiUnreadCount(unReadNotification); // Set UI count immediately
       setUnReadNotification(0);
@@ -54,16 +63,9 @@ export default function NotificationsProfile() {
         await putTimestampNotification();
       };
       updateTimestamp();
-
-      // Hide UI unread indicator after 5 seconds
-      hideTimerRef.current = setTimeout(() => {
-        setUiUnreadCount(0);
-        hideTimerRef.current = null;
-      }, 5000);
-    } else if (isInitialized && unReadNotification === 0 && tempUnReadNotification > 0) {
-      // Reset tempUnReadNotification when there are no unread notifications
+    } else if (isInitialized && unReadNotification === 0 && tempUnReadNotification > 0 && !isOnProfilePage) {
+      // Reset tempUnReadNotification when there are no unread notifications and user is not on profile page
       setTempUnReadNotification(0);
-      // Don't reset uiUnreadCount here, let the timer handle it
     }
   }, [
     unReadNotification,
@@ -71,17 +73,9 @@ export default function NotificationsProfile() {
     putTimestampNotification,
     isInitialized,
     notifications.length,
-    tempUnReadNotification
+    tempUnReadNotification,
+    isOnProfilePage
   ]);
-
-  // Cleanup timer on unmount
-  useEffect(() => {
-    return () => {
-      if (hideTimerRef.current) {
-        clearTimeout(hideTimerRef.current);
-      }
-    };
-  }, []);
 
   // Show loading skeleton only for initial load when no notifications are available
   if (!isInitialized && loadingNotifications && notifications.length === 0) {
