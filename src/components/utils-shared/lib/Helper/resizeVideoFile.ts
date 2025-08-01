@@ -1,7 +1,15 @@
-// Helper function to combine compressed video with original audio
-async function combineVideoWithAudio(videoBlob: Blob, originalFile: File, mimeType: string): Promise<File> {
+// Helper function to resize and compress a video file to fit within a maximum file size while maintaining aspect ratio
+// This function now processes video and audio in a single pass for better performance
+export async function resizeVideoFile(file: File, maxSizeInBytes: number = 20 * 1024 * 1024): Promise<File> {
   return new Promise((resolve, reject) => {
-    // Create canvas for video
+    // If the original file is already small enough, return it as-is
+    if (file.size <= maxSizeInBytes) {
+      resolve(file);
+      return;
+    }
+
+    // Create video elements
+    const videoElement = document.createElement('video');
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
 
@@ -10,49 +18,34 @@ async function combineVideoWithAudio(videoBlob: Blob, originalFile: File, mimeTy
       return;
     }
 
-    // Create video element for compressed video
-    const videoElement = document.createElement('video');
-    const videoUrl = URL.createObjectURL(videoBlob);
-    videoElement.src = videoUrl;
-    videoElement.muted = true;
+    // Create object URL for the video
+    const videoUrl = URL.createObjectURL(file);
+
+    // Configure video element - mute during compression but keep audio track
+    videoElement.muted = true; // Mute during compression to avoid hearing audio
     videoElement.volume = 0;
 
-    // Create video element for original file (for audio)
-    const audioElement = document.createElement('video');
-    const audioUrl = URL.createObjectURL(originalFile);
-    audioElement.src = audioUrl;
-    audioElement.muted = true;
-    audioElement.volume = 0;
+    videoElement.onloadedmetadata = () => {
+      // Start with original dimensions
+      let { videoWidth, videoHeight } = videoElement;
+      let quality = 0.8; // Start with good quality
+      let scale = 1;
+      let bitrate = 1000000; // Start with 1Mbps bitrate
 
-    // Wait for both videos to load
-    let videosLoaded = 0;
-    const onVideoLoad = () => {
-      videosLoaded++;
-      if (videosLoaded === 2) {
-        startRecording();
-      }
-    };
+      const compressVideo = () => {
+        // Calculate new dimensions
+        const newWidth = Math.round(videoWidth * scale);
+        const newHeight = Math.round(videoHeight * scale);
 
-    videoElement.onloadedmetadata = onVideoLoad;
-    audioElement.onloadedmetadata = onVideoLoad;
-
-    videoElement.onerror = () => reject('Error loading compressed video');
-    audioElement.onerror = () => reject('Error loading original video');
-
-    videoElement.load();
-    audioElement.load();
-
-    function startRecording() {
-      try {
-        // Set canvas dimensions to match video
-        canvas.width = videoElement.videoWidth;
-        canvas.height = videoElement.videoHeight;
+        // Set canvas dimensions
+        canvas.width = newWidth;
+        canvas.height = newHeight;
 
         // Create MediaStream from canvas (video track)
         const videoStream = canvas.captureStream();
 
-        // Create MediaStream from audio element (audio track) using type assertion
-        const audioStream = (audioElement as any).captureStream();
+        // Create MediaStream from video element (audio track)
+        const audioStream = (videoElement as any).captureStream();
 
         // Combine video and audio streams
         const combinedStream = new MediaStream();
@@ -69,122 +62,7 @@ async function combineVideoWithAudio(videoBlob: Blob, originalFile: File, mimeTy
           combinedStream.addTrack(audioTracks[0]);
         }
 
-        // Create MediaRecorder for combined stream
-        const recorder = new MediaRecorder(combinedStream, {
-          mimeType: mimeType
-        });
-
-        const chunks: Blob[] = [];
-        recorder.ondataavailable = (event) => {
-          if (event.data.size > 0) {
-            chunks.push(event.data);
-          }
-        };
-
-        recorder.onstop = () => {
-          const finalBlob = new Blob(chunks, { type: mimeType });
-          const finalFile = new File([finalBlob], originalFile.name.replace(/\.[^/.]+$/, '') + '.mp4', {
-            type: mimeType,
-            lastModified: Date.now()
-          });
-
-          // Clean up URLs
-          URL.revokeObjectURL(videoUrl);
-          URL.revokeObjectURL(audioUrl);
-
-          resolve(finalFile);
-        };
-
-        recorder.onerror = (event) => {
-          URL.revokeObjectURL(videoUrl);
-          URL.revokeObjectURL(audioUrl);
-          reject('Error during recording: ' + event);
-        };
-
-        // Start recording
-        recorder.start();
-
-        // Play both videos simultaneously
-        videoElement.currentTime = 0;
-        audioElement.currentTime = 0;
-        videoElement.play();
-        audioElement.play();
-
-        // Draw video frames to canvas
-        const drawFrame = () => {
-          if (videoElement.ended || videoElement.paused) {
-            recorder.stop();
-            return;
-          }
-
-          ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-          requestAnimationFrame(drawFrame);
-        };
-
-        drawFrame();
-
-        // Stop recording when video ends
-        videoElement.onended = () => {
-          recorder.stop();
-        };
-
-        audioElement.onended = () => {
-          recorder.stop();
-        };
-      } catch (error) {
-        URL.revokeObjectURL(videoUrl);
-        URL.revokeObjectURL(audioUrl);
-        reject('Error creating combined stream: ' + error);
-      }
-    }
-  });
-}
-
-// Utility to resize and compress a video file to fit within a maximum file size while maintaining aspect ratio
-// Note: This function compresses video without audio. If audio preservation is needed, consider using the original file.
-export async function resizeVideoFile(file: File, maxSizeInBytes: number = 20 * 1024 * 1024): Promise<File> {
-  return new Promise((resolve, reject) => {
-    // If the original file is already small enough, return it as-is to preserve audio
-    if (file.size <= maxSizeInBytes) {
-      resolve(file);
-      return;
-    }
-
-    // Create a temporary video element for compression (muted)
-    const compressionVideo = document.createElement('video');
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-
-    if (!ctx) {
-      reject('No canvas context available');
-      return;
-    }
-
-    // Create object URL for the video
-    const videoUrl = URL.createObjectURL(file);
-
-    // Mute the compression video to prevent audio during compression
-    compressionVideo.muted = true;
-    compressionVideo.volume = 0;
-
-    compressionVideo.onloadedmetadata = () => {
-      // Start with original dimensions
-      let { videoWidth, videoHeight } = compressionVideo;
-      let quality = 0.8; // Start with good quality
-      let scale = 1;
-      let bitrate = 1000000; // Start with 1Mbps bitrate
-
-      const compressVideo = () => {
-        // Calculate new dimensions
-        const newWidth = Math.round(videoWidth * scale);
-        const newHeight = Math.round(videoHeight * scale);
-
-        // Set canvas dimensions
-        canvas.width = newWidth;
-        canvas.height = newHeight;
-
         // Create MediaRecorder with compression settings
-        const stream = canvas.captureStream();
         const options: MediaRecorderOptions = {
           mimeType: 'video/mp4',
           videoBitsPerSecond: bitrate
@@ -200,7 +78,7 @@ export async function resizeVideoFile(file: File, maxSizeInBytes: number = 20 * 
           options.mimeType = 'video/webm;codecs=vp8';
         }
 
-        const mediaRecorder = new MediaRecorder(stream, options);
+        const mediaRecorder = new MediaRecorder(combinedStream, options);
         const chunks: Blob[] = [];
 
         mediaRecorder.ondataavailable = (event) => {
@@ -210,25 +88,16 @@ export async function resizeVideoFile(file: File, maxSizeInBytes: number = 20 * 
         };
 
         mediaRecorder.onstop = () => {
-          const compressedVideoBlob = new Blob(chunks, { type: options.mimeType || 'video/mp4' });
+          const compressedBlob = new Blob(chunks, { type: options.mimeType || 'video/mp4' });
 
           // Check if file size is within limit
-          if (compressedVideoBlob.size <= maxSizeInBytes) {
-            // Now we need to combine the compressed video with the original audio
-            combineVideoWithAudio(compressedVideoBlob, file, options.mimeType || 'video/mp4')
-              .then((finalFile) => {
-                URL.revokeObjectURL(videoUrl);
-                resolve(finalFile);
-              })
-              .catch((error) => {
-                // If audio combination fails, return video without audio
-                const compressedFile = new File([compressedVideoBlob], file.name.replace(/\.[^/.]+$/, '') + '.mp4', {
-                  type: options.mimeType || 'video/mp4',
-                  lastModified: Date.now()
-                });
-                URL.revokeObjectURL(videoUrl);
-                resolve(compressedFile);
-              });
+          if (compressedBlob.size <= maxSizeInBytes) {
+            const compressedFile = new File([compressedBlob], file.name.replace(/\.[^/.]+$/, '') + '.mp4', {
+              type: options.mimeType || 'video/mp4',
+              lastModified: Date.now()
+            });
+            URL.revokeObjectURL(videoUrl);
+            resolve(compressedFile);
           } else {
             // If still too large, reduce quality or scale
             if (quality > 0.1) {
@@ -258,16 +127,16 @@ export async function resizeVideoFile(file: File, maxSizeInBytes: number = 20 * 
         mediaRecorder.start();
 
         // Play video and draw frames to canvas
-        compressionVideo.currentTime = 0;
-        compressionVideo.play();
+        videoElement.currentTime = 0;
+        videoElement.play();
 
         const drawFrame = () => {
-          if (compressionVideo.ended || compressionVideo.paused) {
+          if (videoElement.ended || videoElement.paused) {
             mediaRecorder.stop();
             return;
           }
 
-          ctx.drawImage(compressionVideo, 0, 0, newWidth, newHeight);
+          ctx.drawImage(videoElement, 0, 0, newWidth, newHeight);
           requestAnimationFrame(drawFrame);
         };
 
@@ -278,12 +147,12 @@ export async function resizeVideoFile(file: File, maxSizeInBytes: number = 20 * 
       compressVideo();
     };
 
-    compressionVideo.onerror = () => {
+    videoElement.onerror = () => {
       URL.revokeObjectURL(videoUrl);
       reject('Error loading video file');
     };
 
-    compressionVideo.src = videoUrl;
-    compressionVideo.load();
+    videoElement.src = videoUrl;
+    videoElement.load();
   });
 }
