@@ -20,7 +20,7 @@ export default function Join() {
   const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
   const fallbackUrl = isIOS ? 'https://apps.apple.com/app' : 'https://play.google.com/store/apps';
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
-  const isiOSPWA = isIOS && isStandalone;
+  const isiOSPWA = false;
   const [loginError, setLoginError] = useState('');
   const [authUrl, setAuthUrl] = useState('');
   const [appLink, setAppLink] = useState('');
