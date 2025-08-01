@@ -5,6 +5,7 @@ import { Icon, PostUtil, Input, Typography } from '@social/ui-shared';
 import { Utils } from '@social/utils-shared';
 import EmojiPicker from '@/components/EmojiPicker';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
+import { useSuggestedTags } from '@/hooks/useSuggestedTags';
 
 interface TagProps extends React.HTMLAttributes<HTMLDivElement> {
   arrayTags: string[];
@@ -18,6 +19,20 @@ export default function ContentTagCreatePost({ arrayTags, setArrayTags }: TagPro
   const [localTags, setLocalTags] = useState<string[]>(arrayTags);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
+
+  const { suggestedTags, selectedTagIndex, handleKeyDown, handleTagClick } = useSuggestedTags({
+    tagInput: tag,
+    onTagSelect: (tag) => setTag(tag)
+  });
+
+  const handleAddTagWithCheck = (tagValue: string) => {
+    if (selectedTagIndex > -1) {
+      const selectedTag = suggestedTags[selectedTagIndex];
+      setTag(selectedTag);
+    } else {
+      handleAddTag();
+    }
+  };
 
   useEffect(() => {
     setLocalTags(arrayTags);
@@ -94,15 +109,34 @@ export default function ContentTagCreatePost({ arrayTags, setArrayTags }: TagPro
             </div>
           </>
         )}
-        <Input.Tag
-          value={tag}
-          onChange={(value) => setTag(value)}
-          onAddTag={handleAddTag}
-          onEmojiPickerClick={() => setShowEmojis(true)}
-          variant="default"
-          className="w-full"
-          autoFocus
-        />
+        <div className="relative w-full" onKeyDown={handleKeyDown} tabIndex={0}>
+          <Input.Tag
+            value={tag}
+            onChange={(value) => setTag(value)}
+            onAddTag={handleAddTagWithCheck}
+            onEmojiPickerClick={() => setShowEmojis(true)}
+            variant="default"
+            className="w-full"
+            autoFocus
+          />
+          {suggestedTags.length > 0 && (
+            <div className="mt-1 bg-[#05050A] border border-white border-opacity-20 rounded-lg z-20 w-full max-h-[150px] overflow-y-auto scrollbar-thin scrollbar-webkit">
+              {suggestedTags.map((tag, index) => (
+                <div
+                  key={index}
+                  onClick={() => handleTagClick(tag)}
+                  className={`cursor-pointer hover:bg-white hover:bg-opacity-10 rounded px-4 py-2 ${
+                    index === selectedTagIndex ? 'bg-white bg-opacity-10' : ''
+                  }`}
+                >
+                  <Typography.Body variant="small" className="text-opacity-80 hover:text-opacity-100">
+                    {tag}
+                  </Typography.Body>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
       {tagsError && (
         <Typography.Body variant="small" className="text-[#e95164]">
