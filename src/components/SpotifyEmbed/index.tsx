@@ -99,7 +99,7 @@ export default function SpotifyEmbed({ link, width = '100%', height = '160' }: S
               clearInterval(checkAPI);
             }
           }, 100);
-          
+
           setTimeout(() => {
             clearInterval(checkAPI);
           }, 10000);
@@ -156,7 +156,7 @@ export default function SpotifyEmbed({ link, width = '100%', height = '160' }: S
 
     return () => {
       isComponentMounted.current = false;
-      
+
       // Remove from global registry
       try {
         window.spotifyControllers.delete(embedId.current);
@@ -175,7 +175,7 @@ export default function SpotifyEmbed({ link, width = '100%', height = '160' }: S
         width,
         height,
         borderRadius: '12px',
-        overflow: 'hidden',
+        overflow: 'hidden'
       }}
     >
       <iframe
