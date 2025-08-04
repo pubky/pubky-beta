@@ -32,6 +32,8 @@ interface InputAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   styleSearchedUsers?: string;
   setCharCountArticle?: React.Dispatch<React.SetStateAction<number>>;
   setIsCompressing?: React.Dispatch<React.SetStateAction<boolean>>;
+  filesBeingCompressed?: number;
+  setFilesBeingCompressed?: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export default function InputArea({
@@ -58,7 +60,9 @@ export default function InputArea({
   handlePaste,
   styleSearchedUsers,
   setCharCountArticle,
-  setIsCompressing
+  setIsCompressing,
+  filesBeingCompressed,
+  setFilesBeingCompressed
 }: InputAreaProps) {
   const [isDragging, setIsDragging] = useState(false);
   const { addAlert, removeAlert } = useAlertContext();
@@ -98,8 +102,8 @@ export default function InputArea({
     const maxVideoSizeForCompressionInBytes = maxVideoSizeForCompressionInMB * 1024 * 1024;
 
     if (files) {
-      // Check file limit before processing
-      const totalFiles = (selectedFiles?.length || 0) + files.length;
+      // Check file limit before processing - include files being compressed
+      const totalFiles = (selectedFiles?.length || 0) + files.length + (filesBeingCompressed || 0);
       if (totalFiles > 4) {
         addAlert('Max 4 files only.', 'warning');
         return;
@@ -109,8 +113,8 @@ export default function InputArea({
         const validFiles: File[] = [];
 
         for (const file of Array.from(files)) {
-          // Check if we already have 4 files
-          if (validFiles.length >= 4 - (selectedFiles?.length || 0)) {
+          // Check if we already have 4 files - include files being compressed
+          if (validFiles.length >= 4 - (selectedFiles?.length || 0) - (filesBeingCompressed || 0)) {
             break;
           }
 
@@ -136,6 +140,7 @@ export default function InputArea({
                 'loading'
               );
               setIsCompressing(true);
+              setFilesBeingCompressed && setFilesBeingCompressed((prev) => prev + 1);
               const resizedFile = await Utils.resizeImageFile(file, maxImageSizeInBytes);
               removeAlert(loadingAlertId);
               validFiles.push(resizedFile);
@@ -143,6 +148,7 @@ export default function InputArea({
               addAlert('The maximum allowed size for images is 5 MB', 'warning');
               continue;
             } finally {
+              setFilesBeingCompressed && setFilesBeingCompressed((prev) => Math.max(0, prev - 1));
               // Only set compressing to false when all files are processed
               if (validFiles.length === files.length) {
                 setIsCompressing(false);
@@ -160,6 +166,7 @@ export default function InputArea({
                 'loading'
               );
               setIsCompressing(true);
+              setFilesBeingCompressed && setFilesBeingCompressed((prev) => prev + 1);
               const resizedFile = await Utils.resizeVideoFile(file, maxOtherSizeInBytes);
               removeAlert(loadingAlertId);
               validFiles.push(resizedFile);
@@ -167,6 +174,7 @@ export default function InputArea({
               addAlert('The maximum allowed size for videos is 20 MB', 'warning');
               continue;
             } finally {
+              setFilesBeingCompressed && setFilesBeingCompressed((prev) => Math.max(0, prev - 1));
               // Only set compressing to false when all files are processed
               if (validFiles.length === files.length) {
                 setIsCompressing(false);
