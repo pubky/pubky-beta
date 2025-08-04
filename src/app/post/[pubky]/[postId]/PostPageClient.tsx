@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useModal } from '@/contexts';
 import { getPost } from '@/services/postService';
 import { usePubkyClientContext } from '@/contexts';
@@ -16,6 +16,7 @@ export default function PostPage({ pubky, postId }: PostPageClientProps) {
   const { pubky: currentUserPubky } = usePubkyClientContext();
   const hasOpenedModal = useRef(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [showReloadButton, setShowReloadButton] = useState(false);
 
   useEffect(() => {
     const openPostModal = async () => {
@@ -72,18 +73,34 @@ export default function PostPage({ pubky, postId }: PostPageClientProps) {
     // Single attempt with a small delay to ensure the modal context is ready
     timeoutRef.current = setTimeout(openPostModal, 100);
 
+    // Show reload button after 5 seconds
+    const reloadTimeout = setTimeout(() => {
+      setShowReloadButton(true);
+    }, 5000);
+
     return () => {
       // Cleanup timeout when component unmounts
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
+      clearTimeout(reloadTimeout);
     };
   }, [pubky, postId, currentUserPubky, openModal]);
 
   // This component doesn't render anything visible
   return (
     <div className="flex justify-center items-center h-screen">
-      <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white" />
+      <div className="flex flex-col items-center justify-center gap-4">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white" />
+        {showReloadButton && (
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-2 bg-[#c8ff00] text-black rounded font-semibold hover:bg-[#b0e600] transition"
+          >
+            Reload
+          </button>
+        )}
+      </div>
     </div>
   );
 }
