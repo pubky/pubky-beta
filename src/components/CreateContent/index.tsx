@@ -299,7 +299,7 @@ export default function CreateContent({
             try {
               const loadingAlertId = addAlert(`Compressing image ${i + 1}/${filesToProcess.length}...`, 'loading');
               setIsCompressing(true);
-              setFilesBeingCompressed(prev => prev + 1);
+              setFilesBeingCompressed((prev) => prev + 1);
               const resizedFile = await Utils.resizeImageFile(file, maxImageSizeInBytes);
               removeAlert(loadingAlertId);
               validFiles.push(resizedFile);
@@ -307,7 +307,7 @@ export default function CreateContent({
               addAlert('The maximum allowed size for images is 5 MB', 'warning');
               continue;
             } finally {
-              setFilesBeingCompressed(prev => Math.max(0, prev - 1));
+              setFilesBeingCompressed((prev) => Math.max(0, prev - 1));
               // Only set compressing to false when all files are processed
               if (i === filesToProcess.length - 1) {
                 setIsCompressing(false);
@@ -323,7 +323,7 @@ export default function CreateContent({
             try {
               const loadingAlertId = addAlert(`Compressing video ${i + 1}/${filesToProcess.length}...`, 'loading');
               setIsCompressing(true);
-              setFilesBeingCompressed(prev => prev + 1);
+              setFilesBeingCompressed((prev) => prev + 1);
               const resizedFile = await Utils.resizeVideoFile(file, maxOtherSizeInBytes);
               removeAlert(loadingAlertId);
               validFiles.push(resizedFile);
@@ -331,7 +331,7 @@ export default function CreateContent({
               addAlert('The maximum allowed size for videos is 20 MB', 'warning');
               continue;
             } finally {
-              setFilesBeingCompressed(prev => Math.max(0, prev - 1));
+              setFilesBeingCompressed((prev) => Math.max(0, prev - 1));
               // Only set compressing to false when all files are processed
               if (i === filesToProcess.length - 1) {
                 setIsCompressing(false);
