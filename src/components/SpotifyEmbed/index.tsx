@@ -26,6 +26,7 @@ export default function SpotifyEmbed({ link, width = '100%', height = '160' }: S
   const [isLoaded, setIsLoaded] = useState(false);
   const embedId = useRef(`spotify-embed-${Math.random().toString(36).substr(2, 9)}`);
   const isComponentMounted = useRef(true);
+  const controllerCreated = useRef(false);
 
   // Convert Spotify URL to URI format for API
   const convertSpotifyUrlToUri = (url: string): string => {
@@ -51,6 +52,9 @@ export default function SpotifyEmbed({ link, width = '100%', height = '160' }: S
     // If no match found, return the original URL
     return url;
   };
+
+  // Create a stable ID based on the Spotify URL to prevent duplicates
+  const spotifyUri = convertSpotifyUrlToUri(link);
 
   // Convert Spotify URL to embed URL format for iframe
   const convertSpotifyUrlToEmbedUrl = (url: string): string => {
@@ -78,7 +82,6 @@ export default function SpotifyEmbed({ link, width = '100%', height = '160' }: S
   };
 
   const embedUrl = convertSpotifyUrlToEmbedUrl(link);
-  const spotifyUri = convertSpotifyUrlToUri(link);
 
   useEffect(() => {
     let script: HTMLScriptElement | null = null;
@@ -117,6 +120,12 @@ export default function SpotifyEmbed({ link, width = '100%', height = '160' }: S
     const createController = () => {
       if (!containerRef.current || !window.spotifyIframeAPI || !isComponentMounted.current) return;
 
+      // Prevent double initialization for the same component instance
+      if (controllerCreated.current) {
+        console.log('Controller already created for this component instance:', embedId.current);
+        return;
+      }
+
       const options = {
         uri: spotifyUri,
         width: width,
@@ -126,6 +135,8 @@ export default function SpotifyEmbed({ link, width = '100%', height = '160' }: S
       const callback = (spotifyEmbedController: any) => {
         if (isComponentMounted.current) {
           setIsLoaded(true);
+          controllerCreated.current = true;
+
           // Register the controller globally for use in useMediaPause
           window.spotifyControllers.set(embedId.current, spotifyEmbedController);
         }
@@ -156,6 +167,8 @@ export default function SpotifyEmbed({ link, width = '100%', height = '160' }: S
 
     return () => {
       isComponentMounted.current = false;
+      controllerCreated.current = false;
+      console.log('SpotifyEmbed component destroyed with ID:', embedId.current);
 
       // Remove from global registry
       try {
