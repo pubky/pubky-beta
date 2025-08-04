@@ -344,7 +344,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
       if (String(error) === 'error sending request' && typeof window !== 'undefined' && !navigator.onLine) {
         return { status: true, message: 'connection lost' };
       }
-      return { status: true, message: 'homeserver down' };
+      return { status: true, message: error.message || 'homeserver down' };
     }
   };
 
