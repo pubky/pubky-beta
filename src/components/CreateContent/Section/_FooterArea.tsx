@@ -215,8 +215,8 @@ export default function FooterArea({
           filePreviews.slice(updatedPreviews.length).forEach((preview) => URL.revokeObjectURL(preview));
         }
 
-        // Ensure compressing state is reset if no files needed compression
-        if (validFiles.length === 0) {
+        // Ensure compressing state is reset when all files are processed
+        if (filesBeingCompressed === 0) {
           setIsCompressing(false);
         }
       };
