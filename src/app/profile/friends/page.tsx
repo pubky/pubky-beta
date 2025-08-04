@@ -1,9 +1,10 @@
 import { getSeoMetadata } from '@components/HeaderSEO';
 import LayoutProfile from '../components/_LayoutProfile';
 import ContactsProfile from '../components/_ContactsProfile/ContactsProfile';
+import { routeTitleMap } from '@/utils/pageTitles';
 
 export const metadata = getSeoMetadata({
-  title: 'Friends | Pubky.app',
+  title: routeTitleMap['/profile/friends'],
   description: 'Pubky.app - Unlock the web.'
 });
 

@@ -19,6 +19,7 @@ import { Header } from './components/_Header';
 import RootParent from './components/_RootParent';
 import PostRoot from './components/_PostRoot';
 import { ImageArticle } from './components/_ImageArticle';
+import { getPageTitle } from '@/utils/pageTitles';
 import { useMediaPause } from '@/hooks/useMediaPause';
 
 interface PostViewModalProps {
@@ -36,6 +37,23 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
   const urlUpdated = useRef<boolean>(false);
   const originalTitle = useRef<string>('');
   const [postKey, setPostKey] = useState<string>('');
+
+  // Function to restore title based on current route
+  const restoreTitleForRoute = () => {
+    const currentPath = window.location.pathname;
+
+    // Get the title from the page metadata
+    const pageTitle = getPageTitle(currentPath);
+
+    if (pageTitle) {
+      document.title = pageTitle;
+    } else {
+      // For unknown routes, restore the original title
+      if (originalTitle.current) {
+        document.title = originalTitle.current;
+      }
+    }
+  };
 
   // Use the media pause hook to stop background media when modal opens
   useMediaPause(showModal);
@@ -64,6 +82,12 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
       // Store original title
       originalTitle.current = document.title;
 
+      // Handle deleted posts or non-existent posts
+      if (post?.details?.content === '[DELETED]') {
+        document.title = `Post not found | Pubky.app`;
+        return;
+      }
+
       // Set appropriate title based on post type
       if (String(post?.details?.kind) === PubkyAppPostKind[1].toLocaleLowerCase()) {
         // Long post (article)
@@ -91,17 +115,11 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
         document.title = `${profileName} on Pubky`;
       }
     } else {
-      // Restore original title when modal closes
-      if (originalTitle.current) {
-        document.title = originalTitle.current;
-      }
+      restoreTitleForRoute();
     }
 
     return () => {
-      // Cleanup: restore original title if component unmounts
-      if (originalTitle.current) {
-        document.title = originalTitle.current;
-      }
+      restoreTitleForRoute();
     };
   }, [showModal, post, user]);
 
@@ -147,13 +165,6 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
       document.body.style.overflow = '';
     };
   }, [showModal, setShowModal, post]);
-
-  const handleClose = () => {
-    setShowModal(false);
-    urlUpdated.current = false;
-    // Go back to previous URL
-    router.back();
-  };
 
   // Handle internal navigation (clicks on links within the modal)
   const handleInternalNavigation = (href: string) => {
@@ -234,10 +245,12 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
                 {renderMainPost()}
               </div>
 
-              {/* Replies section */}
-              <div className="mt-3">
-                <PostRoot key={`replies-${postKey}`} uri={post?.details?.id} post={post} />
-              </div>
+              {/* Replies section - only show if post is not deleted */}
+              {post?.details?.content !== '[DELETED]' && (
+                <div className="mt-3">
+                  <PostRoot key={`replies-${postKey}`} uri={post?.details?.id} post={post} />
+                </div>
+              )}
             </Content.Grid>
 
             <Components.CreatePost />

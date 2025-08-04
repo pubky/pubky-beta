@@ -1,9 +1,10 @@
 import { getSeoMetadata } from '@components/HeaderSEO';
 import LayoutProfile from '../components/_LayoutProfile';
 import TaggedAs from '../components/_TaggedAs';
+import { routeTitleMap } from '@/utils/pageTitles';
 
 export const metadata = getSeoMetadata({
-  title: 'Tagged as | Pubky.app',
+  title: routeTitleMap['/profile/tagged'],
   description: 'Pubky.app - Unlock the web.'
 });
 

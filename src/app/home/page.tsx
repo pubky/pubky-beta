@@ -2,9 +2,10 @@ import { getSeoMetadata } from '@components/HeaderSEO';
 import { Content } from '@social/ui-shared';
 import { HomePage } from './components/index';
 import * as Components from '@/components';
+import { routeTitleMap } from '@/utils/pageTitles';
 
 export const metadata = getSeoMetadata({
-  title: 'Home | Pubky.app',
+  title: routeTitleMap['/home'],
   description: 'Welcome to Pubky.app - Unlock the web.'
 });
 

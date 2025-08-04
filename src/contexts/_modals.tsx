@@ -33,6 +33,19 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
   const modalOpenedByUrl = useRef<boolean>(false);
   const navigationTimeout = useRef<NodeJS.Timeout | null>(null);
 
+  // Helper function to create a mock deleted post
+  const createMockDeletedPost = (pubkyParam: string, postIdParam: string) => ({
+    details: {
+      id: postIdParam,
+      author: pubkyParam,
+      content: '[DELETED]',
+      uri: `pubky://${pubkyParam}/posts/${postIdParam}`,
+      indexed_at: new Date().toISOString(),
+      kind: 'post'
+    },
+    relationships: {}
+  });
+
   const openModal = async (modalId: string, props: Record<string, any> = {}) => {
     // If the modal is already open, just update its props
     if (openModals[modalId]) {
@@ -73,10 +86,16 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
   const isOpen = (modalId: string) => !!openModals[modalId];
 
   // Check if current pathname is a post URL and open modal automatically
+  // Note: This is now handled by the PostPageClient component for better SEO
   useEffect(() => {
     const checkAndOpenPostModal = async () => {
       // Check if pathname matches post URL pattern: /post/[pubky]/[postId]
       const postUrlMatch = pathname.match(/^\/post\/([^\/]+)\/([^\/]+)$/);
+
+      // Initialize previousPathname if we're on a post URL and it's not set
+      if (postUrlMatch && !previousPathname.current) {
+        previousPathname.current = pathname;
+      }
 
       // If we're navigating from a modal to a different page, close the modal instead
       if (isNavigatingFromModal.current) {
@@ -87,23 +106,38 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      // Only open modal if it's not already open, we're not navigating from a modal,
-      // and the modal wasn't opened by direct click (check if modalProps has post data)
+      // Only open modal automatically for direct URL visits (not from internal navigation)
+      // The PostPageClient component now handles opening the modal for SEO purposes
       if (postUrlMatch && !openModals['postView'] && !modalOpenedByUrl.current && !modalProps['postView']) {
-        const [, pubkyParam, postIdParam] = postUrlMatch;
+        // Check if this is a direct visit (no referrer or external referrer)
+        const isDirectVisit = !document.referrer || !document.referrer.includes(window.location.origin);
 
-        try {
-          // Fetch the post data
-          const post = await getPost(pubkyParam, postIdParam, pubky ?? '');
+        if (isDirectVisit) {
+          const [, pubkyParam, postIdParam] = postUrlMatch;
 
-          if (post) {
+          try {
+            // Fetch the post data
+            const post = await getPost(pubkyParam, postIdParam, pubky ?? '');
+
+            // Always open the modal, even if post doesn't exist
             // Mark that we opened the modal via URL
             modalOpenedByUrl.current = true;
-            // Open the PostView modal with the fetched post
-            openModal('postView', { post });
+
+            if (post) {
+              // Open the PostView modal with the fetched post
+              openModal('postView', { post });
+            } else {
+              // Create a mock deleted post when the post doesn't exist
+              const mockDeletedPost = createMockDeletedPost(pubkyParam, postIdParam);
+              openModal('postView', { post: mockDeletedPost });
+            }
+          } catch (error) {
+            console.error('Error fetching post for modal:', error);
+            // Even if there's an error, open the modal with a mock deleted post
+            const mockDeletedPost = createMockDeletedPost(pubkyParam, postIdParam);
+            modalOpenedByUrl.current = true;
+            openModal('postView', { post: mockDeletedPost });
           }
-        } catch (error) {
-          console.error('Error fetching post for modal:', error);
         }
       }
     };
@@ -122,9 +156,16 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
             const newPost = await getPost(pubkyParam, postIdParam, pubky ?? '');
             if (newPost) {
               setModalProps((prev) => ({ ...prev, postView: { post: newPost } }));
+            } else {
+              // Create a mock deleted post when the post doesn't exist
+              const mockDeletedPost = createMockDeletedPost(pubkyParam, postIdParam);
+              setModalProps((prev) => ({ ...prev, postView: { post: mockDeletedPost } }));
             }
           } catch (error) {
             console.error('Error fetching post for modal update:', error);
+            // Even if there's an error, update with a mock deleted post
+            const mockDeletedPost = createMockDeletedPost(pubkyParam, postIdParam);
+            setModalProps((prev) => ({ ...prev, postView: { post: mockDeletedPost } }));
           }
         };
         fetchAndUpdatePost();
