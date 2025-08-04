@@ -228,6 +228,8 @@ export default function CreateContent({
     const maxVideoSizeForCompressionInBytes = maxVideoSizeForCompressionInMB * 1024 * 1024;
 
     if (items) {
+      // Collect all files first
+      const filesToProcess: File[] = [];
       for (let i = 0; i < items.length; i++) {
         const item = items[i];
         if (item.kind === 'file') {
@@ -249,52 +251,87 @@ export default function CreateContent({
               continue;
             }
 
-            if (selectedFiles.length >= 4) {
+            if (selectedFiles.length + filesToProcess.length >= 4) {
               addAlert('Max 4 files only.', 'warning');
               continue;
             }
 
-            let processedFile = file;
-
-            if (isImage && file.size > maxImageSizeInBytes) {
-              try {
-                const loadingAlertId = addAlert('Compressing image...', 'loading');
-                setIsCompressing(true);
-                processedFile = await Utils.resizeImageFile(file, maxImageSizeInBytes);
-                removeAlert(loadingAlertId);
-                setIsCompressing(false);
-              } catch (error) {
-                addAlert('The maximum allowed size for images is 5 MB', 'warning');
-                continue;
-              }
-            } else if (isVideo && file.size > maxOtherSizeInBytes) {
-              // Check if video is too large for compression
-              if (file.size > maxVideoSizeForCompressionInBytes) {
-                addAlert('The maximum allowed size for videos compression is 100 MB', 'warning');
-                continue;
-              }
-
-              try {
-                const loadingAlertId = addAlert('Compressing video...', 'loading');
-                setIsCompressing(true);
-                processedFile = await Utils.resizeVideoFile(file, maxOtherSizeInBytes);
-                removeAlert(loadingAlertId);
-                setIsCompressing(false);
-              } catch (error) {
-                addAlert('The maximum allowed size for videos is 20 MB', 'warning');
-                continue;
-              }
-            } else if (!isImage && !isVideo && file.size > maxOtherSizeInBytes) {
-              addAlert('The maximum allowed size is 20 MB', 'warning');
-              continue;
-            }
-
-            const filePreview = URL.createObjectURL(processedFile);
-            setSelectedFiles((prevFiles) => [...prevFiles, processedFile]);
-            setFilePreviews((prevPreviews) => [...prevPreviews, filePreview]);
+            filesToProcess.push(file);
           } else {
             addAlert('File not supported', 'warning');
           }
+        }
+      }
+
+      // Process files sequentially
+      if (filesToProcess.length > 0) {
+        const validFiles: File[] = [];
+
+        for (let i = 0; i < filesToProcess.length; i++) {
+          const file = filesToProcess[i];
+          const isImage = file.type.startsWith('image/');
+          const isVideo = file.type.startsWith('video/');
+
+          if (isImage && file.size > maxImageSizeInBytes) {
+            try {
+              const loadingAlertId = addAlert(`Compressing image ${i + 1}/${filesToProcess.length}...`, 'loading');
+              setIsCompressing(true);
+              const resizedFile = await Utils.resizeImageFile(file, maxImageSizeInBytes);
+              removeAlert(loadingAlertId);
+              validFiles.push(resizedFile);
+            } catch (error) {
+              addAlert('The maximum allowed size for images is 5 MB', 'warning');
+              continue;
+            } finally {
+              // Only set compressing to false when all files are processed
+              if (i === filesToProcess.length - 1) {
+                setIsCompressing(false);
+              }
+            }
+          } else if (isVideo && file.size > maxOtherSizeInBytes) {
+            // Check if video is too large for compression
+            if (file.size > maxVideoSizeForCompressionInBytes) {
+              addAlert('The maximum allowed size for videos compression is 100 MB', 'warning');
+              continue;
+            }
+
+            try {
+              const loadingAlertId = addAlert(`Compressing video ${i + 1}/${filesToProcess.length}...`, 'loading');
+              setIsCompressing(true);
+              const resizedFile = await Utils.resizeVideoFile(file, maxOtherSizeInBytes);
+              removeAlert(loadingAlertId);
+              validFiles.push(resizedFile);
+            } catch (error) {
+              addAlert('The maximum allowed size for videos is 20 MB', 'warning');
+              continue;
+            } finally {
+              // Only set compressing to false when all files are processed
+              if (i === filesToProcess.length - 1) {
+                setIsCompressing(false);
+              }
+            }
+          } else if (!isImage && !isVideo && file.size > maxOtherSizeInBytes) {
+            addAlert('The maximum allowed size is 20 MB', 'warning');
+            continue;
+          } else {
+            validFiles.push(file);
+          }
+        }
+
+        // Add all processed files at once
+        const newPreviews = validFiles.map((file) => URL.createObjectURL(file));
+        const updatedPreviews = [...filePreviews, ...newPreviews].slice(0, 4);
+
+        setSelectedFiles((prevFiles) => [...prevFiles, ...validFiles].slice(0, 4));
+        setFilePreviews(updatedPreviews);
+
+        if (updatedPreviews.length < filePreviews.length) {
+          filePreviews.slice(updatedPreviews.length).forEach((preview) => URL.revokeObjectURL(preview));
+        }
+
+        // Ensure compressing state is reset if no files needed compression
+        if (validFiles.length === 0) {
+          setIsCompressing(false);
         }
       }
     }

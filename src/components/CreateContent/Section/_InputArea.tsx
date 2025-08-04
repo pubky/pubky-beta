@@ -131,15 +131,22 @@ export default function InputArea({
 
           if (isImage && file.size > maxImageSizeInBytes) {
             try {
-              const loadingAlertId = addAlert('Compressing image...', 'loading');
+              const loadingAlertId = addAlert(
+                `Compressing image ${validFiles.length + 1}/${files.length}...`,
+                'loading'
+              );
               setIsCompressing(true);
               const resizedFile = await Utils.resizeImageFile(file, maxImageSizeInBytes);
               removeAlert(loadingAlertId);
-              setIsCompressing(false);
               validFiles.push(resizedFile);
             } catch (error) {
               addAlert('The maximum allowed size for images is 5 MB', 'warning');
               continue;
+            } finally {
+              // Only set compressing to false when all files are processed
+              if (validFiles.length === files.length) {
+                setIsCompressing(false);
+              }
             }
           } else if (isVideo && file.size > maxOtherSizeInBytes) {
             // Check if video is too large for compression
@@ -148,15 +155,22 @@ export default function InputArea({
               continue;
             }
             try {
-              const loadingAlertId = addAlert('Compressing video...', 'loading');
+              const loadingAlertId = addAlert(
+                `Compressing video ${validFiles.length + 1}/${files.length}...`,
+                'loading'
+              );
               setIsCompressing(true);
               const resizedFile = await Utils.resizeVideoFile(file, maxOtherSizeInBytes);
               removeAlert(loadingAlertId);
-              setIsCompressing(false);
               validFiles.push(resizedFile);
             } catch (error) {
               addAlert('The maximum allowed size for videos is 20 MB', 'warning');
               continue;
+            } finally {
+              // Only set compressing to false when all files are processed
+              if (validFiles.length === files.length) {
+                setIsCompressing(false);
+              }
             }
           } else if (!isImage && !isVideo && file.size > maxOtherSizeInBytes) {
             addAlert('The maximum allowed size is 20 MB', 'warning');
@@ -176,6 +190,11 @@ export default function InputArea({
 
         if (newFiles && newFiles?.length > 0 && setTextArea) {
           setTextArea(true);
+        }
+
+        // Ensure compressing state is reset if no files needed compression
+        if (validFiles.length === 0) {
+          setIsCompressing(false);
         }
       };
 

@@ -243,10 +243,11 @@ export default function ContentCreateArticle({
           setIsCompressing(true);
           processedFile = await Utils.resizeImageFile(file, maxImageSizeInBytes);
           removeAlert(loadingAlertId);
-          setIsCompressing(false);
         } catch (error) {
           setErrorFile('The maximum allowed size for images is 5 MB');
           return;
+        } finally {
+          setIsCompressing(false);
         }
       } else if (isVideo && file.size > maxOtherSizeInBytes) {
         // Check if video is too large for compression
@@ -259,10 +260,11 @@ export default function ContentCreateArticle({
           setIsCompressing(true);
           processedFile = await Utils.resizeVideoFile(file, maxOtherSizeInBytes);
           removeAlert(loadingAlertId);
-          setIsCompressing(false);
         } catch (error) {
           setErrorFile('The maximum allowed size for videos is 20 MB');
           return;
+        } finally {
+          setIsCompressing(false);
         }
       } else if (!isImage && !isVideo && file.size > maxOtherSizeInBytes) {
         setErrorFile('The maximum allowed size is 20 MB');
@@ -350,10 +352,11 @@ export default function ContentCreateArticle({
             setIsCompressing(true);
             processedFile = await Utils.resizeImageFile(file, maxImageSizeInBytes);
             removeAlert(loadingAlertId);
-            setIsCompressing(false);
           } catch (error) {
             addAlert('The maximum allowed size for images is 5 MB', 'warning');
             return;
+          } finally {
+            setIsCompressing(false);
           }
         } else if (isVideo && file.size > maxOtherSizeInBytes) {
           // Check if video is too large for compression
@@ -366,10 +369,11 @@ export default function ContentCreateArticle({
             setIsCompressing(true);
             processedFile = await Utils.resizeVideoFile(file, maxOtherSizeInBytes);
             removeAlert(loadingAlertId);
-            setIsCompressing(false);
           } catch (error) {
             addAlert('The maximum allowed size for videos is 20 MB', 'warning');
             return;
+          } finally {
+            setIsCompressing(false);
           }
         } else if (!isImage && !isVideo && file.size > maxOtherSizeInBytes) {
           addAlert('The maximum allowed size is 20 MB', 'warning');
