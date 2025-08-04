@@ -54,7 +54,7 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
       }
     }
   };
-      
+
   // Use the media pause hook to stop background media when modal opens
   useMediaPause(showModal);
 
