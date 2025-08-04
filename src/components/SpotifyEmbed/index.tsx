@@ -168,7 +168,6 @@ export default function SpotifyEmbed({ link, width = '100%', height = '160' }: S
     return () => {
       isComponentMounted.current = false;
       controllerCreated.current = false;
-      console.log('SpotifyEmbed component destroyed with ID:', embedId.current);
 
       // Remove from global registry
       try {

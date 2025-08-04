@@ -82,7 +82,6 @@ export const useMediaPause = (isModalOpen: boolean) => {
           window.spotifyControllers.forEach((controller, id) => {
             if (controller && typeof controller.pause === 'function') {
               try {
-                console.log('Pausing Spotify embed:', id);
                 controller.pause();
               } catch (error) {
                 console.error(`Error pausing Spotify embed ${id}:`, error);
