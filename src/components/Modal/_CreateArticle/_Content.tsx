@@ -214,8 +214,10 @@ export default function ContentCreateArticle({
     const file = event.target.files?.[0];
     const maxImageSizeInMB = 5;
     const maxOtherSizeInMB = 20;
+    const maxVideoSizeForCompressionInMB = 100;
     const maxImageSizeInBytes = maxImageSizeInMB * 1024 * 1024;
     const maxOtherSizeInBytes = maxOtherSizeInMB * 1024 * 1024;
+    const maxVideoSizeForCompressionInBytes = maxVideoSizeForCompressionInMB * 1024 * 1024;
 
     if (file) {
       const isImage = file.type.startsWith('image/');
@@ -241,12 +243,30 @@ export default function ContentCreateArticle({
           setIsCompressing(true);
           processedFile = await Utils.resizeImageFile(file, maxImageSizeInBytes);
           removeAlert(loadingAlertId);
-          setIsCompressing(false);
         } catch (error) {
           setErrorFile('The maximum allowed size for images is 5 MB');
           return;
+        } finally {
+          setIsCompressing(false);
         }
-      } else if (!isImage && file.size > maxOtherSizeInBytes) {
+      } else if (isVideo && file.size > maxOtherSizeInBytes) {
+        // Check if video is too large for compression
+        if (file.size > maxVideoSizeForCompressionInBytes) {
+          addAlert('The maximum allowed size for videos compression is 100 MB', 'warning');
+          return;
+        }
+        try {
+          const loadingAlertId = addAlert('Compressing video...', 'loading');
+          setIsCompressing(true);
+          processedFile = await Utils.resizeVideoFile(file, maxOtherSizeInBytes);
+          removeAlert(loadingAlertId);
+        } catch (error) {
+          setErrorFile('The maximum allowed size for videos is 20 MB');
+          return;
+        } finally {
+          setIsCompressing(false);
+        }
+      } else if (!isImage && !isVideo && file.size > maxOtherSizeInBytes) {
         setErrorFile('The maximum allowed size is 20 MB');
         return;
       }
@@ -294,8 +314,10 @@ export default function ContentCreateArticle({
     const files = event.dataTransfer.files;
     const maxImageSizeInMB = 5;
     const maxOtherSizeInMB = 20;
+    const maxVideoSizeForCompressionInMB = 100;
     const maxImageSizeInBytes = maxImageSizeInMB * 1024 * 1024;
     const maxOtherSizeInBytes = maxOtherSizeInMB * 1024 * 1024;
+    const maxVideoSizeForCompressionInBytes = maxVideoSizeForCompressionInMB * 1024 * 1024;
 
     if (files) {
       // Check if we already have a file
@@ -330,12 +352,30 @@ export default function ContentCreateArticle({
             setIsCompressing(true);
             processedFile = await Utils.resizeImageFile(file, maxImageSizeInBytes);
             removeAlert(loadingAlertId);
-            setIsCompressing(false);
           } catch (error) {
             addAlert('The maximum allowed size for images is 5 MB', 'warning');
             return;
+          } finally {
+            setIsCompressing(false);
           }
-        } else if (!isImage && file.size > maxOtherSizeInBytes) {
+        } else if (isVideo && file.size > maxOtherSizeInBytes) {
+          // Check if video is too large for compression
+          if (file.size > maxVideoSizeForCompressionInBytes) {
+            addAlert('The maximum allowed size for videos compression is 100 MB', 'warning');
+            return;
+          }
+          try {
+            const loadingAlertId = addAlert('Compressing video...', 'loading');
+            setIsCompressing(true);
+            processedFile = await Utils.resizeVideoFile(file, maxOtherSizeInBytes);
+            removeAlert(loadingAlertId);
+          } catch (error) {
+            addAlert('The maximum allowed size for videos is 20 MB', 'warning');
+            return;
+          } finally {
+            setIsCompressing(false);
+          }
+        } else if (!isImage && !isVideo && file.size > maxOtherSizeInBytes) {
           addAlert('The maximum allowed size is 20 MB', 'warning');
           return;
         }
