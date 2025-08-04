@@ -95,7 +95,7 @@ export function MainContent() {
   useEffect(() => {
     // Extract tags parameter from URL using Next.js searchParams
     const tagsParam = searchParams.get('tags');
-    
+
     if (tagsParam) {
       const tagsArray = tagsParam.split(',').map((tag) => {
         try {
