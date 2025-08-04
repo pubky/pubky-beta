@@ -14,7 +14,7 @@ export const metadata = getSeoMetadata({
 
 export default function Index() {
   return (
-    <Content.Main className="pb-0 pt-[80px]">
+    <Content.Main className="pb-0">
       <BookmarksPage.Header />
       <BookmarksPage.Content />
       <Components.CreatePost />

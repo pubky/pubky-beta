@@ -20,6 +20,7 @@ import RootParent from './components/_RootParent';
 import PostRoot from './components/_PostRoot';
 import { ImageArticle } from './components/_ImageArticle';
 import { getPageTitle } from '@/utils/pageTitles';
+import { useMediaPause } from '@/hooks/useMediaPause';
 
 interface PostViewModalProps {
   showModal: boolean;
@@ -53,6 +54,9 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
       }
     }
   };
+      
+  // Use the media pause hook to stop background media when modal opens
+  useMediaPause(showModal);
 
   // Reset replies when modal opens and update post key for proper re-rendering
   useEffect(() => {
@@ -227,7 +231,7 @@ export default function PostViewModal({ showModal, setShowModal, post }: PostVie
       <div className="flex flex-col h-full">
         {/* Content */}
         <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-webkit">
-          <Content.Main className="pt-[80px]">
+          <Content.Main>
             <Header />
 
             <Content.Grid className="flex justify-between flex-col gap-3">

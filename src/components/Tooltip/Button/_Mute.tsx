@@ -4,69 +4,96 @@ import { useEffect, useState } from 'react';
 import { Icon, Tooltip } from '@social/ui-shared';
 import { usePubkyClientContext } from '@/contexts';
 import { useUserProfile } from '@/hooks/useUser';
+import { userProfileCache } from '@/components/utils-shared/lib/Helper/userProfileCache';
+import { UserView } from '@/types/User';
 
 interface MuteProps {
   pk: string;
 }
 
 export default function Mute({ pk }: MuteProps) {
-  const { pubky, mute, unmute, setMutedUsers } = usePubkyClientContext();
+  const { pubky, mute, unmute, mutedUsers, setMutedUsers } = usePubkyClientContext();
   const { data: author } = useUserProfile(pk, pubky ?? '');
-  const [initLoadingMuted, setInitLoadingMuted] = useState(true);
-  const [muted, setMuted] = useState(false);
+  const [localAuthor, setLocalAuthor] = useState<UserView | null>(author);
   const [loadingMuted, setLoadingMuted] = useState(false);
+  const [initLoadingMuted, setInitLoadingMuted] = useState(true);
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        if (author) {
-          setInitLoadingMuted(false);
-          if (author?.relationship?.muted) setMuted(true);
-        }
-      } catch (error) {
-        console.log(error);
-      }
+    if (author) {
+      setLocalAuthor(author);
+      setInitLoadingMuted(false);
     }
-    fetchData();
   }, [author]);
+
+  useEffect(() => {
+    setLocalAuthor((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        relationship: {
+          ...prev.relationship,
+          muted: mutedUsers?.includes(pk) ?? false
+        }
+      };
+    });
+  }, [mutedUsers, pk]);
+
+  const updateMutedStatus = (isMuted: boolean) => {
+    setLocalAuthor((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        relationship: {
+          ...prev.relationship,
+          muted: isMuted
+        }
+      };
+    });
+  };
 
   const muteUser = async () => {
     if (!pk) return;
-
+    setLoadingMuted(true);
+    updateMutedStatus(true);
     try {
-      setLoadingMuted(true);
-
       const result = await mute(pk);
-      if (result) {
-        setMuted(result);
+      if (!result) {
+        updateMutedStatus(false);
+      } else {
         setMutedUsers((prev) => (prev ? [...prev, pk] : [pk]));
+        userProfileCache.delete(pk);
       }
-      setLoadingMuted(false);
     } catch (error) {
       console.log(error);
+      updateMutedStatus(false);
+    } finally {
+      setLoadingMuted(false);
     }
   };
 
   const unmuteUser = async () => {
     if (!pk) return;
-
+    setLoadingMuted(true);
+    updateMutedStatus(false);
     try {
-      setLoadingMuted(true);
-
       const result = await unmute(pk);
-      if (result) {
-        setMuted(!result);
+      if (!result) {
+        updateMutedStatus(true);
+      } else {
         setMutedUsers((prev) => (prev ? prev.filter((user) => user !== pk) : []));
+        userProfileCache.delete(pk);
       }
-      setLoadingMuted(false);
     } catch (error) {
       console.log(error);
+      updateMutedStatus(true);
+    } finally {
+      setLoadingMuted(false);
     }
   };
 
-  return initLoadingMuted ? (
+  return initLoadingMuted || localAuthor === null ? (
     <Tooltip.Item icon={<Icon.LoadingSpin size="24" />}>Loading</Tooltip.Item>
-  ) : muted ? (
+  ) : localAuthor?.relationship?.muted ? (
     <Tooltip.Item
       id="profile-menu-item-unmute"
       onClick={loadingMuted ? undefined : unmuteUser}

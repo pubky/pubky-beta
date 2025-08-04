@@ -47,7 +47,7 @@ export default function Index() {
   }, [pathname]);
 
   return (
-    <Content.Main className="pt-[90px]">
+    <Content.Main>
       <Hot.Header />
       <Content.Grid className="flex gap-6">
         <Sidebar className="w-[280px] self-start sticky top-[120px] hidden lg:block">

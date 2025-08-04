@@ -13,7 +13,7 @@ export const metadata = getSeoMetadata({
 
 export default function Index() {
   return (
-    <Content.Main className="pb-0 pt-[80px]">
+    <Content.Main className="pb-0">
       <SearchPage.Header />
       <SearchPage.Content />
       <Components.CreatePost />

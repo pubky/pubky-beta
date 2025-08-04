@@ -165,8 +165,24 @@ export default function InputArea({
   };
 
   const handleUserClick = (userId: string) => {
-    const regex = /@\S+/;
-    const newContent = content.replace(regex, `pk:${userId}`);
+    // Find the last @ or pk: pattern in the text and replace it
+    const atRegex = /@[^\s]*$/;
+    const pkRegex = /pk:[^\s]*$/;
+
+    let newContent = content;
+
+    // Check if there's a pk: pattern at the end of the text
+    if (pkRegex.test(content)) {
+      newContent = content.replace(pkRegex, `pk:${userId}`);
+    }
+    // Check if there's an @ pattern at the end of the text
+    else if (atRegex.test(content)) {
+      newContent = content.replace(atRegex, `pk:${userId}`);
+    }
+    // If no pattern found, just append the pk:userId
+    else {
+      newContent = content + ` pk:${userId}`;
+    }
 
     setContent(newContent);
     setSearchedUsers([]);

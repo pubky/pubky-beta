@@ -7,7 +7,7 @@ interface RootProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const Main = ({ children, background = 'bg-[#05050A]', shadowBottom, ...rest }: RootProps) => {
-  const baseCSS = `pt-[100px] lg:pt-[150px] w-full h-full pb-20 min-h-screen relative`;
+  const baseCSS = `pt-[80px] lg:pt-[0px] w-full h-full pb-20 min-h-screen relative`;
 
   return (
     <div {...rest} className={twMerge(baseCSS, background, rest.className)}>

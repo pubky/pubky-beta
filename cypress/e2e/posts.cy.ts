@@ -91,40 +91,54 @@ describe('posts', () => {
     latestPostInFeedContentEq(postContent);
   });
 
+  it('can edit a post', () => {
+    const postContent = `This post will be edited! ${Date.now()}`;
+    const editSuffix = ' ..got edited';
+    const tags = ['welkin', 'octan'];
+    const editTag = ['wolfram'];
+    createQuickPostWithTags(postContent, tags);
+
+    // verify the post is displayed correctly in feed
+    cy.findFirstPostInFeed(CheckIndexed.Yes).within(() => {
+      // open post menu and check edit is available
+      cy.get('#menu-btn').should('be.visible').click();
+      cy.get('#post-tooltip-menu')
+        .should('be.visible')
+        .within(() => {
+          cy.get('#edit-post').should('be.visible').click();
+        });
+    });
+
+    // edit the post and add tags
+    cy.get('#modal-root')
+      .should('be.visible')
+      .within(() => {
+        cy.get('h1').contains('Edit Post').should('be.visible');
+        cy.get('textarea').type(editSuffix);
+        cy.get('textarea').should('have.value', postContent + editSuffix);
+
+        // check that tags cannot be edited from this edit modal
+        cy.get('#show-add-tag-input-btn').should('be.visible').click();
+        cy.get('#add-tag-input').should('not.exist');
+
+        cy.get('#post-btn').click();
+      });
+
+    // verify the post is displayed correctly in feed
+    latestPostInFeedContentEq(postContent + editSuffix);
+  });
+
   it('can post with maximum character limit (1000)', () => {
-    const postContent =
-      'I can make a really looooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      `ooooooooooooooooooooooooooooooooooooooooooog post! ${Date.now()}`;
+    // Helper function to generate 'o' characters
+    const generateOs = (count: number): string => 'o'.repeat(count);
 
-    const expectedPostContent =
-      'I can make a really looooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-      'oooooooooooooooooooooooooooooooo...Show more';
+    // 958 'o' characters makes 1000 in total
+    const postContent = `I can make a really l${generateOs(958)}g post! ${Date.now()}`;
 
+    // The truncation happens at 479 'o' characters
+    const expectedPostContent = `I can make a really l${generateOs(479)}...Show more`;
+
+    // create post and verify the counter is displayed correctly
     createQuickPost(postContent);
 
     // verify the post is displayed correctly in feed
@@ -892,6 +906,128 @@ describe('posts', () => {
 
     // Check that user gets redirected to sign-in page
     cy.location('pathname').should('eq', '/sign-in');
+  });
+
+  it('can navigate back to feed from post view', () => {
+    const tallPostContent = 'This is a tall post ...\n...\n...\n...\n...\n...';
+    function postSuffix(number: number): string {
+      return `${number} - post content suffix`;
+    }
+    const posts = [
+      `${tallPostContent} ${postSuffix(1)}! ${Date.now()}`,
+      `${tallPostContent} ${postSuffix(2)}! ${Date.now()}`,
+      `${tallPostContent} ${postSuffix(3)}! ${Date.now()}`,
+      `${tallPostContent} ${postSuffix(4)}! ${Date.now()}`
+    ];
+
+    // create 5 new posts
+    posts.forEach((post) => {
+      createQuickPost(post);
+    });
+
+    // * Open post view and navigate back to feed retaining scroll position
+
+    cy.findPostInFeed(0, postSuffix(1)).then(($post) => {
+      const yPosition = $post.position().top;
+      // scroll down to the first post
+      cy.scrollTo(0, yPosition - 100);
+
+      // Store the current y scroll position as a Cypress alias for later assertion
+      cy.wrap(yPosition).as('feedScrollY');
+
+      // click on the post
+      cy.wrap($post).click();
+    });
+
+    // check that we are on the post view page
+    cy.location('pathname').should('contain', '/post/');
+
+    // check that the post content is visible
+    cy.get('#post-view-modal')
+      .get('#post-container')
+      .get('#post-content-text')
+      .should('be.visible')
+      .innerTextShouldContain(postSuffix(4));
+
+    // use browser back button to navigate back to feed
+    cy.go('back');
+
+    // check that we are on the feed page
+    cy.location('pathname').should('contain', '/home');
+
+    // check that the post is still visible in feed
+    cy.findPostInFeed(0, postSuffix(1)).should('be.visible');
+    // check y scroll position is the same as before the post view
+    cy.get('@feedScrollY').then((scrollY) => {
+      cy.window().then((win) => {
+        // Assert that the scrollY value is within 1% tolerance of the original scrollY
+        const scrollYValue = scrollY as unknown as number;
+        const tolerance = Math.abs(scrollYValue) * 0.01;
+        expect(win.scrollY).to.be.closeTo(scrollYValue, tolerance);
+      });
+    });
+
+    // * Open post and navigate home to top of feed
+
+    // click on the first post created
+    cy.findPostInFeed(0, postSuffix(1)).then(($post) => {
+      const yPosition = $post.position().top;
+      // scroll down to the first post
+      cy.scrollTo(0, yPosition - 100);
+      // click on the post
+      cy.wrap($post).click();
+    });
+
+    // check that we are on the post view page
+    cy.location('pathname').should('contain', '/post/');
+
+    // use Pubky logo to navigate back to feed
+    // TODO: why are there two header logos
+    cy.get('#post-view-modal').find('#header-logo').first().click();
+
+    // check that we are on the feed page
+    cy.location('pathname').should('contain', '/home');
+
+    // check that the last is visible in feed
+    cy.findPostInFeed(0, postSuffix(4)).should('be.visible');
+
+    // check y scroll position is 0
+    cy.window().then((win) => {
+      expect(win.scrollY).to.equal(0);
+    });
+  });
+
+  // bugfix https://github.com/pubky/pubky-app/issues/1489
+  it('new article modal is shown infront of new post modal', () => {
+    // click in post content area
+    cy.get('#quick-post-create-content').within(() => {
+      cy.get('textarea').should('have.value', '');
+      // click on textarea to expand to view buttons
+      cy.get('textarea').click();
+      // click on new article button
+      cy.get('#article-btn').click();
+    });
+
+    // close new article modal
+    cy.get('#article-modal').should('be.visible');
+    cy.get('#modal-root').within(() => {
+      cy.get('h1').contains('New Article');
+      cy.get('#close-btn').click();
+    });
+
+    // click on new post button (bottom right)
+    cy.get('#new-post-btn').click();
+
+    // click new article button in the new post modal
+    cy.get('#new-post-create-content')
+      .should('be.visible')
+      .within(() => {
+        cy.get('#article-btn').click();
+      });
+
+    // check that new article modal is shown infront of new post modal
+    cy.get('#article-modal').should('be.visible');
+    cy.get('#new-post-create-content').should('not.be.visible');
   });
 
   // todo: check that reply still shown in own profile page
