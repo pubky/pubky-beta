@@ -233,7 +233,7 @@ export default function Header({ title }: HeaderProps) {
       </div>
       {pubky ? (
         <div className="w-full flex justify-between gap-6">
-          <Input.Search>
+          <Input.Search id="header-search">
             {searchTags && (
               <Input.SearchTags ref={refTagsContainer}>
                 {searchTags.map((searchTag, index) => (

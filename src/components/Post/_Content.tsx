@@ -8,7 +8,7 @@ import { Tweet } from 'react-tweet';
 import Parsing from '../Content/_Parsing';
 import { Button, Icon, Skeleton, Typography } from '@social/ui-shared';
 import { FileView, PostView } from '@/types/Post';
-import { Spotify } from 'react-spotify-embed';
+import SpotifyEmbed from '@/components/SpotifyEmbed';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { useInlineUrls } from '@/hooks/useInlineUrls';
 import { useFileLoading } from '@/hooks/useFileLoading';
@@ -193,7 +193,7 @@ export default function Content({
                     <iframe
                       width="100%"
                       height="315"
-                      src={`https://www.youtube.com/embed/${videoId}`}
+                      src={`https://www.youtube.com/embed/${videoId}?enablejsapi=1`}
                       title="YouTube video player"
                       allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
@@ -220,7 +220,7 @@ export default function Content({
                 )}
                 {spotifyUrl && (
                   <div onClick={(event) => event.stopPropagation()} className="mt-4">
-                    <Spotify link={spotifyUrl} />
+                    <SpotifyEmbed link={spotifyUrl} />
                   </div>
                 )}
               </div>
@@ -281,6 +281,8 @@ export default function Content({
                                   if (index === 1) specialGrid = 'row-span-1 col-start-2 row-start-1';
                                   if (index === 2) specialGrid = 'row-span-1 col-start-2 row-start-2';
                                 }
+                                const fileContentsIndex = fileContents.findIndex((f) => f.id === file.id);
+
                                 return (
                                   <div
                                     key={index}
@@ -303,7 +305,7 @@ export default function Content({
                                         src={generateFileUrl(file, file.content_type !== 'image/gif' ? 'feed' : 'main')}
                                         onClick={(event) => {
                                           event.stopPropagation();
-                                          handleOpenModal(index);
+                                          handleOpenModal(fileContentsIndex);
                                         }}
                                         alt={file.name || `Image ${index + 1}`}
                                         className={`${widthMedia} h-full max-h-[544px] object-cover rounded-[10px] overflow-hidden`}

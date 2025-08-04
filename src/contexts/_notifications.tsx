@@ -17,6 +17,7 @@ type NotificationsContextType = {
   loadMoreNotifications: () => Promise<void>;
   applySettings: () => Promise<void>;
   preloadUserProfiles: (userIds: string[]) => Promise<void>;
+  markNotificationsAsViewed: () => void;
 };
 
 const NotificationsContext = createContext<NotificationsContextType>({
@@ -27,7 +28,8 @@ const NotificationsContext = createContext<NotificationsContextType>({
   fetchNotifications: async () => {},
   loadMoreNotifications: async () => {},
   applySettings: async () => {},
-  preloadUserProfiles: async () => {}
+  preloadUserProfiles: async () => {},
+  markNotificationsAsViewed: () => {}
 });
 
 export function NotificationsWrapper({ children }: { children: ReactNode }) {
@@ -39,7 +41,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
   const [skip, setSkip] = useState(0);
   const [notifications, setNotifications] = useState<NotificationView[]>([]);
   const [loading, setLoading] = useState(false);
-  const [profilesLoading, setProfilesLoading] = useState(true);
+  const [profilesLoading, setProfilesLoading] = useState(false);
   const [userProfilesCache, setUserProfilesCache] = useState<{ [userId: string]: UserView | null }>({});
   const [hasMore, setHasMore] = useState(true);
   const [prevPubky, setPrevPubky] = useState<string | null>(null);
@@ -67,7 +69,12 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     async (userIds: string[]) => {
       if (!pubky || userIds.length === 0) return;
 
-      setProfilesLoading(true);
+      const hasCachedProfiles = Object.keys(userProfilesCache).length > 0;
+      const hasNotifications = notifications.length > 0;
+
+      if (!hasCachedProfiles && !hasNotifications) {
+        setProfilesLoading(true);
+      }
 
       try {
         const uniqueUserIds = userIds.filter((userId) => !userProfilesCache.hasOwnProperty(userId));
@@ -117,7 +124,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
         setProfilesLoading(false);
       }
     },
-    [pubky, userProfilesCache]
+    [pubky, userProfilesCache, notifications.length]
   );
 
   const checkSettings = async () => {
@@ -261,34 +268,34 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
         const filteredNotifications = filterNotifications(initNotifications);
         updateNotifications(filteredNotifications);
 
-        // Use lastViewedTimestamp instead of timestamp for unread count
-        if (lastViewedTimestamp > 0) {
+        // Handle unread count calculation
+        if (filteredNotifications.length === 0) {
+          // No notifications, so no unread count
+          setUnReadNotification(0);
+        } else if (lastViewedTimestamp > 0) {
+          // Use lastViewedTimestamp for existing users
           const unreadCount = filteredNotifications.reduce(
             (count, notification) => (notification.timestamp > lastViewedTimestamp ? count + 1 : count),
             0
           );
-
-          if (unreadCount > 0) {
-            setUnReadNotification(unreadCount);
-          } else {
-            setUnReadNotification(0);
-          }
+          setUnReadNotification(unreadCount);
         } else if (timestamp > 0) {
           // Fallback to timestamp if lastViewedTimestamp is not set
           const unreadCount = filteredNotifications.reduce(
             (count, notification) => (notification.timestamp > timestamp ? count + 1 : count),
             0
           );
-
-          if (unreadCount > 0) {
-            setUnReadNotification(unreadCount);
-          } else {
-            setUnReadNotification(0);
-          }
+          setUnReadNotification(unreadCount);
         } else {
-          // If both timestamps are invalid, try to fetch timestamp
-          const lastTimestamp = await getTimestampNotification();
-          setTimestamp(lastTimestamp);
+          // For new users with no timestamp, all notifications are considered unread
+          // Also try to fetch and set the timestamp for future use
+          setUnReadNotification(filteredNotifications.length);
+          try {
+            const lastTimestamp = await getTimestampNotification();
+            setTimestamp(lastTimestamp);
+          } catch (error) {
+            console.warn('Error fetching timestamp for new user:', error);
+          }
         }
       }
     } catch (err) {
@@ -346,26 +353,6 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
     preloadUserProfiles
   ]);
 
-  // Add effect to update lastViewedTimestamp when notifications are viewed
-  useEffect(() => {
-    if (notifications.length > 0) {
-      const mostRecentTimestamp = Math.max(...notifications.map((n) => n.timestamp));
-      setLastViewedTimestamp(mostRecentTimestamp);
-    }
-  }, [notifications]);
-
-  // Add effect to recalculate unread count when notifications change
-  useEffect(() => {
-    if (!timestampLoaded || notifications.length === 0) return;
-
-    // Calculate unread count based on current notifications
-    const unreadCount = notifications.reduce(
-      (count, notification) => (notification.timestamp > timestamp ? count + 1 : count),
-      0
-    );
-    setUnReadNotification(unreadCount);
-  }, [notifications, timestamp, timestampLoaded, setUnReadNotification]);
-
   const updateNotifications = (newNotifications: NotificationView[]) => {
     setNotifications((prev) => {
       const merged = [...prev, ...newNotifications].filter(
@@ -378,6 +365,7 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
   const extractSenderPubky = (notification: BodyNotification) => {
     return (
       notification.followed_by ||
+      notification.unfollowed_by ||
       notification.tagged_by ||
       notification.replied_by ||
       notification.reposted_by ||
@@ -430,14 +418,22 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
       setLoading(false);
     }
   };
+
+  const markNotificationsAsViewed = useCallback(() => {
+    if (notifications.length > 0) {
+      const mostRecentTimestamp = Math.max(...notifications.map((n) => n.timestamp));
+      setLastViewedTimestamp(mostRecentTimestamp);
+      setUnReadNotification(0);
+    }
+  }, [notifications, setUnReadNotification]);
   useEffect(() => {
     if (pubky !== prevPubky) {
       setPrevPubky(pubky ?? '');
       setNotifications([]);
-      setUnReadNotification(0);
       setSkip(0);
       setHasMore(true);
       setTimestampLoaded(false);
+      setLastViewedTimestamp(0); // Reset for new users
     }
   }, [pubky]);
 
@@ -451,7 +447,8 @@ export function NotificationsWrapper({ children }: { children: ReactNode }) {
         fetchNotifications,
         loadMoreNotifications,
         applySettings,
-        preloadUserProfiles
+        preloadUserProfiles,
+        markNotificationsAsViewed
       }}
     >
       {children}

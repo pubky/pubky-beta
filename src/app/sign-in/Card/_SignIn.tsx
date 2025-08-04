@@ -19,8 +19,6 @@ export default function SignIn() {
   const { addAlert } = useAlertContext();
   const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
   const fallbackUrl = isIOS ? 'https://apps.apple.com/app' : 'https://play.google.com/store/apps';
-  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
-  const isiOSPWA = isIOS && isStandalone;
   const [loginError, setLoginError] = useState('');
   const [authUrl, setAuthUrl] = useState('');
   const [appLink, setAppLink] = useState('');
@@ -140,7 +138,7 @@ export default function SignIn() {
     >
       {!isMobile && (
         <div className={`${authUrl && 'cursor-pointer'} relative`} onClick={authUrl ? copyToClipboard : undefined}>
-          {authUrl && !isiOSPWA ? (
+          {authUrl ? (
             <div className="relative w-fit mt-6">
               <QRCodeSVG
                 value={authUrl}
@@ -197,20 +195,20 @@ export default function SignIn() {
       {isMobile && (
         <Button.Medium
           onClick={
-            authUrl && !isiOSPWA
+            authUrl
               ? () => {
                   copyToClipboard();
                   openApp();
                 }
               : undefined
           }
-          disabled={!authUrl || isiOSPWA}
-          icon={<Icon.Key size="16" color={authUrl && !isiOSPWA ? 'white' : 'gray'} />}
+          disabled={!authUrl}
+          icon={<Icon.Key size="16" color={authUrl ? 'white' : 'gray'} />}
           className="mt-2"
         >
           Authorize with Pubky Ring
           <br />
-          <span className={!authUrl || isiOSPWA ? 'block' : 'hidden'}>(Not Available)</span>
+          <span className={!authUrl ? 'block' : 'hidden'}>(Not Available)</span>
         </Button.Medium>
       )}
     </Card.Primary>

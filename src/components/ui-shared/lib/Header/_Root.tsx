@@ -30,12 +30,9 @@ export const Root = ({ children, ...rest }: HeaderRootProps) => {
   return (
     <div
       className={twMerge(
-        'fixed w-full top-0 z-50 bg-gradient-to-b from-[#05050a] via-[#05050a] via-60% to-transparent',
+        'fixed lg:sticky w-full top-0 z-50 bg-gradient-to-b from-[#05050a] via-[#05050a] via-60% to-transparent',
         rest.className
       )}
-      style={{
-        width: 'calc(100% - 8px)'
-      }}
     >
       <header {...rest} className={twMerge(baseCSS, rest.className)}>
         {children}

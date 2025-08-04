@@ -2,6 +2,7 @@ import * as path from 'path';
 import { defaultBackupFilename } from '../support/auth';
 import { slowCypressDown } from 'cypress-slow-down';
 import { HasBackedUp, SkipOnboardingSlides } from '../support/types/enums';
+import { goToProfilePageFromHeader } from '../support/header';
 
 describe('onboarding', () => {
   before(() => {
@@ -31,8 +32,7 @@ describe('onboarding', () => {
     cy.signOut(HasBackedUp.Yes);
     cy.signIn(expectedFilePath, '666942');
 
-    cy.get('#header-profile-pic').click();
-    cy.location('pathname').should('eq', '/profile');
+    goToProfilePageFromHeader();
     cy.get('#profile-username-header').invoke('text').should('eq', username);
   });
 
@@ -51,22 +51,13 @@ describe('onboarding', () => {
 
     // check profile name is 'anonymous'
     cy.get('#quick-post-create-content').innerTextShouldContain('anonymous');
-    cy.get('#header-profile-pic').click();
+    goToProfilePageFromHeader();
     cy.get('#profile-username-header').should('have.text', 'anonymous');
   });
 
   // test that invalid invite code is rejected
-  it('should reject invalid invite code', () => {
-    cy.visit('/');
-
-    cy.location('pathname').should('eq', '/onboarding');
-
-    cy.get('#onboarding-create-account-btn').click();
-    cy.location('pathname').should('eq', '/onboarding/intro');
-
-    cy.get('#onboarding-skip-intro-btn').click();
-
-    cy.get('#onboarding-sign-up-link').click();
+  it('should reject invalid or used invite code', () => {
+    cy.visit('/onboarding/sign-up');
     cy.location('pathname').should('eq', '/onboarding/sign-up');
 
     // test that a code with less than 14 characters is rejected
@@ -79,5 +70,17 @@ describe('onboarding', () => {
     cy.get('#onboarding-token-input').type('invalidcode123');
     cy.get('#onboarding-submit-button').click();
     cy.get('#onboarding-token-input-error').should('contain.text', 'Invalid');
+
+    // test a code that is already used is rejected
+    cy.onboardAsNewUser('OneTime', 'I exist to consume an invite code', SkipOnboardingSlides.Yes);
+    cy.signOut(HasBackedUp.No);
+    cy.visit('/onboarding/sign-up');
+    cy.get('#onboarding-name-input').type('NoTime');
+    cy.location('pathname').should('eq', '/onboarding/sign-up');
+    cy.get('@inviteCode').then((usedInviteCode) => {
+      cy.get('#onboarding-token-input').type(usedInviteCode as unknown as string);
+      cy.get('#onboarding-submit-button').click();
+      cy.get('#onboarding-token-input-error').should('contain.text', 'Token already used');
+    });
   });
 });

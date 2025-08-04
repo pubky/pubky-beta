@@ -3,6 +3,7 @@ import { slowCypressDown } from 'cypress-slow-down';
 import { HasBackedUp, SkipOnboardingSlides } from '../support/types/enums';
 import { backupDownloadFilePath } from '../support/auth';
 import { searchForProfileByName, searchForProfileByPubky } from '../support/contacts';
+import { goToProfilePageFromHeader } from '../support/header';
 
 describe('profile', () => {
   before(() => {
@@ -21,7 +22,7 @@ describe('profile', () => {
     // todo: add test profile picture upload
 
     // navigate to edit profile page
-    cy.get('#header-profile-pic').click();
+    goToProfilePageFromHeader();
     cy.get('#profile-edit-btn').click();
 
     // edit username and bio and verify changes are persisted
@@ -57,7 +58,7 @@ describe('profile', () => {
 
   it('cancelling edit should not retain any changes made to own profile', () => {
     // navigate to edit profile page
-    cy.get('#header-profile-pic').click();
+    goToProfilePageFromHeader();
     cy.get('#profile-edit-btn').click();
 
     // change name and bio
@@ -83,7 +84,7 @@ describe('profile', () => {
 
   it('can tag own profile', () => {
     // navigate to own profile page
-    cy.get('#header-profile-pic').click();
+    goToProfilePageFromHeader();
 
     // assert 'No tags yet'
     cy.get('#profile-tagged-section').contains('No tags yet');

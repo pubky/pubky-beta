@@ -24,7 +24,7 @@ export const Message = ({
   isRetrying,
   ...rest
 }: MessageProps) => {
-  const baseCSS = `z-max relative py-2 px-4 rounded-md shadow border w-full`;
+  const baseCSS = `z-max relative py-1 px-2 md:py-2 md:px-4 rounded-md shadow border w-full`;
 
   let variantCSS = '';
   let colorTextCSS = '';

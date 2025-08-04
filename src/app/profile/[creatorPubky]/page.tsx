@@ -2,7 +2,7 @@ import { getSeoMetadata } from '@components/HeaderSEO';
 import { getFile } from '@/services/fileService';
 import { getUserDetails } from '@/services/userService';
 import CreatorpubkyLayout from './components/_CreatorpubkyLayout';
-import { Profile } from '../components';
+import ProfileContentSwitcher from './components/_ProfileContentSwitcher';
 
 const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
 const BASE_URL = `${NEXT_PUBLIC_NEXUS}`;
@@ -40,9 +40,10 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function Index({ params }: Props) {
+  const { creatorPubky } = await params;
   return (
     <CreatorpubkyLayout params={params}>
-      <Profile.Posts creatorPubky={(await params).creatorPubky} />
+      <ProfileContentSwitcher creatorPubky={creatorPubky} />
     </CreatorpubkyLayout>
   );
 }

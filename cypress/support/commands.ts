@@ -1,5 +1,6 @@
 // <reference types="cypress" />
 
+import { goToProfilePageFromHeader } from './header';
 import { checkPostIsIndexed, waitForFeedToLoad } from './posts';
 import { CheckIndexed, HasBackedUp, SkipOnboardingSlides } from './types/enums';
 // ***********************************************
@@ -52,6 +53,7 @@ Cypress.Commands.add(
       }
     }).then((response) => {
       const inviteCode = response.body;
+      cy.wrap(inviteCode).as('inviteCode');
       cy.get('#onboarding-token-input').type(inviteCode);
     });
 
@@ -81,7 +83,7 @@ Cypress.Commands.add(
 Cypress.Commands.add('signOut', (hasBackedUp: HasBackedUp) => {
   cy.location('pathname').then((currentPath) => {
     if (currentPath !== '/profile') {
-      cy.get('#header-profile-pic').click();
+      goToProfilePageFromHeader();
     }
   });
 

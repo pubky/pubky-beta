@@ -170,6 +170,7 @@ const PubkyClientContext = createContext({} as PubkyClientContextType);
 export function PubkyClientWrapper({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
   const [specsWasmLoaded, setSpecsWasmLoaded] = useState(false);
+  const [wasmError, setWasmError] = useState<string | null>(null);
   const [pubky, setPubky] = useState<string | undefined>(
     (Utils.storage.get('pubky_public_key') as string) || undefined
   );
@@ -197,7 +198,22 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
   useEffect(() => {
     init()
       .then(() => setSpecsWasmLoaded(true))
-      .catch(console.error);
+      .catch((err) => {
+        let message = 'Failed to load core module.';
+        if (typeof window !== 'undefined' && navigator.userAgent.includes('Graphene')) {
+          message =
+            'This device appears to be running GrapheneOS with JIT disabled. Please enable JIT in your browser settings to use Pubky.';
+        } else if (
+          err &&
+          typeof err.message === 'string' &&
+          (err.message.includes('WebAssembly') || err.message.includes('JIT') || err.message.includes('not supported'))
+        ) {
+          message =
+            'WebAssembly failed to load. If you are using GrapheneOS, please enable JIT in your browser settings.';
+        }
+        setWasmError(message);
+        setSpecsWasmLoaded(false);
+      });
   }, []);
 
   useEffect(() => {
@@ -211,8 +227,27 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
     specsWasmLoaded && pubky && setSpecsBuilder(new PubkySpecsBuilder(pubky));
   }, [specsWasmLoaded, pubky]);
 
+  if (wasmError && !specsWasmLoaded) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-white p-8">
+        <h1 className="text-2xl font-bold mb-4">Initialization Error</h1>
+        <p className="mb-4">{wasmError}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="px-6 py-2 bg-[#c8ff00] text-black rounded font-semibold hover:bg-[#b0e600] transition"
+        >
+          Reload
+        </button>
+      </div>
+    );
+  }
+
   if (!specsWasmLoaded) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white" />
+      </div>
+    );
   }
 
   const handleError = (error: unknown, context: string) => {

@@ -92,6 +92,7 @@ export default function CreateContent({
   const [searchedUsers, setSearchedUsers] = useState<UserView[]>([]);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
   const [filesBeingCompressed, setFilesBeingCompressed] = useState<number>(0);
+  const hasContent = content.trim().length > 0 || selectedFiles?.length > 0 || arrayTags?.length > 0;
 
   const searchUsername = async (content: string) => {
     const pkMatches = content.match(/(pk:[^\s]+)/g);
@@ -104,9 +105,30 @@ export default function CreateContent({
       return;
     }
 
+    // Filter out complete pubkeys and partial matches that are too short
+    const filteredQueries = searchQueries.filter((query) => {
+      if (query.startsWith('pk:')) {
+        const userId = query.slice(3);
+        const isCompletePubkey = userId.length >= 52 && /^[a-zA-Z0-9]+$/.test(userId);
+        const shouldSkip = isCompletePubkey || userId.length < 3;
+        return !shouldSkip;
+      }
+      if (query.startsWith('@')) {
+        const username = query.slice(1);
+        const shouldSkip = username.length < 2;
+        return !shouldSkip;
+      }
+      return false;
+    });
+
+    if (filteredQueries.length === 0) {
+      setSearchedUsers([]);
+      return;
+    }
+
     let allUserIds: string[] = [];
 
-    for (const query of searchQueries) {
+    for (const query of filteredQueries) {
       if (query.startsWith('@')) {
         const username = query.slice(1);
         const searchResult = await searchUsersByName(username);
@@ -357,6 +379,7 @@ export default function CreateContent({
           <Section.UserArea
             name={profile?.name ?? Utils.minifyPubky(pubky ?? '')}
             largeView={largeView}
+            warningLink={hasContent}
             variant={variant}
           />
           <Section.InputArea

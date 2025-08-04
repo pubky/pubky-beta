@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import getYouTubeID from 'get-youtube-id';
 import { Tweet } from 'react-tweet';
 import { Preview, Post as PostUI } from '@social/ui-shared';
-import { Spotify } from 'react-spotify-embed';
 import { usePubkyClientContext } from '@/contexts';
 import { PostView } from '@/types/Post';
 import { getPost } from '@/services/postService';
@@ -113,7 +112,7 @@ export default function LinkPreviewer({ content, setQuote }: LinkPreviewerProps)
           const githubMatch = url.match(githubRegex);
           setGithubUrl(githubMatch ? githubMatch[0] : '');
 
-          const spotifyRegex = /https:\/\/open\.spotify\.com\/track\/\w+/;
+          const spotifyRegex = /https:\/\/open\.spotify\.com\/(?:intl-[a-z]{2}\/)?track\/\w+/;
           setSpotifyUrl(spotifyRegex.test(url) ? url : '');
         } else {
           setPreview('');
@@ -149,7 +148,7 @@ export default function LinkPreviewer({ content, setQuote }: LinkPreviewerProps)
           <iframe
             width="100%"
             height="315"
-            src={`https://www.youtube.com/embed/${videoId}`}
+            src={`https://www.youtube.com/embed/${videoId}?enablejsapi=1`}
             title="YouTube video player"
             allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
@@ -167,7 +166,6 @@ export default function LinkPreviewer({ content, setQuote }: LinkPreviewerProps)
         </div>
       )}
       {githubUrl && <Preview.GitHub url={githubUrl} />}
-      {spotifyUrl && <Spotify link={spotifyUrl} />}
     </>
   );
 }
