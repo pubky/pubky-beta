@@ -198,7 +198,7 @@ describe('posts', () => {
   [CheckIndexed.Yes, CheckIndexed.No].forEach((waitForIndexed) => {
     it(`can post with embedded link (waitForIndexed: ${waitForIndexed})`, () => {
       const link = 'https://www.youtube.com/watch?v=989-7xsRLR4';
-      const embedLink = 'https://www.youtube.com/embed/989-7xsRLR4';
+      const embedLink = 'https://www.youtube.com/embed/989-7xsRLR4?enablejsapi=1';
       const postContent = `I can post with an embedded link! ${link} ${Date.now()}`;
       cy.get('#quick-post-create-content').within(() => {
         cy.get('textarea').should('have.value', '');
