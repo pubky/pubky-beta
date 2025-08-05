@@ -1,6 +1,11 @@
 // Helper function to resize and compress a video file to fit within a maximum file size while maintaining aspect ratio
 // This function now processes video and audio in a single pass for better performance
 
+// Extend HTMLVideoElement interface to include captureStream method
+interface HTMLVideoElementWithCapture extends HTMLVideoElement {
+  captureStream?(): MediaStream;
+}
+
 // Queue system to handle multiple video compressions sequentially
 let compressionQueue: Array<() => Promise<void>> = [];
 let isProcessingQueue = false;
@@ -37,7 +42,7 @@ export async function resizeVideoFile(file: File, maxSizeInBytes: number = 20 * 
     const compressionTask = async () => {
       return new Promise<void>((taskResolve, taskReject) => {
         // Create video elements
-        const videoElement = document.createElement('video');
+        const videoElement = document.createElement('video') as HTMLVideoElementWithCapture;
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
 
@@ -72,9 +77,6 @@ export async function resizeVideoFile(file: File, maxSizeInBytes: number = 20 * 
             // Create MediaStream from canvas (video track)
             const videoStream = canvas.captureStream();
 
-            // Create MediaStream from video element (audio track)
-            const audioStream = (videoElement as any).captureStream();
-
             // Combine video and audio streams
             const combinedStream = new MediaStream();
 
@@ -84,10 +86,17 @@ export async function resizeVideoFile(file: File, maxSizeInBytes: number = 20 * 
               combinedStream.addTrack(videoTracks[0]);
             }
 
-            // Add audio track from original video
-            const audioTracks = audioStream.getAudioTracks();
-            if (audioTracks.length > 0) {
-              combinedStream.addTrack(audioTracks[0]);
+            // Try to add audio track from original video if captureStream is supported
+            try {
+              if (videoElement.captureStream && typeof videoElement.captureStream === 'function') {
+                const audioStream = videoElement.captureStream();
+                const audioTracks = audioStream.getAudioTracks();
+                if (audioTracks.length > 0) {
+                  combinedStream.addTrack(audioTracks[0]);
+                }
+              }
+            } catch (error) {
+              console.warn('Audio capture not supported, proceeding with video only:', error);
             }
 
             // Create MediaRecorder with compression settings
