@@ -50,13 +50,11 @@ async function getFFmpegInstance(): Promise<FFmpeg> {
   isFFmpegLoading = true;
 
   try {
-    console.log('Loading ffmpeg.wasm...');
     ffmpegInstance = new FFmpeg();
 
     // Load ffmpeg core locally - no external URLs needed
-    console.log('Loading FFmpeg locally...');
+
     await ffmpegInstance.load();
-    console.log('FFmpeg loaded successfully');
 
     return ffmpegInstance;
   } catch (error) {
@@ -68,7 +66,11 @@ async function getFFmpegInstance(): Promise<FFmpeg> {
   }
 }
 
-export async function resizeVideoFile(file: File, maxSizeInBytes: number = 20 * 1024 * 1024): Promise<File> {
+export async function resizeVideoFile(
+  file: File,
+  maxSizeInBytes: number = 20 * 1024 * 1024,
+  onProgress?: (progress: number) => void
+): Promise<File> {
   return new Promise((resolve, reject) => {
     // If the original file is already small enough, return it as-is
     if (file.size <= maxSizeInBytes) {
@@ -79,8 +81,6 @@ export async function resizeVideoFile(file: File, maxSizeInBytes: number = 20 * 
     const compressionTask = async () => {
       return new Promise<void>(async (taskResolve, taskReject) => {
         try {
-          console.log('Starting video compression...');
-
           // Try ffmpeg.wasm first
           try {
             const ffmpeg = await getFFmpegInstance();
@@ -90,11 +90,9 @@ export async function resizeVideoFile(file: File, maxSizeInBytes: number = 20 * 
             const inputFileName = `input_${timestamp}.${file.name.split('.').pop() || 'mp4'}`;
             const outputFileName = `output_${timestamp}.mp4`;
 
-            console.log('Writing input file to ffmpeg...');
             // Write input file to ffmpeg
             await ffmpeg.writeFile(inputFileName, await fetchFile(file));
 
-            console.log('Starting first compression attempt...');
             // Build ffmpeg command for compression
             const ffmpegArgs = [
               '-i',
@@ -117,49 +115,36 @@ export async function resizeVideoFile(file: File, maxSizeInBytes: number = 20 * 
 
             // Execute ffmpeg command with progress tracking
             ffmpeg.on('progress', ({ progress }) => {
-              console.log(`FFmpeg progress: ${Math.round(progress * 100)}%`);
+              const progressPercentage = Math.round(progress * 100);
+
+              if (onProgress) {
+                onProgress(progressPercentage);
+              }
             });
 
             // Execute ffmpeg command
-            console.log('Executing FFmpeg command...');
             await ffmpeg.exec(ffmpegArgs);
 
             // Read the compressed file
             const compressedData = await ffmpeg.readFile(outputFileName);
-            console.log(
-              'Compressed data type:',
-              typeof compressedData,
-              'instanceof Uint8Array:',
-              compressedData instanceof Uint8Array
-            );
-            console.log(
-              'Compressed data length:',
-              compressedData instanceof Uint8Array ? compressedData.length : 'N/A'
-            );
-            console.log('Max size limit:', maxSizeInBytes);
 
             // Check if the compressed file is within size limit
             if (compressedData instanceof Uint8Array && compressedData.length <= maxSizeInBytes) {
-              console.log('First compression successful, file size:', compressedData.length);
-              console.log('Creating Blob from compressed data...');
               const compressedBlob = new Blob([compressedData as any], { type: 'video/mp4' });
-              console.log('Creating File from Blob...');
+
               const compressedFile = new File([compressedBlob], file.name.replace(/\.[^/.]+$/, '') + '.mp4', {
                 type: 'video/mp4',
                 lastModified: Date.now()
               });
-              console.log('File created, size:', compressedFile.size);
 
               // Clean up ffmpeg files
               await ffmpeg.deleteFile(inputFileName);
               await ffmpeg.deleteFile(outputFileName);
 
-              console.log('Video compression completed successfully with ffmpeg.wasm');
               resolve(compressedFile);
               taskResolve();
               return;
             } else {
-              console.log('First compression too large, trying more aggressive compression...');
               // If still too large, try more aggressive compression
               const moreAggressiveArgs = [
                 '-i',
@@ -185,7 +170,6 @@ export async function resizeVideoFile(file: File, maxSizeInBytes: number = 20 * 
               const compressedData = await ffmpeg.readFile(outputFileName);
 
               if (compressedData instanceof Uint8Array && compressedData.length <= maxSizeInBytes) {
-                console.log('Second compression successful, file size:', compressedData.length);
                 const compressedBlob = new Blob([compressedData as any], { type: 'video/mp4' });
                 const compressedFile = new File([compressedBlob], file.name.replace(/\.[^/.]+$/, '') + '.mp4', {
                   type: 'video/mp4',
@@ -196,12 +180,10 @@ export async function resizeVideoFile(file: File, maxSizeInBytes: number = 20 * 
                 await ffmpeg.deleteFile(inputFileName);
                 await ffmpeg.deleteFile(outputFileName);
 
-                console.log('Video compression completed successfully with ffmpeg.wasm');
                 resolve(compressedFile);
                 taskResolve();
                 return;
               } else {
-                console.log('Second compression too large, trying final compression...');
                 // If still too large, try reducing dimensions further
 
                 const finalArgs = [
@@ -228,7 +210,6 @@ export async function resizeVideoFile(file: File, maxSizeInBytes: number = 20 * 
                 const finalCompressedData = await ffmpeg.readFile(outputFileName);
 
                 if (finalCompressedData instanceof Uint8Array && finalCompressedData.length <= maxSizeInBytes) {
-                  console.log('Final compression successful, file size:', finalCompressedData.length);
                   const compressedBlob = new Blob([finalCompressedData as any], { type: 'video/mp4' });
                   const compressedFile = new File([compressedBlob], file.name.replace(/\.[^/.]+$/, '') + '.mp4', {
                     type: 'video/mp4',
@@ -239,7 +220,6 @@ export async function resizeVideoFile(file: File, maxSizeInBytes: number = 20 * 
                   await ffmpeg.deleteFile(inputFileName);
                   await ffmpeg.deleteFile(outputFileName);
 
-                  console.log('Video compression completed successfully with ffmpeg.wasm');
                   resolve(compressedFile);
                   taskResolve();
                   return;

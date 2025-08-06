@@ -81,7 +81,7 @@ export default function CreateContent({
   setIsCompressing
 }: CreateContentProps) {
   const { profile, pubky } = usePubkyClientContext();
-  const { addAlert, removeAlert } = useAlertContext();
+  const { addAlert, removeAlert, updateAlert } = useAlertContext();
   const [showEmojis, setShowEmojis] = useState(false);
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -324,7 +324,12 @@ export default function CreateContent({
               const loadingAlertId = addAlert(`Compressing video ${i + 1}/${filesToProcess.length}...`, 'loading');
               setIsCompressing(true);
               setFilesBeingCompressed((prev) => prev + 1);
-              const resizedFile = await Utils.resizeVideoFile(file, maxOtherSizeInBytes);
+
+              const resizedFile = await Utils.resizeVideoFile(file, maxOtherSizeInBytes, (progress) => {
+                // Update the alert with current progress
+                updateAlert(loadingAlertId, `Compressing video ${i + 1}/${filesToProcess.length}... ${progress}%`);
+              });
+
               removeAlert(loadingAlertId);
               validFiles.push(resizedFile);
             } catch (error) {

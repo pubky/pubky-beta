@@ -73,7 +73,7 @@ export default function FooterArea({
   setFilesBeingCompressed
   // charCountArticle
 }: FooterAreaProps) {
-  const { addAlert, removeAlert } = useAlertContext();
+  const { addAlert, removeAlert, updateAlert } = useAlertContext();
   const { openModal } = useModal();
   const [addTagInput, setAddTagInput] = useState<boolean>(false);
   const [tagInput, setTagInput] = useState('');
@@ -183,7 +183,15 @@ export default function FooterArea({
               );
               setIsCompressing(true);
               setFilesBeingCompressed && setFilesBeingCompressed((prev) => prev + 1);
-              const resizedFile = await Utils.resizeVideoFile(file, maxOtherSizeInBytes);
+
+              const resizedFile = await Utils.resizeVideoFile(file, maxOtherSizeInBytes, (progress) => {
+                // Update the alert with current progress
+                updateAlert(
+                  loadingAlertId,
+                  `Compressing video ${validFiles.length + 1}/${files.length}... ${progress}%`
+                );
+              });
+
               removeAlert(loadingAlertId);
               validFiles.push(resizedFile);
             } catch (error) {

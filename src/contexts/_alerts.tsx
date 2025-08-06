@@ -21,6 +21,7 @@ type ConnectionStatus = 'waiting' | 'restored' | 'lost';
 type AlertContextType = {
   addAlert: (content: ReactNode, variant?: 'default' | 'warning' | 'loading') => number;
   removeAlert: (id: number) => void;
+  updateAlert: (id: number, content: ReactNode) => void;
   connectionAlertStatus: (status: ConnectionStatus) => void;
   homeserverAlertStatus: (isUp: boolean, onRetry?: () => void, isRetrying?: boolean) => void;
 };
@@ -28,6 +29,7 @@ type AlertContextType = {
 const AlertContext = createContext<AlertContextType>({
   addAlert: () => 0,
   removeAlert: () => {},
+  updateAlert: () => {},
   connectionAlertStatus: () => {},
   homeserverAlertStatus: () => {}
 });
@@ -53,6 +55,10 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
 
   const removeAlert = (id: number) => {
     setAlerts((prev) => prev.filter((alert) => alert.id !== id));
+  };
+
+  const updateAlert = (id: number, content: ReactNode) => {
+    setAlerts((prev) => prev.map((alert) => (alert.id === id ? { ...alert, content } : alert)));
   };
 
   const connectionAlertStatus = (status: ConnectionStatus) => {
@@ -161,7 +167,7 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AlertContext.Provider value={{ addAlert, removeAlert, connectionAlertStatus, homeserverAlertStatus }}>
+    <AlertContext.Provider value={{ addAlert, removeAlert, updateAlert, connectionAlertStatus, homeserverAlertStatus }}>
       {children}
       <div
         style={{ bottom: isMobile ? '96px' : '24px' }}

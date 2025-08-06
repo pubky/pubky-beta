@@ -65,7 +65,7 @@ export default function InputArea({
   setFilesBeingCompressed
 }: InputAreaProps) {
   const [isDragging, setIsDragging] = useState(false);
-  const { addAlert, removeAlert } = useAlertContext();
+  const { addAlert, removeAlert, updateAlert } = useAlertContext();
 
   const handleDragEnter = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -167,7 +167,15 @@ export default function InputArea({
               );
               setIsCompressing(true);
               setFilesBeingCompressed && setFilesBeingCompressed((prev) => prev + 1);
-              const resizedFile = await Utils.resizeVideoFile(file, maxOtherSizeInBytes);
+
+              const resizedFile = await Utils.resizeVideoFile(file, maxOtherSizeInBytes, (progress) => {
+                // Update the alert with current progress
+                updateAlert(
+                  loadingAlertId,
+                  `Compressing video ${validFiles.length + 1}/${files.length}... ${progress}%`
+                );
+              });
+
               removeAlert(loadingAlertId);
               validFiles.push(resizedFile);
             } catch (error) {
