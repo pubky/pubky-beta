@@ -54,7 +54,7 @@ export default function InputArea({
   setFilePreviews,
   loading,
   className,
-  maxLength = 1000,
+  maxLength = 2000,
   markdown,
   setIsError,
   handlePaste,
