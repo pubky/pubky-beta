@@ -320,20 +320,28 @@ export default function CreateContent({
               continue;
             }
 
+            let loadingAlertId: number | undefined;
             try {
-              const loadingAlertId = addAlert(`Compressing video ${i + 1}/${filesToProcess.length}...`, 'loading');
+              loadingAlertId = addAlert(`Compressing video ${i + 1}/${filesToProcess.length}...`, 'loading');
               setIsCompressing(true);
               setFilesBeingCompressed((prev) => prev + 1);
 
               const resizedFile = await Utils.resizeVideoFile(file, maxOtherSizeInBytes, (progress) => {
                 // Update the alert with current progress
-                updateAlert(loadingAlertId, `Compressing video ${i + 1}/${filesToProcess.length}... ${progress}%`);
+                updateAlert(loadingAlertId!, `Compressing video ${i + 1}/${filesToProcess.length}... ${progress}%`);
               });
 
               removeAlert(loadingAlertId);
               validFiles.push(resizedFile);
             } catch (error) {
-              addAlert('The maximum allowed size for videos is 20 MB', 'warning');
+              // Remove the loading alert first
+              if (loadingAlertId) {
+                removeAlert(loadingAlertId);
+              }
+              
+              // Show the error message from compression
+              const errorMessage = error instanceof Error ? error.message : String(error);
+              addAlert(errorMessage, 'warning');
               continue;
             } finally {
               setFilesBeingCompressed((prev) => Math.max(0, prev - 1));

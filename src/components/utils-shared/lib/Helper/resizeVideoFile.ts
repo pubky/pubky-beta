@@ -93,16 +93,39 @@ export async function resizeVideoFile(
             // Write input file to ffmpeg
             await ffmpeg.writeFile(inputFileName, await fetchFile(file));
 
+            // Determine optimal preset based on input file size
+            let preset: string;
+            let crf: number;
+            
+            if (file.size < 40 * 1024 * 1024) {
+              // Small files (< 40MB): ultrafast for speed
+              preset = 'ultrafast';
+              crf = 28;
+            } else if (file.size < 80 * 1024 * 1024) {
+              // Medium files (40-80MB): veryfast for balance
+              preset = 'veryfast';
+              crf = 30;
+            } else {
+              // Large files (80-100MB): fast for better compression
+              preset = 'fast';
+              crf = 32;
+            }
+
+            console.log(`🎬 Starting video compression with preset: ${preset}, CRF: ${crf}`);
+            console.log(`📁 Input file size: ${(file.size / (1024 * 1024)).toFixed(2)}MB`);
+
             // Build ffmpeg command for compression
             const ffmpegArgs = [
+              '-threads',
+              '0', // Use all available CPU threads for input
               '-i',
               inputFileName,
               '-c:v',
               'libx264', // Video codec
               '-preset',
-              'medium', // Compression preset (balance between speed and quality)
+              preset,
               '-crf',
-              '23', // Constant Rate Factor (18-28 is good quality)
+              crf.toString(),
               '-c:a',
               'aac', // Audio codec
               '-b:a',
@@ -114,67 +137,41 @@ export async function resizeVideoFile(
             ];
 
             // Execute ffmpeg command with progress tracking
-            ffmpeg.on('progress', ({ progress }) => {
-              const progressPercentage = Math.round(progress * 100);
-
-              if (onProgress) {
-                onProgress(progressPercentage);
+            const progressHandler = ({ progress }: { progress: number }) => {
+              // Progress is a decimal between 0 and 1, convert to percentage
+              if (typeof progress === 'number' && !isNaN(progress) && progress >= 0 && progress <= 1) {
+                const progressPercentage = Math.round(progress * 100);
+                
+                if (onProgress) {
+                  onProgress(progressPercentage);
+                }
               }
-            });
+            };
+            
+            ffmpeg.on('progress', progressHandler);
 
             // Execute ffmpeg command
             await ffmpeg.exec(ffmpegArgs);
+            
+            // Clean up progress listener
+            ffmpeg.off('progress', progressHandler);
 
             // Read the compressed file
             const compressedData = await ffmpeg.readFile(outputFileName);
 
-            // Check if the compressed file is within size limit
-            if (compressedData instanceof Uint8Array && compressedData.length <= maxSizeInBytes) {
-              const compressedBlob = new Blob([compressedData as any], { type: 'video/mp4' });
-
-              const compressedFile = new File([compressedBlob], file.name.replace(/\.[^/.]+$/, '') + '.mp4', {
-                type: 'video/mp4',
-                lastModified: Date.now()
-              });
-
-              // Clean up ffmpeg files
-              await ffmpeg.deleteFile(inputFileName);
-              await ffmpeg.deleteFile(outputFileName);
-
-              resolve(compressedFile);
-              taskResolve();
-              return;
-            } else {
-              // If still too large, try more aggressive compression
-              const moreAggressiveArgs = [
-                '-i',
-                inputFileName,
-                '-c:v',
-                'libx264',
-                '-preset',
-                'slow', // Slower preset for better compression
-                '-crf',
-                '28', // Higher CRF for more compression
-                '-c:a',
-                'aac',
-                '-b:a',
-                '96k', // Lower audio bitrate
-                '-movflags',
-                '+faststart',
-                '-y',
-                outputFileName
-              ];
-
-              await ffmpeg.exec(moreAggressiveArgs);
-
-              const compressedData = await ffmpeg.readFile(outputFileName);
-
+                          // Check if the compressed file is within size limit
               if (compressedData instanceof Uint8Array && compressedData.length <= maxSizeInBytes) {
                 const compressedBlob = new Blob([compressedData as any], { type: 'video/mp4' });
+
                 const compressedFile = new File([compressedBlob], file.name.replace(/\.[^/.]+$/, '') + '.mp4', {
                   type: 'video/mp4',
                   lastModified: Date.now()
                 });
+
+                console.log(`✅ Video compression successful!`);
+                console.log(`📁 Original size: ${(file.size / (1024 * 1024)).toFixed(2)}MB`);
+                console.log(`📁 Compressed size: ${(compressedFile.size / (1024 * 1024)).toFixed(2)}MB`);
+                console.log(`📊 Compression ratio: ${((1 - compressedFile.size / file.size) * 100).toFixed(1)}%`);
 
                 // Clean up ffmpeg files
                 await ffmpeg.deleteFile(inputFileName);
@@ -184,62 +181,32 @@ export async function resizeVideoFile(
                 taskResolve();
                 return;
               } else {
-                // If still too large, try reducing dimensions further
+                // Clean up ffmpeg files
+                await ffmpeg.deleteFile(inputFileName);
+                await ffmpeg.deleteFile(outputFileName);
 
-                const finalArgs = [
-                  '-i',
-                  inputFileName,
-                  '-c:v',
-                  'libx264',
-                  '-preset',
-                  'slow',
-                  '-crf',
-                  '30', // Even higher CRF
-                  '-c:a',
-                  'aac',
-                  '-b:a',
-                  '64k', // Even lower audio bitrate
-                  '-movflags',
-                  '+faststart',
-                  '-y',
-                  outputFileName
-                ];
+                const compressedSizeMB = (compressedData instanceof Uint8Array ? compressedData.length : 0) / (1024 * 1024);
+                const targetSizeMB = maxSizeInBytes / (1024 * 1024);
+                const originalSizeMB = file.size / (1024 * 1024);
+                
+                console.log(`❌ Video compression failed!`);
+                console.log(`📁 Original size: ${originalSizeMB.toFixed(2)}MB`);
+                console.log(`📁 Compressed size: ${compressedSizeMB.toFixed(2)}MB`);
+                console.log(`🎯 Target size: ${targetSizeMB.toFixed(2)}MB`);
+                console.log(`📊 Compression ratio: ${((1 - compressedSizeMB / originalSizeMB) * 100).toFixed(1)}%`);
 
-                await ffmpeg.exec(finalArgs);
-
-                const finalCompressedData = await ffmpeg.readFile(outputFileName);
-
-                if (finalCompressedData instanceof Uint8Array && finalCompressedData.length <= maxSizeInBytes) {
-                  const compressedBlob = new Blob([finalCompressedData as any], { type: 'video/mp4' });
-                  const compressedFile = new File([compressedBlob], file.name.replace(/\.[^/.]+$/, '') + '.mp4', {
-                    type: 'video/mp4',
-                    lastModified: Date.now()
-                  });
-
-                  // Clean up ffmpeg files
-                  await ffmpeg.deleteFile(inputFileName);
-                  await ffmpeg.deleteFile(outputFileName);
-
-                  resolve(compressedFile);
-                  taskResolve();
-                  return;
-                } else {
-                  // Clean up ffmpeg files
-                  await ffmpeg.deleteFile(inputFileName);
-                  await ffmpeg.deleteFile(outputFileName);
-
-                  throw new Error('Video cannot be compressed to the required size with ffmpeg.wasm');
-                }
+                const errorMsg = `Video compressed to ${compressedSizeMB.toFixed(1)}MB. The maximum allowed size for videos is 20 MB.`;
+                reject(errorMsg);
+                taskReject(errorMsg);
               }
-            }
           } catch (ffmpegError) {
-            console.error('FFmpeg.wasm failed:', ffmpegError);
+            console.error('❌ FFmpeg.wasm failed:', ffmpegError);
             const errorMsg = `Video compression failed: ${ffmpegError instanceof Error ? ffmpegError.message : String(ffmpegError)}`;
             reject(errorMsg);
             taskReject(errorMsg);
           }
         } catch (error) {
-          console.error('Error during video compression:', error);
+          console.error('❌ Error during video compression:', error);
           const errorMsg = `Error during video compression: ${error instanceof Error ? error.message : String(error)}`;
           reject(errorMsg);
           taskReject(errorMsg);

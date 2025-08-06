@@ -176,8 +176,9 @@ export default function FooterArea({
               addAlert('The maximum allowed size for videos compression is 100 MB', 'warning');
               continue;
             }
+            let loadingAlertId: number | undefined;
             try {
-              const loadingAlertId = addAlert(
+              loadingAlertId = addAlert(
                 `Compressing video ${validFiles.length + 1}/${files.length}...`,
                 'loading'
               );
@@ -187,7 +188,7 @@ export default function FooterArea({
               const resizedFile = await Utils.resizeVideoFile(file, maxOtherSizeInBytes, (progress) => {
                 // Update the alert with current progress
                 updateAlert(
-                  loadingAlertId,
+                  loadingAlertId!,
                   `Compressing video ${validFiles.length + 1}/${files.length}... ${progress}%`
                 );
               });
@@ -195,7 +196,14 @@ export default function FooterArea({
               removeAlert(loadingAlertId);
               validFiles.push(resizedFile);
             } catch (error) {
-              addAlert('The maximum allowed size for videos is 20 MB', 'warning');
+              // Remove the loading alert first
+              if (loadingAlertId) {
+                removeAlert(loadingAlertId);
+              }
+              
+              // Show the error message from compression
+              const errorMessage = error instanceof Error ? error.message : String(error);
+              addAlert(errorMessage, 'warning');
               continue;
             } finally {
               setFilesBeingCompressed && setFilesBeingCompressed((prev) => Math.max(0, prev - 1));
