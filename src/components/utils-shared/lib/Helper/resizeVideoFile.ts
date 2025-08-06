@@ -1,9 +1,14 @@
 // Helper function to resize and compress a video file to fit within a maximum file size while maintaining aspect ratio
-// This function now processes video and audio in a single pass for better performance
+// This function uses ffmpeg.wasm for cross-browser compatibility
+
+import { FFmpeg } from '@ffmpeg/ffmpeg';
+import { fetchFile } from '@ffmpeg/util';
 
 // Queue system to handle multiple video compressions sequentially
 let compressionQueue: Array<() => Promise<void>> = [];
 let isProcessingQueue = false;
+let ffmpegInstance: FFmpeg | null = null;
+let isFFmpegLoading = false;
 
 async function processCompressionQueue() {
   if (isProcessingQueue || compressionQueue.length === 0) {
@@ -26,6 +31,43 @@ async function processCompressionQueue() {
   isProcessingQueue = false;
 }
 
+// Initialize ffmpeg instance with timeout and better error handling
+async function getFFmpegInstance(): Promise<FFmpeg> {
+  if (ffmpegInstance) {
+    return ffmpegInstance;
+  }
+
+  if (isFFmpegLoading) {
+    // Wait for the loading to complete
+    while (isFFmpegLoading) {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    if (ffmpegInstance) {
+      return ffmpegInstance;
+    }
+  }
+
+  isFFmpegLoading = true;
+
+  try {
+    console.log('Loading ffmpeg.wasm...');
+    ffmpegInstance = new FFmpeg();
+
+    // Load ffmpeg core locally - no external URLs needed
+    console.log('Loading FFmpeg locally...');
+    await ffmpegInstance.load();
+    console.log('FFmpeg loaded successfully');
+
+    return ffmpegInstance;
+  } catch (error) {
+    console.error('Failed to load FFmpeg:', error);
+    ffmpegInstance = null;
+    throw new Error(`Failed to load FFmpeg: ${error instanceof Error ? error.message : String(error)}`);
+  } finally {
+    isFFmpegLoading = false;
+  }
+}
+
 export async function resizeVideoFile(file: File, maxSizeInBytes: number = 20 * 1024 * 1024): Promise<File> {
   return new Promise((resolve, reject) => {
     // If the original file is already small enough, return it as-is
@@ -35,157 +77,193 @@ export async function resizeVideoFile(file: File, maxSizeInBytes: number = 20 * 
     }
 
     const compressionTask = async () => {
-      return new Promise<void>((taskResolve, taskReject) => {
-        // Create video elements
-        const videoElement = document.createElement('video');
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
+      return new Promise<void>(async (taskResolve, taskReject) => {
+        try {
+          console.log('Starting video compression...');
 
-        if (!ctx) {
-          taskReject('No canvas context available');
-          return;
-        }
+          // Try ffmpeg.wasm first
+          try {
+            const ffmpeg = await getFFmpegInstance();
 
-        // Create object URL for the video
-        const videoUrl = URL.createObjectURL(file);
+            // Generate unique filenames for input and output
+            const timestamp = Date.now();
+            const inputFileName = `input_${timestamp}.${file.name.split('.').pop() || 'mp4'}`;
+            const outputFileName = `output_${timestamp}.mp4`;
 
-        // Configure video element - mute during compression but keep audio track
-        videoElement.muted = true; // Mute during compression to avoid hearing audio
-        videoElement.volume = 0;
+            console.log('Writing input file to ffmpeg...');
+            // Write input file to ffmpeg
+            await ffmpeg.writeFile(inputFileName, await fetchFile(file));
 
-        videoElement.onloadedmetadata = () => {
-          // Start with original dimensions
-          let { videoWidth, videoHeight } = videoElement;
-          let quality = 0.8; // Start with good quality
-          let scale = 1;
-          let bitrate = 1000000; // Start with 1Mbps bitrate
+            console.log('Starting first compression attempt...');
+            // Build ffmpeg command for compression
+            const ffmpegArgs = [
+              '-i',
+              inputFileName,
+              '-c:v',
+              'libx264', // Video codec
+              '-preset',
+              'medium', // Compression preset (balance between speed and quality)
+              '-crf',
+              '23', // Constant Rate Factor (18-28 is good quality)
+              '-c:a',
+              'aac', // Audio codec
+              '-b:a',
+              '128k', // Audio bitrate
+              '-movflags',
+              '+faststart', // Optimize for web streaming
+              '-y', // Overwrite output file
+              outputFileName
+            ];
 
-          const compressVideo = () => {
-            // Calculate new dimensions
-            const newWidth = Math.round(videoWidth * scale);
-            const newHeight = Math.round(videoHeight * scale);
+            // Execute ffmpeg command with progress tracking
+            ffmpeg.on('progress', ({ progress }) => {
+              console.log(`FFmpeg progress: ${Math.round(progress * 100)}%`);
+            });
 
-            // Set canvas dimensions
-            canvas.width = newWidth;
-            canvas.height = newHeight;
+            // Execute ffmpeg command
+            console.log('Executing FFmpeg command...');
+            await ffmpeg.exec(ffmpegArgs);
 
-            // Create MediaStream from canvas (video track)
-            const videoStream = canvas.captureStream();
+            // Read the compressed file
+            const compressedData = await ffmpeg.readFile(outputFileName);
+            console.log(
+              'Compressed data type:',
+              typeof compressedData,
+              'instanceof Uint8Array:',
+              compressedData instanceof Uint8Array
+            );
+            console.log(
+              'Compressed data length:',
+              compressedData instanceof Uint8Array ? compressedData.length : 'N/A'
+            );
+            console.log('Max size limit:', maxSizeInBytes);
 
-            // Create MediaStream from video element (audio track)
-            const audioStream = (videoElement as any).captureStream();
+            // Check if the compressed file is within size limit
+            if (compressedData instanceof Uint8Array && compressedData.length <= maxSizeInBytes) {
+              console.log('First compression successful, file size:', compressedData.length);
+              console.log('Creating Blob from compressed data...');
+              const compressedBlob = new Blob([compressedData as any], { type: 'video/mp4' });
+              console.log('Creating File from Blob...');
+              const compressedFile = new File([compressedBlob], file.name.replace(/\.[^/.]+$/, '') + '.mp4', {
+                type: 'video/mp4',
+                lastModified: Date.now()
+              });
+              console.log('File created, size:', compressedFile.size);
 
-            // Combine video and audio streams
-            const combinedStream = new MediaStream();
+              // Clean up ffmpeg files
+              await ffmpeg.deleteFile(inputFileName);
+              await ffmpeg.deleteFile(outputFileName);
 
-            // Add video track from canvas
-            const videoTracks = videoStream.getVideoTracks();
-            if (videoTracks.length > 0) {
-              combinedStream.addTrack(videoTracks[0]);
-            }
+              console.log('Video compression completed successfully with ffmpeg.wasm');
+              resolve(compressedFile);
+              taskResolve();
+              return;
+            } else {
+              console.log('First compression too large, trying more aggressive compression...');
+              // If still too large, try more aggressive compression
+              const moreAggressiveArgs = [
+                '-i',
+                inputFileName,
+                '-c:v',
+                'libx264',
+                '-preset',
+                'slow', // Slower preset for better compression
+                '-crf',
+                '28', // Higher CRF for more compression
+                '-c:a',
+                'aac',
+                '-b:a',
+                '96k', // Lower audio bitrate
+                '-movflags',
+                '+faststart',
+                '-y',
+                outputFileName
+              ];
 
-            // Add audio track from original video
-            const audioTracks = audioStream.getAudioTracks();
-            if (audioTracks.length > 0) {
-              combinedStream.addTrack(audioTracks[0]);
-            }
+              await ffmpeg.exec(moreAggressiveArgs);
 
-            // Create MediaRecorder with compression settings
-            const options: MediaRecorderOptions = {
-              mimeType: 'video/mp4',
-              videoBitsPerSecond: bitrate
-            };
+              const compressedData = await ffmpeg.readFile(outputFileName);
 
-            // Fallback to WebM if MP4 is not supported
-            if (!MediaRecorder.isTypeSupported(options.mimeType!)) {
-              options.mimeType = 'video/webm;codecs=vp9';
-            }
-
-            // Fallback to VP8 if VP9 is not supported
-            if (!MediaRecorder.isTypeSupported(options.mimeType!)) {
-              options.mimeType = 'video/webm;codecs=vp8';
-            }
-
-            const mediaRecorder = new MediaRecorder(combinedStream, options);
-            const chunks: Blob[] = [];
-
-            mediaRecorder.ondataavailable = (event) => {
-              if (event.data.size > 0) {
-                chunks.push(event.data);
-              }
-            };
-
-            mediaRecorder.onstop = () => {
-              const compressedBlob = new Blob(chunks, { type: options.mimeType || 'video/mp4' });
-
-              // Check if file size is within limit
-              if (compressedBlob.size <= maxSizeInBytes) {
+              if (compressedData instanceof Uint8Array && compressedData.length <= maxSizeInBytes) {
+                console.log('Second compression successful, file size:', compressedData.length);
+                const compressedBlob = new Blob([compressedData as any], { type: 'video/mp4' });
                 const compressedFile = new File([compressedBlob], file.name.replace(/\.[^/.]+$/, '') + '.mp4', {
-                  type: options.mimeType || 'video/mp4',
+                  type: 'video/mp4',
                   lastModified: Date.now()
                 });
-                URL.revokeObjectURL(videoUrl);
+
+                // Clean up ffmpeg files
+                await ffmpeg.deleteFile(inputFileName);
+                await ffmpeg.deleteFile(outputFileName);
+
+                console.log('Video compression completed successfully with ffmpeg.wasm');
                 resolve(compressedFile);
                 taskResolve();
+                return;
               } else {
-                // If still too large, reduce quality or scale
-                if (quality > 0.1) {
-                  quality -= 0.1;
-                  bitrate = Math.max(100000, bitrate * 0.8); // Reduce bitrate but keep minimum
-                  compressVideo();
-                } else if (scale > 0.3) {
-                  // If quality is already very low, reduce scale
-                  scale *= 0.9;
-                  quality = 0.8; // Reset quality
-                  bitrate = Math.max(100000, bitrate * 0.8);
-                  compressVideo();
+                console.log('Second compression too large, trying final compression...');
+                // If still too large, try reducing dimensions further
+
+                const finalArgs = [
+                  '-i',
+                  inputFileName,
+                  '-c:v',
+                  'libx264',
+                  '-preset',
+                  'slow',
+                  '-crf',
+                  '30', // Even higher CRF
+                  '-c:a',
+                  'aac',
+                  '-b:a',
+                  '64k', // Even lower audio bitrate
+                  '-movflags',
+                  '+faststart',
+                  '-y',
+                  outputFileName
+                ];
+
+                await ffmpeg.exec(finalArgs);
+
+                const finalCompressedData = await ffmpeg.readFile(outputFileName);
+
+                if (finalCompressedData instanceof Uint8Array && finalCompressedData.length <= maxSizeInBytes) {
+                  console.log('Final compression successful, file size:', finalCompressedData.length);
+                  const compressedBlob = new Blob([finalCompressedData as any], { type: 'video/mp4' });
+                  const compressedFile = new File([compressedBlob], file.name.replace(/\.[^/.]+$/, '') + '.mp4', {
+                    type: 'video/mp4',
+                    lastModified: Date.now()
+                  });
+
+                  // Clean up ffmpeg files
+                  await ffmpeg.deleteFile(inputFileName);
+                  await ffmpeg.deleteFile(outputFileName);
+
+                  console.log('Video compression completed successfully with ffmpeg.wasm');
+                  resolve(compressedFile);
+                  taskResolve();
+                  return;
                 } else {
-                  // If we can't compress further, reject
-                  URL.revokeObjectURL(videoUrl);
-                  reject('Video cannot be compressed to the required size');
-                  taskReject('Video cannot be compressed to the required size');
+                  // Clean up ffmpeg files
+                  await ffmpeg.deleteFile(inputFileName);
+                  await ffmpeg.deleteFile(outputFileName);
+
+                  throw new Error('Video cannot be compressed to the required size with ffmpeg.wasm');
                 }
               }
-            };
-
-            mediaRecorder.onerror = (event) => {
-              URL.revokeObjectURL(videoUrl);
-              reject('Error during video compression: ' + event);
-              taskReject('Error during video compression: ' + event);
-            };
-
-            // Start recording
-            mediaRecorder.start();
-
-            // Play video and draw frames to canvas
-            videoElement.currentTime = 0;
-            videoElement.play();
-
-            const drawFrame = () => {
-              if (videoElement.ended || videoElement.paused) {
-                mediaRecorder.stop();
-                return;
-              }
-
-              ctx.drawImage(videoElement, 0, 0, newWidth, newHeight);
-              requestAnimationFrame(drawFrame);
-            };
-
-            drawFrame();
-          };
-
-          // Start compression process
-          compressVideo();
-        };
-
-        videoElement.onerror = () => {
-          URL.revokeObjectURL(videoUrl);
-          reject('Error loading video file');
-          taskReject('Error loading video file');
-        };
-
-        videoElement.src = videoUrl;
-        videoElement.load();
+            }
+          } catch (ffmpegError) {
+            console.error('FFmpeg.wasm failed:', ffmpegError);
+            const errorMsg = `Video compression failed: ${ffmpegError instanceof Error ? ffmpegError.message : String(ffmpegError)}`;
+            reject(errorMsg);
+            taskReject(errorMsg);
+          }
+        } catch (error) {
+          console.error('Error during video compression:', error);
+          const errorMsg = `Error during video compression: ${error instanceof Error ? error.message : String(error)}`;
+          reject(errorMsg);
+          taskReject(errorMsg);
+        }
       });
     };
 
