@@ -64,7 +64,7 @@ export default function FooterArea({
   //markdown,
   noEmoji,
   noFile,
-  maxLength = 1000,
+  maxLength = 2000,
   setShowModalPost,
   isError,
   loading,
