@@ -69,7 +69,8 @@ async function getFFmpegInstance(): Promise<FFmpeg> {
 export async function resizeVideoFile(
   file: File,
   maxSizeInBytes: number = 20 * 1024 * 1024,
-  onProgress?: (progress: number) => void
+  onProgress?: (progress: number) => void,
+  abortSignal?: AbortSignal
 ): Promise<File> {
   return new Promise((resolve, reject) => {
     // If the original file is already small enough, return it as-is
@@ -80,7 +81,14 @@ export async function resizeVideoFile(
 
     const compressionTask = async () => {
       return new Promise<void>(async (taskResolve, taskReject) => {
+        let abortHandler: (() => void) | null = null;
+
         try {
+          // Check for cancellation
+          if (abortSignal?.aborted) {
+            taskReject(new Error('Compression cancelled'));
+            return;
+          }
           // Try ffmpeg.wasm first
           try {
             const ffmpeg = await getFFmpegInstance();
@@ -96,7 +104,7 @@ export async function resizeVideoFile(
             // Determine optimal preset based on input file size
             let preset: string;
             let crf: number;
-            
+
             if (file.size < 30 * 1024 * 1024) {
               // Small files (< 30MB)
               preset = 'ultrafast';
@@ -141,70 +149,113 @@ export async function resizeVideoFile(
             ];
 
             // Execute ffmpeg command with progress tracking
-            const progressHandler = ({ progress }: { progress: number }) => {
+            let progressHandler = ({ progress }: { progress: number }) => {
               // Progress is a decimal between 0 and 1, convert to percentage
               if (typeof progress === 'number' && !isNaN(progress) && progress >= 0 && progress <= 1) {
                 const progressPercentage = Math.round(progress * 100);
-                
+
                 if (onProgress) {
                   onProgress(progressPercentage);
                 }
               }
             };
-            
+
             ffmpeg.on('progress', progressHandler);
 
-            // Execute ffmpeg command
-            await ffmpeg.exec(ffmpegArgs);
-            
+            // Execute ffmpeg command with cancellation support
+            const execPromise = ffmpeg.exec(ffmpegArgs);
+
+            // Create a cancellation promise
+            const cancellationPromise = new Promise<never>((_, reject) => {
+              if (abortSignal) {
+                abortHandler = () => {
+                  reject(new Error('Compression cancelled'));
+                };
+                abortSignal.addEventListener('abort', abortHandler);
+              }
+            });
+
+            // Race between execution and cancellation
+            await Promise.race([execPromise, cancellationPromise]);
+
+            // Clean up abort listener
+            if (abortSignal && abortHandler) {
+              abortSignal.removeEventListener('abort', abortHandler);
+            }
+
+            // Check for cancellation after execution
+            if (abortSignal?.aborted) {
+              // Clean up ffmpeg files
+              await ffmpeg.deleteFile(inputFileName);
+              await ffmpeg.deleteFile(outputFileName);
+              taskReject(new Error('Compression cancelled'));
+              return;
+            }
+
             // Clean up progress listener
             ffmpeg.off('progress', progressHandler);
 
             // Read the compressed file
             const compressedData = await ffmpeg.readFile(outputFileName);
 
-                          // Check if the compressed file is within size limit
-              if (compressedData instanceof Uint8Array && compressedData.length <= maxSizeInBytes) {
-                const compressedBlob = new Blob([compressedData as any], { type: 'video/mp4' });
+            // Check if the compressed file is within size limit
+            if (compressedData instanceof Uint8Array && compressedData.length <= maxSizeInBytes) {
+              const compressedBlob = new Blob([compressedData as any], { type: 'video/mp4' });
 
-                const compressedFile = new File([compressedBlob], file.name.replace(/\.[^/.]+$/, '') + '.mp4', {
-                  type: 'video/mp4',
-                  lastModified: Date.now()
-                });
+              const compressedFile = new File([compressedBlob], file.name.replace(/\.[^/.]+$/, '') + '.mp4', {
+                type: 'video/mp4',
+                lastModified: Date.now()
+              });
 
-                console.log(`✅ Video compression successful!`);
-                console.log(`📁 Original size: ${(file.size / (1024 * 1024)).toFixed(2)}MB`);
-                console.log(`📁 Compressed size: ${(compressedFile.size / (1024 * 1024)).toFixed(2)}MB`);
-                console.log(`📊 Compression ratio: ${((1 - compressedFile.size / file.size) * 100).toFixed(1)}%`);
+              console.log(`✅ Video compression successful!`);
+              console.log(`📁 Original size: ${(file.size / (1024 * 1024)).toFixed(2)}MB`);
+              console.log(`📁 Compressed size: ${(compressedFile.size / (1024 * 1024)).toFixed(2)}MB`);
+              console.log(`📊 Compression ratio: ${((1 - compressedFile.size / file.size) * 100).toFixed(1)}%`);
 
-                // Clean up ffmpeg files
-                await ffmpeg.deleteFile(inputFileName);
-                await ffmpeg.deleteFile(outputFileName);
+              // Clean up ffmpeg files
+              await ffmpeg.deleteFile(inputFileName);
+              await ffmpeg.deleteFile(outputFileName);
 
-                resolve(compressedFile);
-                taskResolve();
-                return;
-              } else {
-                // Clean up ffmpeg files
-                await ffmpeg.deleteFile(inputFileName);
-                await ffmpeg.deleteFile(outputFileName);
+              resolve(compressedFile);
+              taskResolve();
+              return;
+            } else {
+              // Clean up ffmpeg files
+              await ffmpeg.deleteFile(inputFileName);
+              await ffmpeg.deleteFile(outputFileName);
 
-                const compressedSizeMB = (compressedData instanceof Uint8Array ? compressedData.length : 0) / (1024 * 1024);
-                const targetSizeMB = maxSizeInBytes / (1024 * 1024);
-                const originalSizeMB = file.size / (1024 * 1024);
-                
-                console.log(`❌ Video compression failed!`);
-                console.log(`📁 Original size: ${originalSizeMB.toFixed(2)}MB`);
-                console.log(`📁 Compressed size: ${compressedSizeMB.toFixed(2)}MB`);
-                console.log(`🎯 Target size: ${targetSizeMB.toFixed(2)}MB`);
-                console.log(`📊 Compression ratio: ${((1 - compressedSizeMB / originalSizeMB) * 100).toFixed(1)}%`);
+              const compressedSizeMB =
+                (compressedData instanceof Uint8Array ? compressedData.length : 0) / (1024 * 1024);
+              const targetSizeMB = maxSizeInBytes / (1024 * 1024);
+              const originalSizeMB = file.size / (1024 * 1024);
 
-                const errorMsg = `Video compressed to ${compressedSizeMB.toFixed(1)}MB. The maximum allowed size for videos is 20 MB.`;
-                reject(errorMsg);
-                taskReject(errorMsg);
-              }
+              console.log(`❌ Video compression failed!`);
+              console.log(`📁 Original size: ${originalSizeMB.toFixed(2)}MB`);
+              console.log(`📁 Compressed size: ${compressedSizeMB.toFixed(2)}MB`);
+              console.log(`🎯 Target size: ${targetSizeMB.toFixed(2)}MB`);
+              console.log(`📊 Compression ratio: ${((1 - compressedSizeMB / originalSizeMB) * 100).toFixed(1)}%`);
+
+              const errorMsg = `Video compressed to ${compressedSizeMB.toFixed(1)}MB. The maximum allowed size for videos is 20 MB.`;
+              reject(errorMsg);
+              taskReject(errorMsg);
+            }
           } catch (ffmpegError) {
             console.error('❌ FFmpeg.wasm failed:', ffmpegError);
+
+            // Clean up abort listener
+            if (abortSignal && abortHandler) {
+              abortSignal.removeEventListener('abort', abortHandler);
+            }
+
+            // Check if it was cancelled
+            if (ffmpegError instanceof Error && ffmpegError.message === 'Compression cancelled') {
+              // Reset FFmpeg instance for next use
+              ffmpegInstance = null;
+              reject('Compression cancelled');
+              taskReject('Compression cancelled');
+              return;
+            }
+
             const errorMsg = `Video compression failed: ${ffmpegError instanceof Error ? ffmpegError.message : String(ffmpegError)}`;
             reject(errorMsg);
             taskReject(errorMsg);

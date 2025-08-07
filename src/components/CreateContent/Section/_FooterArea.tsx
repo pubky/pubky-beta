@@ -73,7 +73,7 @@ export default function FooterArea({
   setFilesBeingCompressed
   // charCountArticle
 }: FooterAreaProps) {
-  const { addAlert, removeAlert, updateAlert } = useAlertContext();
+  const { addAlert, removeAlert, updateAlert, updateAlertCancelState, removeAllCompressionAlerts } = useAlertContext();
   const { openModal } = useModal();
   const [addTagInput, setAddTagInput] = useState<boolean>(false);
   const [tagInput, setTagInput] = useState('');
@@ -127,8 +127,10 @@ export default function FooterArea({
 
       const processFiles = async () => {
         const validFiles: File[] = [];
+        const filesArray = Array.from(files);
 
-        for (const file of Array.from(files)) {
+        for (let i = 0; i < filesArray.length; i++) {
+          const file = filesArray[i];
           // Check if we already have 4 files - include files being compressed
           if (validFiles.length >= 4 - (selectedFiles?.length || 0) - (filesBeingCompressed || 0)) {
             break;
@@ -151,10 +153,7 @@ export default function FooterArea({
 
           if (isImage && file.size > maxImageSizeInBytes) {
             try {
-              const loadingAlertId = addAlert(
-                `Compressing image ${validFiles.length + 1}/${files.length}...`,
-                'loading'
-              );
+              const loadingAlertId = addAlert(`Compressing image ${i + 1}/${filesArray.length}...`, 'loading');
               setIsCompressing(true);
               setFilesBeingCompressed && setFilesBeingCompressed((prev) => prev + 1);
               const resizedFile = await Utils.resizeImageFile(file, maxImageSizeInBytes);
@@ -177,21 +176,36 @@ export default function FooterArea({
               continue;
             }
             let loadingAlertId: number | undefined;
+            let abortController: AbortController | undefined;
             try {
+              abortController = new AbortController();
+
               loadingAlertId = addAlert(
-                `Compressing video ${validFiles.length + 1}/${files.length}...`,
-                'loading'
+                `Compressing video ${i + 1}/${filesArray.length}...`,
+                'loading',
+                () => {
+                  // Cancel compression when cancel button is clicked
+                  abortController?.abort();
+                },
+                true // Start with cancel disabled
               );
               setIsCompressing(true);
               setFilesBeingCompressed && setFilesBeingCompressed((prev) => prev + 1);
 
-              const resizedFile = await Utils.resizeVideoFile(file, maxOtherSizeInBytes, (progress) => {
-                // Update the alert with current progress
-                updateAlert(
-                  loadingAlertId!,
-                  `Compressing video ${validFiles.length + 1}/${files.length}... ${progress}%`
-                );
-              });
+              const resizedFile = await Utils.resizeVideoFile(
+                file,
+                maxOtherSizeInBytes,
+                (progress) => {
+                  // Update the alert with current progress
+                  updateAlert(loadingAlertId!, `Compressing video ${i + 1}/${filesArray.length}... ${progress}%`);
+
+                  // Enable cancel button on first progress
+                  if (progress > 0) {
+                    updateAlertCancelState(loadingAlertId!, false);
+                  }
+                },
+                abortController.signal
+              );
 
               removeAlert(loadingAlertId);
               validFiles.push(resizedFile);
@@ -200,7 +214,13 @@ export default function FooterArea({
               if (loadingAlertId) {
                 removeAlert(loadingAlertId);
               }
-              
+
+              // Check if it was cancelled
+              if (error instanceof Error && error.message === 'Compression cancelled') {
+                // Don't show error for cancellation
+                continue;
+              }
+
               // Show the error message from compression
               const errorMessage = error instanceof Error ? error.message : String(error);
               addAlert(errorMessage, 'warning');
