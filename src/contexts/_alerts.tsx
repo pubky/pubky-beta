@@ -2,7 +2,7 @@
 
 import { Alert, Icon } from '@social/ui-shared';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useRef } from 'react';
 
 type AlertMessage = {
   id: number;
@@ -48,6 +48,7 @@ const AlertContext = createContext<AlertContextType>({
 export function AlertWrapper({ children }: { children: React.ReactNode }) {
   const isMobile = useIsMobile();
   const [alerts, setAlerts] = useState<AlertMessage[]>([]);
+  const nextIdRef = useRef(1);
 
   const addAlert = (
     content: ReactNode,
@@ -55,7 +56,8 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
     onCancel?: () => void,
     cancelDisabled?: boolean
   ): number => {
-    const id = Date.now();
+    const id = nextIdRef.current;
+    nextIdRef.current += 1;
     const isPersistent = variant === 'loading';
     setAlerts((prev) => [...prev, { id, content, variant, persistent: isPersistent, onCancel, cancelDisabled }]);
 
@@ -123,7 +125,8 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
         break;
     }
 
-    const id = Date.now();
+    const id = nextIdRef.current;
+    nextIdRef.current += 1;
 
     setAlerts((prev) => [
       ...prev,
@@ -149,7 +152,8 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
     setAlerts((prev) => prev.filter((alert) => alert.variant !== 'homeserver'));
 
     const content = isUp ? 'Homeserver restored' : 'Homeserver is down';
-    const id = Date.now();
+    const id = nextIdRef.current;
+    nextIdRef.current += 1;
 
     setAlerts((prev) => [
       ...prev,

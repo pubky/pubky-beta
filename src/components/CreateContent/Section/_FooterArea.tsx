@@ -177,11 +177,12 @@ export default function FooterArea({
             }
             let loadingAlertId: number | undefined;
             let abortController: AbortController | undefined;
+            const currentFileIndex = i + 1; // Capture the current file index
             try {
               abortController = new AbortController();
 
               loadingAlertId = addAlert(
-                `Compressing video ${i + 1}/${filesArray.length}...`,
+                `Compressing video ${currentFileIndex}/${filesArray.length}...`,
                 'loading',
                 () => {
                   // Cancel compression when cancel button is clicked
@@ -197,7 +198,7 @@ export default function FooterArea({
                 maxOtherSizeInBytes,
                 (progress) => {
                   // Update the alert with current progress
-                  updateAlert(loadingAlertId!, `Compressing video ${i + 1}/${filesArray.length}... ${progress}%`);
+                  updateAlert(loadingAlertId!, `Compressing video ${currentFileIndex}/${filesArray.length}... ${progress}%`);
 
                   // Enable cancel button on first progress
                   if (progress > 0) {

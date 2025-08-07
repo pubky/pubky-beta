@@ -101,7 +101,7 @@ export const Message = ({
             disabled={cancelDisabled}
             className={twMerge(
               'ml-2 underline transition-colors duration-200',
-              cancelDisabled ? 'text-gray-500 cursor-not-allowed' : 'text-[#e95164] hover:text-[#c8ff00]'
+              cancelDisabled ? 'text-gray-500 cursor-not-allowed' : 'text-[#c8ff00] hover:text-white'
             )}
           >
             <Typography.Body className={twMerge(colorTextCSS, 'text-opacity-80')} variant="small">
