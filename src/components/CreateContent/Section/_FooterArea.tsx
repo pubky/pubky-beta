@@ -198,7 +198,10 @@ export default function FooterArea({
                 maxOtherSizeInBytes,
                 (progress) => {
                   // Update the alert with current progress
-                  updateAlert(loadingAlertId!, `Compressing video ${currentFileIndex}/${filesArray.length}... ${progress}%`);
+                  updateAlert(
+                    loadingAlertId!,
+                    `Compressing video ${currentFileIndex}/${filesArray.length}... ${progress}%`
+                  );
 
                   // Enable cancel button on first progress
                   if (progress > 0) {
