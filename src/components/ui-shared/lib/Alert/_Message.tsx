@@ -11,6 +11,8 @@ interface MessageProps extends React.HTMLAttributes<HTMLDivElement> {
   isLosingConnection?: boolean;
   onRetry?: () => void;
   isRetrying?: boolean;
+  onCancel?: () => void;
+  cancelDisabled?: boolean;
 }
 
 export const Message = ({
@@ -22,6 +24,8 @@ export const Message = ({
   isLosingConnection,
   onRetry,
   isRetrying,
+  onCancel,
+  cancelDisabled = false,
   ...rest
 }: MessageProps) => {
   const baseCSS = `z-max relative py-1 px-2 md:py-2 md:px-4 rounded-md shadow border w-full`;
@@ -88,6 +92,20 @@ export const Message = ({
           >
             <Typography.Body className={twMerge(colorTextCSS, 'text-opacity-80')} variant="small">
               {isRetrying ? 'Trying...' : 'Try again'}
+            </Typography.Body>
+          </button>
+        )}
+        {onCancel && variant === 'loading' && (
+          <button
+            onClick={onCancel}
+            disabled={cancelDisabled}
+            className={twMerge(
+              'ml-2 underline transition-colors duration-200',
+              cancelDisabled ? 'text-gray-500 cursor-not-allowed' : 'text-[#c8ff00] hover:text-white'
+            )}
+          >
+            <Typography.Body className={twMerge(colorTextCSS, 'text-opacity-80')} variant="small">
+              Cancel
             </Typography.Body>
           </button>
         )}

@@ -81,7 +81,7 @@ export default function CreateContent({
   setIsCompressing
 }: CreateContentProps) {
   const { profile, pubky } = usePubkyClientContext();
-  const { addAlert, removeAlert } = useAlertContext();
+  const { addAlert, removeAlert, updateAlert, updateAlertCancelState, removeAllCompressionAlerts } = useAlertContext();
   const [showEmojis, setShowEmojis] = useState(false);
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -320,15 +320,55 @@ export default function CreateContent({
               continue;
             }
 
+            let loadingAlertId: number | undefined;
+            let abortController: AbortController | undefined;
             try {
-              const loadingAlertId = addAlert(`Compressing video ${i + 1}/${filesToProcess.length}...`, 'loading');
+              abortController = new AbortController();
+
+              loadingAlertId = addAlert(
+                `Compressing video ${i + 1}/${filesToProcess.length}...`,
+                'loading',
+                () => {
+                  // Cancel compression when cancel button is clicked
+                  abortController?.abort();
+                },
+                true
+              ); // Start with cancel disabled
               setIsCompressing(true);
               setFilesBeingCompressed((prev) => prev + 1);
-              const resizedFile = await Utils.resizeVideoFile(file, maxOtherSizeInBytes);
+
+              const resizedFile = await Utils.resizeVideoFile(
+                file,
+                maxOtherSizeInBytes,
+                (progress) => {
+                  // Update the alert with current progress
+                  updateAlert(loadingAlertId!, `Compressing video ${i + 1}/${filesToProcess.length}... ${progress}%`);
+
+                  // Enable cancel button on first progress
+                  if (progress > 0) {
+                    updateAlertCancelState(loadingAlertId!, false);
+                  }
+                },
+                abortController.signal
+              );
+
               removeAlert(loadingAlertId);
               validFiles.push(resizedFile);
             } catch (error) {
-              addAlert('The maximum allowed size for videos is 20 MB', 'warning');
+              // Remove the loading alert first
+              if (loadingAlertId) {
+                removeAlert(loadingAlertId);
+              }
+
+              // Check if it was cancelled
+              if (error instanceof Error && error.message === 'Compression cancelled') {
+                // Don't show error for cancellation
+                continue;
+              }
+
+              // Show the error message from compression
+              const errorMessage = error instanceof Error ? error.message : String(error);
+              addAlert(errorMessage, 'warning');
               continue;
             } finally {
               setFilesBeingCompressed((prev) => Math.max(0, prev - 1));

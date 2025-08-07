@@ -2,7 +2,7 @@
 
 import { Alert, Icon } from '@social/ui-shared';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useRef } from 'react';
 
 type AlertMessage = {
   id: number;
@@ -14,13 +14,23 @@ type AlertMessage = {
   isLosingConnection?: boolean;
   onRetry?: () => void;
   isRetrying?: boolean;
+  onCancel?: () => void;
+  cancelDisabled?: boolean;
 };
 
 type ConnectionStatus = 'waiting' | 'restored' | 'lost';
 
 type AlertContextType = {
-  addAlert: (content: ReactNode, variant?: 'default' | 'warning' | 'loading') => number;
+  addAlert: (
+    content: ReactNode,
+    variant?: 'default' | 'warning' | 'loading',
+    onCancel?: () => void,
+    cancelDisabled?: boolean
+  ) => number;
   removeAlert: (id: number) => void;
+  updateAlert: (id: number, content: ReactNode) => void;
+  updateAlertCancelState: (id: number, cancelDisabled: boolean) => void;
+  removeAllCompressionAlerts: () => void;
   connectionAlertStatus: (status: ConnectionStatus) => void;
   homeserverAlertStatus: (isUp: boolean, onRetry?: () => void, isRetrying?: boolean) => void;
 };
@@ -28,6 +38,9 @@ type AlertContextType = {
 const AlertContext = createContext<AlertContextType>({
   addAlert: () => 0,
   removeAlert: () => {},
+  updateAlert: () => {},
+  updateAlertCancelState: () => {},
+  removeAllCompressionAlerts: () => {},
   connectionAlertStatus: () => {},
   homeserverAlertStatus: () => {}
 });
@@ -35,11 +48,18 @@ const AlertContext = createContext<AlertContextType>({
 export function AlertWrapper({ children }: { children: React.ReactNode }) {
   const isMobile = useIsMobile();
   const [alerts, setAlerts] = useState<AlertMessage[]>([]);
+  const nextIdRef = useRef(1);
 
-  const addAlert = (content: ReactNode, variant: 'default' | 'warning' | 'loading' = 'default'): number => {
-    const id = Date.now();
+  const addAlert = (
+    content: ReactNode,
+    variant: 'default' | 'warning' | 'loading' = 'default',
+    onCancel?: () => void,
+    cancelDisabled?: boolean
+  ): number => {
+    const id = nextIdRef.current;
+    nextIdRef.current += 1;
     const isPersistent = variant === 'loading';
-    setAlerts((prev) => [...prev, { id, content, variant, persistent: isPersistent }]);
+    setAlerts((prev) => [...prev, { id, content, variant, persistent: isPersistent, onCancel, cancelDisabled }]);
 
     // Only auto-remove if not persistent
     if (!isPersistent) {
@@ -53,6 +73,26 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
 
   const removeAlert = (id: number) => {
     setAlerts((prev) => prev.filter((alert) => alert.id !== id));
+  };
+
+  const updateAlert = (id: number, content: ReactNode) => {
+    setAlerts((prev) => prev.map((alert) => (alert.id === id ? { ...alert, content } : alert)));
+  };
+
+  const updateAlertCancelState = (id: number, cancelDisabled: boolean) => {
+    setAlerts((prev) => prev.map((alert) => (alert.id === id ? { ...alert, cancelDisabled } : alert)));
+  };
+
+  const removeAllCompressionAlerts = () => {
+    setAlerts((prev) =>
+      prev.filter((alert) => {
+        // Remove all loading alerts that contain "Compressing"
+        if (alert.variant === 'loading' && typeof alert.content === 'string') {
+          return !alert.content.includes('Compressing');
+        }
+        return true;
+      })
+    );
   };
 
   const connectionAlertStatus = (status: ConnectionStatus) => {
@@ -85,7 +125,8 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
         break;
     }
 
-    const id = Date.now();
+    const id = nextIdRef.current;
+    nextIdRef.current += 1;
 
     setAlerts((prev) => [
       ...prev,
@@ -111,7 +152,8 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
     setAlerts((prev) => prev.filter((alert) => alert.variant !== 'homeserver'));
 
     const content = isUp ? 'Homeserver restored' : 'Homeserver is down';
-    const id = Date.now();
+    const id = nextIdRef.current;
+    nextIdRef.current += 1;
 
     setAlerts((prev) => [
       ...prev,
@@ -161,26 +203,51 @@ export function AlertWrapper({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AlertContext.Provider value={{ addAlert, removeAlert, connectionAlertStatus, homeserverAlertStatus }}>
+    <AlertContext.Provider
+      value={{
+        addAlert,
+        removeAlert,
+        updateAlert,
+        updateAlertCancelState,
+        removeAllCompressionAlerts,
+        connectionAlertStatus,
+        homeserverAlertStatus
+      }}
+    >
       {children}
       <div
         style={{ bottom: isMobile ? '96px' : '24px' }}
         className="fixed z-max left-1/2 transform -translate-x-1/2 flex flex-col gap-2"
       >
-        {alerts.map(({ id, content, variant = 'default', isOnline, isUp, isLosingConnection, onRetry, isRetrying }) => (
-          <Alert.Message
-            key={id}
-            icon={iconToShow(variant, isOnline, isUp, isLosingConnection)}
-            variant={variant}
-            isOnline={isOnline}
-            isUp={isUp}
-            isLosingConnection={isLosingConnection}
-            onRetry={onRetry}
-            isRetrying={isRetrying}
-          >
-            {content}
-          </Alert.Message>
-        ))}
+        {alerts.map(
+          ({
+            id,
+            content,
+            variant = 'default',
+            isOnline,
+            isUp,
+            isLosingConnection,
+            onRetry,
+            isRetrying,
+            onCancel,
+            cancelDisabled
+          }) => (
+            <Alert.Message
+              key={id}
+              icon={iconToShow(variant, isOnline, isUp, isLosingConnection)}
+              variant={variant}
+              isOnline={isOnline}
+              isUp={isUp}
+              isLosingConnection={isLosingConnection}
+              onRetry={onRetry}
+              isRetrying={isRetrying}
+              onCancel={onCancel}
+              cancelDisabled={cancelDisabled}
+            >
+              {content}
+            </Alert.Message>
+          )
+        )}
       </div>
     </AlertContext.Provider>
   );
