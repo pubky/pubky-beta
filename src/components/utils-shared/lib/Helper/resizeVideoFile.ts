@@ -97,16 +97,20 @@ export async function resizeVideoFile(
             let preset: string;
             let crf: number;
             
-            if (file.size < 40 * 1024 * 1024) {
-              // Small files (< 40MB): ultrafast for speed
+            if (file.size < 30 * 1024 * 1024) {
+              // Small files (< 30MB)
               preset = 'ultrafast';
+              crf = 25;
+            } else if (file.size < 60 * 1024 * 1024) {
+              // Medium files (30-60MB
+              preset = 'veryfast';
               crf = 28;
             } else if (file.size < 80 * 1024 * 1024) {
-              // Medium files (40-80MB): veryfast for balance
+              // Medium files (60-80MB)
               preset = 'veryfast';
               crf = 30;
             } else {
-              // Large files (80-100MB): fast for better compression
+              // Large files (80-100MB)
               preset = 'fast';
               crf = 32;
             }
