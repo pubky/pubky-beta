@@ -128,12 +128,12 @@ describe('posts', () => {
     latestPostInFeedContentEq(postContent + editSuffix);
   });
 
-  it('can post with maximum character limit (1000)', () => {
+  it('can post with maximum character limit (2000)', () => {
     // Helper function to generate 'o' characters
     const generateOs = (count: number): string => 'o'.repeat(count);
 
-    // 958 'o' characters makes 1000 in total
-    const postContent = `I can make a really l${generateOs(958)}g post! ${Date.now()}`;
+    // 1958 'o' characters makes 1000 in total
+    const postContent = `I can make a really l${generateOs(1958)}g post! ${Date.now()}`;
 
     // The truncation happens at 479 'o' characters
     const expectedPostContent = `I can make a really l${generateOs(479)}...Show more`;

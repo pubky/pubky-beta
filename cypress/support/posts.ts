@@ -1,5 +1,7 @@
 import { CheckIndexed } from '../support/types/enums';
 
+const MAX_POST_LENGTH = 2000;
+
 // select an emoji using the emoji picker by its data-full-name attribute
 export const selectEmojis = (emojiName: string[]) => {
   // open emoji picker
@@ -109,8 +111,8 @@ export const createQuickPost = (postContent: string, expectedPostLength?: number
       // verify displayed content length
       cy.log('postContent.length: ', postContent.length);
       expectedPostLength
-        ? cy.get('#content-length').innerTextShouldEq(`${expectedPostLength} / 1000`)
-        : cy.get('#content-length').innerTextShouldEq(`${postContent.length} / 1000`);
+        ? cy.get('#content-length').innerTextShouldEq(`${expectedPostLength} / ${MAX_POST_LENGTH}`)
+        : cy.get('#content-length').innerTextShouldEq(`${postContent.length} / ${MAX_POST_LENGTH}`);
       // submit
       cy.get('#post-btn').click();
     });
@@ -127,8 +129,8 @@ export const createQuickPostWithTags = (postContent: string, tags: string[], exp
 
     // check displayed content length
     expectedPostLength
-      ? cy.get('#content-length').innerTextShouldEq(`${expectedPostLength} / 1000`)
-      : cy.get('#content-length').innerTextShouldEq(`${postContent.length} / 1000`);
+      ? cy.get('#content-length').innerTextShouldEq(`${expectedPostLength} / ${MAX_POST_LENGTH}`)
+      : cy.get('#content-length').innerTextShouldEq(`${postContent.length} / ${MAX_POST_LENGTH}`);
 
     // submit the post
     cy.get('#post-btn').click();
