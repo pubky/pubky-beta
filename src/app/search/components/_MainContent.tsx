@@ -93,16 +93,13 @@ export function MainContent() {
   };
 
   useEffect(() => {
-    // Extract the full tags parameter from the URL
-    const url = window.location.href;
-    const tagsRegex = /[?&]tags=([^#]*)/;
-    const match = url.match(tagsRegex);
-    const search = match ? match[1] : null;
+    // Extract tags parameter from URL using Next.js searchParams
+    const tagsParam = searchParams.get('tags');
 
-    if (search) {
-      const tagsArray = search.split(',').map((tag) => {
+    if (tagsParam) {
+      const tagsArray = tagsParam.split(',').map((tag) => {
         try {
-          // First decode the URL, then convert to lowercase
+          // Decode URL component and convert to lowercase
           const result = decodeURIComponent(tag).toLowerCase();
           return result;
         } catch (e) {
