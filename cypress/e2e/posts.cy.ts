@@ -16,7 +16,8 @@ import {
   fastTagWhilstCreatingPost,
   addImage,
   waitForBookmarksToLoad,
-  checkLatestPostIsIndexed
+  checkLatestPostIsIndexed,
+  MAX_POST_LENGTH
 } from '../support/posts';
 import { defaultMs, fastMs } from '../support/slow-down';
 import { CheckIndexed, HasBackedUp, SkipOnboardingSlides } from '../support/types/enums';
@@ -162,7 +163,7 @@ describe('posts', () => {
       // type the rest of the post
       cy.get('textarea').type(postContentWithoutEmoji);
       // check displayed content length
-      cy.get('#content-length').innerTextShouldEq(`${postContent.length} / 1000`);
+      cy.get('#content-length').innerTextShouldEq(`${postContent.length} / ${MAX_POST_LENGTH}`);
       // submit
       cy.get('#post-btn').click();
       // wait for textarea to be cleared to ensure post is submitted

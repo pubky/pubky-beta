@@ -1,6 +1,6 @@
 import { CheckIndexed } from '../support/types/enums';
 
-const MAX_POST_LENGTH = 2000;
+export const MAX_POST_LENGTH = 2000;
 
 // select an emoji using the emoji picker by its data-full-name attribute
 export const selectEmojis = (emojiName: string[]) => {
