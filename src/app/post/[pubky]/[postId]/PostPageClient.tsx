@@ -23,19 +23,15 @@ export default function PostPage({ pubky, postId }: PostPageClientProps) {
       // Prevent opening multiple times
       if (hasOpenedModal.current) return;
 
-      console.log('PostPageClient: Attempting to open modal for post', { pubky, postId });
-
       try {
         // Fetch the post data
         const post = await getPost(pubky, postId, currentUserPubky ?? '');
 
         if (post) {
-          console.log('PostPageClient: Post found, opening modal');
           // Open the PostView modal with the fetched post
           openModal('postView', { post });
           hasOpenedModal.current = true;
         } else {
-          console.log('PostPageClient: Post not found, opening modal with deleted post');
           // Create a mock deleted post when the post doesn't exist
           const mockDeletedPost = {
             details: {
