@@ -249,6 +249,12 @@ export default function ContentCreateArticle({
         } finally {
           setIsCompressing(false);
         }
+      } else if (isImage && file.type !== 'image/gif' && file.type !== 'image/svg+xml') {
+        try {
+          processedFile = await Utils.stripImageMetadata(file);
+        } catch (e) {
+          // keep original on failure
+        }
       } else if (isVideo && file.size > maxOtherSizeInBytes) {
         // Check if video is too large for compression
         if (file.size > maxVideoSizeForCompressionInBytes) {
@@ -377,6 +383,12 @@ export default function ContentCreateArticle({
             return;
           } finally {
             setIsCompressing(false);
+          }
+        } else if (isImage) {
+          try {
+            processedFile = await Utils.stripImageMetadata(file);
+          } catch (e) {
+            // keep original on failure
           }
         } else if (isVideo && file.size > maxOtherSizeInBytes) {
           // Check if video is too large for compression
