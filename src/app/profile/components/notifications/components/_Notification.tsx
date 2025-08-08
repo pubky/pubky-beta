@@ -6,9 +6,12 @@ import { Icon, Typography, PostUtil } from '@social/ui-shared';
 import Link from 'next/link';
 import { ImageByUri } from '@/components/ImageByUri';
 import { getUserProfile } from '@/services/userService';
+import { getPost } from '@/services/postService';
 import { usePubkyClientContext, useNotificationsContext } from '@/contexts';
 import { NotificationView, UserView } from '@/types/User';
+import { PostView } from '@/types/Post';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { parse_uri } from 'pubky-app-specs';
 
 const notificationType = {
   follow: {
@@ -72,6 +75,7 @@ export default function Notification({ notification, unread }: { notification: N
   const [user, setUser] = useState<UserView | null | undefined>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [currentNotificationId, setCurrentNotificationId] = useState<string | number>('');
+  const [repostedPost, setRepostedPost] = useState<PostView | null>(null);
 
   const fetchProfile = useCallback(
     async (userId: string) => {
@@ -89,6 +93,28 @@ export default function Notification({ notification, unread }: { notification: N
     [pubky]
   );
 
+  const fetchRepostedPost = useCallback(
+    async (repostUri: string) => {
+      try {
+        const parsed = parse_uri(repostUri);
+
+        if (parsed.resource === 'posts') {
+          const authorId = parsed.user_id;
+          const postId = parsed.resource_id!;
+          const result = await getPost(authorId, postId, pubky ?? '');
+          setRepostedPost(result);
+        } else {
+          console.error('Invalid repost URI:', repostUri);
+          setRepostedPost(null);
+        }
+      } catch (error) {
+        console.error('Error fetching reposted post:', error);
+        setRepostedPost(null);
+      }
+    },
+    [pubky]
+  );
+
   useEffect(() => {
     // Identifier for this notification to track changes
     const notificationId = notification.timestamp;
@@ -98,6 +124,7 @@ export default function Notification({ notification, unread }: { notification: N
       setCurrentNotificationId(notificationId);
       setUser(undefined);
       setIsLoading(true);
+      setRepostedPost(null);
     }
 
     let userId: string | undefined;
@@ -137,7 +164,12 @@ export default function Notification({ notification, unread }: { notification: N
       // If no userId found, set loading to false immediately
       setIsLoading(false);
     }
-  }, [notification, fetchProfile, currentNotificationId, userProfilesCache]);
+
+    // Fetch reposted post for repost notifications
+    if (notification.body.type === notificationType?.repost?.type && notification.body.repost_uri) {
+      fetchRepostedPost(notification.body.repost_uri);
+    }
+  }, [notification, fetchProfile, fetchRepostedPost, currentNotificationId, userProfilesCache]);
 
   const currentNotificationType = notificationType[notification?.body?.type as NotificationTypeKey];
 
@@ -172,10 +204,22 @@ export default function Notification({ notification, unread }: { notification: N
       ? Utils.encodePostUri(notification.body.parent_post_uri)
       : '';
 
-  const repostLink =
-    notification.body.type === notificationType?.repost?.type && notification.body.repost_uri
-      ? Utils.encodePostUri(notification.body.repost_uri)
-      : '';
+  // For repost notifications, determine which URI to use for the "View Repost" link
+  const getRepostLink = () => {
+    if (notification.body.type !== notificationType?.repost?.type || !notification.body.repost_uri) {
+      return '';
+    }
+
+    // If reposted post has empty content, use the embed_uri (main post) instead
+    if (repostedPost && repostedPost.details.content === '') {
+      return notification.body.embed_uri ? Utils.encodePostUri(notification.body.embed_uri) : '';
+    }
+
+    // Otherwise use the repost_uri
+    return Utils.encodePostUri(notification.body.repost_uri);
+  };
+
+  const repostLink = getRepostLink();
 
   const embedLink =
     notification.body.type === notificationType?.repost?.type && notification.body.embed_uri
