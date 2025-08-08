@@ -313,6 +313,18 @@ export default function CreateContent({
                 setIsCompressing(false);
               }
             }
+          } else if (
+            isImage &&
+            file.type !== 'image/gif' &&
+            file.type !== 'image/svg+xml' &&
+            file.type !== 'image/webp'
+          ) {
+            try {
+              const cleaned = await Utils.stripImageMetadata(file);
+              validFiles.push(cleaned);
+            } catch (e) {
+              validFiles.push(file);
+            }
           } else if (isVideo && file.size > maxOtherSizeInBytes) {
             // Check if video is too large for compression
             if (file.size > maxVideoSizeForCompressionInBytes) {
