@@ -249,7 +249,12 @@ export default function ContentCreateArticle({
         } finally {
           setIsCompressing(false);
         }
-      } else if (isImage && file.type !== 'image/gif' && file.type !== 'image/svg+xml') {
+      } else if (
+        isImage &&
+        file.type !== 'image/gif' &&
+        file.type !== 'image/svg+xml' &&
+        file.type !== 'image/webp'
+      ) {
         try {
           processedFile = await Utils.stripImageMetadata(file);
         } catch (e) {
@@ -384,7 +389,12 @@ export default function ContentCreateArticle({
           } finally {
             setIsCompressing(false);
           }
-        } else if (isImage) {
+        } else if (
+          isImage &&
+          file.type !== 'image/gif' &&
+          file.type !== 'image/svg+xml' &&
+          file.type !== 'image/webp'
+        ) {
           try {
             processedFile = await Utils.stripImageMetadata(file);
           } catch (e) {

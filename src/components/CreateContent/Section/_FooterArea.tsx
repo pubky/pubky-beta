@@ -239,7 +239,12 @@ export default function FooterArea({
           } else if (!isImage && !isVideo && file.size > maxOtherSizeInBytes) {
             addAlert('The maximum allowed size is 20 MB', 'warning');
             continue;
-          } else if (isImage && file.type !== 'image/gif' && file.type !== 'image/svg+xml') {
+          } else if (
+            isImage &&
+            file.type !== 'image/gif' &&
+            file.type !== 'image/svg+xml' &&
+            file.type !== 'image/webp'
+          ) {
             try {
               const cleaned = await Utils.stripImageMetadata(file);
               validFiles.push(cleaned);
