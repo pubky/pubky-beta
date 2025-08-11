@@ -170,7 +170,7 @@ export default function InputArea({
                 );
 
                 removeAlert(loadingAlertId);
-                
+
                 // After conversion, check if the converted file needs compression
                 if (convertedFile.size > maxOtherSizeInBytes) {
                   // Check if video is too large for compression (100MB limit)
@@ -178,7 +178,7 @@ export default function InputArea({
                     addAlert('The maximum allowed size for videos compression is 100 MB', 'warning');
                     continue;
                   }
-                  
+
                   // Video needs compression (between 20MB and 100MB)
                   let compressionLoadingAlertId: number | undefined;
                   let abortController: AbortController | undefined;
@@ -224,13 +224,17 @@ export default function InputArea({
                     }
 
                     // Check if it was cancelled
-                    if (compressionError instanceof Error && compressionError.message.includes('Compression cancelled')) {
+                    if (
+                      compressionError instanceof Error &&
+                      compressionError.message.includes('Compression cancelled')
+                    ) {
                       // Don't show error for cancellation
                       continue;
                     }
 
                     // Show the error message from compression
-                    const errorMessage = compressionError instanceof Error ? compressionError.message : String(compressionError);
+                    const errorMessage =
+                      compressionError instanceof Error ? compressionError.message : String(compressionError);
                     addAlert(errorMessage, 'warning');
                     continue;
                   } finally {
@@ -244,7 +248,7 @@ export default function InputArea({
                   // No compression needed, add the converted file directly
                   validFiles.push(convertedFile);
                 }
-                
+
                 continue;
               } catch (error) {
                 // Remove the loading alert first
