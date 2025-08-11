@@ -28,6 +28,7 @@ import sanitizeUrlsArticle from './lib/Helper/sanitizeUrlsArticle';
 import { resizeImageFile } from './lib/Helper/resizeImageFile';
 import { resizeVideoFile } from './lib/Helper/resizeVideoFile';
 import { stripImageMetadata } from './lib/Helper/stripImageMetadata';
+import { convertVideo } from './lib/Helper/convertVideo';
 import { censoredTags } from './lib/Helper/Moderation/censoredTags';
 import isPostCensored from './lib/Helper/Moderation/isPostCensored';
 import isProfileCensored from './lib/Helper/Moderation/isProfileCensored';
@@ -67,5 +68,6 @@ export const Utils = {
   sanitizeUrlsArticle,
   resizeImageFile,
   resizeVideoFile,
-  stripImageMetadata
+  stripImageMetadata,
+  convertVideo
 };

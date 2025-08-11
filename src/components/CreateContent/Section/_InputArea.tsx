@@ -131,6 +131,146 @@ export default function InputArea({
             isPDF;
 
           if (!isValidType) {
+            // Try to convert unsupported video types to MP4
+            if (isVideo && !Utils.supportedVideoTypes.includes(file.type)) {
+              let loadingAlertId: number | undefined;
+              let abortController: AbortController | undefined;
+              try {
+                abortController = new AbortController();
+
+                loadingAlertId = addAlert(
+                  `Converting video ${i + 1}/${filesArray.length} to MP4... 0%`,
+                  'loading',
+                  () => {
+                    // Cancel conversion when cancel button is clicked
+                    abortController?.abort();
+                  },
+                  true // Start with cancel disabled
+                );
+                setIsCompressing(true);
+                setFilesBeingCompressed && setFilesBeingCompressed((prev) => prev + 1);
+
+                const convertedFile = await Utils.convertVideo(
+                  file,
+                  (progress) => {
+                    // Update the alert with current progress
+                    if (loadingAlertId) {
+                      updateAlert(
+                        loadingAlertId,
+                        `Converting video ${i + 1}/${filesArray.length} to MP4... ${progress}%`
+                      );
+                    }
+
+                    // Enable cancel button on first progress
+                    if (progress > 0) {
+                      updateAlertCancelState(loadingAlertId!, false);
+                    }
+                  },
+                  abortController.signal
+                );
+
+                removeAlert(loadingAlertId);
+                
+                // After conversion, check if the converted file needs compression
+                if (convertedFile.size > maxOtherSizeInBytes) {
+                  // Check if video is too large for compression (100MB limit)
+                  if (convertedFile.size > maxVideoSizeForCompressionInBytes) {
+                    addAlert('The maximum allowed size for videos compression is 100 MB', 'warning');
+                    continue;
+                  }
+                  
+                  // Video needs compression (between 20MB and 100MB)
+                  let compressionLoadingAlertId: number | undefined;
+                  let abortController: AbortController | undefined;
+                  try {
+                    abortController = new AbortController();
+
+                    compressionLoadingAlertId = addAlert(
+                      `Compressing converted video ${i + 1}/${filesArray.length}...`,
+                      'loading',
+                      () => {
+                        // Cancel compression when cancel button is clicked
+                        abortController?.abort();
+                      },
+                      true // Start with cancel disabled
+                    );
+                    setIsCompressing(true);
+                    setFilesBeingCompressed && setFilesBeingCompressed((prev) => prev + 1);
+
+                    const resizedFile = await Utils.resizeVideoFile(
+                      convertedFile,
+                      maxOtherSizeInBytes,
+                      (progress) => {
+                        // Update the alert with current progress
+                        updateAlert(
+                          compressionLoadingAlertId!,
+                          `Compressing converted video ${i + 1}/${filesArray.length}... ${progress}%`
+                        );
+
+                        // Enable cancel button on first progress
+                        if (progress > 0) {
+                          updateAlertCancelState(compressionLoadingAlertId!, false);
+                        }
+                      },
+                      abortController.signal
+                    );
+
+                    removeAlert(compressionLoadingAlertId);
+                    validFiles.push(resizedFile);
+                  } catch (compressionError) {
+                    // Remove the loading alert first
+                    if (compressionLoadingAlertId) {
+                      removeAlert(compressionLoadingAlertId);
+                    }
+
+                    // Check if it was cancelled
+                    if (compressionError instanceof Error && compressionError.message.includes('Compression cancelled')) {
+                      // Don't show error for cancellation
+                      continue;
+                    }
+
+                    // Show the error message from compression
+                    const errorMessage = compressionError instanceof Error ? compressionError.message : String(compressionError);
+                    addAlert(errorMessage, 'warning');
+                    continue;
+                  } finally {
+                    setFilesBeingCompressed && setFilesBeingCompressed((prev) => Math.max(0, prev - 1));
+                    // Only set compressing to false when all files are processed
+                    if (validFiles.length === files.length) {
+                      setIsCompressing(false);
+                    }
+                  }
+                } else {
+                  // No compression needed, add the converted file directly
+                  validFiles.push(convertedFile);
+                }
+                
+                continue;
+              } catch (error) {
+                // Remove the loading alert first
+                if (loadingAlertId) {
+                  removeAlert(loadingAlertId);
+                }
+
+                // Check if it was cancelled
+                if (error instanceof Error && error.message.includes('Conversion cancelled')) {
+                  // Don't show error for cancellation
+                  continue;
+                }
+
+                // Show error and continue with next file
+                addAlert('Video conversion failed. File type not supported.', 'warning');
+                continue;
+              } finally {
+                setFilesBeingCompressed && setFilesBeingCompressed((prev) => Math.max(0, prev - 1));
+                // Only set compressing to false when all files are processed
+                if (validFiles.length === files.length) {
+                  setIsCompressing(false);
+                }
+              }
+            }
+
+            // If not video, show error
             addAlert('File type not supported.', 'warning');
             continue;
           }
