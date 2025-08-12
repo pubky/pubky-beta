@@ -16,7 +16,7 @@ export const LinksStoreApp = ({ ...rest }: LinksStoreAppProps) => {
           alt="Apple Store"
         />
       </Link>
-      <Link target="_blank" href="https://play.google.com/apps/testing/to.pubkyring">
+      <Link target="_blank" href="https://play.google.com/store/apps/details?id=to.pubky.ring">
         <img
           className="w-full h-[65px] sm:w-[112px] sm:h-[45px] object-contain"
           src="/images/webp/google-play.webp"
