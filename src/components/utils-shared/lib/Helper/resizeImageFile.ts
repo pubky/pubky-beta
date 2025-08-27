@@ -1,6 +1,12 @@
 // Utility to resize an image file to fit within a maximum file size while maintaining aspect ratio
 export async function resizeImageFile(file: File, maxSizeInBytes: number = 5 * 1024 * 1024): Promise<File> {
   return new Promise((resolve, reject) => {
+    // Check if file is a GIF and exceeds size limit
+    if (file.type === 'image/gif' && file.size > maxSizeInBytes) {
+      reject('GIF files cannot be compressed as it would lose the animation. Please use a GIF under 5 MB.');
+      return;
+    }
+
     const img = new window.Image();
     const reader = new FileReader();
 

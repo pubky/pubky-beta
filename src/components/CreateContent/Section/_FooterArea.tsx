@@ -152,14 +152,19 @@ export default function FooterArea({
           }
 
           if (isImage && file.size > maxImageSizeInBytes) {
+            let loadingAlertId: number | undefined;
             try {
-              const loadingAlertId = addAlert(`Compressing image ${i + 1}/${filesArray.length}...`, 'loading');
+              loadingAlertId = addAlert(`Compressing image ${i + 1}/${filesArray.length}...`, 'loading');
               setIsCompressing(true);
               setFilesBeingCompressed && setFilesBeingCompressed((prev) => prev + 1);
               const resizedFile = await Utils.resizeImageFile(file, maxImageSizeInBytes);
               removeAlert(loadingAlertId);
               validFiles.push(resizedFile);
             } catch (error) {
+              // Remove the loading alert if it exists
+              if (loadingAlertId) {
+                removeAlert(loadingAlertId);
+              }
               addAlert('The maximum allowed size for images is 5 MB', 'warning');
               continue;
             } finally {

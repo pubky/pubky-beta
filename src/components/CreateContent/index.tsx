@@ -296,14 +296,19 @@ export default function CreateContent({
           const isVideo = file.type.startsWith('video/');
 
           if (isImage && file.size > maxImageSizeInBytes) {
+            let loadingAlertId: number | undefined;
             try {
-              const loadingAlertId = addAlert(`Compressing image ${i + 1}/${filesToProcess.length}...`, 'loading');
+              loadingAlertId = addAlert(`Compressing image ${i + 1}/${filesToProcess.length}...`, 'loading');
               setIsCompressing(true);
               setFilesBeingCompressed((prev) => prev + 1);
               const resizedFile = await Utils.resizeImageFile(file, maxImageSizeInBytes);
               removeAlert(loadingAlertId);
               validFiles.push(resizedFile);
             } catch (error) {
+              // Remove the loading alert if it exists
+              if (loadingAlertId) {
+                removeAlert(loadingAlertId);
+              }
               addAlert('The maximum allowed size for images is 5 MB', 'warning');
               continue;
             } finally {
