@@ -33,10 +33,11 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_HOMESERVER: process.env.NEXT_PUBLIC_HOMESERVER || '11111111111111111111111111111111'
   },
-  transpilePackages: ['pubky-app-specs'],
+  // transpilePackages: ['pubky-app-specs'],
   webpack: (config, { isServer }) => {
     if (isServer) {
       config.externals.push('@synonymdev/pubky');
+     // config.externals.push('pubky-app-specs');
     }
 
     config.experiments = {
