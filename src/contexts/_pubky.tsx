@@ -169,7 +169,7 @@ const PubkyClientContext = createContext({} as PubkyClientContextType);
 
 export function PubkyClientWrapper({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
-  const [specsWasmLoaded, setSpecsWasmLoaded] = useState(false);
+  const [ready, setReady] = useState(false);
   const [wasmError, setWasmError] = useState<string | null>(null);
   const [pubky, setPubky] = useState<string | undefined>(
     (Utils.storage.get('pubky_public_key') as string) || undefined
@@ -196,26 +196,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
   const [singlePost, setSinglePost] = useState<PostView | undefined>(undefined);
 
   useEffect(() => {
-    if (!specsWasmLoaded) {
-      try {
-        setSpecsWasmLoaded(true);
-      } catch (err) {
-        let message = 'Failed to load core module.';
-        if (typeof window !== 'undefined' && navigator.userAgent.includes('Graphene')) {
-          message =
-            'This device appears to be running GrapheneOS with JIT disabled. Please enable JIT in your browser settings to use Pubky.';
-        } else if (
-          err &&
-          typeof err.message === 'string' &&
-          (err.message.includes('WebAssembly') || err.message.includes('JIT') || err.message.includes('not supported'))
-        ) {
-          message =
-            'WebAssembly failed to load. If you are using GrapheneOS, please enable JIT in your browser settings.';
-        }
-        setWasmError(message);
-        setSpecsWasmLoaded(false);
-      }
-    }
+    setReady(true);
   }, []);
 
   useEffect(() => {
@@ -226,10 +207,10 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
   }, [newUser]);
 
   useEffect(() => {
-    specsWasmLoaded && pubky && setSpecsBuilder(new PubkySpecsBuilder(pubky));
-  }, [specsWasmLoaded, pubky]);
+    ready && pubky && setSpecsBuilder(new PubkySpecsBuilder(pubky));
+  }, [ready, pubky]);
 
-  if (wasmError && !specsWasmLoaded) {
+  if (wasmError) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-white p-8">
         <h1 className="text-2xl font-bold mb-4">Initialization Error</h1>
@@ -244,7 +225,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
     );
   }
 
-  if (!specsWasmLoaded) {
+  if (!ready) {
     return (
       <div className="flex justify-center items-center h-screen">
         <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white" />
