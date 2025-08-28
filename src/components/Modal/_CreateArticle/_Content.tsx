@@ -244,7 +244,9 @@ export default function ContentCreateArticle({
           processedFile = await Utils.resizeImageFile(file, maxImageSizeInBytes);
           removeAlert(loadingAlertId);
         } catch (error) {
-          setErrorFile('The maximum allowed size for images is 5 MB');
+          // Show the actual error message from the compression function
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          addAlert(errorMessage, 'warning');
           return;
         } finally {
           setIsCompressing(false);
@@ -379,7 +381,9 @@ export default function ContentCreateArticle({
             processedFile = await Utils.resizeImageFile(file, maxImageSizeInBytes);
             removeAlert(loadingAlertId);
           } catch (error) {
-            addAlert('The maximum allowed size for images is 5 MB', 'warning');
+            // Show the actual error message from the compression function
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            addAlert(errorMessage, 'warning');
             return;
           } finally {
             setIsCompressing(false);

@@ -165,7 +165,9 @@ export default function FooterArea({
               if (loadingAlertId) {
                 removeAlert(loadingAlertId);
               }
-              addAlert('The maximum allowed size for images is 5 MB', 'warning');
+              // Show the actual error message from the compression function
+              const errorMessage = error instanceof Error ? error.message : String(error);
+              addAlert(errorMessage, 'warning');
               continue;
             } finally {
               setFilesBeingCompressed && setFilesBeingCompressed((prev) => Math.max(0, prev - 1));
