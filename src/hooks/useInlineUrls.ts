@@ -14,6 +14,11 @@ interface UseInlineUrlsReturn {
   tweetId: string;
   githubUrl: string;
   spotifyUrl: string;
+  blueskyUrl: {
+    url: string;
+    did: string | null;
+    rkey: string | null;
+  };
 }
 
 export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrlsReturn => {
@@ -24,6 +29,11 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
   const [tweetId, setTweetId] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
   const [spotifyUrl, setSpotifyUrl] = useState('');
+  const [blueskyUrl, setBlueskyUrl] = useState({
+    url: '',
+    did: null as string | null,
+    rkey: null as string | null,
+  });
 
   const isValidUrl = (url: string): boolean => {
     try {
@@ -286,6 +296,36 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
     return text?.replace(/\n{3,}/g, '\n\n');
   };
 
+  // Helper function to extract Bluesky post parameters from URL
+  const extractBlueskyParams = (url: string): { handle: string; rkey: string } | null => {
+    try {
+      // Bluesky URL format: https://bsky.app/profile/{handle}/post/{rkey}
+      const match = url.match(/https:\/\/bsky\.app\/profile\/([^\/]+)\/post\/([^\/\?]+)/);
+      if (match) {
+        const [, handle, rkey] = match;
+        return { handle, rkey };
+      }
+      return null;
+    } catch (error) {
+      console.error('Error extracting Bluesky parameters:', error);
+      return null;
+    }
+  };
+
+  const resolveHandleToDid = async (handle: string): Promise<string | null> => {
+    try {
+      const response = await fetch(`https://bsky.social/xrpc/com.atproto.identity.resolveHandle?handle=${encodeURIComponent(handle)}`);
+      if (response.ok) {
+        const data = await response.json();
+        return data.did;
+      }
+      return null;
+    } catch (error) {
+      console.error('Error resolving handle to DID:', error);
+      return null;
+    }
+  };
+
   const checkForLink = async (text: string) => {
     const protocolRegex = /(https?:\/\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+)/g;
     const domainRegex = /(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)*/g;
@@ -468,6 +508,29 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
       // Spotify detection
       const spotifyRegex = /https:\/\/open\.spotify\.com\/(?:intl-[a-z]{2}\/)?track\/\w+/;
       if (spotifyRegex.test(url)) setSpotifyUrl(url);
+
+      // Bluesky detection
+      const blueskyRegex = /https:\/\/bsky\.app\/profile\/[\w.-]+\/post\/\w+/;
+      if (blueskyRegex.test(url)) {
+        const params = extractBlueskyParams(url);
+        if (params) {
+          setBlueskyUrl({
+            url,
+            rkey: params.rkey,
+            did: null, // Will be resolved asynchronously
+          });
+          
+          // Resolve handle to DID asynchronously
+          resolveHandleToDid(params.handle).then((resolvedDid) => {
+            if (resolvedDid) {
+              setBlueskyUrl(prev => ({
+                ...prev,
+                did: resolvedDid,
+              }));
+            }
+          });
+        }
+      }
     }
   };
 
@@ -476,6 +539,12 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
     if (!files?.length) {
       setFileContents([]);
     }
+    // Reset Bluesky URL when text changes
+    setBlueskyUrl({
+      url: '',
+      did: null,
+      rkey: null,
+    });
     setLoading(true);
     checkForLink(cleanedText).finally(() => {
       setLoading(false);
@@ -489,6 +558,7 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
     videoId,
     tweetId,
     githubUrl,
-    spotifyUrl
+    spotifyUrl,
+    blueskyUrl
   };
 };
