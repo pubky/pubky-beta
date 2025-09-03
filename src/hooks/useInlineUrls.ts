@@ -541,12 +541,19 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
     if (!files?.length) {
       setFileContents([]);
     }
-    // Reset Bluesky URL when text changes
+
+    // Reset all URL states when text changes
+    setPreview('');
+    setVideoId('');
+    setTweetId('');
+    setGithubUrl('');
+    setSpotifyUrl('');
     setBlueskyUrl({
       url: '',
       did: null,
       rkey: null
     });
+
     setLoading(true);
     checkForLink(cleanedText).finally(() => {
       setLoading(false);
