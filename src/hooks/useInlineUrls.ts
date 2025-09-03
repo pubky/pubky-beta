@@ -32,7 +32,7 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
   const [blueskyUrl, setBlueskyUrl] = useState({
     url: '',
     did: null as string | null,
-    rkey: null as string | null,
+    rkey: null as string | null
   });
 
   const isValidUrl = (url: string): boolean => {
@@ -314,7 +314,9 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
 
   const resolveHandleToDid = async (handle: string): Promise<string | null> => {
     try {
-      const response = await fetch(`https://bsky.social/xrpc/com.atproto.identity.resolveHandle?handle=${encodeURIComponent(handle)}`);
+      const response = await fetch(
+        `https://bsky.social/xrpc/com.atproto.identity.resolveHandle?handle=${encodeURIComponent(handle)}`
+      );
       if (response.ok) {
         const data = await response.json();
         return data.did;
@@ -517,15 +519,15 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
           setBlueskyUrl({
             url,
             rkey: params.rkey,
-            did: null, // Will be resolved asynchronously
+            did: null // Will be resolved asynchronously
           });
-          
+
           // Resolve handle to DID asynchronously
           resolveHandleToDid(params.handle).then((resolvedDid) => {
             if (resolvedDid) {
-              setBlueskyUrl(prev => ({
+              setBlueskyUrl((prev) => ({
                 ...prev,
-                did: resolvedDid,
+                did: resolvedDid
               }));
             }
           });
@@ -543,7 +545,7 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
     setBlueskyUrl({
       url: '',
       did: null,
-      rkey: null,
+      rkey: null
     });
     setLoading(true);
     checkForLink(cleanedText).finally(() => {
