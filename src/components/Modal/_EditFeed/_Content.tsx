@@ -8,6 +8,7 @@ import { Utils } from '@social/utils-shared';
 import { useRef, useState } from 'react';
 import EmojiPicker from '@/components/EmojiPicker';
 import { useDrawerClickOutside } from '@/hooks/useDrawerClickOutside';
+import { useSuggestedTags } from '@/hooks/useSuggestedTags';
 import { checkDuplicateName, checkDuplicateContent, handleAddTag, handleRemoveTag } from '../_CreateFeed/_UtilsFeed';
 
 interface EditFeedProps {
@@ -40,6 +41,12 @@ export default function ContentEditFeed({
   const [duplicateError, setDuplicateError] = useState<string | null>(null);
   const wrapperRefEmojis = useRef<HTMLDivElement>(null);
   useDrawerClickOutside(wrapperRefEmojis, () => setShowEmojis(false));
+
+  // Tag suggestion logic
+  const { suggestedTags, selectedTagIndex, handleKeyDown, handleTagClick } = useSuggestedTags({
+    tagInput: tag,
+    onTagSelect: (selectedTag) => setTag(selectedTag)
+  });
 
   const handleUpdateFeed = async () => {
     setLoadingEdit(true);
@@ -98,7 +105,14 @@ export default function ContentEditFeed({
     }
   };
 
-  const onAddTag = () => handleAddTag(tag, tagsFeed, setTagsFeed, setTag, setTagsError);
+  const onAddTag = () => {
+    if (selectedTagIndex > -1) {
+      const selectedTag = suggestedTags[selectedTagIndex];
+      setTag(selectedTag);
+    } else {
+      handleAddTag(tag, tagsFeed, setTagsFeed, setTag, setTagsError);
+    }
+  };
   const onRemoveTag = (indexToRemove: number) => handleRemoveTag(indexToRemove, tagsFeed, setTagsFeed, setTagsError);
 
   return (
@@ -138,15 +152,34 @@ export default function ContentEditFeed({
             )}
             <div className="w-full">
               <Input.Label className="text-uppercase text-white/30" value="Filter on content tags" />
-              <Input.Tag
-                idPrefix="create-feed"
-                value={tag}
-                onChange={(value) => setTag(value)}
-                onAddTag={onAddTag}
-                onEmojiPickerClick={() => setShowEmojis(true)}
-                variant="default"
-                className="w-full"
-              />
+              <div className="relative" onKeyDown={handleKeyDown} tabIndex={0}>
+                <Input.Tag
+                  idPrefix="create-feed"
+                  value={tag}
+                  onChange={(value) => setTag(value)}
+                  onAddTag={onAddTag}
+                  onEmojiPickerClick={() => setShowEmojis(true)}
+                  variant="default"
+                  className="w-full"
+                />
+                {suggestedTags.length > 0 && (
+                  <div className="absolute top-full left-0 mt-1 bg-[#05050A] border border-white border-opacity-20 rounded-lg z-20 w-full max-h-[150px] overflow-y-auto scrollbar-thin scrollbar-webkit">
+                    {suggestedTags.map((suggestedTag, index) => (
+                      <div
+                        key={index}
+                        onClick={() => handleTagClick(suggestedTag)}
+                        className={`cursor-pointer hover:bg-white hover:bg-opacity-10 rounded px-4 py-2 ${
+                          index === selectedTagIndex ? 'bg-white bg-opacity-10' : ''
+                        }`}
+                      >
+                        <Typography.Body variant="small" className="text-opacity-80 hover:text-opacity-100">
+                          {suggestedTag}
+                        </Typography.Body>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
           <div className="mt-2 justify-start items-start">
