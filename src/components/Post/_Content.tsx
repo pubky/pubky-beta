@@ -9,6 +9,7 @@ import Parsing from '../Content/_Parsing';
 import { Button, Icon, Skeleton, Typography } from '@social/ui-shared';
 import { FileView, PostView } from '@/types/Post';
 import SpotifyEmbed from '@/components/SpotifyEmbed';
+import { PostThread } from 'react-bluesky-embed';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { useInlineUrls } from '@/hooks/useInlineUrls';
 import { useFileLoading } from '@/hooks/useFileLoading';
@@ -53,7 +54,8 @@ export default function Content({
     videoId,
     tweetId,
     githubUrl,
-    spotifyUrl
+    spotifyUrl,
+    blueskyUrl
   } = useInlineUrls({ text: text?.toString() || '', files });
 
   const { fileContents, loading } = useFileLoading({
@@ -200,7 +202,7 @@ export default function Content({
                     ></iframe>
                   </div>
                 )}
-                {preview && !videoId && !tweetId && !githubUrl && !spotifyUrl && (
+                {preview && !videoId && !tweetId && !githubUrl && !spotifyUrl && !blueskyUrl && (
                   <div onClick={(event) => event.stopPropagation()}>
                     <LinkPreview url={preview} />
                   </div>
@@ -221,6 +223,19 @@ export default function Content({
                 {spotifyUrl && (
                   <div onClick={(event) => event.stopPropagation()} className="mt-4">
                     <SpotifyEmbed link={spotifyUrl} />
+                  </div>
+                )}
+                {blueskyUrl.url && blueskyUrl.did && blueskyUrl.rkey && (
+                  <div
+                    onClick={(event) => event.stopPropagation()}
+                    className="mt-4 no-scrollbar w-full max-w-[300px] sm:max-w-[480px] overflow-y-auto"
+                  >
+                    <PostThread
+                      params={{
+                        did: blueskyUrl.did,
+                        rkey: blueskyUrl.rkey
+                      }}
+                    />
                   </div>
                 )}
               </div>

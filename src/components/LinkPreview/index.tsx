@@ -8,6 +8,8 @@ import { usePubkyClientContext } from '@/contexts';
 import { PostView } from '@/types/Post';
 import { getPost } from '@/services/postService';
 import { Post } from '@/components';
+import { PostThread } from 'react-bluesky-embed';
+import { useInlineUrls } from '@/hooks/useInlineUrls';
 
 interface LinkPreviewerProps {
   content: string;
@@ -16,15 +18,13 @@ interface LinkPreviewerProps {
 
 export default function LinkPreviewer({ content, setQuote }: LinkPreviewerProps) {
   const { pubky } = usePubkyClientContext();
-  const [preview, setPreview] = useState('');
-  const [videoId, setVideoId] = useState('');
-  const [tweetId, setTweetId] = useState('');
-  const [githubUrl, setGithubUrl] = useState('');
-  const [spotifyUrl, setSpotifyUrl] = useState('');
   const [postPreview, setPostPreview] = useState<PostView>();
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
 
-  const checkForLink = (text: string) => {
+  // Use the useInlineUrls hook for URL detection
+  const { preview, videoId, tweetId, githubUrl, spotifyUrl, blueskyUrl } = useInlineUrls({ text: content });
+
+  const checkForPubkyPost = (text: string) => {
     if (debounceTimeout) {
       clearTimeout(debounceTimeout);
     }
@@ -94,33 +94,9 @@ export default function LinkPreviewer({ content, setQuote }: LinkPreviewerProps)
               console.error('Failed to fetch post:', error);
               setPostPreview(undefined);
             }
-
-            setPreview('');
-            return;
           }
-
-          setPreview(url);
-
-          const youtubeId = getYouTubeID(url);
-          setVideoId(youtubeId || '');
-
-          const twitterRegex = /https?:\/\/(?:www\.)?(?:twitter\.com|x\.com)\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/;
-          const twitterMatch = url.match(twitterRegex);
-          setTweetId(twitterMatch ? twitterMatch[3] : '');
-
-          const githubRegex = /https:\/\/github\.com\/[^/]+\/[^/]+/;
-          const githubMatch = url.match(githubRegex);
-          setGithubUrl(githubMatch ? githubMatch[0] : '');
-
-          const spotifyRegex = /https:\/\/open\.spotify\.com\/(?:intl-[a-z]{2}\/)?track\/\w+/;
-          setSpotifyUrl(spotifyRegex.test(url) ? url : '');
         } else {
-          setPreview('');
           setPostPreview(undefined);
-          setVideoId('');
-          setTweetId('');
-          setGithubUrl('');
-          setSpotifyUrl('');
           setQuote?.(undefined);
         }
       }, 100);
@@ -132,7 +108,7 @@ export default function LinkPreviewer({ content, setQuote }: LinkPreviewerProps)
   };
 
   useEffect(() => {
-    checkForLink(content);
+    checkForPubkyPost(content);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content]);
 
@@ -155,7 +131,8 @@ export default function LinkPreviewer({ content, setQuote }: LinkPreviewerProps)
           ></iframe>
         </div>
       )}
-      {preview && !videoId && !tweetId && !githubUrl && !spotifyUrl && (
+
+      {preview && !videoId && !tweetId && !githubUrl && !spotifyUrl && !blueskyUrl.url && (
         <div className="flex w-full overflow-hidden justify-start -mt-2">
           <PostUI.LinkPreview url={preview} />
         </div>
@@ -166,6 +143,16 @@ export default function LinkPreviewer({ content, setQuote }: LinkPreviewerProps)
         </div>
       )}
       {githubUrl && <Preview.GitHub url={githubUrl} />}
+      {blueskyUrl.url && blueskyUrl.did && blueskyUrl.rkey && (
+        <div className="no-scrollbar w-full max-w-[300px] sm:max-w-[480px] overflow-y-auto">
+          <PostThread
+            params={{
+              did: blueskyUrl.did,
+              rkey: blueskyUrl.rkey
+            }}
+          />
+        </div>
+      )}
     </>
   );
 }
