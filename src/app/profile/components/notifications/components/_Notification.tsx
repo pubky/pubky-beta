@@ -6,9 +6,12 @@ import { Icon, Typography, PostUtil } from '@social/ui-shared';
 import Link from 'next/link';
 import { ImageByUri } from '@/components/ImageByUri';
 import { getUserProfile } from '@/services/userService';
-import { usePubkyClientContext, useNotificationsContext } from '@/contexts';
+import { usePubkyClientContext, useNotificationsContext, useModal } from '@/contexts';
 import { NotificationView, UserView } from '@/types/User';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { getPost } from '@/services/postService';
+import { PostView } from '@/types/Post';
+import { parse_uri } from 'pubky-app-specs';
 
 const notificationType = {
   follow: {
@@ -68,6 +71,7 @@ type NotificationTypeKey = keyof typeof notificationType;
 export default function Notification({ notification, unread }: { notification: NotificationView; unread?: boolean }) {
   const { pubky } = usePubkyClientContext();
   const { userProfilesCache } = useNotificationsContext();
+  const { openModal } = useModal();
   const isMobile = useIsMobile();
   const [user, setUser] = useState<UserView | null | undefined>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -87,6 +91,26 @@ export default function Notification({ notification, unread }: { notification: N
       }
     },
     [pubky]
+  );
+
+  const handleRepostClick = useCallback(
+    async (repostUri: string) => {
+      try {
+        // Parse the repost URI to get author and post ID
+        const parsed = parse_uri(repostUri);
+        if (parsed.resource === 'posts') {
+          const authorId = parsed.user_id;
+          const postId = parsed.resource_id!;
+          const post = await getPost(authorId, postId, pubky ?? '');
+          if (post) {
+            openModal('postView', { post });
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching repost for modal:', error);
+      }
+    },
+    [pubky, openModal]
   );
 
   useEffect(() => {
@@ -307,11 +331,11 @@ export default function Notification({ notification, unread }: { notification: N
           )}
           {repostLink && embedLink && (
             <>
-              <Link href={repostLink}>
+              <button onClick={() => handleRepostClick(notification.body.repost_uri)} className="cursor-pointer">
                 <Typography.Body variant="small-bold" className="text-white text-opacity-80 hover:text-opacity-100">
                   View Repost
                 </Typography.Body>
-              </Link>
+              </button>
               <Typography.Body variant="small">{' - '}</Typography.Body>
               <Link href={embedLink}>
                 <Typography.Body variant="small-bold" className="text-white text-opacity-80 hover:text-opacity-100">
