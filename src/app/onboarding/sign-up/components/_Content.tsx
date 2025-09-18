@@ -3,7 +3,8 @@
 import { z } from 'zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Button, Input, Icon, Typography } from '@social/ui-shared';
 import { usePubkyClientContext } from '@/contexts';
 import { Onboarding } from '../../components';
@@ -30,6 +31,7 @@ const profileSchema = z.object({
 export default function Index() {
   const { signUp, profile } = usePubkyClientContext();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [name, setName] = useState(profile?.name || '');
   const [token, setToken] = useState('');
@@ -54,6 +56,23 @@ export default function Index() {
     const maskedValue = Utils.inviteCodeMask(e.target.value);
     setToken(maskedValue);
   };
+
+  useEffect(() => {
+    const queryToken = searchParams?.get('token') || searchParams?.get('invite');
+
+    let hashToken: string | null = null;
+    if (typeof window !== 'undefined' && window.location.hash) {
+      const hash = window.location.hash.replace(/^#/, '');
+      const params = new URLSearchParams(hash);
+      hashToken = params.get('token') || params.get('invite');
+    }
+
+    const raw = queryToken || hashToken;
+    if (raw && !token) {
+      const masked = Utils.inviteCodeMask(raw);
+      setToken(masked);
+    }
+  }, [searchParams]);
 
   const handleSubmit = async () => {
     if (loading) {
