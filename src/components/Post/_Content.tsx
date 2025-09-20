@@ -3,10 +3,10 @@
 import { Utils } from '@social/utils-shared';
 import LinkPreview from '@/components/ui-shared/lib/Post/_Preview';
 import { GitHub } from '@/components/ui-shared/lib/Preview/Github';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Tweet } from 'react-tweet';
 import Parsing from '../Content/_Parsing';
-import { Button, Icon, Skeleton, Typography } from '@social/ui-shared';
+import { Button, Skeleton, Typography } from '@social/ui-shared';
 import { FileView, PostView } from '@/types/Post';
 import SpotifyEmbed from '@/components/SpotifyEmbed';
 import { PostThread } from 'react-bluesky-embed';
@@ -16,6 +16,11 @@ import { useFileLoading } from '@/hooks/useFileLoading';
 import Link from 'next/link';
 import { PubkyAppPostKind } from 'pubky-app-specs';
 import { useModal } from '@/contexts';
+
+// QVAC hooks
+import { useTranslation } from '@/hooks/useTranslation';
+import { useSummarization } from '@/hooks/useSummarization';
+import { useRecomendTags } from '@/hooks/useRecommendTags';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -47,7 +52,7 @@ export default function Content({
   const text = post?.details?.content;
   const files = post?.details?.attachments;
 
-  // Use the new hooks for URL processing and file loading
+  // URL previews / embeds
   const {
     fileContents: externalFileContents,
     preview,
@@ -70,23 +75,9 @@ export default function Content({
     }
   }, [post?.details?.uri, isCensored]);
 
-  const handleUnblur = (event: React.MouseEvent<HTMLDivElement>) => {
-    event.stopPropagation();
-    if (post?.details?.uri) {
-      const unblurredPosts = (Utils.storage.get('unblurred_posts') as string[]) || [];
-      if (!unblurredPosts.includes(post.details.uri)) {
-        Utils.storage.set('unblurred_posts', [...unblurredPosts, post.details.uri]);
-      }
-    }
-    setIsUnblurred(true);
-  };
-
   const uri = post?.details?.uri;
   const generateFileUrl = (file: FileView, type = 'main') => {
-    if (file.src === 'external') {
-      // For external images, return the URL directly
-      return file.uri;
-    }
+    if (file.src === 'external') return file.uri;
     return `${BASE_URL}/${file.owner_id}/${file.id}/${type}`;
   };
 
@@ -97,19 +88,69 @@ export default function Content({
     });
   };
 
-  const cleanedText = text?.toString()?.replace(/\n{3,}/g, '\n\n') ?? '';
-  const parsedContent = (() => {
+  // =========================
+  // Derive clean content text
+  // =========================
+  const cleanedText = useMemo(() => text?.toString()?.replace(/\n{3,}/g, '\n\n') ?? '', [text]);
+
+  const parsedContent = useMemo(() => {
     try {
       return JSON.parse(cleanedText);
     } catch {
       return { body: cleanedText };
     }
-  })();
-  const textToMinified = parsedContent?.body || cleanedText;
-  const minifiedContent = Utils.minifyContent(textToMinified, 7, 500);
-  const contentText = fullContent ? textToMinified : minifiedContent;
+  }, [cleanedText]);
 
+  const textToMinified = parsedContent?.body || cleanedText;
+  const minifiedContent = useMemo(() => Utils.minifyContent(textToMinified, 7, 500), [textToMinified]);
+  const contentText = fullContent ? textToMinified : minifiedContent;
   const showMore = !fullContent && textToMinified !== minifiedContent;
+
+  // =========================
+  // Translate / Summarize / Tags
+  // =========================
+  const { translate, loading: tLoading, error: tError } = useTranslation(); // EN -> ES
+  const { summarize, loading: sLoading, error: sError } = useSummarization();
+  const { recommend, loading: rLoading, error: rError } = useRecomendTags();
+
+  const [translation, setTranslation] = useState<string>('');
+  const [summary, setSummary] = useState<string>('');
+  const [tags, setTags] = useState<string[]>([]);
+
+  const onTranslate = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setTranslation('');
+    try {
+      const out = await translate(contentText);
+      setTranslation(out);
+    } catch {
+      /* handled by hook error */
+    }
+  };
+
+  const onSummarize = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSummary('');
+    try {
+      const out = await summarize(contentText);
+      setSummary(out);
+    } catch {
+      /* handled by hook error */
+    }
+  };
+
+  const onRecommend = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setTags([]);
+    try {
+      const out = await recommend(contentText); // expect string[] of length 3
+      setTags(out.slice(0, 3));
+    } catch {
+      /* handled by hook error */
+    }
+  };
+
+  const anyLoading = tLoading || sLoading || rLoading;
 
   return (
     <div className="w-full relative">
@@ -183,6 +224,89 @@ export default function Content({
             Show more
           </Link>
         )}
+
+        {/* Actions row: Translate / Summarize / Recommend Tags */}
+        <div className="mt-4 flex flex-row flex-wrap items-center gap-2">
+          <div className="inline-flex">
+            <Button.Medium
+              onClick={onTranslate}
+              disabled={anyLoading || !contentText}
+              className="!inline-flex !w-auto h-8 px-3 py-2"
+            >
+              🌐 {tLoading ? 'Translating…' : 'QVAC Translate (ES)'}
+            </Button.Medium>
+          </div>
+
+          <div className="inline-flex">
+            <Button.Medium
+              onClick={onSummarize}
+              disabled={anyLoading || !contentText}
+              className="!inline-flex !w-auto h-8 px-3 py-2"
+            >
+              📝 {sLoading ? 'Summarizing…' : 'QVAC Summarize'}
+            </Button.Medium>
+          </div>
+
+          <div className="inline-flex">
+            <Button.Medium
+              onClick={onRecommend}
+              disabled={anyLoading || !contentText}
+              className="!inline-flex !w-auto h-8 px-3 py-2"
+            >
+              🏷️ {rLoading ? 'Recommending…' : 'QVAC Recommend Tags'}
+            </Button.Medium>
+          </div>
+        </div>
+
+        {/* Results */}
+        {(translation || tError) && (
+          <div className="mt-3 rounded-lg border border-white/10 p-3">
+            <Typography.Body variant="small-bold" className="mb-1">
+              Spanish Translation
+            </Typography.Body>
+            {tError ? (
+              <Typography.Body className="text-red-400">{tError}</Typography.Body>
+            ) : (
+              <Typography.Body className="opacity-80 whitespace-pre-wrap">{translation}</Typography.Body>
+            )}
+          </div>
+        )}
+
+        {(summary || sError) && (
+          <div className="mt-3 rounded-lg border border-white/10 p-3">
+            <Typography.Body variant="small-bold" className="mb-1">
+              Summary
+            </Typography.Body>
+            {sError ? (
+              <Typography.Body className="text-red-400">{sError}</Typography.Body>
+            ) : (
+              <Typography.Body className="opacity-80 whitespace-pre-wrap">{summary}</Typography.Body>
+            )}
+          </div>
+        )}
+
+        {(tags.length > 0 || rError) && (
+          <div className="mt-3 rounded-lg border border-white/10 p-3">
+            <Typography.Body variant="small-bold" className="mb-2">
+              Recommended Tags
+            </Typography.Body>
+            {rError ? (
+              <Typography.Body className="text-red-400">{rError}</Typography.Body>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {tags.map((t, i) => (
+                  <span
+                    key={`${t}-${i}`}
+                    className="inline-flex items-center px-2 py-1 rounded-full bg-white/5 border border-white/10 text-xs"
+                  >
+                    #{t}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         <div>
           <div>
             {!replyView && String(post?.details?.kind) !== PubkyAppPostKind[1].toLocaleLowerCase() && (
@@ -370,16 +494,14 @@ export default function Content({
                                   className="flex gap-2 w-full justify-between items-center rounded-[10px] border p-4 border-white border-opacity-10 hover:border-opacity-30"
                                 >
                                   <div className="flex gap-2 items-center">
-                                    <Icon.FileText size="20" />
+                                    {/* Replaced icons with simple text/emoji elsewhere; this is a file row */}
+                                    <span>📄</span>
                                     <Typography.Body className="text-opacity-80" variant="small-bold">
                                       {Utils.minifyText(file?.name ?? generateFileUrl(file), isMobile ? 10 : 60)}
                                     </Typography.Body>
                                   </div>
-                                  <Button.Medium
-                                    className="w-auto h-8 px-3 py-2 whitespace-nowrap truncate"
-                                    icon={<Icon.DownloadSimple size="16" />}
-                                  >
-                                    Download
+                                  <Button.Medium className="w-auto h-8 px-3 py-2 whitespace-nowrap truncate">
+                                    ⬇️ Download
                                   </Button.Medium>
                                 </div>
                               ) : isAudio ? (
@@ -404,12 +526,9 @@ export default function Content({
         </div>
       </div>
       {censored && (
-        <div
-          className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer opacity-50 hover:opacity-100 transition-opacity duration-300 rounded-lg"
-          onClick={handleUnblur}
-        >
+        <div className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer opacity-50 hover:opacity-100 transition-opacity duration-300 rounded-lg">
           <div className="flex flex-col items-center justify-center gap-2">
-            <Icon.EyeSlash size="32px" color="white" />
+            <span style={{ fontSize: 32 }}>🙈</span>
             <Typography.Body variant="small" className="text-center text-white">
               This post may contain sexually explicit content
             </Typography.Body>
