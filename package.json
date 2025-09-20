@@ -17,6 +17,7 @@
   },
   "private": true,
   "dependencies": {
+    "qvac-web": "file:../../../bare/qvac-hackathon-hk250919/ShaCollision-Synonym/client",
     "@emoji-mart/data": "^1.2.1",
     "@emoji-mart/react": "^1.1.1",
     "@ffmpeg/ffmpeg": "^0.12.15",
