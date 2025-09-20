@@ -20,7 +20,7 @@ import { useModal } from '@/contexts';
 // QVAC hooks
 import { useTranslation } from '@/hooks/useTranslation';
 import { useSummarization } from '@/hooks/useSummarization';
-import { useRecomendTags } from '@/hooks/useRecommendTags';
+import { useRecommendTags } from '@/hooks/useRecommendTags';
 
 interface PostProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostView;
@@ -109,46 +109,13 @@ export default function Content({
   // =========================
   // Translate / Summarize / Tags
   // =========================
-  const { translate, loading: tLoading, error: tError } = useTranslation(); // EN -> ES
-  const { summarize, loading: sLoading, error: sError } = useSummarization();
-  const { recommend, loading: rLoading, error: rError } = useRecomendTags();
+  const { translate, loading: tLoading, translation } = useTranslation();
+  const { summarize, loading: sLoading, summary } = useSummarization();
+  const { recommend, loading: rLoading, tags, liveText } = useRecommendTags();
 
-  const [translation, setTranslation] = useState<string>('');
-  const [summary, setSummary] = useState<string>('');
-  const [tags, setTags] = useState<string[]>([]);
-
-  const onTranslate = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setTranslation('');
-    try {
-      const out = await translate(contentText);
-      setTranslation(out);
-    } catch {
-      /* handled by hook error */
-    }
-  };
-
-  const onSummarize = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setSummary('');
-    try {
-      const out = await summarize(contentText);
-      setSummary(out);
-    } catch {
-      /* handled by hook error */
-    }
-  };
-
-  const onRecommend = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setTags([]);
-    try {
-      const out = await recommend(contentText); // expect string[] of length 3
-      setTags(out.slice(0, 3));
-    } catch {
-      /* handled by hook error */
-    }
-  };
+  const onTranslate = () => translate(contentText);
+  const onSummarize = () => summarize(contentText);
+  const onRecommend = () => recommend(contentText);
 
   const anyLoading = tLoading || sLoading || rLoading;
 
@@ -227,85 +194,83 @@ export default function Content({
 
         {/* Actions row: Translate / Summarize / Recommend Tags */}
         <div className="mt-4 flex flex-row flex-wrap items-center gap-2">
-          <div className="inline-flex">
-            <Button.Medium
-              onClick={onTranslate}
-              disabled={anyLoading || !contentText}
-              className="!inline-flex !w-auto h-8 px-3 py-2"
-            >
-              🌐 {tLoading ? 'Translating…' : 'QVAC Translate (ES)'}
-            </Button.Medium>
-          </div>
+          <Button.Medium
+            onClick={(e) => {
+              e.stopPropagation();
+              onTranslate();
+            }}
+            disabled={anyLoading || !contentText}
+            className="!inline-flex !w-auto h-9 px-3.5 text-[14.5px]"
+          >
+            🌐 {tLoading ? 'Translating…' : 'QVAC Translate (ES)'}
+          </Button.Medium>
 
-          <div className="inline-flex">
-            <Button.Medium
-              onClick={onSummarize}
-              disabled={anyLoading || !contentText}
-              className="!inline-flex !w-auto h-8 px-3 py-2"
-            >
-              📝 {sLoading ? 'Summarizing…' : 'QVAC Summarize'}
-            </Button.Medium>
-          </div>
+          <Button.Medium
+            onClick={(e) => {
+              e.stopPropagation();
+              onSummarize();
+            }}
+            disabled={anyLoading || !contentText}
+            className="!inline-flex !w-auto h-9 px-3.5 text-[14.5px]"
+          >
+            📝 {sLoading ? 'Summarizing…' : 'QVAC Summarize'}
+          </Button.Medium>
 
-          <div className="inline-flex">
-            <Button.Medium
-              onClick={onRecommend}
-              disabled={anyLoading || !contentText}
-              className="!inline-flex !w-auto h-8 px-3 py-2"
-            >
-              🏷️ {rLoading ? 'Recommending…' : 'QVAC Recommend Tags'}
-            </Button.Medium>
-          </div>
+          <Button.Medium
+            onClick={(e) => {
+              e.stopPropagation();
+              onRecommend();
+            }}
+            disabled={anyLoading || !contentText}
+            className="!inline-flex !w-auto h-9 px-3.5 text-[14.5px]"
+          >
+            🏷️ {rLoading ? 'Recommending…' : 'QVAC Recommend Tags'}
+          </Button.Medium>
         </div>
 
-        {/* Results */}
-        {(translation || tError) && (
-          <div className="mt-3 rounded-lg border border-white/10 p-3">
-            <Typography.Body variant="small-bold" className="mb-1">
-              Spanish Translation
-            </Typography.Body>
-            {tError ? (
-              <Typography.Body className="text-red-400">{tError}</Typography.Body>
-            ) : (
-              <Typography.Body className="opacity-80 whitespace-pre-wrap">{translation}</Typography.Body>
-            )}
-          </div>
-        )}
+        {/* Results — prettier, color-coded */}
+        <div className="mt-3 space-y-3">
+          {translation && (
+            <div className="rounded-xl border border-cyan-400/25 bg-cyan-500/10 px-4 py-3 shadow-sm">
+              <Typography.Body variant="small-bold" className="text-cyan-200 mb-1 tracking-wide">
+                Spanish Translation
+              </Typography.Body>
+              <div className="text-[15px] md:text-base leading-relaxed text-cyan-50/90 whitespace-pre-wrap">
+                {translation}
+              </div>
+            </div>
+          )}
 
-        {(summary || sError) && (
-          <div className="mt-3 rounded-lg border border-white/10 p-3">
-            <Typography.Body variant="small-bold" className="mb-1">
-              Summary
-            </Typography.Body>
-            {sError ? (
-              <Typography.Body className="text-red-400">{sError}</Typography.Body>
-            ) : (
-              <Typography.Body className="opacity-80 whitespace-pre-wrap">{summary}</Typography.Body>
-            )}
-          </div>
-        )}
+          {summary && (
+            <div className="rounded-xl border border-violet-400/25 bg-violet-500/10 px-4 py-3 shadow-sm">
+              <Typography.Body variant="small-bold" className="text-violet-200 mb-1 tracking-wide">
+                Summary
+              </Typography.Body>
+              <div className="text-[15px] md:text-base leading-relaxed text-violet-50/90 whitespace-pre-wrap">
+                {summary}
+              </div>
+            </div>
+          )}
 
-        {(tags.length > 0 || rError) && (
-          <div className="mt-3 rounded-lg border border-white/10 p-3">
-            <Typography.Body variant="small-bold" className="mb-2">
-              Recommended Tags
-            </Typography.Body>
-            {rError ? (
-              <Typography.Body className="text-red-400">{rError}</Typography.Body>
-            ) : (
+          {tags?.length > 0 && (
+            <div className="rounded-xl border border-amber-400/25 bg-amber-500/10 px-4 py-3 shadow-sm">
+              <Typography.Body variant="small-bold" className="text-amber-200 mb-2 tracking-wide">
+                Recommended Tags
+              </Typography.Body>
               <div className="flex flex-wrap gap-2">
-                {tags.map((t, i) => (
+                {tags.map((t) => (
                   <span
-                    key={`${t}-${i}`}
-                    className="inline-flex items-center px-2 py-1 rounded-full bg-white/5 border border-white/10 text-xs"
+                    key={t}
+                    className="rounded-full bg-amber-400/10 border border-amber-400/30 px-2.5 py-1
+                       text-[13.5px] md:text-sm text-amber-100"
                   >
                     #{t}
                   </span>
                 ))}
               </div>
-            )}
-          </div>
-        )}
+            </div>
+          )}
+        </div>
 
         <div>
           <div>
