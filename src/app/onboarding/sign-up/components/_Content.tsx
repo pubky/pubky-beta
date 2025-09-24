@@ -117,35 +117,7 @@ export default function Index() {
     <Onboarding.Layout currentStep={2}>
       <div className="w-full flex flex-col gap-4 lg:flex-row justify-between">
         <div>
-          <Input.Cursor
-            placeholder="Your Name"
-            className="h-auto text-[40px] font-bold sm:h-[106px] sm:text-[64px] placeholder:text-opacity-30"
-            defaultValue={name}
-            disabled={loading}
-            maxLength={30}
-            autoFocus
-            id="onboarding-name-input"
-            autoCorrect="off"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
-            error={errors.name}
-          />
-          <Typography.Body variant="large" className="text-[22px] sm:text-2xl leading-tight text-opacity-50">
-            Enter your name, invite code, bio, add links, and upload a user picture.
-          </Typography.Body>
-          <Typography.Body variant="large" className="text-[14px] leading-tight text-opacity-50">
-            By signing up, you agree to the{' '}
-            <span className="cursor-pointer text-[#C8FF00]" onClick={() => openModal('termsOfService')}>
-              Terms of Service,
-            </span>{' '}
-            <span className="cursor-pointer text-[#C8FF00]" onClick={() => openModal('privacyPolicy')}>
-              Privacy Policy,
-            </span>{' '}
-            and you confirm you are{' '}
-            <span className="cursor-pointer text-[#C8FF00]" onClick={() => openModal('minimumAge')}>
-              over 18 years old
-            </span>
-            .
-          </Typography.Body>
+          <Typography.Display>Create your profile.</Typography.Display>
         </div>
         <div className="flex flex-col lg:justify-self-end lg:mt-4">
           <Input.Text
@@ -162,8 +134,22 @@ export default function Index() {
           />
         </div>
       </div>
+      <Typography.Body variant="large" className="mt-4 lg:mt-0 text-[22px] sm:text-2xl leading-tight text-opacity-50">
+        By signing up, you agree to the{' '}
+        <span className="cursor-pointer text-[#C8FF00]" onClick={() => openModal('termsOfService')}>
+          Terms of Service,
+        </span>{' '}
+        <span className="cursor-pointer text-[#C8FF00]" onClick={() => openModal('privacyPolicy')}>
+          Privacy Policy,
+        </span>{' '}
+        and you confirm you are{' '}
+        <span className="cursor-pointer text-[#C8FF00]" onClick={() => openModal('minimumAge')}>
+          over 18 years old
+        </span>
+        .
+      </Typography.Body>
       <div className="w-full flex-col inline-flex lg:grid lg:grid-cols-8 gap-6 mt-6">
-        <Card.Bio bio={bio} setBio={setBio} errors={errors} loading={loading} />
+        <Card.Bio name={name} setName={setName} bio={bio} setBio={setBio} errors={errors} loading={loading} />
         <Card.Links links={links} setLinks={setLinks} errors={errors} loading={loading} />
         <Card.Pic image={image} setImage={setImage} loading={loading} />
         {/**<Content.MainBg alt="Onboard Pubky" imgSrc="/images/webp/bg-image-2.webp" />*/}

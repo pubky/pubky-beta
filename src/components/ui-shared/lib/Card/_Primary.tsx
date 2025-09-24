@@ -16,7 +16,7 @@ export const Primary = ({
   title,
   text,
   background = 'bg-white bg-opacity-10',
-  borderRadius = 'rounded-lg',
+  borderRadius = 'rounded-2xl',
   children,
   refCard,
   imageTitle,
