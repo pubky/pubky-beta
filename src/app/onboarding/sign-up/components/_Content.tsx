@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Button, Input, Icon, Typography } from '@social/ui-shared';
-import { usePubkyClientContext } from '@/contexts';
+import { useModal, usePubkyClientContext } from '@/contexts';
 import { Onboarding } from '../../components';
 import { Card } from '../Card';
 import { Links } from '@/types/Post';
@@ -29,6 +29,7 @@ const profileSchema = z.object({
 
 export default function Index() {
   const { signUp, profile } = usePubkyClientContext();
+  const { openModal } = useModal();
   const router = useRouter();
 
   const [name, setName] = useState(profile?.name || '');
@@ -130,6 +131,20 @@ export default function Index() {
           />
           <Typography.Body variant="large" className="text-[22px] sm:text-2xl leading-tight text-opacity-50">
             Enter your name, invite code, bio, add links, and upload a user picture.
+          </Typography.Body>
+          <Typography.Body variant="large" className="text-[14px] leading-tight text-opacity-50">
+            By signing up, you agree to the{' '}
+            <span className="cursor-pointer text-[#C8FF00]" onClick={() => openModal('termsOfService')}>
+              Terms of Service,
+            </span>{' '}
+            <span className="cursor-pointer text-[#C8FF00]" onClick={() => openModal('privacyPolicy')}>
+              Privacy Policy,
+            </span>{' '}
+            and you confirm you are{' '}
+            <span className="cursor-pointer text-[#C8FF00]" onClick={() => openModal('minimumAge')}>
+              over 18 years old
+            </span>
+            .
           </Typography.Body>
         </div>
         <div className="flex flex-col lg:justify-self-end lg:mt-4">
