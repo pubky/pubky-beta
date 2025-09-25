@@ -279,7 +279,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
   };
 
   const homeserver = {
-    get: (url: string) => client.fetch(url),
+    get: (url: string, options?: RequestInit) => client.fetch(url, options),
     put: (url: string, body: any) => client.fetch(url, { method: 'PUT', body, credentials: 'include' }),
     del: (url: string) => client.fetch(url, { method: 'DELETE', credentials: 'include' })
   };
@@ -1025,6 +1025,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
     let hasMore = true;
 
     // 1) Gather the list of files from pubky
+    setProgress(5);
     do {
       const batch = await client.list(baseDirectory, cursor, false, limit);
       if (batch.length === 0) {
@@ -1043,12 +1044,20 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
     }
 
     const totalFiles = dataList.length;
+    setProgress(10);
 
-    // 3) Fetch each file as a Response, convert to ArrayBuffer, then decide if JSON or binary
-    await Promise.all(
-      dataList.map(async (dataUrl, index) => {
+    // 3) Fetch each file sequentially to maintain accurate progress
+    for (let index = 0; index < dataList.length; index++) {
+      const dataUrl = dataList[index];
+
+      try {
+        // Add timeout to prevent hanging requests
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
         // Get the Response object
-        const response = await homeserver.get(dataUrl);
+        const response = await homeserver.get(dataUrl, { signal: controller.signal });
+        clearTimeout(timeoutId);
 
         // Convert to ArrayBuffer
         const arrayBuffer = await response.arrayBuffer();
@@ -1068,11 +1077,18 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
           });
         }
 
-        // Update progress
-        setProgress(Math.round(((index + 1) / totalFiles) * 100));
-      })
-    );
+        // Update progress (10% to 80% for file downloading)
+        const fileProgress = 10 + Math.round(((index + 1) / totalFiles) * 70);
+        setProgress(fileProgress);
+      } catch (error) {
+        console.error(`Error downloading file ${dataUrl}:`, error);
+        // Continue with other files even if one fails
+        continue;
+      }
+    }
 
+    // 4) Generate ZIP file (80% to 95%)
+    setProgress(80);
     const now = new Date();
     const formattedDateTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
       2,
@@ -1082,7 +1098,10 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
       '0'
     )}-${String(now.getMinutes()).padStart(2, '0')}-${String(now.getSeconds()).padStart(2, '0')}`;
 
+    setProgress(90);
     const content = await zip.generateAsync({ type: 'blob' });
+
+    setProgress(95);
     const url = URL.createObjectURL(content);
     const a = document.createElement('a');
     a.href = url;
@@ -1093,6 +1112,7 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
+    setProgress(100);
     return true;
   });
 
