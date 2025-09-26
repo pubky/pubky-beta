@@ -1050,40 +1050,83 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
     for (let index = 0; index < dataList.length; index++) {
       const dataUrl = dataList[index];
 
-      try {
-        // Add timeout to prevent hanging requests
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+      // Retry logic for rate limiting and other transient errors
+      let retryCount = 0;
+      const maxRetries = 5;
+      let success = false;
 
-        // Get the Response object
-        const response = await homeserver.get(dataUrl, { signal: controller.signal });
-        clearTimeout(timeoutId);
-
-        // Convert to ArrayBuffer
-        const arrayBuffer = await response.arrayBuffer();
-
-        // Derive a file name from the pubky URL
-        const fileName = dataUrl.split(`pubky://${pubky}/`)[1];
-
-        // Try to decode as JSON (text) — if it fails, store binary
+      while (retryCount < maxRetries && !success) {
         try {
-          const decoder = new TextDecoder('utf-8');
-          const decodedString = decoder.decode(arrayBuffer);
-          const parsedData = JSON.parse(decodedString);
-          dataFolder.file(fileName, JSON.stringify(parsedData, null, 2));
-        } catch (err) {
-          dataFolder.file(fileName, new Uint8Array(arrayBuffer), {
-            binary: true
-          });
-        }
+          // Add timeout to prevent hanging requests
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
 
-        // Update progress (10% to 80% for file downloading)
-        const fileProgress = 10 + Math.round(((index + 1) / totalFiles) * 70);
-        setProgress(fileProgress);
-      } catch (error) {
-        console.error(`Error downloading file ${dataUrl}:`, error);
-        // Continue with other files even if one fails
-        continue;
+          // Get the Response object
+          const response = await homeserver.get(dataUrl, { signal: controller.signal });
+          clearTimeout(timeoutId);
+
+          // Check for rate limiting (429) or server errors (5xx)
+          if (response.status === 429) {
+            // Rate limited - wait with exponential backoff
+            const delay = Math.min(1000 * Math.pow(2, retryCount), 30000); // Max 30 seconds
+            console.log(`Rate limited, waiting ${delay}ms before retry ${retryCount + 1}/${maxRetries}`);
+            await new Promise((resolve) => setTimeout(resolve, delay));
+            retryCount++;
+            continue;
+          } else if (response.status >= 500) {
+            // Server error - wait and retry
+            const delay = Math.min(1000 * Math.pow(2, retryCount), 10000); // Max 10 seconds
+            console.log(
+              `Server error ${response.status}, waiting ${delay}ms before retry ${retryCount + 1}/${maxRetries}`
+            );
+            await new Promise((resolve) => setTimeout(resolve, delay));
+            retryCount++;
+            continue;
+          } else if (!response.ok) {
+            // Other client errors - don't retry
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+
+          // Convert to ArrayBuffer
+          const arrayBuffer = await response.arrayBuffer();
+
+          // Derive a file name from the pubky URL
+          const fileName = dataUrl.split(`pubky://${pubky}/`)[1];
+
+          // Try to decode as JSON (text) — if it fails, store binary
+          try {
+            const decoder = new TextDecoder('utf-8');
+            const decodedString = decoder.decode(arrayBuffer);
+            const parsedData = JSON.parse(decodedString);
+            dataFolder.file(fileName, JSON.stringify(parsedData, null, 2));
+          } catch (err) {
+            dataFolder.file(fileName, new Uint8Array(arrayBuffer), {
+              binary: true
+            });
+          }
+
+          success = true;
+
+          // Update progress (10% to 80% for file downloading)
+          const fileProgress = 10 + Math.round(((index + 1) / totalFiles) * 70);
+          setProgress(fileProgress);
+
+          // Add small delay between requests to respect rate limits (3r/s = ~333ms between requests)
+          if (index < dataList.length - 1) {
+            await new Promise((resolve) => setTimeout(resolve, 350));
+          }
+        } catch (error) {
+          if (retryCount < maxRetries - 1) {
+            console.log(`Error downloading file ${dataUrl}, retry ${retryCount + 1}/${maxRetries}:`, error);
+            retryCount++;
+            // Wait before retry
+            await new Promise((resolve) => setTimeout(resolve, 1000 * retryCount));
+          } else {
+            console.error(`Failed to download file ${dataUrl} after ${maxRetries} retries:`, error);
+            // Continue with other files even if one fails
+            break;
+          }
+        }
       }
     }
 
