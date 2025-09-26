@@ -1110,11 +1110,6 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
           // Update progress (10% to 80% for file downloading)
           const fileProgress = 10 + Math.round(((index + 1) / totalFiles) * 70);
           setProgress(fileProgress);
-
-          // Add small delay between requests to respect rate limits (3r/s = ~333ms between requests)
-          if (index < dataList.length - 1) {
-            await new Promise((resolve) => setTimeout(resolve, 350));
-          }
         } catch (error) {
           if (retryCount < maxRetries - 1) {
             console.log(`Error downloading file ${dataUrl}, retry ${retryCount + 1}/${maxRetries}:`, error);
