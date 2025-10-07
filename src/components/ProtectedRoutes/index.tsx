@@ -39,7 +39,8 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
     '/onboarding/sign-up',
     '/logout',
     '/sign-in',
-    '/copyright'
+    '/copyright',
+    '/invite'
   ];
 
   const onboardingImages = [
@@ -60,7 +61,7 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
   ];
 
   const isDynamicPublicRoute = (path: string) => {
-    const dynamicPublicRoutes = ['/post/[userId]/[postId]', '/profile/[userId]'];
+    const dynamicPublicRoutes = ['/post/[userId]/[postId]', '/profile/[userId]', '/invite/[code]'];
     const protectedProfileRoutes = [
       '/profile/posts',
       '/profile/replies',
