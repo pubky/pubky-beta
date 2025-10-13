@@ -29,6 +29,7 @@ const NEXT_PUBLIC_DEFAULT_HTTP_RELAY = process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELA
 const NEXT_PUBLIC_PKARR_RELAYS = process.env.NEXT_PUBLIC_PKARR_RELAYS
   ? JSON.parse(process.env.NEXT_PUBLIC_PKARR_RELAYS)
   : ['https://pkarr.pubky.app', 'https://pkarr.pubky.org'];
+const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
 
 const client = TESTNET
   ? Client.testnet()
@@ -390,9 +391,18 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
 
   const loginWithAuthUrl = async (publickey: PublicKey) => {
     try {
-      // Save pubky state
       const pk = publickey.z32();
 
+      // 1) Make PUT req with user PK
+      const ingest_user_url = `${NEXT_PUBLIC_NEXUS}/v0/ingest/${pk}`;
+      try {
+        const res = await fetch(ingest_user_url, { method: 'PUT' });
+        console.log('PUT (ingest user) status:', res.status);
+      } catch (err) {
+        console.error('PUT (ingest user):', err);
+      }
+
+      // 2) Save pubky state
       setPubkyAndStorage(pk);
       return pk;
     } catch (error: any) {
