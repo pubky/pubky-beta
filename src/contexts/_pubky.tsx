@@ -375,6 +375,9 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
     }
   };
 
+  /**
+   * @deprecated Not called anywhere, because we want to support calls to other homeservers
+   */
   async function checkHomeserver(publicKey: PublicKey): Promise<string> {
     const homeserver = await client.getHomeserver(publicKey);
 
@@ -387,9 +390,6 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
 
   const loginWithAuthUrl = async (publickey: PublicKey) => {
     try {
-      // check homeserver
-      const homeserver = await checkHomeserver(publickey);
-      if (!homeserver) logout();
       // Save pubky state
       const pk = publickey.z32();
 
@@ -405,9 +405,6 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
   // Helper used on the different login methods
   async function authenticateKeypair(keypair: Keypair): Promise<string> {
     try {
-      // check homeserver
-      await checkHomeserver(keypair.publicKey());
-
       // 1) Sign in with the Keypair
       await client.signin(keypair);
     } catch (error) {
