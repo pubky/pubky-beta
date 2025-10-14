@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { Button, Input, Icon, Typography } from '@social/ui-shared';
 import { Onboarding } from '../../components';
 import { Card } from '../Card';
-import { useAlertContext, usePubkyClientContext } from '@/contexts';
+import { useAlertContext, useModal, usePubkyClientContext } from '@/contexts';
 import { Links } from '@/types/Post';
 import { Utils } from '@social/utils-shared';
 import Link from 'next/link';
@@ -28,6 +28,7 @@ const profileSchema = z.object({
 export default function Index() {
   const { pubky, saveProfile } = usePubkyClientContext();
   const { addAlert } = useAlertContext();
+  const { openModal } = useModal();
 
   const router = useRouter();
 
@@ -106,21 +107,32 @@ export default function Index() {
 
   return (
     <Onboarding.Layout currentStep={3}>
-      <Input.Cursor
-        placeholder="Your Name"
-        className="h-auto text-[40px] font-bold sm:h-[106px] sm:text-[64px] placeholder:text-opacity-30"
-        defaultValue={name}
-        disabled={loading}
-        maxLength={24}
-        autoCorrect="off"
-        error={errors.name}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
-      />
-      <Typography.H2 variant="light" className="text-[22px] sm:text-2xl leading-tight text-opacity-50 mt-2 sm:mt-0">
-        {Utils.minifyPubky(pubky ?? '')}
-      </Typography.H2>
+      <div className="w-full flex flex-col gap-4 lg:flex-row justify-between">
+        <div>
+          <Typography.Display>Create your profile.</Typography.Display>
+        </div>
+        <div className="flex flex-col lg:justify-self-end lg:mt-4">
+          <Typography.Body variant="large" className="text-[22px] sm:text-2xl leading-tight text-opacity-50">
+            {Utils.minifyPubky(pubky ?? '')}
+          </Typography.Body>
+        </div>
+      </div>
+      <Typography.Body variant="large" className="mt-4 lg:mt-0 text-[22px] sm:text-2xl leading-tight text-opacity-50">
+        By signing up, you agree to the{' '}
+        <span className="cursor-pointer text-[#C8FF00]" onClick={() => openModal('termsOfService')}>
+          Terms of Service,
+        </span>{' '}
+        <span className="cursor-pointer text-[#C8FF00]" onClick={() => openModal('privacyPolicy')}>
+          Privacy Policy,
+        </span>{' '}
+        and you confirm you are{' '}
+        <span className="cursor-pointer text-[#C8FF00]" onClick={() => openModal('minimumAge')}>
+          over 18 years old
+        </span>
+        .
+      </Typography.Body>
       <div className="w-full flex-col inline-flex lg:grid lg:grid-cols-8 gap-6 mt-6">
-        <Card.Bio bio={bio} setBio={setBio} errors={errors} />
+        <Card.Bio name={name} setName={setName} bio={bio} setBio={setBio} errors={errors} />
         <Card.Links links={links} setLinks={setLinks} errors={errors} loading={loading} />
         <Card.Pic image={image} setImage={setImage} />
       </div>

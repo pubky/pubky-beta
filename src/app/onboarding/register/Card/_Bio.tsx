@@ -17,10 +17,12 @@ interface Errors {
 interface BioProps {
   bio: string;
   setBio: React.Dispatch<React.SetStateAction<string>>;
+  name: string;
+  setName: React.Dispatch<React.SetStateAction<string>>;
   errors: Errors;
 }
 
-export default function Bio({ bio, setBio, errors }: BioProps) {
+export default function Bio({ bio, setBio, name, setName, errors }: BioProps) {
   const { pubky } = usePubkyClientContext();
   const [searchedUsers, setSearchedUsers] = useState<UserView[]>([]);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
@@ -135,36 +137,51 @@ export default function Bio({ bio, setBio, errors }: BioProps) {
 
   return (
     <Card.Primary className="justify-start gap-4 w-full col-span-3" title="Profile">
-      <div>
-        <Input.Label value="Short bio" />
-        <Card.Primary
-          background="bg-transparent"
-          className="relative border border-white border-opacity-30 border-dashed mt-2"
-        >
-          <Input.TextArea
-            placeholder="Short bio. Tell a bit about yourself."
-            className="h-[180px]"
-            id="onboarding-bio-input"
-            value={bio ? bio : ''}
-            error={errors.bio}
-            onInput={(e: React.FormEvent<HTMLTextAreaElement>) => {
-              const target = e.target as HTMLTextAreaElement;
-              if (Utils.isValidContent(target.value)) {
-                const cleanedBio = Utils.cleanText(target.value);
-                setBio(cleanedBio);
-              } else {
-                setBio('');
-              }
-            }}
+      <div className="flex flex-col gap-4">
+        <div>
+          <Input.Label value="Name" />
+          <Input.Text
+            placeholder="Your name"
+            id="onboarding-name-input"
+            defaultValue={name}
+            maxLength={30}
+            autoFocus
+            autoCorrect="off"
+            error={errors.name}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
           />
-          {searchedUsers.length > 0 && (
-            <Modal.SearchedUsersCard
-              className="top-56"
-              handleUserClick={handleUserClick}
-              searchedUsers={searchedUsers}
+        </div>
+        <div>
+          <Input.Label value="Short bio" />
+          <Card.Primary
+            background="bg-transparent"
+            className="relative border border-white border-opacity-30 border-dashed mt-2"
+          >
+            <Input.TextArea
+              placeholder="Short bio. Tell a bit about yourself."
+              className="h-[70px]"
+              id="onboarding-bio-input"
+              value={bio ? bio : ''}
+              error={errors.bio}
+              onInput={(e: React.FormEvent<HTMLTextAreaElement>) => {
+                const target = e.target as HTMLTextAreaElement;
+                if (Utils.isValidContent(target.value)) {
+                  const cleanedBio = Utils.cleanText(target.value);
+                  setBio(cleanedBio);
+                } else {
+                  setBio('');
+                }
+              }}
             />
-          )}
-        </Card.Primary>
+            {searchedUsers.length > 0 && (
+              <Modal.SearchedUsersCard
+                className="top-56"
+                handleUserClick={handleUserClick}
+                searchedUsers={searchedUsers}
+              />
+            )}
+          </Card.Primary>
+        </div>
       </div>
     </Card.Primary>
   );
