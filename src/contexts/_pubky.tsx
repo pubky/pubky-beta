@@ -29,7 +29,6 @@ const NEXT_PUBLIC_DEFAULT_HTTP_RELAY = process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELA
 const NEXT_PUBLIC_PKARR_RELAYS = process.env.NEXT_PUBLIC_PKARR_RELAYS
   ? JSON.parse(process.env.NEXT_PUBLIC_PKARR_RELAYS)
   : ['https://pkarr.pubky.app', 'https://pkarr.pubky.org'];
-const NEXT_PUBLIC_NEXUS = process.env.NEXT_PUBLIC_NEXUS;
 
 const client = TESTNET
   ? Client.testnet()
@@ -376,9 +375,6 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
     }
   };
 
-  /**
-   * @deprecated Not called anywhere, because we want to support calls to other homeservers
-   */
   async function checkHomeserver(publicKey: PublicKey): Promise<string> {
     const homeserver = await client.getHomeserver(publicKey);
 
@@ -391,18 +387,12 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
 
   const loginWithAuthUrl = async (publickey: PublicKey) => {
     try {
+      // check homeserver
+      const homeserver = await checkHomeserver(publickey);
+      if (!homeserver) logout();
+      // Save pubky state
       const pk = publickey.z32();
 
-      // 1) Make PUT req with user PK
-      const ingest_user_url = `${NEXT_PUBLIC_NEXUS}/v0/ingest/${pk}`;
-      try {
-        const res = await fetch(ingest_user_url, { method: 'PUT' });
-        console.log('PUT (ingest user) status:', res.status);
-      } catch (err) {
-        console.error('PUT (ingest user):', err);
-      }
-
-      // 2) Save pubky state
       setPubkyAndStorage(pk);
       return pk;
     } catch (error: any) {
@@ -415,6 +405,9 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
   // Helper used on the different login methods
   async function authenticateKeypair(keypair: Keypair): Promise<string> {
     try {
+      // check homeserver
+      await checkHomeserver(keypair.publicKey());
+
       // 1) Sign in with the Keypair
       await client.signin(keypair);
     } catch (error) {
