@@ -88,7 +88,7 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
       const result = await getTimestampNotification();
       setTimestamp(Number(result));
     } catch (error) {
-      console.debug('No last_read data available for new user');
+      console.debug('checkTimestamp failed to get last_read data: ', error);
     }
   };
 
