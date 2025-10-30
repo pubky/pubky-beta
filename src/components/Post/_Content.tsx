@@ -202,7 +202,7 @@ export default function Content({
                     ></iframe>
                   </div>
                 )}
-                {preview && !videoId && !tweetId && !githubUrl && !spotifyUrl && !blueskyUrl && (
+                {preview && !videoId && !tweetId && !githubUrl && !spotifyUrl && !blueskyUrl.url && (
                   <div onClick={(event) => event.stopPropagation()}>
                     <LinkPreview url={preview} />
                   </div>
