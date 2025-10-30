@@ -83,12 +83,13 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
 
   const checkTimestamp = async () => {
     if (pubky === undefined) return;
+    let result: number;
 
     try {
-      const result = await getTimestampNotification();
+      result = await getTimestampNotification();
       setTimestamp(Number(result));
     } catch (error) {
-      console.debug('No last_read data available for new user');
+      console.debug(`checkTimestamp failed to get last_read data\nerror: ${error}\nresult: ${result}`);
     }
   };
 
