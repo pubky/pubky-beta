@@ -490,6 +490,10 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
 
       // YouTube video detection
       const getYouTubeID = (url: string): string | null => {
+        // Only process URLs that are actually from YouTube domains
+        if (!/youtube\.com|youtu\.be/.test(url)) {
+          return null;
+        }
         const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
         const match = url.match(regExp);
         return match && match[2].length === 11 ? match[2] : null;
