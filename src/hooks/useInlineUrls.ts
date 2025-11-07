@@ -298,27 +298,13 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
     return text?.replace(/\n{3,}/g, '\n\n');
   };
 
-  const parseYouTubeTime = (value: string | null): number => {
+  const parseYouTubeSeconds = (value: string | null): number => {
     if (!value) {
       return 0;
     }
 
-    if (/^\d+$/.test(value)) {
-      return parseInt(value, 10);
-    }
-
-    const timePattern = /(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)(?:s)?)?/i;
-    const match = value.match(timePattern);
-    if (!match) {
-      return 0;
-    }
-
-    const hours = match[1] ? parseInt(match[1], 10) : 0;
-    const minutes = match[2] ? parseInt(match[2], 10) : 0;
-    const seconds = match[3] ? parseInt(match[3], 10) : 0;
-
-    const totalSeconds = hours * 3600 + minutes * 60 + seconds;
-    return Number.isNaN(totalSeconds) ? 0 : totalSeconds;
+    const parsed = parseInt(value, 10);
+    return Number.isNaN(parsed) || parsed < 0 ? 0 : parsed;
   };
 
   const extractYouTubeDetails = (rawUrl: string): { id: string | null; start: number } => {
@@ -337,7 +323,7 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
       if (start > 0) {
         return;
       }
-      const parsed = parseYouTubeTime(value);
+      const parsed = parseYouTubeSeconds(value);
       if (parsed > 0) {
         start = parsed;
       }
@@ -346,30 +332,21 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
     try {
       const parsedUrl = new URL(rawUrl);
       setStartFromValue(parsedUrl.searchParams.get('t'));
-      setStartFromValue(parsedUrl.searchParams.get('start'));
 
       if (!start && parsedUrl.hash) {
         const hash = parsedUrl.hash.replace(/^#/, '');
-
         if (hash.startsWith('t=')) {
           setStartFromValue(hash.substring(2));
         } else {
           const hashParams = new URLSearchParams(hash);
           setStartFromValue(hashParams.get('t'));
-          setStartFromValue(hashParams.get('start'));
         }
       }
     } catch {
       const queryMatch = rawUrl.match(/[?&#]t=([^&#]+)/i);
       setStartFromValue(queryMatch ? queryMatch[1] : null);
-
       if (start === 0) {
-        const startMatch = rawUrl.match(/[?&#]start=([^&#]+)/i);
-        setStartFromValue(startMatch ? startMatch[1] : null);
-      }
-
-      if (start === 0) {
-        const hashMatch = rawUrl.match(/#t=([^&#]+)/i) || rawUrl.match(/#start=([^&#]+)/i);
+        const hashMatch = rawUrl.match(/#t=([^&#]+)/i);
         setStartFromValue(hashMatch ? hashMatch[1] : null);
       }
     }
