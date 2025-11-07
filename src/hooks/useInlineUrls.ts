@@ -11,6 +11,7 @@ interface UseInlineUrlsReturn {
   loading: boolean;
   preview: string;
   videoId: string;
+  videoStart: number;
   tweetId: string;
   githubUrl: string;
   spotifyUrl: string;
@@ -26,6 +27,7 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
   const [loading, setLoading] = useState(true);
   const [preview, setPreview] = useState('');
   const [videoId, setVideoId] = useState('');
+  const [videoStart, setVideoStart] = useState(0);
   const [tweetId, setTweetId] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
   const [spotifyUrl, setSpotifyUrl] = useState('');
@@ -296,6 +298,85 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
     return text?.replace(/\n{3,}/g, '\n\n');
   };
 
+  const parseYouTubeTime = (value: string | null): number => {
+    if (!value) {
+      return 0;
+    }
+
+    if (/^\d+$/.test(value)) {
+      return parseInt(value, 10);
+    }
+
+    const timePattern = /(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)(?:s)?)?/i;
+    const match = value.match(timePattern);
+    if (!match) {
+      return 0;
+    }
+
+    const hours = match[1] ? parseInt(match[1], 10) : 0;
+    const minutes = match[2] ? parseInt(match[2], 10) : 0;
+    const seconds = match[3] ? parseInt(match[3], 10) : 0;
+
+    const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+    return Number.isNaN(totalSeconds) ? 0 : totalSeconds;
+  };
+
+  const extractYouTubeDetails = (rawUrl: string): { id: string | null; start: number } => {
+    // Only process URLs that are actually from YouTube domains
+    if (!/youtube\.com|youtu\.be/.test(rawUrl)) {
+      return null;
+    }
+
+    const regExp = /^.*(youtu.be\/(?!shorts)|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = rawUrl.match(regExp);
+    const id = match && match[2].length === 11 ? match[2] : null;
+
+    let start = 0;
+
+    const setStartFromValue = (value: string | null) => {
+      if (start > 0) {
+        return;
+      }
+      const parsed = parseYouTubeTime(value);
+      if (parsed > 0) {
+        start = parsed;
+      }
+    };
+
+    try {
+      const parsedUrl = new URL(rawUrl);
+      setStartFromValue(parsedUrl.searchParams.get('t'));
+      setStartFromValue(parsedUrl.searchParams.get('start'));
+
+      if (!start && parsedUrl.hash) {
+        const hash = parsedUrl.hash.replace(/^#/, '');
+
+        if (hash.startsWith('t=')) {
+          setStartFromValue(hash.substring(2));
+        } else {
+          const hashParams = new URLSearchParams(hash);
+          setStartFromValue(hashParams.get('t'));
+          setStartFromValue(hashParams.get('start'));
+        }
+      }
+    } catch {
+      const queryMatch = rawUrl.match(/[?&#]t=([^&#]+)/i);
+      setStartFromValue(queryMatch ? queryMatch[1] : null);
+
+      if (start === 0) {
+        const startMatch = rawUrl.match(/[?&#]start=([^&#]+)/i);
+        setStartFromValue(startMatch ? startMatch[1] : null);
+      }
+
+      if (start === 0) {
+        const hashMatch = rawUrl.match(/#t=([^&#]+)/i) || rawUrl.match(/#start=([^&#]+)/i);
+        setStartFromValue(hashMatch ? hashMatch[1] : null);
+      }
+    }
+
+    return { id, start };
+  };
+
   // Helper function to extract Bluesky post parameters from URL
   const extractBlueskyParams = (url: string): { handle: string; rkey: string } | null => {
     try {
@@ -489,18 +570,11 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
       }
 
       // YouTube video detection
-      const getYouTubeID = (url: string): string | null => {
-        // Only process URLs that are actually from YouTube domains
-        if (!/youtube\.com|youtu\.be/.test(url)) {
-          return null;
-        }
-        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-        const match = url.match(regExp);
-        return match && match[2].length === 11 ? match[2] : null;
-      };
-
-      const youtubeId = getYouTubeID(url);
-      if (youtubeId) setVideoId(youtubeId);
+      const { id: youtubeId, start: youtubeStart } = extractYouTubeDetails(url);
+      if (youtubeId) {
+        setVideoId(youtubeId);
+        setVideoStart(youtubeStart);
+      }
 
       // Twitter/X detection
       const twitterRegex = /https?:\/\/(?:www\.)?(?:twitter\.com|x\.com)\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/;
@@ -549,6 +623,7 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
     // Reset all URL states when text changes
     setPreview('');
     setVideoId('');
+    setVideoStart(0);
     setTweetId('');
     setGithubUrl('');
     setSpotifyUrl('');
@@ -569,6 +644,7 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
     loading,
     preview,
     videoId,
+    videoStart,
     tweetId,
     githubUrl,
     spotifyUrl,

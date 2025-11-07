@@ -3,7 +3,7 @@
 import { Utils } from '@social/utils-shared';
 import LinkPreview from '@/components/ui-shared/lib/Post/_Preview';
 import { GitHub } from '@/components/ui-shared/lib/Preview/Github';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Tweet } from 'react-tweet';
 import Parsing from '../Content/_Parsing';
 import { Button, Icon, Skeleton, Typography } from '@social/ui-shared';
@@ -52,6 +52,7 @@ export default function Content({
     fileContents: externalFileContents,
     preview,
     videoId,
+    videoStart,
     tweetId,
     githubUrl,
     spotifyUrl,
@@ -62,6 +63,19 @@ export default function Content({
     files,
     externalFileContents
   });
+
+  const youtubeEmbedSrc = useMemo(() => {
+    if (!videoId) {
+      return '';
+    }
+
+    const params = new URLSearchParams({ enablejsapi: '1' });
+    if (videoStart > 0) {
+      params.set('start', videoStart.toString());
+    }
+
+    return `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
+  }, [videoId, videoStart]);
 
   useEffect(() => {
     if (post?.details?.uri && isCensored) {
@@ -187,7 +201,7 @@ export default function Content({
           <div>
             {!replyView && String(post?.details?.kind) !== PubkyAppPostKind[1].toLocaleLowerCase() && (
               <div>
-                {videoId && (
+                {videoId && youtubeEmbedSrc && (
                   <div
                     onClick={(event) => event.stopPropagation()}
                     className="w-full max-w-[560px] relative border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden"
@@ -195,7 +209,7 @@ export default function Content({
                     <iframe
                       width="100%"
                       height="315"
-                      src={`https://www.youtube.com/embed/${videoId}?enablejsapi=1`}
+                      src={youtubeEmbedSrc}
                       title="YouTube video player"
                       allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
