@@ -197,7 +197,6 @@ export default function SignIn() {
           onClick={
             authUrl
               ? () => {
-                  copyToClipboard();
                   openApp();
                 }
               : undefined
