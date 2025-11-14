@@ -11,6 +11,7 @@ interface UseInlineUrlsReturn {
   loading: boolean;
   preview: string;
   videoId: string;
+  videoStart: number;
   tweetId: string;
   githubUrl: string;
   spotifyUrl: string;
@@ -26,6 +27,7 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
   const [loading, setLoading] = useState(true);
   const [preview, setPreview] = useState('');
   const [videoId, setVideoId] = useState('');
+  const [videoStart, setVideoStart] = useState(0);
   const [tweetId, setTweetId] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
   const [spotifyUrl, setSpotifyUrl] = useState('');
@@ -296,6 +298,62 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
     return text?.replace(/\n{3,}/g, '\n\n');
   };
 
+  const parseYouTubeSeconds = (value: string | null): number => {
+    if (!value) {
+      return 0;
+    }
+
+    const parsed = parseInt(value, 10);
+    return Number.isNaN(parsed) || parsed < 0 ? 0 : parsed;
+  };
+
+  const extractYouTubeDetails = (rawUrl: string): { id: string | null; start: number } => {
+    // Only process URLs that are actually from YouTube domains
+    if (!/youtube\.com|youtu\.be/.test(rawUrl)) {
+      return { id: null, start: 0 };
+    }
+
+    const regExp = /^.*(youtu.be\/(?!shorts)|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = rawUrl.match(regExp);
+    const id = match && match[2].length === 11 ? match[2] : null;
+
+    let start = 0;
+
+    const setStartFromValue = (value: string | null) => {
+      if (start > 0) {
+        return;
+      }
+      const parsed = parseYouTubeSeconds(value);
+      if (parsed > 0) {
+        start = parsed;
+      }
+    };
+
+    try {
+      const parsedUrl = new URL(rawUrl);
+      setStartFromValue(parsedUrl.searchParams.get('t'));
+
+      if (!start && parsedUrl.hash) {
+        const hash = parsedUrl.hash.replace(/^#/, '');
+        if (hash.startsWith('t=')) {
+          setStartFromValue(hash.substring(2));
+        } else {
+          const hashParams = new URLSearchParams(hash);
+          setStartFromValue(hashParams.get('t'));
+        }
+      }
+    } catch {
+      const queryMatch = rawUrl.match(/[?&#]t=([^&#]+)/i);
+      setStartFromValue(queryMatch ? queryMatch[1] : null);
+      if (start === 0) {
+        const hashMatch = rawUrl.match(/#t=([^&#]+)/i);
+        setStartFromValue(hashMatch ? hashMatch[1] : null);
+      }
+    }
+
+    return { id, start };
+  };
+
   // Helper function to extract Bluesky post parameters from URL
   const extractBlueskyParams = (url: string): { handle: string; rkey: string } | null => {
     try {
@@ -489,18 +547,11 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
       }
 
       // YouTube video detection
-      const getYouTubeID = (url: string): string | null => {
-        // Only process URLs that are actually from YouTube domains
-        if (!/youtube\.com|youtu\.be/.test(url)) {
-          return null;
-        }
-        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-        const match = url.match(regExp);
-        return match && match[2].length === 11 ? match[2] : null;
-      };
-
-      const youtubeId = getYouTubeID(url);
-      if (youtubeId) setVideoId(youtubeId);
+      const { id: youtubeId, start: youtubeStart } = extractYouTubeDetails(url);
+      if (youtubeId) {
+        setVideoId(youtubeId);
+        setVideoStart(youtubeStart);
+      }
 
       // Twitter/X detection
       const twitterRegex = /https?:\/\/(?:www\.)?(?:twitter\.com|x\.com)\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/;
@@ -549,6 +600,7 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
     // Reset all URL states when text changes
     setPreview('');
     setVideoId('');
+    setVideoStart(0);
     setTweetId('');
     setGithubUrl('');
     setSpotifyUrl('');
@@ -569,6 +621,7 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
     loading,
     preview,
     videoId,
+    videoStart,
     tweetId,
     githubUrl,
     spotifyUrl,

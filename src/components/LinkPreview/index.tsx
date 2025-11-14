@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import getYouTubeID from 'get-youtube-id';
+import { useEffect, useMemo, useState } from 'react';
 import { Tweet } from 'react-tweet';
 import { Preview, Post as PostUI } from '@social/ui-shared';
 import { usePubkyClientContext } from '@/contexts';
@@ -22,7 +21,7 @@ export default function LinkPreviewer({ content, setQuote }: LinkPreviewerProps)
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
 
   // Use the useInlineUrls hook for URL detection
-  const { preview, videoId, tweetId, githubUrl, spotifyUrl, blueskyUrl } = useInlineUrls({ text: content });
+  const { preview, videoId, videoStart, tweetId, githubUrl, spotifyUrl, blueskyUrl } = useInlineUrls({ text: content });
 
   const checkForPubkyPost = (text: string) => {
     if (debounceTimeout) {
@@ -112,6 +111,19 @@ export default function LinkPreviewer({ content, setQuote }: LinkPreviewerProps)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content]);
 
+  const youtubeEmbedSrc = useMemo(() => {
+    if (!videoId) {
+      return '';
+    }
+
+    const params = new URLSearchParams({ enablejsapi: '1' });
+    if (videoStart > 0) {
+      params.set('start', videoStart.toString());
+    }
+
+    return `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
+  }, [videoId, videoStart]);
+
   return (
     <>
       {postPreview && (
@@ -119,12 +131,12 @@ export default function LinkPreviewer({ content, setQuote }: LinkPreviewerProps)
           <Post post={postPreview} repostView postType="single" />
         </div>
       )}
-      {videoId && (
+      {videoId && youtubeEmbedSrc && (
         <div className="relative w-full border border-stone-800 hover:border-stone-700 mt-4 rounded-xl overflow-hidden">
           <iframe
             width="100%"
             height="315"
-            src={`https://www.youtube.com/embed/${videoId}?enablejsapi=1`}
+            src={youtubeEmbedSrc}
             title="YouTube video player"
             allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
