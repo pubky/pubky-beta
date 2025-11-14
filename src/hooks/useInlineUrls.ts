@@ -310,7 +310,7 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
   const extractYouTubeDetails = (rawUrl: string): { id: string | null; start: number } => {
     // Only process URLs that are actually from YouTube domains
     if (!/youtube\.com|youtu\.be/.test(rawUrl)) {
-      return null;
+      return { id: null, start: 0 };
     }
 
     const regExp = /^.*(youtu.be\/(?!shorts)|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
