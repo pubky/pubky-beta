@@ -1443,11 +1443,22 @@ export function PubkyClientWrapper({ children }: { children: React.ReactNode }) 
   );
 
   const loadFeeds = withAuth(async (): Promise<{ feed: ICustomFeed; name: string }[]> => {
-    // Define the feeds directory path
     const feedsDirUrl = `pubky://${pubky}/pub/pubky.app/feeds/`;
-    const feedUris = await client.list(feedsDirUrl);
+    let feedUris: string[] = [];
 
-    // Fetch each feed data
+    try {
+      feedUris = await client.list(feedsDirUrl);
+    } catch (error) {
+      if (error.toString().includes('404')) {
+        return [];
+      }
+      throw error;
+    }
+
+    if (feedUris.length === 0) {
+      return [];
+    }
+
     const feedsData = await Promise.all(
       feedUris.map(async (uri) => {
         try {
