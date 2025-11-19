@@ -539,8 +539,13 @@ export const useInlineUrls = ({ text, files }: UseInlineUrlsProps): UseInlineUrl
       const firstUrl = allUrls.sort((a, b) => a.index - b.index)[0];
       const url = firstUrl.url;
 
-      const postRegex = new RegExp(`/post/([^/]+)/([^/]+)`);
-      if (postRegex.test(url)) return;
+      // Only filter out Pubky internal post URLs, not external URLs with /post/ in path
+      if (isValidUrl(url)) {
+        const parsedUrl = new URL(url);
+        const isPubkyDomain = parsedUrl.hostname === 'pubky.app' || parsedUrl.hostname.endsWith('.pubky.app');
+        const postRegex = new RegExp(`/post/([^/]+)/([^/]+)`);
+        if (isPubkyDomain && postRegex.test(url)) return;
+      }
 
       if (!isImageUrl(url) && !isVideoUrl(url) && !isAudioUrl(url) && !isPdfUrl(url) && !isInternalPubkyUrl(url)) {
         setPreview(url);
