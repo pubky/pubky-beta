@@ -26,7 +26,7 @@ export const Timeline = () => {
   const [skip, setSkip] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
   const [finishedLoading, setFinishedLoading] = useState(false);
-  const limit = 10;
+  const limit = 25;
 
   const fetchPosts = async ({
     skipValue = skip,
