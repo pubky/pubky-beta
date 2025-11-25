@@ -49,6 +49,18 @@ function LinkPreview({ url }: { url: string }) {
           return;
         }
 
+        // Handle blocked URLs (403 from Cloudflare) - show placeholder with domain
+        if (data.blocked) {
+          const domain = data.title || new URL(url).hostname.replace(/^www\./, '');
+          setPreviewData({
+            title: domain,
+            description: '',
+            image: null
+          });
+          setLoading(false);
+          return;
+        }
+
         const validImage = data.image ? await isValidImage(data.image) : false;
 
         const preview = {
