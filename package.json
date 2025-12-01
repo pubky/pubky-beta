@@ -56,7 +56,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@swc-node/register": "~1.10.9",
+    "@swc-node/register": "~1.11.1",
     "@swc/cli": "^0.5.1",
     "@swc/core": "1.9.2",
     "@testing-library/jest-dom": "^6.6.3",
