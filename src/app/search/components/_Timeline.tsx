@@ -28,6 +28,11 @@ export const Timeline = () => {
     skipValue?: number;
     timelineValue?: PostView[];
   }) => {
+    // Prevent rapid-fire requests (only check finishedLoading, isLoading is checked by useInfiniteScroll)
+    if (finishedLoading) {
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -44,13 +49,34 @@ export const Timeline = () => {
         content // kind
       );
 
+      // Check if we received no data
+      if (!Array.isArray(data) || data.length === 0) {
+        setFinishedLoading(true);
+        setIsLoading(false);
+        return;
+      }
+
       setSkip(skipValue + limit);
 
       // filter out deleted posts and muted users
       const filteredData = data.filter(
         (post) => !deletedPosts.includes(post.details.id) && !mutedUsers.includes(post.details.author)
       );
-      setTimeline([...timelineValue, ...filteredData]);
+
+      // If all data was filtered out and we got less than limit, we've reached the end
+      if (filteredData.length === 0 && data.length < limit) {
+        setFinishedLoading(true);
+        setIsLoading(false);
+        return;
+      }
+
+      // Use functional update to avoid stale closure issues
+      // If timelineValue is explicitly empty array (initialization), replace. Otherwise append.
+      if (timelineValue.length === 0 && skipValue === 0) {
+        setTimeline(filteredData);
+      } else {
+        setTimeline((prev) => [...prev, ...filteredData]);
+      }
     } catch (error) {
       setFinishedLoading(true);
     } finally {
@@ -58,7 +84,11 @@ export const Timeline = () => {
     }
   };
 
-  const loader = useInfiniteScroll(() => fetchPosts({ skipValue: skip, timelineValue: timeline }), isLoading);
+  const fetchMorePosts = useCallback(() => {
+    fetchPosts({ skipValue: skip });
+  }, [skip]);
+
+  const loader = useInfiniteScroll(fetchMorePosts, isLoading);
 
   const initializeTimeline = async () => {
     setSkip(0);
