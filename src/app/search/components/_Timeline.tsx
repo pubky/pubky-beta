@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Icon } from '@social/ui-shared';
 import { useFilterContext, usePubkyClientContext } from '@/contexts';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
@@ -28,7 +28,7 @@ export const Timeline = () => {
     skipValue?: number;
     timelineValue?: PostView[];
   }) => {
-    // Prevent rapid-fire requests (only check finishedLoading, isLoading is checked by useInfiniteScroll)
+    // Prevent rapid-fire requests
     if (finishedLoading) {
       return;
     }
@@ -70,13 +70,7 @@ export const Timeline = () => {
         return;
       }
 
-      // Use functional update to avoid stale closure issues
-      // If timelineValue is explicitly empty array (initialization), replace. Otherwise append.
-      if (timelineValue.length === 0 && skipValue === 0) {
-        setTimeline(filteredData);
-      } else {
-        setTimeline((prev) => [...prev, ...filteredData]);
-      }
+      setTimeline([...timelineValue, ...filteredData]);
     } catch (error) {
       setFinishedLoading(true);
     } finally {
@@ -84,11 +78,7 @@ export const Timeline = () => {
     }
   };
 
-  const fetchMorePosts = useCallback(() => {
-    fetchPosts({ skipValue: skip });
-  }, [skip]);
-
-  const loader = useInfiniteScroll(fetchMorePosts, isLoading);
+  const loader = useInfiniteScroll(() => fetchPosts({ skipValue: skip, timelineValue: timeline }), isLoading);
 
   const initializeTimeline = async () => {
     setSkip(0);
@@ -102,12 +92,8 @@ export const Timeline = () => {
     });
   };
 
-  const initializeTimelineCallback = useCallback(() => {
-    initializeTimeline();
-  }, [reach, sort, content, searchTags, layout]);
-
   useEffect(() => {
-    initializeTimelineCallback();
+    initializeTimeline();
   }, [reach, sort, content, searchTags, layout]);
 
   return (
