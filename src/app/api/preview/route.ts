@@ -77,6 +77,12 @@ export async function GET(request: Request) {
     });
 
     if (!response.ok) {
+      // For 403 errors (Cloudflare protection), return a placeholder with domain name
+      if (response.status === 403) {
+        return NextResponse.json({
+          title: parsedUrl.hostname.replace(/^www\./, '')
+        });
+      }
       throw new Error(`Request failed with status ${response.status}`);
     }
 
