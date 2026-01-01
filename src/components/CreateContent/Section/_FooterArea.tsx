@@ -146,7 +146,7 @@ export default function FooterArea({
             (isAudio && Utils.supportedAudioTypes.includes(file.type)) ||
             isPDF;
 
-          if (!isValidType) {
+          if (!isValidType && !isVideo) {
             addAlert('File type not supported.', 'warning');
             continue;
           }
@@ -176,7 +176,7 @@ export default function FooterArea({
                 setIsCompressing(false);
               }
             }
-          } else if (isVideo && file.size > maxOtherSizeInBytes) {
+          } else if (isVideo && (file.size > maxOtherSizeInBytes || !Utils.supportedVideoTypes.includes(file.type))) {
             // Check if video is too large for compression
             if (file.size > maxVideoSizeForCompressionInBytes) {
               addAlert('The maximum allowed size for videos compression is 100 MB', 'warning');
@@ -188,8 +188,13 @@ export default function FooterArea({
             try {
               abortController = new AbortController();
 
+              const isUnsupportedFormat = !Utils.supportedVideoTypes.includes(file.type);
+              const alertMessage = isUnsupportedFormat
+                ? `Converting and compressing video ${currentFileIndex}/${filesArray.length}...`
+                : `Compressing video ${currentFileIndex}/${filesArray.length}...`;
+
               loadingAlertId = addAlert(
-                `Compressing video ${currentFileIndex}/${filesArray.length}...`,
+                alertMessage,
                 'loading',
                 () => {
                   // Cancel compression when cancel button is clicked
@@ -205,10 +210,11 @@ export default function FooterArea({
                 maxOtherSizeInBytes,
                 (progress) => {
                   // Update the alert with current progress
-                  updateAlert(
-                    loadingAlertId!,
-                    `Compressing video ${currentFileIndex}/${filesArray.length}... ${progress}%`
-                  );
+                  const progressMessage = isUnsupportedFormat
+                    ? `Converting and compressing video ${currentFileIndex}/${filesArray.length}... ${progress}%`
+                    : `Compressing video ${currentFileIndex}/${filesArray.length}... ${progress}%`;
+
+                  updateAlert(loadingAlertId!, progressMessage);
 
                   // Enable cancel button on first progress
                   if (progress > 0) {
