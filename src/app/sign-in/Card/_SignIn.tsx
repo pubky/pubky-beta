@@ -27,6 +27,8 @@ export default function SignIn() {
   const canvasRef = useRef(null);
   const errorRetryMessage = 'Retry attempts reached. Click here to reload the page.';
 
+  {
+    /** 
   useEffect(() => {
     if (!isOnline) {
       setLoginError('Error sending request. Check internet connection.');
@@ -38,6 +40,11 @@ export default function SignIn() {
       return () => abortController.abort();
     }
   }, [isOnline]);
+  */
+  }
+  useEffect(() => {
+    handleGenerateAuthUrl(new AbortController().signal);
+  }, []);
 
   useEffect(() => {
     setAppLink(`pubkyring://${authUrl}`);
@@ -84,18 +91,8 @@ export default function SignIn() {
     } catch (error: unknown) {
       setLoginError(String(error));
       console.error('Login error:', error);
-
-      // Regenerate auth URL on error, but only up to 4 attempts total
-      if (!signal.aborted && retryCountRef.current < 4) {
-        setTimeout(() => {
-          setLoginError('');
-          handleGenerateAuthUrl(signal, true);
-        }, 2000); // Wait 2 seconds before retrying
-      } else if (retryCountRef.current >= 4) {
-        // After 4 attempts, stop trying and clear the auth URL
-        setAuthUrl('');
-        setLoginError(errorRetryMessage);
-      }
+      setAuthUrl('');
+      setLoginError(errorRetryMessage);
     }
   };
 
